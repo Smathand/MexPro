@@ -520,6 +520,7 @@ tbody tr:hover {
     background: var(--bg-body);
     padding: 20px;
     background-size: cover;
+    background-image: url(./Temple\ 1.jpeg);
 }
 
 .page-overlay.hidden {
@@ -3571,6 +3572,91 @@ select {
         right: -60px;
     }
 }
+
+/* ============================================================
+   INVENTORY SEARCH BAR
+   ============================================================ */
+.inventory-search-wrap {
+    position: relative;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+}
+
+.inventory-search-wrap .inventory-search-icon {
+    position: absolute;
+    left: 16px;
+    color: var(--text-muted);
+    font-size: .9rem;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.inventory-search-input {
+    padding-left: 42px !important;
+    padding-right: 42px !important;
+    border-radius: 30px !important;
+    font-size: .9rem !important;
+    height: 44px;
+    width: 100%;
+}
+
+.inventory-search-input:focus {
+    border-color: var(--accent-1);
+    box-shadow: 0 0 0 3px rgba(18, 140, 126, .15);
+}
+
+.inventory-search-clear {
+    position: absolute;
+    right: 8px;
+    background: var(--input-bg) !important;
+    color: var(--text-muted) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 50% !important;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: .7rem;
+    z-index: 2;
+    transition: var(--transition);
+}
+
+.inventory-search-clear:hover {
+    background: var(--accent-danger) !important;
+    color: #ffffff !important;
+    border-color: var(--accent-danger) !important;
+}
+
+.inventory-search-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-muted);
+    font-size: .9rem;
+    display: none;
+}
+
+.inventory-search-empty i {
+    font-size: 2.5rem;
+    opacity: .3;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.inventory-search-count {
+    font-size: .75rem;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.inventory-search-count i {
+    color: var(--accent-1);
+}
 </style>
 </head>
 <body>
@@ -3880,6 +3966,10 @@ en: {
     inventory_title:'Inventory & Stock',inventory_add:'Add Product',inventory_th_name:'Product',inventory_th_desc:'Description',
     inventory_th_category:'Category',inventory_th_price:'Price (TSh)',inventory_th_cost:'Cost (TSh)',inventory_th_stock:'Stock',
     inventory_th_status:'Status',inventory_th_actions:'Actions',inventory_empty:'No products',
+    inventory_search_placeholder:'Search product by name...',
+    inventory_search_empty:'No products match your search.',
+    inventory_search_clear:'Clear search',
+    inventory_items_count:'items',
     pnl_title:'Profit and Loss',pnl_revenue:'Total Revenue',pnl_cogs:'Cost of Goods Sold (COGS)',pnl_expenses:'Total Expenses',
     pnl_net:'Net Profit',pnl_monthly_sales:'Monthly Sales',pnl_monthly_expenses:'Monthly Expenses',pnl_breakdown:'P&L Breakdown',
     expenses_title:'Company Expenses',expenses_add:'Add Expense',expenses_th_desc:'Description',expenses_th_amount:'Amount',
@@ -4046,6 +4136,10 @@ sw: {
     inventory_title:'Bidhaa na Stoo',inventory_add:'Ongeza Bidhaa',inventory_th_name:'Bidhaa',inventory_th_desc:'Maelezo',
     inventory_th_category:'Kundi',inventory_th_price:'Bei (TSh)',inventory_th_cost:'Gharama (TSh)',inventory_th_stock:'Stoo',
     inventory_th_status:'Hali',inventory_th_actions:'Vitendo',inventory_empty:'Hakuna bidhaa',
+    inventory_search_placeholder:'Tafuta bidhaa kwa jina...',
+    inventory_search_empty:'Hakuna bidhaa inayolingana na utafutaji wako.',
+    inventory_search_clear:'Futa utafutaji',
+    inventory_items_count:'bidhaa',
     pnl_title:'Faida na Hasara',pnl_revenue:'Mapato Yote',pnl_cogs:'Gharama ya Bidhaa Zilizouzwa',pnl_expenses:'Matumizi Yote',
     pnl_net:'Faida Halisi',pnl_monthly_sales:'Mauzo ya Mwezi',pnl_monthly_expenses:'Matumizi ya Mwezi',pnl_breakdown:'Mchanganuo wa Faida na Hasara',
     expenses_title:'Matumizi ya Kampuni',expenses_add:'Ongeza Matumizi',expenses_th_desc:'Maelezo',expenses_th_amount:'Kiasi',
@@ -4212,6 +4306,10 @@ fr: {
     inventory_title:"Inventaire & Stock",inventory_add:"Ajouter un produit",inventory_th_name:"Produit",inventory_th_desc:"Description",
     inventory_th_category:"Catégorie",inventory_th_price:"Prix (TSh)",inventory_th_cost:"Coût (TSh)",inventory_th_stock:"Stock",
     inventory_th_status:"Statut",inventory_th_actions:"Actions",inventory_empty:"Aucun produit",
+    inventory_search_placeholder:'Rechercher un produit par nom...',
+    inventory_search_empty:'Aucun produit ne correspond à votre recherche.',
+    inventory_search_clear:'Effacer la recherche',
+    inventory_items_count:'articles',
     pnl_title:"Profit et Perte",pnl_revenue:"Revenu total",pnl_cogs:"Coût des marchandises vendues (COGS)",pnl_expenses:"Dépenses totales",
     pnl_net:"Profit net",pnl_monthly_sales:"Ventes mensuelles",pnl_monthly_expenses:"Dépenses mensuelles",pnl_breakdown:"Détail P&L",
     expenses_title:"Dépenses de l'entreprise",expenses_add:"Ajouter une dépense",expenses_th_desc:"Description",expenses_th_amount:"Montant",
@@ -4378,6 +4476,10 @@ zh: {
     inventory_title:'库存与存货',inventory_add:'添加产品',inventory_th_name:'产品',inventory_th_desc:'描述',
     inventory_th_category:'类别',inventory_th_price:'售价（TSh）',inventory_th_cost:'成本（TSh）',inventory_th_stock:'库存',
     inventory_th_status:'状态',inventory_th_actions:'操作',inventory_empty:'暂无产品',
+    inventory_search_placeholder:'按名称搜索产品...',
+    inventory_search_empty:'没有与您的搜索匹配的产品。',
+    inventory_search_clear:'清除搜索',
+    inventory_items_count:'件商品',
     pnl_title:'利润与亏损',pnl_revenue:'总收入',pnl_cogs:'销货成本（COGS）',pnl_expenses:'总支出',
     pnl_net:'净利润',pnl_monthly_sales:'每月销售',pnl_monthly_expenses:'每月支出',pnl_breakdown:'损益明细',
     expenses_title:'公司支出',expenses_add:'添加支出',expenses_th_desc:'描述',expenses_th_amount:'金额',
@@ -4571,6 +4673,7 @@ let lockCheckerInterval = null;
 let currentStatusTab = 'ads';
 let pendingVideoData = null;
 let expandedAdComments = {};
+let inventorySearchTerm = '';
 const adObjectUrls = {};
 
 let panelSelectedPlan = 'monthly';
@@ -6745,6 +6848,42 @@ function updateSaleTotalPreview() {
     box.style.display = 'block';
 }
 
+/* INVENTORY SEARCH */
+function filterInventoryTable(term) {
+    inventorySearchTerm = term || '';
+    const q = inventorySearchTerm.trim().toLowerCase();
+    const rows = document.querySelectorAll('#inventoryTableBody tr[data-name]');
+    let visible = 0;
+    rows.forEach(function (r) {
+        const name = (r.dataset.name || '').toLowerCase();
+        const match = !q || name.indexOf(q) !== -1;
+        r.style.display = match ? '' : 'none';
+        if (match) visible++;
+    });
+    const noRes = document.getElementById('inventoryNoResults');
+    if (noRes) {
+        noRes.style.display = (rows.length > 0 && visible === 0 && q) ? 'block' : 'none';
+    }
+    const clearBtn = document.getElementById('inventorySearchClear');
+    if (clearBtn) {
+        clearBtn.style.display = q ? 'flex' : 'none';
+    }
+    const countText = document.getElementById('inventorySearchCountText');
+    if (countText) {
+        countText.textContent = q
+            ? visible + ' / ' + rows.length + ' ' + t('inventory_items_count')
+            : rows.length + ' ' + t('inventory_items_count');
+    }
+}
+
+function clearInventorySearch() {
+    inventorySearchTerm = '';
+    const inp = document.getElementById('inventorySearchInput');
+    if (inp) inp.value = '';
+    filterInventoryTable('');
+    if (inp) inp.focus();
+}
+
 /* VIEWS */
 const views = {};
 
@@ -7408,19 +7547,38 @@ views.sales = function () {
 views.inventory = function () {
     if (isSuperAdmin || isSystemLocked()) return renderLockOverlay();
     const u = getCurrentUser();
-    const p = getFilteredProducts();
+    const p = getFilteredProducts()
+        .slice()
+        .sort(function (a, b) {
+            const an = (a.name || '').toString();
+            const bn = (b.name || '').toString();
+            return an.localeCompare(bn, undefined, { sensitivity: 'base', numeric: true });
+        });
     const ce = !!u && ['owner', 'admin', 'accountant'].includes(u.role);
     const isO = u && u.role === 'owner';
-    const tb = isO ? `<button class="btn btn-transfer-stock btn-icon" onclick="openTransferModal()"><i class="fas fa-exchange-alt"></i> ${t('transfer_btn')}</button>` : '';
+    const tb = isO
+        ? `<button class="btn btn-transfer-stock btn-icon" onclick="openTransferModal()"><i class="fas fa-exchange-alt"></i> ${t('transfer_btn')}</button>`
+        : '';
+    const safeTerm = inventorySearchTerm.replace(/"/g, '&quot;');
+    const searchBar = `<div class="inventory-search-wrap">
+        <i class="fas fa-search inventory-search-icon"></i>
+        <input type="text" id="inventorySearchInput" class="inventory-search-input" placeholder="${t('inventory_search_placeholder')}" value="${safeTerm}" oninput="filterInventoryTable(this.value)" autocomplete="off" spellcheck="false"/>
+        <button type="button" class="inventory-search-clear" id="inventorySearchClear" onclick="clearInventorySearch()" style="display:${inventorySearchTerm ? 'flex' : 'none'};" title="${t('inventory_search_clear')}"><i class="fas fa-times"></i></button>
+    </div>`;
+    const rows = p.map(function (x) {
+        const st = x.quantity <= 0 ? 'red' : x.quantity <= 5 ? 'yellow' : 'green';
+        const lb = x.quantity <= 0 ? t('stock_out') : x.quantity <= 5 ? t('stock_low') : t('stock_ok');
+        const safeName = (x.name || '').replace(/"/g, '&quot;');
+        return `<tr data-name="${safeName}"><td><strong>${x.name}</strong></td><td>${fmtMoney(x.price)}</td><td>${fmtMoney(x.cost)}</td><td><strong>${x.quantity}</strong></td><td><span class="stock-dot ${st}"></span> ${lb}</td><td>${ce ? `<button class="btn btn-success btn-xs" onclick="adjustStock('${x.id}')">+</button><button class="btn btn-danger btn-xs" onclick="deleteProduct('${x.id}')">×</button>` : '—'}</td></tr>`;
+    }).join('');
+    const countBar = `<div class="inventory-search-count" id="inventorySearchCount"><i class="fas fa-cubes"></i> <span id="inventorySearchCountText">${p.length} ${t('inventory_items_count')}</span></div>`;
     return `<div class="section-header"><h2><i class="fas fa-boxes" style="color:var(--accent-4)"></i> ${t('inventory_title')}</h2><div style="display:flex;gap:8px;flex-wrap:wrap;">${tb}${ce ? `<button class="btn btn-primary btn-icon" onclick="openModal('product')"><i class="fas fa-plus"></i> ${t('inventory_add')}</button>` : ''}</div></div>
+    ${searchBar}
+    ${countBar}
     <div class="card"><div class="card-body"><div class="table-wrap"><table>
         <thead><tr><th>${t('inventory_th_name')}</th><th>${t('inventory_th_price')}</th><th>${t('inventory_th_cost')}</th><th>${t('inventory_th_stock')}</th><th>${t('inventory_th_status')}</th><th>${t('inventory_th_actions')}</th></tr></thead>
-        <tbody>${p.map(x => {
-            const st = x.quantity <= 0 ? 'red' : x.quantity <= 5 ? 'yellow' : 'green';
-            const lb = x.quantity <= 0 ? t('stock_out') : x.quantity <= 5 ? t('stock_low') : t('stock_ok');
-            return `<tr><td><strong>${x.name}</strong></td><td>${fmtMoney(x.price)}</td><td>${fmtMoney(x.cost)}</td><td><strong>${x.quantity}</strong></td><td><span class="stock-dot ${st}"></span> ${lb}</td><td>${ce ? `<button class="btn btn-success btn-xs" onclick="adjustStock('${x.id}')">+</button><button class="btn btn-danger btn-xs" onclick="deleteProduct('${x.id}')">×</button>` : '—'}</td></tr>`;
-        }).join('') || `<tr class="empty-row"><td colspan="6">${t('inventory_empty')}</td></tr>`}</tbody>
-    </table></div></div></div>`;
+        <tbody id="inventoryTableBody">${rows || `<tr class="empty-row"><td colspan="6">${t('inventory_empty')}</td></tr>`}</tbody>
+    </table></div><div class="inventory-search-empty" id="inventoryNoResults"><i class="fas fa-search-minus"></i>${t('inventory_search_empty')}</div></div></div>`;
 };
 
 views.pnl = function () {
@@ -8278,9 +8436,7 @@ function showToast(msg, type = 'info') {
     }, 3500);
 }
 
-/* ================================================================
-   LOGOUT — FIXED: resets language to English (default)
-   ================================================================ */
+/* LOGOUT — resets language to English (default) */
 function logout() {
     const u = getCurrentUser();
     if (u && !isSuperAdmin) recordUserLogout(u.id);
@@ -8291,10 +8447,8 @@ function logout() {
     setCurrentUser(null);
     currentTenantId = null;
     isSuperAdmin = false;
-
-    /* FIX: Reset language back to default English on logout */
+    inventorySearchTerm = '';
     currentLang = 'en';
-
     document.getElementById('appContainer').classList.remove('active');
     document.getElementById('loginPage').classList.remove('hidden');
     document.getElementById('registerPage').classList.add('hidden');
@@ -8304,8 +8458,6 @@ function logout() {
     document.getElementById('loginUsername').value = '';
     document.getElementById('loginPassword').value = '';
     document.getElementById('trialTimerWrap').style.display = 'none';
-
-    /* FIX: Apply English translations immediately */
     applyTranslations();
     const lm = document.getElementById('langMenu');
     if (lm) lm.classList.remove('show');
@@ -8423,7 +8575,6 @@ function initApp(user) {
 (function autoLogin() {
     migrateBranchPermissions();
     initLanguageMenu();
-    /* FIX: Always start in English if no user is set */
     const user = getCurrentUser();
     if (!user) {
         currentLang = 'en';
@@ -8501,6 +8652,7 @@ applyTranslations();
 Object.assign(window, {
     openModal, closeModal, submitSale, submitProduct, submitExpense, submitUser, submitStockAdjust,
     deleteSale, deleteExpense, deleteProduct, deleteUser, changeUserRole, adjustStock,
+    filterInventoryTable, clearInventorySearch,
     onSaleProductChange, updateSaleTotalPreview, selectPanelPlan, selectPanelPayment,
     handlePanelSubscriptionPayment, sendWhatsAppReport, sendEmailReport, downloadFile,
     showReceipt, closeReceiptModal, printReceipt, sendReceiptWhatsApp, shareReceipt, navigate, logout,
@@ -8523,10 +8675,12 @@ Object.assign(window, {
     setLanguage, updateLangMenu, initLanguageMenu, LANG_NAMES, TRANSLATIONS, t
 });
 
-console.log('✅ MeX PRO v17 — Logout language fixed + CSS reformatted (one property per line).');
-console.log('   • logout() now resets currentLang to "en" and re-applies translations.');
-console.log('   • autoLogin() also forces English on the login page.');
-console.log('   • Full CSS was rewritten so every property sits on its own line.');
+console.log('✅ MeX PRO v18 — Inventory search bar + Alphabetical sorting added.');
+console.log('   • Inventory products sorted A→Z (localeCompare, numeric, base sensitivity).');
+console.log('   • Live search bar filters by product name as you type.');
+console.log('   • Clear button (×) to reset search quickly.');
+console.log('   • Item count shows "X items" or "X / Y items" when searching.');
+console.log('   • "No products match your search" shown when empty results.');
 </script>
 </body>
 </html>
