@@ -2733,7 +2733,7 @@ tbody tr:hover {
 }
 
 /* ============================================================
-   37. MEX CREDENTIALS BOX — KILA CODE KWENYE MSTARI WAKE
+   37. MEX CREDENTIALS BOX
    ============================================================ */
 .mex-cred-box {
     background: linear-gradient(135deg, rgba(245,158,11,.08), rgba(217,119,6,.05));
@@ -5530,9 +5530,9 @@ en: {
     ads_title_label:'Ad Title',
     ads_content_label:'Ad Content',
     ads_image_label:'Image (optional, max 2 MB)',
-    ads_video_label:'Video (optional, max 30 seconds, max 10 MB)',
-    ads_video_too_long:'Video must be 30 seconds or less.',
-    ads_video_too_large:'Video is too large (max 10 MB).',
+    ads_video_label:'Video (optional, max 60 seconds, max 100 MB)',
+    ads_video_too_long:'Video must be 60 seconds or less.',
+    ads_video_too_large:'Video is too large (max 100 MB).',
     ads_video_invalid:'Invalid video file.',
     ads_video_reading:'Reading video...',
     ads_video_ready:'Video ready',
@@ -6098,9 +6098,9 @@ sw: {
     ads_title_label:'Kichwa cha Tangazo',
     ads_content_label:'Maudhui ya Tangazo',
     ads_image_label:'Picha (si lazima, max 2 MB)',
-    ads_video_label:'Video (si lazima, max sekunde 30, max 10 MB)',
-    ads_video_too_long:'Video lazima iwe sekunde 30 au chini.',
-    ads_video_too_large:'Video ni kubwa mno (max 10 MB).',
+    ads_video_label:'Video (si lazima, max sekunde 60, max 100 MB)',
+    ads_video_too_long:'Video lazima iwe sekunde 60 au chini.',
+    ads_video_too_large:'Video ni kubwa mno (max 100 MB).',
     ads_video_invalid:'Faili ya video si sahihi.',
     ads_video_reading:'Inasoma video...',
     ads_video_ready:'Video iko tayari',
@@ -6666,9 +6666,9 @@ fr: {
     ads_title_label:"Titre de l'annonce",
     ads_content_label:"Contenu de l'annonce",
     ads_image_label:"Image (facultatif, max 2 Mo)",
-    ads_video_label:"Vidéo (facultatif, max 30 secondes, max 10 Mo)",
-    ads_video_too_long:"La vidéo doit durer 30 secondes ou moins.",
-    ads_video_too_large:"La vidéo est trop volumineuse (max 10 Mo).",
+    ads_video_label:"Vidéo (facultatif, max 60 secondes, max 100 Mo)",
+    ads_video_too_long:"La vidéo doit durer 60 secondes ou moins.",
+    ads_video_too_large:"La vidéo est trop volumineuse (max 100 Mo).",
     ads_video_invalid:"Fichier vidéo invalide.",
     ads_video_reading:"Lecture de la vidéo...",
     ads_video_ready:"Vidéo prête",
@@ -7234,9 +7234,9 @@ zh: {
     ads_title_label:'广告标题',
     ads_content_label:'广告内容',
     ads_image_label:'图片（可选，最大 2 MB）',
-    ads_video_label:'视频（可选，最长 30 秒，最大 10 MB）',
-    ads_video_too_long:'视频必须不超过 30 秒。',
-    ads_video_too_large:'视频过大（最大 10 MB）。',
+    ads_video_label:'视频（可选，最长 60 秒，最大 100 MB）',
+    ads_video_too_long:'视频必须不超过 60 秒。',
+    ads_video_too_large:'视频过大（最大 100 MB）。',
     ads_video_invalid:'无效的视频文件。',
     ads_video_reading:'正在读取视频...',
     ads_video_ready:'视频已就绪',
@@ -7493,8 +7493,11 @@ const GLOBAL_ADS_KEY = 'sb_global_ads';
 const MEX_EMPLOYEES_KEY = 'sb_mex_employees';
 const MEX_SESSION_KEY = 'sb_mex_current_employee';
 const AD_PRICE = 5000;
-const MAX_VIDEO_SECONDS = 30;
-const MAX_VIDEO_BYTES = 10 * 1024 * 1024;
+/* KILA KITU KIKO KWENYE MSTARI WAKE:
+   video mpaka dakika 60 (seconds 60)
+   na haipaswi kuzidi MB 100 */
+const MAX_VIDEO_SECONDS = 60;
+const MAX_VIDEO_BYTES = 100 * 1024 * 1024;
 const MAX_IMAGE_BYTES = 2 * 1024 * 1024;
 const AD_VALIDITY_MS = 2 * 24 * 60 * 60 * 1000;
 
@@ -8674,19 +8677,16 @@ function getCommenterAvatar(comment) {
     if (!comment) {
         return 'https://ui-avatars.com/api/?background=128C7E&color=fff&name=User';
     }
-    /* Super Admin */
     if (comment.isSuperAdmin) {
         const su = getTenantData('_currentUser', null);
         if (su && su.photo && su.photo.startsWith('data:image') && isSuperAdmin) return su.photo;
         return 'https://ui-avatars.com/api/?background=f59e0b&color=fff&name=' + encodeURIComponent(comment.userName || 'Super Admin');
     }
-    /* MeX Employee */
     if (comment.isMexEmployee) {
         const emp = findMexEmployeeById(comment.userId);
         if (emp && emp.photo && emp.photo.startsWith('data:image')) return emp.photo;
         return 'https://ui-avatars.com/api/?background=f59e0b&color=fff&name=' + encodeURIComponent(comment.userName || 'Employee');
     }
-    /* Tenant user — tafuta kwenye tenant husika bila kubadilisha currentTenantId ya global */
     if (comment.tenantId) {
         const oldTenant = currentTenantId;
         currentTenantId = comment.tenantId;
@@ -14175,7 +14175,6 @@ function saveProfile() {
         showToast(t('toast_password_mismatch'), 'error');
         return;
     }
-    /* SUPER ADMIN */
     if (isSuperAdmin) {
         u.fullName = fn || 'Super Admin';
         u.email = em;
@@ -14188,7 +14187,6 @@ function saveProfile() {
         showToast(t('toast_profile_saved'), 'success');
         return;
     }
-    /* MEX EMPLOYEE */
     if (isMexEmployee) {
         const emp = findMexEmployeeById(currentMexEmployeeId);
         if (!emp) return;
@@ -14217,7 +14215,6 @@ function saveProfile() {
         showToast(t('toast_profile_saved'), 'success');
         return;
     }
-    /* TENANT USER */
     const us = getTenantData('users', []);
     const tg = us.find(x => x.id === u.id);
     if (!tg) return;
@@ -14251,7 +14248,6 @@ document.getElementById('profileUpload').addEventListener('change', function (e)
     const r = new FileReader();
     r.onload = ev => {
         const du = ev.target.result;
-        /* MEX EMPLOYEE */
         if (isMexEmployee) {
             const emp = findMexEmployeeById(currentMexEmployeeId);
             if (!emp) return;
@@ -14276,7 +14272,6 @@ document.getElementById('profileUpload').addEventListener('change', function (e)
         }
         const u = getCurrentUser();
         if (!u) return;
-        /* SUPER ADMIN */
         if (isSuperAdmin) {
             u.photo = du;
             setCurrentUser(u);
@@ -14285,7 +14280,6 @@ document.getElementById('profileUpload').addEventListener('change', function (e)
             showToast('📸 Photo updated!', 'success');
             return;
         }
-        /* TENANT USER */
         const us = getTenantData('users', []);
         const tg = us.find(x => x.id === u.id);
         if (tg) {
@@ -14996,12 +14990,10 @@ Object.assign(window, {
     getCommenterAvatar
 });
 
-console.log('✅ MeX PRO v26 — Full code written step by step with clear CSS lines.');
-console.log('   • Kila CSS property iko kwenye mstari wake wa kipekee.');
-console.log('   • HTML imepangwa kwa sehemu (Login, Register, App, Modals).');
-console.log('   • JavaScript imegawanywa kwa sehemu 70 tofauti.');
-console.log('   • Viewers count inafanya kazi (trackAdViewers/trackStatusViewers kabla ya render).');
-console.log('   • Comment profile photos zinaonyesha (getCommenterAvatar).');
+console.log('✅ MeX PRO v26 — Video mpaka dakika 60 (sekunde 60) na MB 100.');
+console.log('   • MAX_VIDEO_SECONDS = 60');
+console.log('   • MAX_VIDEO_BYTES = 100 * 1024 * 1024 (100 MB)');
+console.log('   • Tafsiri zote zimesasishwa (EN/SW/FR/ZH).');
 </script>
 </body>
 </html>
