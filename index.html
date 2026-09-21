@@ -1346,7 +1346,7 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
     height: 100%;
     object-fit: cover;
     display: block;
-    background: #000;
+    background: transparent !important;
     box-shadow: none !important;
     border: none !important;
     outline: none !important;
@@ -1956,7 +1956,7 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
     max-width: 100%;
     max-height: 240px;
     border-radius: 6px;
-    background: #000000;
+    background: transparent;
     display: block;
 }
 .ad-video-preview img {
@@ -2004,8 +2004,8 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #000000;
-    color: #ffffff;
+    background: var(--input-bg);
+    color: var(--text-muted);
     font-size: .75rem;
     text-align: center;
     padding: 8px;
@@ -5228,6 +5228,7 @@ let currentSuperAdminTab = 'companies';
 let videoAutoplayObserver = null;
 let userHasInteracted = false;
 let activeVideo = null;
+let chatRefreshInterval = null;
 
 /* ================================================================
    CONSTANTS
@@ -5256,10 +5257,20 @@ const MAX_IMAGE_BYTES = 2 * 1024 * 1024;
 function markUserInteracted() {
     if (userHasInteracted) return;
     userHasInteracted = true;
+    const allVideos = document.querySelectorAll('video.mex-auto-video');
+    allVideos.forEach(v => {
+        try {
+            if (!v.paused && v.offsetParent !== null) {
+                v.muted = false;
+                v.volume = 1;
+            }
+        } catch (e) {}
+    });
     if (activeVideo && !activeVideo.paused) {
         try {
             activeVideo.muted = false;
             activeVideo.volume = 1;
+            updateSoundBadge(activeVideo);
         } catch (e) {}
     }
 }
@@ -5269,6 +5280,7 @@ function markUserInteracted() {
 
 /* ================================================================
    VIDEO AUTOPLAY ON SCROLL — SETUP
+   Video starts immediately WITHOUT black flash (preload=auto + autoplay)
    ================================================================ */
 function setupVideoAutoplayObserver() {
     if (videoAutoplayObserver) {
@@ -5277,6 +5289,19 @@ function setupVideoAutoplayObserver() {
     }
     const videos = document.querySelectorAll('video.mex-auto-video');
     if (videos.length === 0) return;
+    videos.forEach(v => {
+        try {
+            v.muted = !userHasInteracted;
+            v.volume = 1;
+            v.setAttribute('playsinline', '');
+            v.setAttribute('webkit-playsinline', '');
+            v.setAttribute('preload', 'auto');
+            v.setAttribute('autoplay', '');
+            v.style.background = 'transparent';
+            const p = v.play();
+            if (p && p.catch) p.catch(() => {});
+        } catch (e) {}
+    });
     videoAutoplayObserver = new IntersectionObserver((entries) => {
         let bestEntry = null;
         let bestRatio = 0;
@@ -5286,7 +5311,7 @@ function setupVideoAutoplayObserver() {
                 bestEntry = entry;
             }
         });
-        if (bestEntry && bestRatio >= 0.55) {
+        if (bestEntry && bestRatio >= 0.35) {
             const inViewVideo = bestEntry.target;
             videos.forEach(v => {
                 if (v !== inViewVideo) {
@@ -5313,7 +5338,7 @@ function setupVideoAutoplayObserver() {
             updateSoundBadge(inViewVideo);
         } else {
             entries.forEach(entry => {
-                if (entry.intersectionRatio < 0.3) {
+                if (entry.intersectionRatio < 0.2) {
                     const v = entry.target;
                     try {
                         v.muted = true;
@@ -5325,18 +5350,10 @@ function setupVideoAutoplayObserver() {
             });
         }
     }, {
-        threshold: [0, 0.3, 0.55, 0.75, 0.9, 1.0],
+        threshold: [0, 0.2, 0.35, 0.5, 0.75, 0.9, 1.0],
         rootMargin: '0px 0px 0px 0px'
     });
-    videos.forEach(v => {
-        try {
-            v.muted = true;
-            v.setAttribute('playsinline', '');
-            v.setAttribute('webkit-playsinline', '');
-            v.setAttribute('preload', 'metadata');
-        } catch (e) {}
-        videoAutoplayObserver.observe(v);
-    });
+    videos.forEach(v => videoAutoplayObserver.observe(v));
 }
 
 function updateSoundBadge(video) {
@@ -8185,11 +8202,14 @@ function updateChatBadge() {
         b.classList.remove('show');
         return;
     }
-    const c = getUnreadCount(u.id);
+    const messages = getMessages();
+    const c = messages.filter(m => m.to === u.id && !m.read).length;
     if (c > 0) {
-        b.textContent = c;
+        b.textContent = c > 99 ? '99+' : c;
         b.classList.add('show');
-    } else b.classList.remove('show');
+    } else {
+        b.classList.remove('show');
+    }
 }
 
 /* ================================================================
@@ -8906,7 +8926,7 @@ views.statusAdsOnly = function () {
 };
 
 /* ================================================================
-   RENDER ADS TAB — WITH AUTO-PLAY VIDEO
+   RENDER ADS TAB
    ================================================================ */
 function renderAdsTab() {
     const user = getCurrentUser();
@@ -8934,7 +8954,7 @@ function renderAdsTab() {
         const hasVideo = ad.mediaType === 'video' || hasInlineVideo;
         let mediaPlaceholder = '';
         if (hasInlineVideo) {
-            mediaPlaceholder = `<video class="mex-auto-video" src="${ad.video}" loop muted playsinline webkit-playsinline preload="metadata"></video>`;
+            mediaPlaceholder = `<video class="mex-auto-video" src="${ad.video}" loop playsinline webkit-playsinline preload="auto" autoplay></video>`;
         } else if (hasInlineImage) {
             mediaPlaceholder = `<img src="${ad.image}" alt="Ad"/>`;
         } else {
@@ -9034,7 +9054,7 @@ function renderAdsTab() {
                 }
                 adObjectUrls[ad.id] = url;
                 if (media.type === 'video') {
-                    wrap.innerHTML = `<video class="mex-auto-video" src="${url}" loop muted playsinline webkit-playsinline preload="metadata"></video>`;
+                    wrap.innerHTML = `<video class="mex-auto-video" src="${url}" loop playsinline webkit-playsinline preload="auto" autoplay></video>`;
                     const adCard = wrap.closest('.card');
                     if (adCard && !adCard.classList.contains('ad-video-card')) {
                         adCard.classList.add('ad-video-card');
@@ -11196,6 +11216,10 @@ function logout() {
         videoAutoplayObserver.disconnect();
         videoAutoplayObserver = null;
     }
+    if (chatRefreshInterval) {
+        clearInterval(chatRefreshInterval);
+        chatRefreshInterval = null;
+    }
     activeVideo = null;
     Object.keys(adObjectUrls).forEach(id => {
         try { URL.revokeObjectURL(adObjectUrls[id]); } catch (e) {}
@@ -11419,17 +11443,269 @@ function bindGlobalEvents() {
         });
     });
 }
+
+/* ================================================================
+   CHAT SYSTEM — FULLY FUNCTIONAL
+   ================================================================ */
 function initChatSystem() {
     const btn = document.getElementById('chatToggleBtn');
     if (btn) {
-        const nb = btn.cloneNode(true);
-        btn.parentNode.replaceChild(nb, btn);
-        const fb = document.getElementById('chatToggleBtn');
-        fb.onclick = (e) => {
+        btn.onclick = (e) => {
             e.preventDefault();
             e.stopPropagation();
+            openChatModal();
         };
     }
+    const closeBtn = document.getElementById('closeChatBtn');
+    if (closeBtn) closeBtn.onclick = (e) => {
+        e.preventDefault();
+        closeChatModal();
+    };
+    const sendBtn = document.getElementById('chatSendBtn');
+    if (sendBtn) sendBtn.onclick = (e) => {
+        e.preventDefault();
+        sendChatMessage();
+    };
+    const chatInput = document.getElementById('chatInput');
+    if (chatInput) {
+        chatInput.addEventListener('keydown', e => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendChatMessage();
+            }
+        });
+    }
+    const attachBtn = document.getElementById('chatAttachBtn');
+    const fileInput = document.getElementById('fileInput');
+    if (attachBtn && fileInput) {
+        attachBtn.onclick = (e) => {
+            e.preventDefault();
+            fileInput.click();
+        };
+        fileInput.onchange = handleChatFileAttach;
+    }
+    const taskToggle = document.getElementById('chatTaskToggle');
+    if (taskToggle) {
+        taskToggle.onclick = (e) => {
+            e.preventDefault();
+            taskToggle.classList.toggle('active');
+        };
+    }
+    if (chatRefreshInterval) clearInterval(chatRefreshInterval);
+    chatRefreshInterval = setInterval(() => {
+        const modal = document.getElementById('chatModal');
+        if (!modal || !modal.classList.contains('show')) return;
+        const user = getCurrentUser();
+        if (!user) return;
+        loadChatContacts();
+        if (chatCurrentContact) renderChatMessages();
+        updateChatBadge();
+    }, 3000);
+}
+
+function openChatModal() {
+    const user = getCurrentUser();
+    if (!user || isSuperAdmin || isMexEmployee) {
+        showToast('Chat inapatikana kwa watumiaji wa kampuni pekee.', 'info');
+        return;
+    }
+    document.getElementById('chatModal').classList.add('show');
+    document.body.classList.add('modal-open');
+    loadChatContacts();
+    if (chatCurrentContact) {
+        renderChatMessages();
+    } else {
+        const m = document.getElementById('chatMessages');
+        if (m) m.innerHTML = `<div class="no-chat"><i class="fas fa-comment"></i><span>${t('chat_select_contact')}</span></div>`;
+    }
+}
+
+function closeChatModal() {
+    document.getElementById('chatModal').classList.remove('show');
+    document.body.classList.remove('modal-open');
+}
+
+function loadChatContacts() {
+    const user = getCurrentUser();
+    if (!user) return;
+    const contactsEl = document.getElementById('chatContacts');
+    if (!contactsEl) return;
+    const allUsers = getTenantData('users', []);
+    const contacts = allUsers.filter(u => u.id !== user.id);
+    if (contacts.length === 0) {
+        contactsEl.innerHTML = `<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:.8rem;">${t('chat_no_contacts')}</div>`;
+        return;
+    }
+    contactsEl.innerHTML = contacts.map(c => {
+        const unread = getUnreadFromContact(c.id, user.id);
+        const avatar = getUserPhoto(c);
+        const initials = (c.fullName || c.username || '?').charAt(0).toUpperCase();
+        const active = chatCurrentContact && chatCurrentContact.id === c.id ? 'active' : '';
+        const avatarHtml = avatar
+            ? `<img src="${avatar}" alt="${c.username}" onerror="this.style.display='none';this.parentElement.textContent='${initials}';"/>`
+            : initials;
+        return `<div class="contact-item ${active}" onclick="openChatWith('${c.id}')">
+            <div class="contact-avatar">${avatarHtml}</div>
+            <div class="contact-info">
+                <div class="contact-name">${c.fullName || c.username}</div>
+                <div class="contact-last">${getRoleLabel(c.role)}</div>
+            </div>
+            ${unread > 0 ? `<div class="contact-unread">${unread}</div>` : ''}
+        </div>`;
+    }).join('');
+}
+
+function getUnreadFromContact(fromId, toId) {
+    const messages = getMessages();
+    return messages.filter(m => m.from === fromId && m.to === toId && !m.read).length;
+}
+
+function openChatWith(contactId) {
+    const user = getCurrentUser();
+    if (!user) return;
+    const contact = getUser(contactId);
+    if (!contact) return;
+    chatCurrentContact = contact;
+    const messages = getMessages();
+    let changed = false;
+    messages.forEach(m => {
+        if (m.from === Number(contactId) && m.to === user.id && !m.read) {
+            m.read = true;
+            changed = true;
+        }
+    });
+    if (changed) saveMessages(messages);
+    loadChatContacts();
+    renderChatMessages();
+    updateChatBadge();
+}
+
+function renderChatMessages() {
+    const user = getCurrentUser();
+    const messagesEl = document.getElementById('chatMessages');
+    if (!user || !chatCurrentContact || !messagesEl) return;
+    const messages = getMessages().filter(m =>
+        (m.from === user.id && m.to === chatCurrentContact.id) ||
+        (m.from === chatCurrentContact.id && m.to === user.id)
+    ).sort((a, b) => a.timestamp - b.timestamp);
+    if (messages.length === 0) {
+        messagesEl.innerHTML = `<div class="no-chat"><i class="fas fa-comment"></i><span>${t('no_messages_yet')}</span></div>`;
+        return;
+    }
+    messagesEl.innerHTML = messages.map(m => {
+        const isSender = m.from === user.id;
+        const time = fmtTime(m.timestamp);
+        let attachHtml = '';
+        if (m.file) {
+            if (m.fileType && m.fileType.startsWith('image/')) {
+                attachHtml = `<div class="file-attachment" onclick="window.open('${m.file}','_blank')"><img src="${m.file}" alt="Image"/></div>`;
+            } else {
+                attachHtml = `<div class="file-attachment" onclick="window.open('${m.file}','_blank')">
+                    <i class="fas fa-file file-icon"></i>
+                    <div class="file-info">
+                        <div class="file-name">${m.fileName || 'File'}</div>
+                        <div class="file-size">${m.fileSize || ''}</div>
+                    </div>
+                </div>`;
+            }
+        }
+        const taskHtml = m.isTask ? `<div class="msg-task"><i class="fas fa-tasks"></i> Task</div>` : '';
+        const deleteBtn = isSender
+            ? `<button class="msg-delete-btn" onclick="deleteChatMessage('${m.id}')" title="Delete"><i class="fas fa-times"></i></button>`
+            : '';
+        return `<div class="msg-bubble ${isSender ? 'sender-msg' : 'receiver-msg'}">
+            ${deleteBtn}
+            ${m.text ? escapeHtml(m.text) : ''}
+            ${taskHtml}
+            ${attachHtml}
+            <span class="msg-time">${time}</span>
+        </div>`;
+    }).join('');
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+function sendChatMessage() {
+    const user = getCurrentUser();
+    if (!user || !chatCurrentContact) {
+        showToast(t('toast_select_contact'), 'warning');
+        return;
+    }
+    const input = document.getElementById('chatInput');
+    if (!input) return;
+    const text = input.value.trim();
+    if (!text && !pendingFile) {
+        showToast(t('toast_msg_empty'), 'warning');
+        return;
+    }
+    const taskToggle = document.getElementById('chatTaskToggle');
+    const msg = {
+        id: uid(),
+        from: user.id,
+        to: chatCurrentContact.id,
+        text: text,
+        timestamp: Date.now(),
+        read: false,
+        isTask: taskToggle ? taskToggle.classList.contains('active') : false
+    };
+    if (pendingFile) {
+        msg.file = pendingFile.data;
+        msg.fileName = pendingFile.name;
+        msg.fileSize = pendingFile.size;
+        msg.fileType = pendingFile.type;
+        pendingFile = null;
+    }
+    const messages = getMessages();
+    messages.push(msg);
+    if (messages.length > 500) messages.splice(0, messages.length - 500);
+    saveMessages(messages);
+    input.value = '';
+    if (taskToggle) taskToggle.classList.remove('active');
+    renderChatMessages();
+}
+
+function handleChatFileAttach(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+        showToast(t('toast_file_too_large'), 'error');
+        e.target.value = '';
+        return;
+    }
+    const reader = new FileReader();
+    reader.onload = ev => {
+        pendingFile = {
+            data: ev.target.result,
+            name: file.name,
+            size: (file.size / 1024).toFixed(1) + ' KB',
+            type: file.type
+        };
+        showToast(t('toast_file_attached'), 'success');
+    };
+    reader.onerror = () => showToast(t('toast_file_error'), 'error');
+    reader.readAsDataURL(file);
+    e.target.value = '';
+}
+
+function deleteChatMessage(msgId) {
+    if (!confirm(t('delete_msg_confirm') || 'Delete this message?')) return;
+    const messages = getMessages();
+    const idx = messages.findIndex(m => m.id === Number(msgId));
+    if (idx === -1) return;
+    const user = getCurrentUser();
+    if (messages[idx].from !== user.id && !isSuperAdmin) {
+        showToast(t('toast_cannot_delete'), 'error');
+        return;
+    }
+    messages.splice(idx, 1);
+    saveMessages(messages);
+    renderChatMessages();
+    showToast(t('toast_msg_deleted'), 'success');
+}
+
+function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = String(str || '');
+    return div.innerHTML;
 }
 
 /* ================================================================
@@ -11542,6 +11818,7 @@ document.addEventListener('keydown', function (e) {
         closeLowStockModal();
         closeTransferModal();
         closeProfileViewModal();
+        closeChatModal();
         closeMobileSidebar();
         const lm = document.getElementById('langMenu');
         if (lm) lm.classList.remove('show');
@@ -11600,8 +11877,16 @@ Object.assign(window, {
     toggleTheme,
     toggleLanguage,
     clearAttendanceHistory,
-    openChatModal: function () {},
-    closeChatModal: function () {},
+    openChatModal,
+    closeChatModal,
+    loadChatContacts,
+    openChatWith,
+    renderChatMessages,
+    sendChatMessage,
+    handleChatFileAttach,
+    deleteChatMessage,
+    getUnreadFromContact,
+    escapeHtml,
     superBlockTenant,
     superUnblockTenant,
     superDeleteTenant,
@@ -11704,12 +11989,11 @@ Object.assign(window, {
     setupVideoAutoplayObserver
 });
 
-console.log('✅ MeX PRO v30 — Free Ads 3h + Paid Ads 48h (auto-delete)');
-console.log('   • Free ads: 3 hours, then auto-deleted');
-console.log('   • Paid ads (5,000 TSh): 48 hours, then auto-deleted');
-console.log('   • Video ads on mobile: expanded with 1px padding, PC/tablet unchanged');
-console.log('   • Video in view: plays with SOUND');
-console.log('   • Video out of view: auto-muted & paused');
+console.log('✅ MeX PRO v31 — Video Direct Play (No Dark) + Chat System Fixed');
+console.log('   • Video plays immediately without dark flash');
+console.log('   • Video has sound by default after first click');
+console.log('   • Chat system fully functional with contacts, messages, files');
+console.log('   • Free ads: 3h · Paid ads: 48h');
 </script>
 </body>
 </html>
