@@ -465,6 +465,18 @@ select {
     color: #8b5cf6;
 }
 
+.badge-paid {
+    background: rgba(16,185,129,.15);
+    color: var(--accent-4);
+    border: 1px solid rgba(16,185,129,.35);
+}
+
+.badge-pending {
+    background: rgba(245,158,11,.15);
+    color: var(--accent-3);
+    border: 1px solid rgba(245,158,11,.35);
+}
+
 /* ============================================================
    8. LOW STOCK ALERT BUTTON
    ============================================================ */
@@ -5615,6 +5627,12 @@ en: {
     active_label:'Active',
     blocked_label:'Blocked',
     revenue_label:'Revenue',
+    revenue_gross:'Gross Revenue',
+    net_profit_mex:'Net Profit (MeX)',
+    commission_paid:'Commission Paid',
+    commission_pending:'Commission Pending',
+    total_subscriptions:'Subscriptions',
+    total_service_fees:'Service Fees',
     all_companies:'All Companies',
     company:'Company',
     owner_label:'Owner',
@@ -6183,6 +6201,12 @@ sw: {
     active_label:'Zinafanya kazi',
     blocked_label:'Zimezuiwa',
     revenue_label:'Mapato',
+    revenue_gross:'Mapato Ghafi',
+    net_profit_mex:'Faida Halisi (MeX)',
+    commission_paid:'Kamisheni Iliyolipwa',
+    commission_pending:'Kamisheni Inayosubiri',
+    total_subscriptions:'Usajili',
+    total_service_fees:'Ada za Huduma',
     all_companies:'Kampuni Zote',
     company:'Kampuni',
     owner_label:'Mmiliki',
@@ -6751,6 +6775,12 @@ fr: {
     active_label:"Actives",
     blocked_label:"Bloquées",
     revenue_label:"Revenus",
+    revenue_gross:"Revenus bruts",
+    net_profit_mex:"Profit net (MeX)",
+    commission_paid:"Commission payée",
+    commission_pending:"Commission en attente",
+    total_subscriptions:"Abonnements",
+    total_service_fees:"Frais de service",
     all_companies:"Toutes les entreprises",
     company:"Entreprise",
     owner_label:"Propriétaire",
@@ -7319,6 +7349,12 @@ zh: {
     active_label:'有效',
     blocked_label:'已封禁',
     revenue_label:'收入',
+    revenue_gross:'总收入',
+    net_profit_mex:'净利润（MeX）',
+    commission_paid:'已支付佣金',
+    commission_pending:'待支付佣金',
+    total_subscriptions:'订阅',
+    total_service_fees:'服务费',
     all_companies:'所有公司',
     company:'公司',
     owner_label:'所有者',
@@ -7493,9 +7529,6 @@ const GLOBAL_ADS_KEY = 'sb_global_ads';
 const MEX_EMPLOYEES_KEY = 'sb_mex_employees';
 const MEX_SESSION_KEY = 'sb_mex_current_employee';
 const AD_PRICE = 5000;
-/* KILA KITU KIKO KWENYE MSTARI WAKE:
-   video mpaka dakika 60 (seconds 60)
-   na haipaswi kuzidi MB 100 */
 const MAX_VIDEO_SECONDS = 60;
 const MAX_VIDEO_BYTES = 100 * 1024 * 1024;
 const MAX_IMAGE_BYTES = 2 * 1024 * 1024;
@@ -7631,7 +7664,10 @@ function creditPromoCommission(promoCode, companyId, companyName, ownerUsername)
         companyName: companyName,
         ownerUsername: ownerUsername || '',
         amount: commission,
-        date: Date.now()
+        date: Date.now(),
+        paid: false,
+        paidDate: null,
+        paidBy: null
     });
     saveMexEmployees(arr);
     return { employee: emp, commission };
@@ -7687,6 +7723,213 @@ function fallbackCopy(text) {
 }
 
 /* ================================================================
+   SEHEMU YA 7B: COMMISSION PAYMENT STATUS (SUPER ADMIN APPROVAL)
+   ================================================================ */
+function migrateCommissionPaidStatus() {
+    const arr = getMexEmployees();
+    let changed = false;
+    arr.forEach(emp => {
+        if (!Array.isArray(emp.registeredCompanyIds)) return;
+        emp.registeredCompanyIds.forEach(r => {
+            if (typeof r.paid !== 'boolean') {
+                r.paid = false;
+                r.paidDate = null;
+                r.paidBy = null;
+                changed = true;
+            }
+        });
+    });
+    if (changed) saveMexEmployees(arr);
+    return changed;
+}
+
+function getEmployeeCommissionStats(emp) {
+    const regs = (emp && Array.isArray(emp.registeredCompanyIds))
+        ? emp.registeredCompanyIds
+        : [];
+    let totalEarned = 0;
+    let totalPaid = 0;
+    let totalPending = 0;
+    regs.forEach(r => {
+        const amt = Number(r.amount) || 0;
+        totalEarned += amt;
+        if (r.paid) totalPaid += amt;
+        else totalPending += amt;
+    });
+    return {
+        totalEarned,
+        totalPaid,
+        totalPending,
+        total: regs.length
+    };
+}
+
+function markCommissionPaid(employeeId, regIndex, paid) {
+    if (!isSuperAdmin) return false;
+    const arr = getMexEmployees();
+    const emp = arr.find(e => Number(e.id) === Number(employeeId));
+    if (!emp) return false;
+    if (!Array.isArray(emp.registeredCompanyIds)) return false;
+    if (regIndex < 0 || regIndex >= emp.registeredCompanyIds.length) return false;
+    emp.registeredCompanyIds[regIndex].paid = !!paid;
+    emp.registeredCompanyIds[regIndex].paidDate = paid ? Date.now() : null;
+    emp.registeredCompanyIds[regIndex].paidBy = paid ? 'Super Admin' : null;
+    saveMexEmployees(arr);
+    return true;
+}
+
+function markAllCommissionsPaid(employeeId) {
+    if (!isSuperAdmin) return 0;
+    const arr = getMexEmployees();
+    const emp = arr.find(e => Number(e.id) === Number(employeeId));
+    if (!emp || !Array.isArray(emp.registeredCompanyIds)) return 0;
+    let count = 0;
+    const now = Date.now();
+    emp.registeredCompanyIds.forEach(r => {
+        if (!r.paid) {
+            r.paid = true;
+            r.paidDate = now;
+            r.paidBy = 'Super Admin';
+            count++;
+        }
+    });
+    saveMexEmployees(arr);
+    return count;
+}
+
+function openEmployeeCommissionModal(employeeId) {
+    if (!isSuperAdmin) {
+        showToast('Access denied.', 'error');
+        return;
+    }
+    const emp = findMexEmployeeById(employeeId);
+    if (!emp) {
+        showToast('Employee not found.', 'error');
+        return;
+    }
+    const regs = Array.isArray(emp.registeredCompanyIds)
+        ? emp.registeredCompanyIds
+        : [];
+    const stats = getEmployeeCommissionStats(emp);
+
+    let rows = '';
+    if (regs.length === 0) {
+        rows = `<tr class="empty-row"><td colspan="7">${t('mex_dash_no_companies')}</td></tr>`;
+    } else {
+        const sorted = regs
+            .map((r, i) => Object.assign({}, r, { _idx: i }))
+            .sort((a, b) => (b.date || 0) - (a.date || 0));
+
+        rows = sorted.map((r, i) => {
+            const isPaid = !!r.paid;
+            const statusBadge = isPaid
+                ? `<span class="badge badge-success"><i class="fas fa-check-circle"></i> PAID</span>`
+                : `<span class="badge badge-warning"><i class="fas fa-clock"></i> PENDING</span>`;
+            const paidInfo = isPaid && r.paidDate
+                ? `<div style="font-size:.62rem;color:var(--text-muted);margin-top:2px;">${fmtDate(r.paidDate)}</div>`
+                : '';
+            const actionBtn = isPaid
+                ? `<button class="btn btn-secondary btn-xs" onclick="toggleCommissionPaid('${emp.id}', ${r._idx}, false)" title="Undo">
+                     <i class="fas fa-undo"></i> Undo
+                   </button>`
+                : `<button class="btn btn-success btn-xs" onclick="toggleCommissionPaid('${emp.id}', ${r._idx}, true)" title="Mark as Paid">
+                     <i class="fas fa-check"></i> Pay
+                   </button>`;
+            return `<tr>
+                <td>${i + 1}</td>
+                <td><strong>${r.companyName || '--'}</strong></td>
+                <td>${r.ownerUsername || '--'}</td>
+                <td>${fmtDate(r.date)}</td>
+                <td><span class="mex-emp-earnings">${fmtMoney(r.amount || 0)}</span></td>
+                <td>${statusBadge}${paidInfo}</td>
+                <td>${actionBtn}</td>
+            </tr>`;
+        }).join('');
+    }
+
+    const payAllBtn = stats.totalPending > 0
+        ? `<div style="margin-bottom:12px;text-align:right;">
+             <button class="btn btn-primary btn-sm" onclick="payAllCommissions('${emp.id}')">
+               <i class="fas fa-money-check-alt"></i>
+               Pay All Pending (${fmtMoney(stats.totalPending)})
+             </button>
+           </div>`
+        : `<div style="margin-bottom:12px;text-align:center;padding:8px;background:rgba(16,185,129,.08);border-radius:8px;color:var(--accent-4);font-size:.85rem;font-weight:600;">
+             <i class="fas fa-check-circle"></i> All commissions paid
+           </div>`;
+
+    const ov = document.getElementById('modalOverlay');
+    const bx = document.getElementById('modalBox');
+    bx.innerHTML = `
+        <h3><i class="fas fa-coins" style="color:#f59e0b;"></i> Commissions — ${emp.name}</h3>
+        <div style="font-size:.78rem;color:var(--text-muted);margin-bottom:12px;">
+            <i class="fas fa-user"></i> ${emp.username} &nbsp;|&nbsp;
+            <i class="fas fa-tag"></i> ${emp.promoCode}
+        </div>
+        <div class="super-dash-stats" style="margin-bottom:16px;">
+            <div class="super-stat-card">
+                <div class="number">${fmtMoney(stats.totalEarned)}</div>
+                <div class="label">Total Earned</div>
+            </div>
+            <div class="super-stat-card">
+                <div class="number" style="color:var(--accent-4);">${fmtMoney(stats.totalPaid)}</div>
+                <div class="label">Paid</div>
+            </div>
+            <div class="super-stat-card">
+                <div class="number" style="color:var(--accent-3);">${fmtMoney(stats.totalPending)}</div>
+                <div class="label">Pending</div>
+            </div>
+        </div>
+        ${payAllBtn}
+        <div class="table-wrap" style="max-height:55vh;overflow-y:auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Company</th>
+                        <th>Owner</th>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>${rows}</tbody>
+            </table>
+        </div>
+        <div class="form-actions" style="margin-top:16px;">
+            <button class="btn btn-secondary" onclick="closeModal()">${t('close')}</button>
+        </div>
+    `;
+    ov.classList.add('show');
+    document.body.classList.add('modal-open');
+}
+
+function toggleCommissionPaid(employeeId, regIndex, paid) {
+    if (!isSuperAdmin) return;
+    const ok = markCommissionPaid(employeeId, regIndex, paid);
+    if (ok) {
+        showToast(
+            paid ? '✅ Commission marked as PAID.' : '↩️ Commission marked as PENDING.',
+            paid ? 'success' : 'info'
+        );
+        openEmployeeCommissionModal(employeeId);
+    }
+}
+
+function payAllCommissions(employeeId) {
+    if (!isSuperAdmin) return;
+    if (!confirm('Mark ALL pending commissions as PAID?')) return;
+    const count = markAllCommissionsPaid(employeeId);
+    if (count > 0) {
+        showToast(`✅ ${count} commission(s) marked as PAID.`, 'success');
+        openEmployeeCommissionModal(employeeId);
+    } else {
+        showToast('No pending commissions.', 'info');
+    }
+}
+
+/* ================================================================
    SEHEMU YA 8: MEX EMPLOYEE — ADD MODAL
    ================================================================ */
 function openAddMexEmployeeModal() {
@@ -7730,7 +7973,7 @@ function submitAddMexEmployee(e) {
 }
 
 /* ================================================================
-   SEHEMU YA 9: CREDENTIALS DISPLAY — KILA CODE KWENYE MSTARI WAKE
+   SEHEMU YA 9: CREDENTIALS DISPLAY
    ================================================================ */
 function showMexEmployeeCredentials(emp) {
     const ov = document.getElementById('modalOverlay');
@@ -8671,7 +8914,7 @@ function getViewerCount(item) {
 }
 
 /* ================================================================
-   SEHEMU YA 22: COMMENT AUTHOR AVATAR — INATAfUTA PHOTO HALISI
+   SEHEMU YA 22: COMMENT AUTHOR AVATAR
    ================================================================ */
 function getCommenterAvatar(comment) {
     if (!comment) {
@@ -10516,15 +10759,26 @@ views.mexEarnings = function () {
     }
     const commissionPer = Math.round(SERVICE_FEE * PROMO_COMMISSION_RATE);
     const regs = Array.isArray(emp.registeredCompanyIds) ? emp.registeredCompanyIds : [];
-    const recent = regs.slice().sort((a, b) => b.date - a.date).slice(0, 5);
+    const stats = getEmployeeCommissionStats(emp);
+    const recent = regs
+        .map((r, i) => Object.assign({}, r, { _idx: i }))
+        .sort((a, b) => b.date - a.date)
+        .slice(0, 5);
     const recentRows = recent.length === 0
-        ? `<tr class="empty-row"><td colspan="4">${t('mex_dash_no_companies')}</td></tr>`
-        : recent.map((r, i) => `<tr>
-            <td>${i + 1}</td>
-            <td><strong>${r.companyName || '--'}</strong></td>
-            <td>${fmtDate(r.date)}</td>
-            <td><span class="mex-emp-earnings">${fmtMoney(r.amount || commissionPer)}</span></td>
-        </tr>`).join('');
+        ? `<tr class="empty-row"><td colspan="5">${t('mex_dash_no_companies')}</td></tr>`
+        : recent.map((r, i) => {
+            const isPaid = !!r.paid;
+            const statusBadge = isPaid
+                ? `<span class="badge badge-success" style="font-size:.65rem;"><i class="fas fa-check-circle"></i> PAID</span>`
+                : `<span class="badge badge-warning" style="font-size:.65rem;"><i class="fas fa-clock"></i> PENDING</span>`;
+            return `<tr>
+                <td>${i + 1}</td>
+                <td><strong>${r.companyName || '--'}</strong></td>
+                <td>${fmtDate(r.date)}</td>
+                <td><span class="mex-emp-earnings">${fmtMoney(r.amount || commissionPer)}</span></td>
+                <td>${statusBadge}</td>
+            </tr>`;
+        }).join('');
     const avatarHtml = emp.photo && emp.photo.startsWith('data:image')
         ? `<img src="${emp.photo}" style="width:60px;height:60px;border-radius:50%;object-fit:cover;border:3px solid #f59e0b;"/>`
         : `<div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:800;border:3px solid #f59e0b;">${(emp.name || '?').charAt(0).toUpperCase()}</div>`;
@@ -10547,18 +10801,23 @@ views.mexEarnings = function () {
     <div class="stats-grid">
         <div class="stat-card">
             <div class="stat-label">${t('mex_dash_earnings')}</div>
-            <div class="stat-value gold">${fmtMoney(emp.totalEarned || 0)}</div>
+            <div class="stat-value gold">${fmtMoney(stats.totalEarned)}</div>
             <div class="stat-icon"><i class="fas fa-coins"></i></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Paid</div>
+            <div class="stat-value primary" style="color:var(--accent-4);">${fmtMoney(stats.totalPaid)}</div>
+            <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Pending</div>
+            <div class="stat-value" style="color:var(--accent-3);">${fmtMoney(stats.totalPending)}</div>
+            <div class="stat-icon"><i class="fas fa-clock"></i></div>
         </div>
         <div class="stat-card">
             <div class="stat-label">${t('mex_dash_registrations')}</div>
             <div class="stat-value primary">${emp.totalRegistrations || 0}</div>
             <div class="stat-icon"><i class="fas fa-building"></i></div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">${t('mex_dash_commission_rate')}</div>
-            <div class="stat-value primary-light">${fmtMoney(commissionPer)}</div>
-            <div class="stat-icon"><i class="fas fa-percentage"></i></div>
         </div>
     </div>
     <div class="card mb-16" style="background:linear-gradient(135deg, rgba(245,158,11,.05), rgba(217,119,6,.02));border:2px dashed #f59e0b;">
@@ -10585,6 +10844,7 @@ views.mexEarnings = function () {
                             <th>${t('mex_companies_th_company')}</th>
                             <th>${t('mex_companies_th_date')}</th>
                             <th>${t('mex_companies_th_commission')}</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>${recentRows}</tbody>
@@ -10604,19 +10864,29 @@ views.mexCompanies = function () {
     }
     const commissionPer = Math.round(SERVICE_FEE * PROMO_COMMISSION_RATE);
     const regs = Array.isArray(emp.registeredCompanyIds)
-        ? emp.registeredCompanyIds.slice().sort((a, b) => b.date - a.date)
+        ? emp.registeredCompanyIds
+            .map((r, i) => Object.assign({}, r, { _idx: i }))
+            .sort((a, b) => b.date - a.date)
         : [];
     const rows = regs.length === 0
-        ? `<tr class="empty-row"><td colspan="5">${t('mex_companies_empty')}</td></tr>`
+        ? `<tr class="empty-row"><td colspan="6">${t('mex_companies_empty')}</td></tr>`
         : regs.map((r, i) => {
             const tn = getTenant(r.companyId);
             const owner = tn ? tn.ownerUsername : (r.ownerUsername || '--');
+            const isPaid = !!r.paid;
+            const statusBadge = isPaid
+                ? `<span class="badge badge-success" style="font-size:.65rem;"><i class="fas fa-check-circle"></i> PAID</span>`
+                : `<span class="badge badge-warning" style="font-size:.65rem;"><i class="fas fa-clock"></i> PENDING</span>`;
+            const paidInfo = isPaid && r.paidDate
+                ? `<div style="font-size:.6rem;color:var(--text-muted);margin-top:2px;">${fmtDate(r.paidDate)}</div>`
+                : '';
             return `<tr>
                 <td>${i + 1}</td>
                 <td><strong>${r.companyName || '--'}</strong></td>
                 <td>${owner}</td>
                 <td>${fmtDate(r.date)}</td>
                 <td><span class="mex-emp-earnings">${fmtMoney(r.amount || commissionPer)}</span></td>
+                <td>${statusBadge}${paidInfo}</td>
             </tr>`;
         }).join('');
     return `<div class="section-header">
@@ -10634,6 +10904,7 @@ views.mexCompanies = function () {
                             <th>${t('mex_companies_th_owner')}</th>
                             <th>${t('mex_companies_th_date')}</th>
                             <th>${t('mex_companies_th_commission')}</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>${rows}</tbody>
@@ -11308,7 +11579,16 @@ views.superadmin = function () {
         if (t0.trialEnd && t0.trialEnd > Date.now() && !t0.trialExpired && !t0.blocked) as++;
         if (t0.serviceFeePaid) sf += t0.serviceFeeAmount || 0;
     });
-    const totalCommissionPaid = employees.reduce((s, e) => s + (Number(e.totalEarned) || 0), 0);
+    const totalCommissionPaid = employees.reduce((s, e) => {
+        const st = getEmployeeCommissionStats(e);
+        return s + st.totalPaid;
+    }, 0);
+    const totalCommissionPending = employees.reduce((s, e) => {
+        const st = getEmployeeCommissionStats(e);
+        return s + st.totalPending;
+    }, 0);
+    const grossRevenue = tr + sf;
+    const netProfit = grossRevenue - totalCommissionPaid;
     const statsHtml = `<div class="super-dash-stats">
         <div class="super-stat-card">
             <div class="number">${tc}</div>
@@ -11323,16 +11603,63 @@ views.superadmin = function () {
             <div class="label">${t('blocked_label')}</div>
         </div>
         <div class="super-stat-card">
-            <div class="number">${fmtMoney(tr + sf)}</div>
-            <div class="label">${t('revenue_label')}</div>
+            <div class="number" style="color:var(--accent-1);">${fmtMoney(grossRevenue)}</div>
+            <div class="label">${t('revenue_gross')}</div>
+        </div>
+        <div class="super-stat-card">
+            <div class="number" style="color:var(--accent-3);">${fmtMoney(totalCommissionPaid)}</div>
+            <div class="label">${t('commission_paid')}</div>
+        </div>
+        <div class="super-stat-card" style="border:2px solid var(--accent-4);background:rgba(16,185,129,.04);">
+            <div class="number" style="color:${netProfit >= 0 ? 'var(--accent-4)' : 'var(--accent-danger)'};">${fmtMoney(netProfit)}</div>
+            <div class="label" style="font-weight:700;">${t('net_profit_mex')}</div>
+        </div>
+        <div class="super-stat-card">
+            <div class="number" style="color:var(--accent-3);">${fmtMoney(totalCommissionPending)}</div>
+            <div class="label">${t('commission_pending')}</div>
         </div>
         <div class="super-stat-card">
             <div class="number">${employees.length}</div>
             <div class="label">${t('mex_emp_title')}</div>
         </div>
-        <div class="super-stat-card">
-            <div class="number">${fmtMoney(totalCommissionPaid)}</div>
-            <div class="label">${t('mex_emp_earnings')}</div>
+    </div>`;
+    const revenueBreakdownHtml = `<div class="card" style="margin-bottom:18px;">
+        <div class="card-header">
+            <h3><i class="fas fa-calculator" style="color:var(--accent-1);"></i> Revenue Breakdown</h3>
+        </div>
+        <div class="card-body">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;">
+                <div>
+                    <div style="font-size:.7rem;text-transform:uppercase;font-weight:600;color:var(--text-muted);letter-spacing:.4px;">${t('total_subscriptions')}</div>
+                    <div style="font-size:1.1rem;font-weight:700;color:var(--accent-1);margin-top:3px;">${fmtMoney(tr)}</div>
+                </div>
+                <div>
+                    <div style="font-size:.7rem;text-transform:uppercase;font-weight:600;color:var(--text-muted);letter-spacing:.4px;">${t('total_service_fees')}</div>
+                    <div style="font-size:1.1rem;font-weight:700;color:var(--accent-1);margin-top:3px;">${fmtMoney(sf)}</div>
+                </div>
+                <div>
+                    <div style="font-size:.7rem;text-transform:uppercase;font-weight:600;color:var(--text-muted);letter-spacing:.4px;">${t('revenue_gross')}</div>
+                    <div style="font-size:1.1rem;font-weight:800;color:var(--accent-1);margin-top:3px;">${fmtMoney(grossRevenue)}</div>
+                </div>
+                <div>
+                    <div style="font-size:.7rem;text-transform:uppercase;font-weight:600;color:var(--text-muted);letter-spacing:.4px;">
+                        <i class="fas fa-minus" style="color:var(--accent-danger);"></i> ${t('commission_paid')}
+                    </div>
+                    <div style="font-size:1.1rem;font-weight:700;color:var(--accent-danger);margin-top:3px;">-${fmtMoney(totalCommissionPaid)}</div>
+                </div>
+                <div style="border-left:3px solid var(--accent-4);padding-left:12px;">
+                    <div style="font-size:.7rem;text-transform:uppercase;font-weight:700;color:var(--accent-4);letter-spacing:.4px;">${t('net_profit_mex')}</div>
+                    <div style="font-size:1.3rem;font-weight:800;color:${netProfit >= 0 ? 'var(--accent-4)' : 'var(--accent-danger)'};margin-top:3px;">${fmtMoney(netProfit)}</div>
+                </div>
+            </div>
+            <div style="margin-top:14px;padding:10px 14px;background:${netProfit >= 0 ? 'rgba(16,185,129,.06)' : 'rgba(239,68,68,.06)'};border-radius:8px;font-size:.8rem;color:var(--text-secondary);display:flex;gap:8px;align-items:flex-start;">
+                <i class="fas fa-${netProfit >= 0 ? 'check-circle' : 'exclamation-triangle'}" style="color:${netProfit >= 0 ? 'var(--accent-4)' : 'var(--accent-danger)'};margin-top:2px;"></i>
+                <span>
+                    <strong>${t('net_profit_mex')}:</strong> ${fmtMoney(grossRevenue)} (${t('revenue_gross')}) 
+                    − ${fmtMoney(totalCommissionPaid)} (${t('commission_paid')}) 
+                    = <strong style="color:${netProfit >= 0 ? 'var(--accent-4)' : 'var(--accent-danger)'};">${fmtMoney(netProfit)}</strong>
+                </span>
+            </div>
         </div>
     </div>`;
     const tabsHtml = `<div class="super-tabs">
@@ -11353,6 +11680,10 @@ views.superadmin = function () {
                 const avatarHtml = e.photo && e.photo.startsWith('data:image')
                     ? `<div class="mex-emp-avatar"><img src="${e.photo}" alt=""/></div>`
                     : `<div class="mex-emp-avatar">${initial}</div>`;
+                const empStats = getEmployeeCommissionStats(e);
+                const pendingBadge = empStats.totalPending > 0
+                    ? `<span class="badge badge-warning" style="font-size:.65rem;"><i class="fas fa-clock"></i> ${fmtMoney(empStats.totalPending)}</span>`
+                    : `<span class="badge badge-success" style="font-size:.65rem;"><i class="fas fa-check-circle"></i> Paid</span>`;
                 return `<tr>
                     <td>${i + 1}</td>
                     <td>
@@ -11376,9 +11707,15 @@ views.superadmin = function () {
                         </span>
                     </td>
                     <td><span class="badge badge-info">${e.totalRegistrations || 0}</span></td>
-                    <td><span class="mex-emp-earnings">${fmtMoney(e.totalEarned || 0)}</span></td>
+                    <td>
+                        <div><span class="mex-emp-earnings">${fmtMoney(empStats.totalEarned)}</span></div>
+                        <div style="margin-top:3px;">${pendingBadge}</div>
+                    </td>
                     <td>
                         <div class="mex-emp-actions">
+                            <button class="btn btn-primary btn-xs" onclick="openEmployeeCommissionModal('${e.id}')" title="Manage commissions">
+                                <i class="fas fa-money-check-alt"></i> Pay
+                            </button>
                             <button class="btn btn-danger btn-xs" onclick="confirmDeleteMexEmployee('${e.id}')">
                                 <i class="fas fa-trash"></i>
                             </button>
@@ -11394,6 +11731,7 @@ views.superadmin = function () {
         </div>
         ${tabsHtml}
         ${statsHtml}
+        ${revenueBreakdownHtml}
         <div class="card">
             <div class="card-header">
                 <h3><i class="fas fa-user-tie" style="color:#f59e0b;"></i> ${t('mex_emp_title')}</h3>
@@ -11427,6 +11765,7 @@ views.superadmin = function () {
     </div>
     ${tabsHtml}
     ${statsHtml}
+    ${revenueBreakdownHtml}
     <div class="card">
         <div class="card-header"><h3><i class="fas fa-building"></i> ${t('all_companies')}</h3></div>
         <div class="card-body">
@@ -11635,16 +11974,14 @@ views.statusAdsOnly = function () {
 };
 
 /* ================================================================
-   SEHEMU YA 41: RENDER ADS TAB — FIXED: trackAdViewers kabla
+   SEHEMU YA 41: RENDER ADS TAB
    ================================================================ */
 function renderAdsTab() {
     const user = getCurrentUser();
 
-    /* 1) Kwanza fuatilia viewers (ili current user aonekane mara moja) */
     const initialAds = cleanupExpiredAds();
     if (initialAds.length > 0) trackAdViewers(initialAds.map(a => a.id));
 
-    /* 2) Kisha soma upya ads zilizosasishwa */
     const ads = cleanupExpiredAds().sort((a, b) => b.timestamp - a.timestamp);
 
     const canPostFree = isSuperAdmin;
@@ -11679,7 +12016,6 @@ function renderAdsTab() {
                 ${t('ads_media_loading')}
             </div>`;
         }
-        /* Comments — kwa kila comment, tumia getCommenterAvatar() kupata photo halisi */
         let commentsHtml = '';
         if (commentsCount === 0) {
             commentsHtml = `<div class="ad-comment-empty">${t('ad_no_comments')}</div>`;
@@ -11688,7 +12024,6 @@ function renderAdsTab() {
             sortedComments.forEach(c => {
                 const cIsSuper = c.isSuperAdmin;
                 const cIsMex = c.isMexEmployee;
-                /* TUMIA getCommenterAvatar() — hii inatafuta photo aliyoiset mtumiaji */
                 const cAvatar = getCommenterAvatar(c);
                 let isOwnComment = false;
                 if (isSuperAdmin) isOwnComment = cIsSuper;
@@ -11810,10 +12145,9 @@ function renderAdsTab() {
 }
 
 /* ================================================================
-   SEHEMU YA 42: RENDER COMPANY STATUS — FIXED: trackStatusViewers kabla
+   SEHEMU YA 42: RENDER COMPANY STATUS
    ================================================================ */
 function renderCompanyStatusTab(user) {
-    /* Fuatilia viewers kwanza ili hesabu ionekane mara moja */
     const initialStatuses = getStatuses();
     if (initialStatuses.length > 0) trackStatusViewers(initialStatuses.map(s => s.id));
     const statuses = getStatuses();
@@ -14138,7 +14472,7 @@ function toggleTheme() {
 }
 
 /* ================================================================
-   SEHEMU YA 62: PROFILE MODAL — MEX EMPLOYEE INAFANYA KAZI PIA
+   SEHEMU YA 62: PROFILE MODAL
    ================================================================ */
 function openProfileModal() {
     const u = getCurrentUser();
@@ -14618,6 +14952,7 @@ function logout() {
 let _appInitialized = false;
 
 function initApp(user) {
+    migrateCommissionPaidStatus();
     migrateBranchPermissions();
     currentLang = getUserLanguage(user);
     applyTheme(user.theme === 'dark');
@@ -14829,6 +15164,7 @@ function initChatSystem() {
    SEHEMU YA 68: AUTO-LOGIN
    ================================================================ */
 (function autoLogin() {
+    migrateCommissionPaidStatus();
     migrateBranchPermissions();
     initLanguageMenu();
     const mexSess = getMexSession();
@@ -14987,13 +15323,20 @@ Object.assign(window, {
     openSuperAddCompanyModal, submitSuperAddCompany, switchSuperAdminTab,
     showMexEmployeeCredentials, copyAllMexCred, openMexPasswordModal, submitMexPasswordChange,
     normalizeUsername, generateUniqueMexUsername, getMexSession, setMexSession,
-    getCommenterAvatar
+    getCommenterAvatar,
+    migrateCommissionPaidStatus,
+    getEmployeeCommissionStats,
+    markCommissionPaid,
+    markAllCommissionsPaid,
+    openEmployeeCommissionModal,
+    toggleCommissionPaid,
+    payAllCommissions
 });
 
-console.log('✅ MeX PRO v26 — Video mpaka dakika 60 (sekunde 60) na MB 100.');
-console.log('   • MAX_VIDEO_SECONDS = 60');
-console.log('   • MAX_VIDEO_BYTES = 100 * 1024 * 1024 (100 MB)');
-console.log('   • Tafsiri zote zimesasishwa (EN/SW/FR/ZH).');
+console.log('✅ MeX PRO v28 — Commission Payment + Revenue Tracking.');
+console.log('   • Super Admin anaweza kuthibitisha malipo ya commission kwa employees');
+console.log('   • Employees wanaona status ya PAID/PENDING kwenye dashboards zao');
+console.log('   • Super Admin Dashboard inaonyesha: Gross Revenue, Commission Paid, Net Profit (MeX)');
 </script>
 </body>
 </html>
