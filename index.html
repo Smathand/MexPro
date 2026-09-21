@@ -70,7 +70,6 @@
     --safe-left: env(safe-area-inset-left, 0px);
     --safe-right: env(safe-area-inset-right, 0px);
 }
-
 /* ============================================================
    2. DARK THEME OVERRIDES
    ============================================================ */
@@ -108,7 +107,6 @@ body.dark {
     --service-fee-border: #f59e0b;
     --service-fee-text: #fcd34d;
 }
-
 /* ============================================================
    3. GLOBAL RESET
    ============================================================ */
@@ -117,12 +115,10 @@ body.dark {
     padding: 0;
     box-sizing: border-box;
 }
-
 html {
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
 }
-
 body {
     font-family: var(--font);
     background: var(--bg-body);
@@ -134,29 +130,23 @@ body {
     text-rendering: optimizeLegibility;
     overscroll-behavior-y: none;
 }
-
 body.modal-open {
     overflow: hidden;
 }
-
 ::-webkit-scrollbar {
     width: 7px;
     height: 7px;
 }
-
 ::-webkit-scrollbar-track {
     background: transparent;
 }
-
 ::-webkit-scrollbar-thumb {
     background: linear-gradient(180deg, var(--accent-1), var(--accent-2));
     border-radius: 10px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
     background: var(--accent-2);
 }
-
 /* ============================================================
    4. BUTTONS
    ============================================================ */
@@ -172,7 +162,6 @@ button,
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
 }
-
 .btn-primary {
     background: var(--accent-1) !important;
     color: #ffffff !important;
@@ -180,13 +169,11 @@ button,
     font-weight: 600;
     box-shadow: 0 4px 12px rgba(18,140,126,.3) !important;
 }
-
 .btn-primary:hover {
     background: #0e6b5f !important;
     transform: translateY(-2px);
     box-shadow: 0 6px 18px rgba(18,140,126,.4) !important;
 }
-
 .btn-secondary {
     background: var(--input-bg) !important;
     color: var(--text-secondary) !important;
@@ -194,48 +181,40 @@ button,
     padding: 10px 20px;
     font-weight: 600;
 }
-
 .btn-secondary:hover {
     background: var(--border-color) !important;
     transform: translateY(-1px);
 }
-
 .btn-success {
     background: var(--accent-4) !important;
     color: #ffffff !important;
     padding: 10px 20px;
     font-weight: 600;
 }
-
 .btn-success:hover {
     filter: brightness(.94);
     transform: translateY(-1px);
 }
-
 .btn-danger {
     background: var(--accent-danger) !important;
     color: #ffffff !important;
     padding: 10px 20px;
     font-weight: 600;
 }
-
 .btn-danger:hover {
     filter: brightness(.94);
     transform: translateY(-1px);
 }
-
 .btn-sm {
     padding: 6px 14px !important;
     font-size: .8rem !important;
     border-radius: 8px !important;
 }
-
 .btn-xs {
     padding: 3px 10px !important;
     font-size: .7rem !important;
     border-radius: 6px !important;
 }
-
 .btn-outline {
     background: transparent !important;
     border: 1px solid var(--border-color) !important;
@@ -243,47 +222,39 @@ button,
     padding: 10px 20px;
     font-weight: 600;
 }
-
 .btn-outline:hover {
     background: var(--input-bg) !important;
 }
-
 .btn-icon {
     display: inline-flex;
     align-items: center;
     gap: 8px;
 }
-
 .btn-block {
     width: 100%;
     display: block;
     text-align: center;
 }
-
 .btn-whatsapp {
     background: var(--whatsapp-color) !important;
     color: #ffffff !important;
     padding: 10px 20px;
     font-weight: 600;
 }
-
 .btn-whatsapp:hover {
     filter: brightness(.94);
     transform: translateY(-1px);
 }
-
 .btn-email {
     background: var(--email-color) !important;
     color: #ffffff !important;
     padding: 10px 20px;
     font-weight: 600;
 }
-
 .btn-email:hover {
     filter: brightness(.94);
     transform: translateY(-1px);
 }
-
 .btn-transfer-stock {
     background: #8b5cf6 !important;
     color: #ffffff !important;
@@ -292,12 +263,10 @@ button,
     border-radius: 8px !important;
     font-weight: 600;
 }
-
 .btn-receipt-share {
     background: var(--accent-1) !important;
     color: #ffffff !important;
 }
-
 .btn-register-pay {
     background: linear-gradient(135deg, #128C7E, #0e6b5f) !important;
     color: #ffffff !important;
@@ -308,16 +277,13 @@ button,
     box-shadow: 0 6px 20px rgba(18,140,126,.35) !important;
     width: 100%;
 }
-
 .btn-register-pay:hover {
     transform: translateY(-2px);
     box-shadow: 0 10px 26px rgba(18,140,126,.45) !important;
 }
-
 .btn:active {
     transform: scale(.98) !important;
 }
-
 /* ============================================================
    5. CARDS
    ============================================================ */
@@ -329,11 +295,9 @@ button,
     overflow: hidden;
     transition: box-shadow .3s ease, transform .3s ease;
 }
-
 .card:hover {
     box-shadow: 0 8px 28px rgba(0,0,0,.08);
 }
-
 .card-header {
     padding: 16px 24px;
     border-bottom: 1px solid var(--border-color);
@@ -343,7 +307,6 @@ button,
     flex-wrap: wrap;
     gap: 12px;
 }
-
 .card-header h2,
 .card-header h3 {
     font-size: 1.1rem;
@@ -352,11 +315,9 @@ button,
     align-items: center;
     gap: 10px;
 }
-
 .card-body {
     padding: 20px 24px;
 }
-
 /* ============================================================
    6. FORM INPUTS
    ============================================================ */
@@ -374,7 +335,6 @@ textarea {
     transition: var(--transition);
     outline: none;
 }
-
 input:focus,
 select:focus,
 textarea:focus {
@@ -382,7 +342,6 @@ textarea:focus {
     box-shadow: 0 0 0 3px rgba(18,140,126,.15);
     background: var(--bg-card);
 }
-
 label {
     display: block;
     font-size: .8rem;
@@ -390,25 +349,20 @@ label {
     color: var(--text-secondary);
     margin-bottom: 4px;
 }
-
 .form-group {
     margin-bottom: 16px;
 }
-
 .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 16px;
 }
-
 input[type="date"] {
     cursor: pointer;
 }
-
 select {
     cursor: pointer;
 }
-
 /* ============================================================
    7. BADGES
    ============================================================ */
@@ -419,64 +373,52 @@ select {
     font-size: .7rem;
     font-weight: 600;
 }
-
 .badge-success {
     background: rgba(16,185,129,.12);
     color: var(--accent-4);
 }
-
 .badge-danger {
     background: rgba(239,68,68,.12);
     color: var(--accent-danger);
 }
-
 .badge-warning {
     background: rgba(245,158,11,.12);
     color: var(--accent-3);
 }
-
 .badge-primary {
     background: rgba(18,140,126,.12);
     color: var(--accent-1);
 }
-
 .badge-info {
     background: rgba(18,140,126,.08);
     color: var(--accent-1);
 }
-
 .badge-role-admin {
     background: rgba(59,130,246,.15);
     color: #3b82f6;
 }
-
 .badge-role-employee {
     background: rgba(16,185,129,.15);
     color: #10b981;
 }
-
 .badge-role-accountant {
     background: rgba(245,158,11,.15);
     color: #f59e0b;
 }
-
 .badge-role-owner {
     background: rgba(139,92,246,.15);
     color: #8b5cf6;
 }
-
 .badge-paid {
     background: rgba(16,185,129,.15);
     color: var(--accent-4);
     border: 1px solid rgba(16,185,129,.35);
 }
-
 .badge-pending {
     background: rgba(245,158,11,.15);
     color: var(--accent-3);
     border: 1px solid rgba(245,158,11,.35);
 }
-
 /* ============================================================
    8. LOW STOCK ALERT BUTTON
    ============================================================ */
@@ -493,13 +435,11 @@ select {
     border: 1px solid #128C7E !important;
     cursor: pointer;
 }
-
 .low-stock-alert-btn.has-alert {
     background: var(--accent-danger) !important;
     border-color: var(--accent-danger) !important;
     animation: pulseSoft 2s infinite;
 }
-
 .low-stock-alert-btn .alert-count {
     background: rgba(255,255,255,.2);
     border-radius: 20px;
@@ -508,12 +448,10 @@ select {
     font-weight: 700;
     color: #ffffff;
 }
-
 @keyframes pulseSoft {
     0%, 100% { opacity: 1; }
     50% { opacity: .82; }
 }
-
 /* ============================================================
    9. TABLES
    ============================================================ */
@@ -522,13 +460,11 @@ select {
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
 }
-
 table {
     width: 100%;
     border-collapse: collapse;
     font-size: .88rem;
 }
-
 th {
     text-align: left;
     padding: 12px 12px 12px 0;
@@ -540,32 +476,26 @@ th {
     border-bottom: 1px solid var(--border-color);
     white-space: nowrap;
 }
-
 td {
     padding: 12px 12px 12px 0;
     border-bottom: 1px solid var(--border-color);
     color: var(--text-secondary);
     vertical-align: middle;
 }
-
 tr:last-child td {
     border-bottom: none;
 }
-
 tbody tr {
     transition: background .2s ease;
 }
-
 tbody tr:hover {
     background: rgba(18,140,126,.03);
 }
-
 .empty-row td {
     text-align: center;
     padding: 40px;
     color: var(--text-muted);
 }
-
 /* ============================================================
    10. LOGIN / REGISTER PAGE OVERLAY
    ============================================================ */
@@ -583,11 +513,9 @@ tbody tr:hover {
     background-size: cover;
     background-image: url(./Temple\ 1.jpeg);
 }
-
 .page-overlay.hidden {
     display: none;
 }
-
 .page-card {
     margin: 20px auto;
     max-height: 92vh;
@@ -605,7 +533,6 @@ tbody tr:hover {
     justify-content: center;
     animation: cardIn .4s ease;
 }
-
 @keyframes cardIn {
     from {
         opacity: 0;
@@ -616,63 +543,52 @@ tbody tr:hover {
         transform: translateY(0) scale(1);
     }
 }
-
 .page-card .logo-icon {
     font-size: 56px;
     color: var(--accent-1);
     margin-bottom: 4px;
 }
-
 .page-card h2 {
     font-size: 1.8rem;
     font-weight: 800;
     color: var(--accent-1);
 }
-
 .page-card .subtitle {
     color: var(--text-muted);
     margin-bottom: 18px;
     font-size: .85rem;
 }
-
 .page-card .input-group {
     text-align: left;
     margin-bottom: 14px;
 }
-
 .page-card .input-group label {
     font-size: .75rem;
     text-transform: uppercase;
     letter-spacing: .4px;
 }
-
 .error-msg {
     color: var(--accent-danger);
     font-size: .85rem;
     margin-top: 8px;
 }
-
 .success-msg {
     color: var(--accent-4);
     font-size: .85rem;
     margin-top: 8px;
 }
-
 .link-text {
     color: var(--accent-1);
     font-weight: 600;
     cursor: pointer;
 }
-
 .link-text:hover {
     text-decoration: underline;
 }
-
 .divider {
     margin: 16px 0 14px;
     border-top: 1px solid var(--border-color);
 }
-
 /* ============================================================
    11. APP CONTAINER
    ============================================================ */
@@ -685,11 +601,9 @@ tbody tr:hover {
     gap: 12px;
     background: var(--bg-body);
 }
-
 .app-container.active {
     display: flex;
 }
-
 /* ============================================================
    12. SIDEBAR
    ============================================================ */
@@ -707,7 +621,6 @@ tbody tr:hover {
     box-shadow: var(--shadow-card);
     -webkit-overflow-scrolling: touch;
 }
-
 .sidebar-brand {
     display: flex;
     align-items: center;
@@ -717,7 +630,6 @@ tbody tr:hover {
     margin-bottom: 12px;
     flex-wrap: wrap;
 }
-
 .sidebar-brand .brand-icon {
     width: 40px;
     height: 40px;
@@ -730,13 +642,11 @@ tbody tr:hover {
     font-weight: 800;
     color: #ffffff;
 }
-
 .sidebar-brand .brand-text {
     font-size: 1.1rem;
     font-weight: 700;
     color: #ffffff;
 }
-
 .sidebar-brand .brand-ver {
     font-size: .6rem;
     font-weight: 700;
@@ -747,14 +657,12 @@ tbody tr:hover {
     margin-left: auto;
     letter-spacing: .5px;
 }
-
 .sidebar-nav {
     flex: 1;
     display: flex;
     flex-direction: column;
     gap: 2px;
 }
-
 .sidebar-nav .nav-item {
     display: flex;
     align-items: center;
@@ -772,25 +680,21 @@ tbody tr:hover {
     position: relative;
     min-height: 44px;
 }
-
 .sidebar-nav .nav-item i {
     width: 20px;
     font-size: 1rem;
     color: var(--text-sidebar);
 }
-
 .sidebar-nav .nav-item:hover {
     background: var(--bg-sidebar-hover);
     color: #ffffff;
     transform: translateX(2px);
 }
-
 .sidebar-nav .nav-item.active {
     background: var(--bg-sidebar-active);
     color: var(--text-sidebar-active);
     box-shadow: inset 3px 0 0 rgba(255,255,255,.55);
 }
-
 .sidebar-nav .nav-item .badge {
     margin-left: auto;
     background: rgba(255,255,255,.2);
@@ -800,7 +704,6 @@ tbody tr:hover {
     padding: 2px 10px;
     border-radius: 20px;
 }
-
 .sidebar-footer {
     margin-top: auto;
     padding-top: 12px;
@@ -810,7 +713,6 @@ tbody tr:hover {
     gap: 12px;
     flex-wrap: wrap;
 }
-
 .sidebar-footer .user-avatar {
     width: 36px;
     height: 36px;
@@ -827,25 +729,21 @@ tbody tr:hover {
     background-size: cover !important;
     background-position: center !important;
 }
-
 .sidebar-footer .user-info {
     flex: 1;
     line-height: 1.2;
     min-width: 0;
 }
-
 .sidebar-footer .user-info .name {
     font-weight: 600;
     font-size: .8rem;
     color: #ffffff;
 }
-
 .sidebar-footer .user-info .role {
     font-size: .6rem;
     color: rgba(255,255,255,.6);
     text-transform: uppercase;
 }
-
 .sidebar-footer .logout-btn {
     background: rgba(255,255,255,.08);
     color: rgba(255,255,255,.6);
@@ -858,12 +756,10 @@ tbody tr:hover {
     justify-content: center;
     font-size: .9rem;
 }
-
 .sidebar-footer .logout-btn:hover {
     background: rgba(255,255,255,.2);
     color: #ffffff;
 }
-
 /* ============================================================
    13. MAIN CONTENT
    ============================================================ */
@@ -878,7 +774,6 @@ tbody tr:hover {
     box-shadow: var(--shadow-card);
     min-width: 0;
 }
-
 .topbar {
     padding: 14px 28px;
     background: var(--bg-card);
@@ -890,19 +785,16 @@ tbody tr:hover {
     flex-wrap: wrap;
     gap: 12px;
 }
-
 .topbar .page-title {
     font-size: 1.2rem;
     font-weight: 700;
 }
-
 .topbar .topbar-actions {
     display: flex;
     align-items: center;
     gap: 12px;
     flex-wrap: wrap;
 }
-
 .topbar .topbar-actions .date-display {
     font-size: .8rem;
     color: var(--text-muted);
@@ -911,7 +803,6 @@ tbody tr:hover {
     border-radius: 20px;
     border: 1px solid var(--border-color);
 }
-
 .topbar .topbar-actions .theme-toggle,
 .topbar .topbar-actions .chat-toggle {
     background: var(--input-bg);
@@ -928,22 +819,18 @@ tbody tr:hover {
     position: relative;
     flex-shrink: 0;
 }
-
 .topbar .topbar-actions .theme-toggle:hover,
 .topbar .topbar-actions .chat-toggle:hover {
     background: var(--accent-1);
     color: #ffffff;
     border-color: var(--accent-1) !important;
 }
-
 .topbar .topbar-actions .chat-toggle {
     display: none;
 }
-
 .topbar .topbar-actions .chat-toggle.visible {
     display: flex;
 }
-
 .topbar .topbar-actions .chat-toggle .chat-badge {
     position: absolute;
     top: -4px;
@@ -960,11 +847,9 @@ tbody tr:hover {
     justify-content: center;
     padding: 0 4px;
 }
-
 .topbar .topbar-actions .chat-toggle .chat-badge.show {
     display: flex;
 }
-
 .topbar .topbar-actions .profile-trigger {
     display: flex;
     align-items: center;
@@ -976,18 +861,15 @@ tbody tr:hover {
     border: 1px solid var(--border-color) !important;
     max-width: 180px;
 }
-
 .topbar .topbar-actions .profile-trigger:hover {
     border-color: var(--accent-1) !important;
 }
-
 .topbar .topbar-actions .profile-trigger img {
     width: 32px;
     height: 32px;
     border-radius: 50%;
     object-fit: cover;
 }
-
 .topbar .topbar-actions .profile-trigger .profile-name {
     font-size: .85rem;
     font-weight: 500;
@@ -995,7 +877,6 @@ tbody tr:hover {
     overflow: hidden;
     text-overflow: ellipsis;
 }
-
 /* ============================================================
    14. LANGUAGE TOGGLE
    ============================================================ */
@@ -1015,17 +896,14 @@ tbody tr:hover {
     justify-content: center;
     min-height: 38px;
 }
-
 .lang-toggle:hover {
     background: var(--accent-1);
     color: #ffffff;
     border-color: var(--accent-1) !important;
 }
-
 .lang-wrapper {
     position: relative;
 }
-
 .lang-menu {
     position: absolute;
     top: calc(100% + 8px);
@@ -1040,17 +918,14 @@ tbody tr:hover {
     z-index: 100000;
     overflow: hidden;
 }
-
 .lang-menu.show {
     display: block;
     animation: fadeSlide .2s ease;
 }
-
 @keyframes fadeSlide {
     from { opacity: 0; transform: translateY(-8px); }
     to { opacity: 1; transform: translateY(0); }
 }
-
 .lang-menu button {
     display: flex;
     align-items: center;
@@ -1065,33 +940,27 @@ tbody tr:hover {
     text-align: left;
     cursor: pointer;
 }
-
 .lang-menu button:hover {
     background: var(--input-bg) !important;
     color: var(--accent-1) !important;
 }
-
 .lang-menu button.active {
     background: rgba(18,140,126,.1) !important;
     color: var(--accent-1) !important;
 }
-
 .lang-menu button .flag {
     font-size: 1.05rem;
     line-height: 1;
 }
-
 .lang-menu button .check {
     margin-left: auto;
     opacity: 0;
     font-size: .75rem;
     color: var(--accent-1);
 }
-
 .lang-menu button.active .check {
     opacity: 1;
 }
-
 /* ============================================================
    15. SUBSCRIPTION ALERT
    ============================================================ */
@@ -1107,11 +976,9 @@ tbody tr:hover {
     color: var(--sub-alert-color) !important;
     cursor: pointer;
 }
-
 .sub-alert-btn.show {
     display: inline-flex;
 }
-
 .sub-alert-btn .sub-days {
     background: rgba(255,255,255,.25);
     border-radius: 20px;
@@ -1119,11 +986,9 @@ tbody tr:hover {
     font-size: .7rem;
     font-weight: 700;
 }
-
 .sub-alert-btn.danger {
     background: var(--accent-danger) !important;
 }
-
 /* ============================================================
    16. CONTENT AREA
    ============================================================ */
@@ -1135,12 +1000,10 @@ tbody tr:hover {
     animation: fadeIn .35s ease;
     -webkit-overflow-scrolling: touch;
 }
-
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: translateY(0); }
 }
-
 /* ============================================================
    17. STATS GRID & CARDS
    ============================================================ */
@@ -1150,7 +1013,6 @@ tbody tr:hover {
     gap: 12px;
     margin-bottom: 18px;
 }
-
 .stat-card {
     background: var(--bg-card);
     border-radius: 16px;
@@ -1166,12 +1028,10 @@ tbody tr:hover {
     flex-direction: column;
     justify-content: center;
 }
-
 .stat-card:hover {
     transform: translateY(-3px);
     box-shadow: 0 10px 28px rgba(0,0,0,.1);
 }
-
 .stat-card::after {
     content: '';
     position: absolute;
@@ -1182,7 +1042,6 @@ tbody tr:hover {
     background: linear-gradient(180deg, var(--accent-1), var(--accent-3));
     opacity: .85;
 }
-
 .stat-card .stat-label {
     font-size: .62rem;
     text-transform: uppercase;
@@ -1196,7 +1055,6 @@ tbody tr:hover {
     line-height: 1.2;
     margin-bottom: 2px;
 }
-
 .stat-card .stat-value {
     font-size: clamp(.92rem, 1vw + .68rem, 1.3rem);
     font-weight: 800;
@@ -1209,13 +1067,11 @@ tbody tr:hover {
     text-overflow: clip;
     min-width: 0;
 }
-
 .stat-card .stat-value.primary { color: var(--accent-1); }
 .stat-card .stat-value.primary-light { color: #1a9b8c; }
 .stat-card .stat-value.primary-dark { color: #0e6b5f; }
 .stat-card .stat-value.red { color: var(--accent-danger); }
 .stat-card .stat-value.gold { color: var(--accent-3); }
-
 .stat-card .stat-icon {
     position: absolute;
     right: 12px;
@@ -1225,7 +1081,6 @@ tbody tr:hover {
     pointer-events: none;
     line-height: 1;
 }
-
 /* ============================================================
    18. SECTION HEADER
    ============================================================ */
@@ -1237,16 +1092,13 @@ tbody tr:hover {
     flex-wrap: wrap;
     gap: 12px;
 }
-
 .section-header h2 {
     font-size: 1.1rem;
     font-weight: 700;
 }
-
 .section-header h2 i {
     color: var(--accent-1);
 }
-
 /* ============================================================
    19. MODALS
    ============================================================ */
@@ -1264,11 +1116,9 @@ tbody tr:hover {
     padding-top: calc(20px + var(--safe-top));
     padding-bottom: calc(20px + var(--safe-bottom));
 }
-
 .modal-overlay.show {
     display: flex;
 }
-
 .modal-box {
     background: var(--bg-card);
     border-radius: var(--radius-card);
@@ -1282,12 +1132,10 @@ tbody tr:hover {
     animation: modalIn .28s ease;
     -webkit-overflow-scrolling: touch;
 }
-
 @keyframes modalIn {
     from { opacity: 0; transform: translateY(16px) scale(.98); }
     to { opacity: 1; transform: translateY(0) scale(1); }
 }
-
 .modal-box h3 {
     font-size: 1.2rem;
     margin-bottom: 20px;
@@ -1295,7 +1143,6 @@ tbody tr:hover {
     align-items: center;
     gap: 10px;
 }
-
 .modal-box .form-actions {
     display: flex;
     gap: 12px;
@@ -1303,7 +1150,6 @@ tbody tr:hover {
     justify-content: flex-end;
     flex-wrap: wrap;
 }
-
 /* ============================================================
    20. RECEIPT MODAL
    ============================================================ */
@@ -1312,37 +1158,31 @@ tbody tr:hover {
     padding: 0;
     overflow: hidden;
 }
-
 .receipt-modal .modal-box .receipt-content {
     padding: 28px 24px;
     background: var(--receipt-bg);
 }
-
 .receipt-modal .modal-box .receipt-header {
     text-align: center;
     border-bottom: 2px solid var(--border-color);
     padding-bottom: 12px;
     margin-bottom: 12px;
 }
-
 .receipt-modal .modal-box .receipt-header .receipt-brand {
     font-size: 1.3rem;
     font-weight: 800;
     color: var(--accent-1);
 }
-
 .receipt-modal .modal-box .receipt-header .receipt-sub {
     font-size: .7rem;
     color: var(--text-muted);
 }
-
 .receipt-modal .modal-box .receipt-header .receipt-number {
     font-size: .72rem;
     color: var(--text-muted);
     margin-top: 4px;
     letter-spacing: .5px;
 }
-
 .receipt-modal .modal-box .receipt-row {
     display: flex;
     justify-content: space-between;
@@ -1350,22 +1190,18 @@ tbody tr:hover {
     font-size: .85rem;
     gap: 8px;
 }
-
 .receipt-modal .modal-box .receipt-row .label { color: var(--text-muted); }
 .receipt-modal .modal-box .receipt-row .value { font-weight: 600; text-align: right; }
-
 .receipt-modal .modal-box .receipt-divider {
     border-top: 1px dashed var(--border-color);
     margin: 8px 0;
 }
-
 .receipt-modal .modal-box .receipt-table {
     width: 100%;
     font-size: .8rem;
     border-collapse: collapse;
     margin: 8px 0;
 }
-
 .receipt-modal .modal-box .receipt-table th {
     padding: 4px;
     text-align: left;
@@ -1374,12 +1210,10 @@ tbody tr:hover {
     text-transform: uppercase;
     color: var(--text-muted);
 }
-
 .receipt-modal .modal-box .receipt-table td {
     padding: 4px;
     border-bottom: 1px dotted var(--border-color);
 }
-
 .receipt-modal .modal-box .receipt-total {
     display: flex;
     justify-content: space-between;
@@ -1389,7 +1223,6 @@ tbody tr:hover {
     border-top: 2px solid var(--border-color);
     margin-top: 6px;
 }
-
 .receipt-modal .modal-box .receipt-footer {
     text-align: center;
     font-size: .7rem;
@@ -1398,14 +1231,12 @@ tbody tr:hover {
     padding-top: 12px;
     margin-top: 12px;
 }
-
 .receipt-modal .modal-box .receipt-footer .efd-note {
     margin-top: 4px;
     font-size: .65rem;
     color: var(--accent-1);
     font-weight: 600;
 }
-
 .receipt-modal .modal-box .receipt-actions {
     display: flex;
     gap: 12px;
@@ -1414,13 +1245,11 @@ tbody tr:hover {
     border-top: 1px solid var(--border-color);
     flex-wrap: wrap;
 }
-
 .receipt-modal .modal-box .receipt-actions .btn {
     flex: 1;
     min-width: 120px;
     justify-content: center;
 }
-
 .receipt-modal .modal-box .whatsapp-input-area {
     padding: 10px 24px 6px;
     background: var(--bg-card);
@@ -1430,7 +1259,6 @@ tbody tr:hover {
     flex-wrap: wrap;
     border-top: 1px solid var(--border-color);
 }
-
 .receipt-modal .modal-box .whatsapp-input-area input {
     flex: 1;
     min-width: 160px;
@@ -1440,7 +1268,6 @@ tbody tr:hover {
     background: var(--input-bg);
     font-size: 16px;
 }
-
 /* ============================================================
    21. CHAT MODAL
    ============================================================ */
@@ -1452,7 +1279,6 @@ tbody tr:hover {
     padding: 0;
     overflow: hidden;
 }
-
 .chat-modal .modal-box .chat-header {
     padding: 16px 20px;
     border-bottom: 1px solid var(--border-color);
@@ -1460,13 +1286,11 @@ tbody tr:hover {
     justify-content: space-between;
     align-items: center;
 }
-
 .chat-modal .modal-box .chat-body {
     display: flex;
     flex: 1;
     overflow: hidden;
 }
-
 .chat-modal .modal-box .chat-contacts {
     width: 220px;
     border-right: 1px solid var(--border-color);
@@ -1474,7 +1298,6 @@ tbody tr:hover {
     flex-shrink: 0;
     padding: 8px 0;
 }
-
 .chat-modal .modal-box .chat-contacts .contact-item {
     display: flex;
     align-items: center;
@@ -1485,16 +1308,13 @@ tbody tr:hover {
     gap: 10px;
     transition: background .2s ease;
 }
-
 .chat-modal .modal-box .chat-contacts .contact-item:hover {
     background: var(--input-bg);
 }
-
 .chat-modal .modal-box .chat-contacts .contact-item.active {
     background: var(--accent-1);
     color: #ffffff;
 }
-
 .chat-modal .modal-box .chat-contacts .contact-item .contact-avatar {
     width: 32px;
     height: 32px;
@@ -1509,23 +1329,19 @@ tbody tr:hover {
     flex-shrink: 0;
     overflow: hidden;
 }
-
 .chat-modal .modal-box .chat-contacts .contact-item .contact-avatar img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
-
 .chat-modal .modal-box .chat-contacts .contact-item .contact-info {
     flex: 1;
     min-width: 0;
 }
-
 .chat-modal .modal-box .chat-contacts .contact-item .contact-name {
     font-weight: 600;
     font-size: .85rem;
 }
-
 .chat-modal .modal-box .chat-contacts .contact-item .contact-last {
     font-size: .7rem;
     opacity: .6;
@@ -1533,7 +1349,6 @@ tbody tr:hover {
     overflow: hidden;
     text-overflow: ellipsis;
 }
-
 .chat-modal .modal-box .chat-contacts .contact-item .contact-unread {
     background: var(--accent-danger);
     color: #ffffff;
@@ -1547,7 +1362,6 @@ tbody tr:hover {
     justify-content: center;
     padding: 0 5px;
 }
-
 .chat-modal .modal-box .chat-messages-area {
     flex: 1;
     display: flex;
@@ -1555,7 +1369,6 @@ tbody tr:hover {
     overflow: hidden;
     min-width: 0;
 }
-
 .chat-modal .modal-box .chat-messages {
     flex: 1;
     overflow-y: auto;
@@ -1564,7 +1377,6 @@ tbody tr:hover {
     flex-direction: column;
     gap: 4px;
 }
-
 .chat-modal .modal-box .chat-messages .no-chat {
     display: flex;
     align-items: center;
@@ -1576,7 +1388,6 @@ tbody tr:hover {
     text-align: center;
     padding: 20px;
 }
-
 .chat-modal .modal-box .chat-messages .msg-bubble {
     max-width: 80%;
     padding: 10px 14px;
@@ -1585,28 +1396,24 @@ tbody tr:hover {
     font-size: .9rem;
     position: relative;
 }
-
 .chat-modal .modal-box .chat-messages .msg-bubble.sender-msg {
     align-self: flex-end;
     background: var(--chat-sender-bg);
     color: var(--chat-sender-text);
     border-bottom-right-radius: 4px;
 }
-
 .chat-modal .modal-box .chat-messages .msg-bubble.receiver-msg {
     align-self: flex-start;
     background: var(--chat-receiver-bg);
     color: var(--chat-receiver-text);
     border-bottom-left-radius: 4px;
 }
-
 .chat-modal .modal-box .chat-messages .msg-bubble .msg-time {
     font-size: .6rem;
     opacity: .6;
     margin-top: 4px;
     display: block;
 }
-
 .chat-modal .modal-box .chat-messages .msg-bubble .msg-task {
     background: rgba(245,158,11,.15);
     border-left: 3px solid var(--accent-3);
@@ -1615,7 +1422,6 @@ tbody tr:hover {
     margin-top: 4px;
     font-size: .8rem;
 }
-
 .chat-modal .modal-box .chat-messages .msg-bubble .msg-delete-btn {
     position: absolute;
     top: 6px;
@@ -1633,12 +1439,10 @@ tbody tr:hover {
     cursor: pointer;
     opacity: .6;
 }
-
 .chat-modal .modal-box .chat-messages .msg-bubble .msg-delete-btn:hover {
     opacity: 1;
     background: var(--accent-danger);
 }
-
 .chat-modal .modal-box .chat-messages .msg-bubble .file-attachment {
     margin-top: 6px;
     border-radius: 8px;
@@ -1651,7 +1455,6 @@ tbody tr:hover {
     cursor: pointer;
     max-width: 100%;
 }
-
 .chat-modal .modal-box .chat-messages .msg-bubble .file-attachment img {
     max-width: 150px;
     max-height: 150px;
@@ -1659,18 +1462,15 @@ tbody tr:hover {
     object-fit: cover;
     display: block;
 }
-
 .chat-modal .modal-box .chat-messages .msg-bubble .file-attachment .file-icon {
     font-size: 2rem;
     opacity: .7;
     flex-shrink: 0;
 }
-
 .chat-modal .modal-box .chat-messages .msg-bubble .file-attachment .file-info {
     flex: 1;
     min-width: 0;
 }
-
 .chat-modal .modal-box .chat-messages .msg-bubble .file-attachment .file-name {
     font-weight: 600;
     font-size: .8rem;
@@ -1678,12 +1478,10 @@ tbody tr:hover {
     overflow: hidden;
     text-overflow: ellipsis;
 }
-
 .chat-modal .modal-box .chat-messages .msg-bubble .file-attachment .file-size {
     font-size: .7rem;
     opacity: .6;
 }
-
 .chat-modal .modal-box .chat-input-area {
     display: flex;
     gap: 8px;
@@ -1693,7 +1491,6 @@ tbody tr:hover {
     align-items: center;
     flex-wrap: wrap;
 }
-
 .chat-modal .modal-box .chat-input-area input[type="text"] {
     flex: 1;
     padding: 10px 14px;
@@ -1703,7 +1500,6 @@ tbody tr:hover {
     font-size: 16px;
     min-width: 100px;
 }
-
 .chat-modal .modal-box .chat-input-area .chat-send-btn {
     padding: 10px 18px;
     border-radius: 24px !important;
@@ -1712,11 +1508,9 @@ tbody tr:hover {
     font-weight: 600;
     cursor: pointer;
 }
-
 .chat-modal .modal-box .chat-input-area .chat-send-btn:hover {
     background: var(--accent-2);
 }
-
 .chat-modal .modal-box .chat-input-area .chat-task-toggle,
 .chat-modal .modal-box .chat-input-area .chat-attach-btn {
     background: var(--input-bg);
@@ -1732,23 +1526,19 @@ tbody tr:hover {
     font-size: 1rem;
     flex-shrink: 0;
 }
-
 .chat-modal .modal-box .chat-input-area .chat-task-toggle:hover,
 .chat-modal .modal-box .chat-input-area .chat-attach-btn:hover {
     background: var(--accent-1);
     color: #ffffff;
 }
-
 .chat-modal .modal-box .chat-input-area .chat-task-toggle.active {
     background: var(--accent-3);
     color: #ffffff;
     border-color: var(--accent-3) !important;
 }
-
 .chat-modal .modal-box .chat-input-area #fileInput {
     display: none;
 }
-
 /* ============================================================
    22. CHARTS
    ============================================================ */
@@ -1756,14 +1546,12 @@ tbody tr:hover {
     position: relative;
     height: 240px;
 }
-
 .chart-grid {
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: 20px;
     margin-bottom: 24px;
 }
-
 /* ============================================================
    23. STOCK INDICATORS
    ============================================================ */
@@ -1774,11 +1562,9 @@ tbody tr:hover {
     border-radius: 50%;
     margin-right: 6px;
 }
-
 .stock-dot.green { background: var(--accent-4); }
 .stock-dot.yellow { background: var(--accent-3); }
 .stock-dot.red { background: var(--accent-danger); }
-
 /* ============================================================
    24. UTILITY CLASSES
    ============================================================ */
@@ -1788,7 +1574,6 @@ tbody tr:hover {
 .text-muted { color: var(--text-muted); }
 .text-sm { font-size: .8rem; }
 .hidden { display: none !important; }
-
 /* ============================================================
    25. TOAST NOTIFICATIONS
    ============================================================ */
@@ -1803,7 +1588,6 @@ tbody tr:hover {
     gap: 8px;
     pointer-events: none;
 }
-
 .toast {
     background: var(--bg-card);
     color: var(--text-primary);
@@ -1819,16 +1603,13 @@ tbody tr:hover {
     pointer-events: auto;
     margin-left: auto;
 }
-
 .toast.success { border-left-color: var(--accent-4); }
 .toast.error { border-left-color: var(--accent-danger); }
 .toast.warning { border-left-color: var(--accent-3); }
-
 @keyframes slideUp {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
-
 /* ============================================================
    26. SUBSCRIPTION MODAL
    ============================================================ */
@@ -1838,7 +1619,6 @@ tbody tr:hover {
     padding: 36px 40px 32px;
     border-radius: 28px;
 }
-
 .sub-modal .modal-box h3 {
     font-size: 1.6rem;
     font-weight: 800;
@@ -1846,7 +1626,6 @@ tbody tr:hover {
     margin-bottom: 2px;
     justify-content: center;
 }
-
 .sub-modal .modal-box .sub-desc {
     text-align: center;
     color: var(--text-muted);
@@ -1854,7 +1633,6 @@ tbody tr:hover {
     margin: 0 0 18px;
     line-height: 1.5;
 }
-
 .sub-modal .modal-box .sub-plan-selector {
     display: flex;
     gap: 12px;
@@ -1862,7 +1640,6 @@ tbody tr:hover {
     margin-bottom: 16px;
     flex-wrap: wrap;
 }
-
 .sub-modal .modal-box .sub-plan-selector .plan-btn {
     padding: 14px 20px;
     border-radius: var(--radius-sm);
@@ -1877,17 +1654,14 @@ tbody tr:hover {
     text-align: center;
     position: relative;
 }
-
 .sub-modal .modal-box .sub-plan-selector .plan-btn:hover {
     border-color: var(--accent-1);
 }
-
 .sub-modal .modal-box .sub-plan-selector .plan-btn.active {
     border-color: var(--accent-1);
     background: rgba(18,140,126,.08);
     color: var(--accent-1);
 }
-
 .sub-modal .modal-box .sub-plan-selector .plan-btn .price {
     display: block;
     font-size: 1.3rem;
@@ -1895,14 +1669,12 @@ tbody tr:hover {
     color: var(--text-primary);
     margin-top: 2px;
 }
-
 .sub-modal .modal-box .sub-plan-selector .plan-btn .period {
     font-size: .7rem;
     color: var(--text-muted);
     display: block;
     margin-top: 2px;
 }
-
 .sub-modal .modal-box .sub-plan-selector .plan-btn .save-badge {
     position: absolute;
     top: -8px;
@@ -1914,7 +1686,6 @@ tbody tr:hover {
     padding: 2px 8px;
     border-radius: 20px;
 }
-
 .sub-modal .modal-box .sub-amount-display {
     font-size: 1.05rem;
     font-weight: 600;
@@ -1926,7 +1697,6 @@ tbody tr:hover {
     text-align: center;
     border: 1px solid rgba(18,140,126,.12);
 }
-
 .sub-modal .modal-box .fee-breakdown {
     background: var(--service-fee-bg);
     border: 1px solid var(--service-fee-border);
@@ -1935,25 +1705,21 @@ tbody tr:hover {
     margin-bottom: 16px;
     font-size: .9rem;
 }
-
 .sub-modal .modal-box .fee-breakdown .fee-row {
     display: flex;
     justify-content: space-between;
     padding: 3px 0;
     gap: 8px;
 }
-
 .sub-modal .modal-box .fee-breakdown .fee-row .fee-label {
     color: var(--service-fee-text);
     opacity: .8;
 }
-
 .sub-modal .modal-box .fee-breakdown .fee-row .fee-value {
     font-weight: 700;
     color: var(--service-fee-text);
     text-align: right;
 }
-
 .sub-modal .modal-box .fee-breakdown .fee-total {
     border-top: 2px solid var(--service-fee-border);
     margin-top: 6px;
@@ -1964,12 +1730,10 @@ tbody tr:hover {
     justify-content: space-between;
     color: var(--service-fee-text);
 }
-
 .sub-modal .modal-box .fee-breakdown .fee-total .fee-total-value {
     color: var(--accent-1);
     font-size: 1.15rem;
 }
-
 .sub-modal .modal-box .payment-options {
     display: flex;
     flex-wrap: wrap;
@@ -1977,7 +1741,6 @@ tbody tr:hover {
     justify-content: center;
     margin-bottom: 12px;
 }
-
 .sub-modal .modal-box .payment-options .payment-option {
     display: flex;
     align-items: center;
@@ -1992,26 +1755,21 @@ tbody tr:hover {
     justify-content: center;
     min-height: 44px;
 }
-
 .sub-modal .modal-box .payment-options .payment-option:hover {
     border-color: var(--accent-1);
 }
-
 .sub-modal .modal-box .payment-options .payment-option.selected {
     border-color: var(--accent-1);
     background: rgba(18,140,126,.06);
 }
-
 .sub-modal .modal-box .payment-options .payment-option input[type="radio"] {
     width: 14px;
     height: 14px;
     accent-color: var(--accent-1);
 }
-
 .sub-modal .modal-box .sub-input-group {
     margin-bottom: 14px;
 }
-
 .sub-modal .modal-box .sub-input-group label {
     font-size: .75rem;
     font-weight: 600;
@@ -2019,19 +1777,15 @@ tbody tr:hover {
     margin-bottom: 3px;
     display: block;
 }
-
 .sub-modal .modal-box .branch-fields {
     display: none;
 }
-
 .sub-modal .modal-box .branch-fields.show {
     display: block;
 }
-
 .sub-modal .modal-box .plan-selector-wrapper.hide {
     display: none;
 }
-
 .sub-modal .modal-box .sub-status {
     font-weight: 600;
     font-size: .9rem;
@@ -2040,17 +1794,14 @@ tbody tr:hover {
     padding: 6px 10px;
     border-radius: var(--radius-sm);
 }
-
 .sub-modal .modal-box .sub-status.active {
     color: var(--accent-4);
     background: rgba(16,185,129,.06);
 }
-
 .sub-modal .modal-box .sub-status.inactive {
     color: var(--accent-danger);
     background: rgba(239,68,68,.06);
 }
-
 .sub-modal .modal-box .sub-actions {
     display: flex;
     gap: 12px;
@@ -2058,20 +1809,17 @@ tbody tr:hover {
     justify-content: center;
     flex-wrap: wrap;
 }
-
 .sub-modal .modal-box .sub-actions .btn {
     min-width: 140px;
     justify-content: center;
     padding: 12px 24px;
     font-weight: 600;
 }
-
 .sub-modal .modal-box .sub-divider {
     border: none;
     border-top: 1px solid var(--border-color);
     margin: 12px 0 16px;
 }
-
 /* ============================================================
    27. SUBSCRIPTION PANEL PAGE
    ============================================================ */
@@ -2079,32 +1827,27 @@ tbody tr:hover {
     max-width: 720px;
     margin: 0 auto;
 }
-
 .sub-panel-page .sub-modal {
     display: block;
 }
-
 .sub-panel-page .sub-modal .modal-box {
     margin: 0 auto;
     max-height: none;
     overflow: visible;
     width: 100%;
 }
-
 .sub-panel-page .panel-info-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 12px;
     margin-bottom: 16px;
 }
-
 .sub-panel-page .panel-info-card {
     background: var(--input-bg);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-sm);
     padding: 12px 16px;
 }
-
 .sub-panel-page .panel-info-card .pic-label {
     font-size: .7rem;
     text-transform: uppercase;
@@ -2112,18 +1855,15 @@ tbody tr:hover {
     color: var(--text-muted);
     letter-spacing: .4px;
 }
-
 .sub-panel-page .panel-info-card .pic-value {
     font-size: 1.05rem;
     font-weight: 700;
     color: var(--text-primary);
     margin-top: 3px;
 }
-
 .sub-panel-page .panel-info-card .pic-value.green { color: var(--accent-4); }
 .sub-panel-page .panel-info-card .pic-value.red { color: var(--accent-danger); }
 .sub-panel-page .panel-info-card .pic-value.gold { color: var(--accent-3); }
-
 /* ============================================================
    28. SUBSCRIPTION DASHBOARD CARDS
    ============================================================ */
@@ -2139,41 +1879,34 @@ tbody tr:hover {
     flex-wrap: wrap;
     gap: 16px;
 }
-
 .sub-dashboard-card .sub-info {
     display: flex;
     align-items: center;
     gap: 16px;
     flex-wrap: wrap;
 }
-
 .sub-dashboard-card .sub-info .sub-status-badge {
     font-size: .85rem;
     font-weight: 700;
     padding: 4px 16px;
     border-radius: 20px;
 }
-
 .sub-dashboard-card .sub-info .sub-status-badge.active {
     background: rgba(16,185,129,.15);
     color: var(--accent-4);
 }
-
 .sub-dashboard-card .sub-info .sub-status-badge.inactive {
     background: rgba(239,68,68,.15);
     color: var(--accent-danger);
 }
-
 .sub-dashboard-card .sub-info .sub-status-badge.expiring {
     background: rgba(245,158,11,.15);
     color: var(--accent-3);
 }
-
 .sub-dashboard-card .sub-info .sub-expiry {
     font-size: .85rem;
     color: var(--text-muted);
 }
-
 .sub-dashboard-card .sub-plan-badge {
     background: var(--pro-badge-bg);
     color: var(--pro-badge-text);
@@ -2182,7 +1915,6 @@ tbody tr:hover {
     font-size: .7rem;
     font-weight: 700;
 }
-
 .branch-sub-card {
     background: var(--bg-card);
     border-radius: var(--radius-card);
@@ -2195,42 +1927,35 @@ tbody tr:hover {
     flex-wrap: wrap;
     gap: 12px;
 }
-
 .branch-sub-card .sub-info {
     display: flex;
     align-items: center;
     gap: 12px;
     flex-wrap: wrap;
 }
-
 .branch-sub-card .sub-info .sub-status-badge {
     font-size: .8rem;
     font-weight: 700;
     padding: 3px 14px;
     border-radius: 20px;
 }
-
 .branch-sub-card .sub-info .sub-status-badge.active {
     background: rgba(16,185,129,.15);
     color: var(--accent-4);
 }
-
 .branch-sub-card .sub-info .sub-status-badge.inactive {
     background: rgba(239,68,68,.15);
     color: var(--accent-danger);
 }
-
 .branch-sub-card .sub-info .sub-status-badge.expiring {
     background: rgba(245,158,11,.15);
     color: var(--accent-3);
 }
-
 .branch-sub-card .sub-info .branch-name {
     font-weight: 700;
     font-size: .95rem;
     color: var(--accent-1);
 }
-
 /* ============================================================
    29. EMPTY STATE
    ============================================================ */
@@ -2239,7 +1964,6 @@ tbody tr:hover {
     padding: 40px 20px;
     color: var(--text-muted);
 }
-
 .empty-state i {
     font-size: 3rem;
     opacity: .3;
@@ -2247,24 +1971,20 @@ tbody tr:hover {
     display: block;
     animation: floatIcon 3s ease-in-out infinite;
 }
-
 @keyframes floatIcon {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-6px); }
 }
-
 .empty-state h3 {
     font-size: 1.2rem;
     color: var(--text-primary);
     margin-bottom: 8px;
 }
-
 .empty-state p {
     font-size: .9rem;
     max-width: 400px;
     margin: 0 auto 16px;
 }
-
 /* ============================================================
    30. LOCK OVERLAY
    ============================================================ */
@@ -2281,27 +2001,23 @@ tbody tr:hover {
     border: 2px dashed var(--accent-danger);
     margin: 20px 0;
 }
-
 .lock-overlay-full i {
     font-size: 5rem;
     color: var(--accent-danger);
     opacity: .3;
     margin-bottom: 16px;
 }
-
 .lock-overlay-full h2 {
     font-size: 2rem;
     font-weight: 800;
     margin-bottom: 8px;
 }
-
 .lock-overlay-full p {
     color: var(--text-muted);
     font-size: 1.1rem;
     max-width: 500px;
     margin: 0 auto 20px;
 }
-
 /* ============================================================
    31. STATUS CARDS
    ============================================================ */
@@ -2311,7 +2027,6 @@ tbody tr:hover {
     gap: 12px;
     margin-bottom: 6px;
 }
-
 .status-card .status-header .status-avatar {
     width: 40px;
     height: 40px;
@@ -2321,32 +2036,26 @@ tbody tr:hover {
     cursor: pointer;
     transition: transform .2s;
 }
-
 .status-card .status-header .status-avatar:hover {
     transform: scale(1.08);
 }
-
 .status-card .status-header .status-meta {
     flex: 1;
     min-width: 0;
 }
-
 .status-card .status-header .status-meta .status-name {
     font-weight: 600;
     font-size: .9rem;
 }
-
 .status-card .status-header .status-meta .status-time {
     font-size: .7rem;
     color: var(--text-muted);
 }
-
 .status-card .status-body {
     display: flex;
     gap: 16px;
     align-items: flex-start;
 }
-
 .status-card .status-body .status-image-wrap {
     flex-shrink: 0;
     width: 200px;
@@ -2357,7 +2066,6 @@ tbody tr:hover {
     cursor: pointer;
     position: relative;
 }
-
 .status-card .status-body .status-image-wrap img,
 .status-card .status-body .status-image-wrap video {
     width: 100%;
@@ -2365,7 +2073,6 @@ tbody tr:hover {
     object-fit: cover;
     display: block;
 }
-
 .status-card .status-body .status-content {
     flex: 1;
     min-width: 0;
@@ -2373,21 +2080,18 @@ tbody tr:hover {
     flex-direction: column;
     gap: 6px;
 }
-
 .status-card .status-body .status-content .status-text {
     font-size: .92rem;
     word-break: break-word;
     line-height: 1.5;
     margin: 0;
 }
-
 .status-card .status-body .status-content .status-actions {
     display: flex;
     gap: 10px;
     align-items: center;
     flex-wrap: wrap;
 }
-
 .status-card .status-body .status-content .status-comments {
     margin-top: 6px;
     border-top: 1px solid var(--border-color);
@@ -2396,13 +2100,11 @@ tbody tr:hover {
     flex-direction: column;
     min-height: 0;
 }
-
 .status-card .status-body .status-content .status-comments .comment-input-row {
     display: flex;
     gap: 8px;
     margin-bottom: 6px;
 }
-
 .status-card .status-body .status-content .status-comments .comment-input-row input {
     flex: 1;
     padding: 6px 12px;
@@ -2411,7 +2113,6 @@ tbody tr:hover {
     background: var(--input-bg);
     font-size: 16px;
 }
-
 .status-card .status-body .status-content .status-comments .comment-list {
     height: 150px;
     overflow-y: auto;
@@ -2422,16 +2123,13 @@ tbody tr:hover {
     padding-right: 4px;
     scrollbar-width: thin;
 }
-
 .status-card .status-body .status-content .status-comments .comment-list::-webkit-scrollbar {
     width: 5px;
 }
-
 .status-card .status-body .status-content .status-comments .comment-list::-webkit-scrollbar-thumb {
     background: var(--accent-1);
     border-radius: 10px;
 }
-
 /* ============================================================
    32. COMMENT ITEMS
    ============================================================ */
@@ -2443,11 +2141,9 @@ tbody tr:hover {
     border-bottom: 1px solid var(--border-color);
     font-size: .82rem;
 }
-
 .comment-item:last-child {
     border-bottom: none;
 }
-
 .comment-item .comment-avatar {
     width: 32px;
     height: 32px;
@@ -2464,23 +2160,19 @@ tbody tr:hover {
     cursor: pointer;
     transition: transform .2s;
 }
-
 .comment-item .comment-avatar:hover {
     transform: scale(1.1);
     box-shadow: 0 2px 8px rgba(18,140,126,.3);
 }
-
 .comment-item .comment-avatar img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
-
 .comment-item .comment-body {
     flex: 1;
     min-width: 0;
 }
-
 .comment-item .comment-author {
     font-weight: 600;
     color: var(--text-primary);
@@ -2488,12 +2180,10 @@ tbody tr:hover {
     margin-right: 6px;
     cursor: pointer;
 }
-
 .comment-item .comment-author:hover {
     color: var(--accent-1);
     text-decoration: underline;
 }
-
 .comment-item .comment-company {
     font-size: .65rem;
     color: var(--accent-1);
@@ -2504,17 +2194,14 @@ tbody tr:hover {
     display: inline-block;
     cursor: pointer;
 }
-
 .comment-item .comment-text {
     font-size: .82rem;
 }
-
 .comment-item .comment-time {
     font-size: .6rem;
     color: var(--text-muted);
     margin-left: 6px;
 }
-
 .comment-item .comment-delete {
     font-size: .6rem;
     color: var(--accent-danger);
@@ -2522,21 +2209,17 @@ tbody tr:hover {
     cursor: pointer;
     opacity: .4;
 }
-
 .comment-item .comment-delete:hover {
     opacity: 1;
 }
-
 .comment-empty {
     font-size: .75rem;
     color: var(--text-muted);
     padding: 4px 0;
 }
-
 .dashboard-status-card {
     margin-top: 16px;
 }
-
 /* ============================================================
    33. TENANT STATUS
    ============================================================ */
@@ -2549,7 +2232,6 @@ tbody tr:hover {
     color: var(--accent-danger);
     font-weight: 600;
 }
-
 .tenant-active {
     background: rgba(16,185,129,.08);
     border-left: 3px solid var(--accent-4);
@@ -2559,28 +2241,24 @@ tbody tr:hover {
     color: var(--accent-4);
     font-weight: 600;
 }
-
 .btn-super-delete {
     background: var(--accent-danger) !important;
     color: #ffffff !important;
     padding: 4px 12px !important;
     font-size: .7rem !important;
 }
-
 .btn-super-block {
     background: #f59e0b !important;
     color: #ffffff !important;
     padding: 4px 12px !important;
     font-size: .7rem !important;
 }
-
 .btn-super-unblock {
     background: var(--accent-4) !important;
     color: #ffffff !important;
     padding: 4px 12px !important;
     font-size: .7rem !important;
 }
-
 /* ============================================================
    34. SUPER ADMIN STATS
    ============================================================ */
@@ -2590,7 +2268,6 @@ tbody tr:hover {
     gap: 12px;
     margin-bottom: 18px;
 }
-
 .super-stat-card {
     background: var(--bg-card);
     padding: 12px 16px;
@@ -2604,11 +2281,9 @@ tbody tr:hover {
     flex-direction: column;
     justify-content: center;
 }
-
 .super-stat-card:hover {
     transform: translateY(-3px);
 }
-
 .super-stat-card .number {
     font-size: clamp(1.05rem, 1.8vw + .7rem, 1.6rem);
     font-weight: 800;
@@ -2621,7 +2296,6 @@ tbody tr:hover {
     text-overflow: clip;
     min-width: 0;
 }
-
 .super-stat-card .label {
     font-size: .62rem;
     color: var(--text-muted);
@@ -2632,7 +2306,6 @@ tbody tr:hover {
     text-overflow: ellipsis;
     margin-top: 2px;
 }
-
 /* ============================================================
    35. SUPER TABS
    ============================================================ */
@@ -2642,7 +2315,6 @@ tbody tr:hover {
     margin-bottom: 18px;
     flex-wrap: wrap;
 }
-
 .super-tab {
     padding: 10px 22px;
     border-radius: 24px !important;
@@ -2656,19 +2328,16 @@ tbody tr:hover {
     align-items: center;
     gap: 8px;
 }
-
 .super-tab:hover {
     background: #f59e0b;
     color: #fff;
     border-color: #f59e0b !important;
 }
-
 .super-tab.active {
     background: linear-gradient(135deg, #f59e0b, #d97706);
     color: #fff;
     border-color: #d97706 !important;
 }
-
 .super-tab .tab-count {
     background: rgba(255,255,255,.25);
     padding: 1px 9px;
@@ -2676,12 +2345,10 @@ tbody tr:hover {
     font-size: .7rem;
     font-weight: 700;
 }
-
 .super-tab:not(.active) .tab-count {
     background: var(--border-color);
     color: var(--text-secondary);
 }
-
 /* ============================================================
    36. MEX EMPLOYEE CODE / BADGES
    ============================================================ */
@@ -2701,26 +2368,22 @@ tbody tr:hover {
     transition: var(--transition);
     border: 1px solid rgba(245,158,11,.3);
 }
-
 .mex-emp-code:hover {
     background: #f59e0b;
     color: #fff;
     border-color: #d97706;
 }
-
 .mex-emp-earnings {
     color: var(--accent-4);
     font-weight: 800;
     font-variant-numeric: tabular-nums;
     font-feature-settings: "tnum" 1;
 }
-
 .mex-emp-actions {
     display: flex;
     gap: 4px;
     flex-wrap: wrap;
 }
-
 .mex-emp-avatar {
     width: 36px;
     height: 36px;
@@ -2737,13 +2400,11 @@ tbody tr:hover {
     background-size: cover;
     background-position: center;
 }
-
 .mex-emp-avatar img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
-
 /* ============================================================
    37. MEX CREDENTIALS BOX
    ============================================================ */
@@ -2754,7 +2415,6 @@ tbody tr:hover {
     padding: 16px 18px;
     margin: 16px 0;
 }
-
 .mex-cred-box .mex-cred-title {
     font-size: .75rem;
     text-transform: uppercase;
@@ -2766,7 +2426,6 @@ tbody tr:hover {
     align-items: center;
     gap: 6px;
 }
-
 .mex-cred-row {
     display: flex;
     flex-direction: column;
@@ -2775,11 +2434,9 @@ tbody tr:hover {
     border-bottom: 1px dashed rgba(245,158,11,.3);
     gap: 8px;
 }
-
 .mex-cred-row:last-child {
     border-bottom: none;
 }
-
 .mex-cred-row .mex-cred-label {
     font-size: .72rem;
     color: var(--text-muted);
@@ -2790,11 +2447,9 @@ tbody tr:hover {
     align-items: center;
     gap: 6px;
 }
-
 .mex-cred-row .mex-cred-label i {
     color: #d97706;
 }
-
 .mex-cred-row .mex-cred-value {
     font-family: 'Courier New', monospace;
     font-weight: 800;
@@ -2813,7 +2468,6 @@ tbody tr:hover {
     word-break: break-all;
     transition: var(--transition);
 }
-
 .mex-cred-row .mex-cred-value .mex-cred-copy-hint {
     font-family: var(--font);
     font-size: .68rem;
@@ -2826,7 +2480,6 @@ tbody tr:hover {
     flex-shrink: 0;
     white-space: nowrap;
 }
-
 .mex-cred-row .mex-cred-value:hover {
     background: #f59e0b;
     color: #fff;
@@ -2834,11 +2487,9 @@ tbody tr:hover {
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(245,158,11,.35);
 }
-
 .mex-cred-row .mex-cred-value:hover .mex-cred-copy-hint {
     opacity: 1;
 }
-
 /* ============================================================
    38. PROMO CODE INPUT
    ============================================================ */
@@ -2852,13 +2503,11 @@ tbody tr:hover {
     background: rgba(245,158,11,.05);
     border-color: rgba(245,158,11,.4);
 }
-
 .promo-code-input:focus {
     border-color: #d97706 !important;
     box-shadow: 0 0 0 3px rgba(245,158,11,.2) !important;
     background: rgba(245,158,11,.08) !important;
 }
-
 .promo-hint {
     font-size: .72rem;
     color: var(--text-muted);
@@ -2868,7 +2517,6 @@ tbody tr:hover {
     align-items: flex-start;
     line-height: 1.35;
 }
-
 .promo-status {
     font-size: .75rem;
     font-weight: 700;
@@ -2877,10 +2525,8 @@ tbody tr:hover {
     align-items: center;
     gap: 5px;
 }
-
 .promo-status.ok { color: var(--accent-4); }
 .promo-status.bad { color: var(--accent-danger); }
-
 /* ============================================================
    39. EMERGENCY CONTACT
    ============================================================ */
@@ -2896,35 +2542,29 @@ tbody tr:hover {
     flex-wrap: wrap;
     gap: 6px;
 }
-
 .emergency-contact .emergency-info {
     flex: 1;
     min-width: 100px;
 }
-
 .emergency-contact .emergency-info .emergency-title {
     font-weight: 700;
     font-size: .85rem;
     color: #128C7E;
 }
-
 .emergency-contact .emergency-info .emergency-number {
     font-size: .95rem;
     font-weight: 600;
     color: var(--accent-1);
 }
-
 .emergency-contact .emergency-info .emergency-desc {
     color: var(--text-muted);
     font-size: .65rem;
 }
-
 .emergency-contact .emergency-actions {
     display: flex;
     gap: 4px;
     flex-wrap: wrap;
 }
-
 .emergency-contact .emergency-actions .btn-emergency-call {
     background: #128C7E !important;
     color: #ffffff !important;
@@ -2934,7 +2574,6 @@ tbody tr:hover {
     font-size: .75rem;
     text-decoration: none;
 }
-
 .emergency-contact .emergency-actions .btn-emergency-wa {
     background: var(--whatsapp-color) !important;
     color: #ffffff !important;
@@ -2944,7 +2583,6 @@ tbody tr:hover {
     font-size: .75rem;
     text-decoration: none;
 }
-
 /* ============================================================
    40. REPORT PERIOD SELECTOR
    ============================================================ */
@@ -2959,19 +2597,16 @@ tbody tr:hover {
     align-items: center;
     gap: 12px;
 }
-
 .report-period-selector .period-label {
     font-weight: 600;
     font-size: .85rem;
     color: var(--text-secondary);
 }
-
 .report-period-selector .period-btn-group {
     display: flex;
     gap: 4px;
     flex-wrap: wrap;
 }
-
 .report-period-selector .period-btn {
     padding: 6px 16px;
     border-radius: 20px !important;
@@ -2982,18 +2617,15 @@ tbody tr:hover {
     border: 1px solid var(--border-color) !important;
     cursor: pointer;
 }
-
 .report-period-selector .period-btn:hover {
     border-color: var(--accent-1) !important;
     color: var(--accent-1);
 }
-
 .report-period-selector .period-btn.active {
     background: var(--accent-1);
     color: #ffffff;
     border-color: var(--accent-1) !important;
 }
-
 .report-period-selector .period-date-inputs {
     display: flex;
     align-items: center;
@@ -3001,7 +2633,6 @@ tbody tr:hover {
     flex-wrap: wrap;
     margin-left: auto;
 }
-
 .report-period-selector .period-date-inputs input[type="date"] {
     padding: 6px 10px;
     border-radius: var(--radius-sm);
@@ -3011,18 +2642,15 @@ tbody tr:hover {
     font-size: 16px;
     width: 140px;
 }
-
 .report-period-selector .period-date-inputs .period-custom-label {
     font-size: .75rem;
     color: var(--text-muted);
     font-weight: 500;
 }
-
 .report-period-selector .period-date-inputs .date-sep {
     color: var(--text-muted);
     font-weight: 600;
 }
-
 .report-period-selector .period-apply-btn {
     padding: 6px 18px;
     border-radius: 20px !important;
@@ -3032,11 +2660,9 @@ tbody tr:hover {
     color: #ffffff;
     cursor: pointer;
 }
-
 .report-period-selector .period-apply-btn:hover {
     background: var(--accent-2);
 }
-
 /* ============================================================
    41. REPORT SUMMARY
    ============================================================ */
@@ -3046,7 +2672,6 @@ tbody tr:hover {
     gap: 12px;
     margin-bottom: 18px;
 }
-
 .report-summary-card {
     background: var(--bg-card);
     border-radius: 16px;
@@ -3060,11 +2685,9 @@ tbody tr:hover {
     flex-direction: column;
     justify-content: center;
 }
-
 .report-summary-card:hover {
     transform: translateY(-2px);
 }
-
 .report-summary-card .rs-label {
     font-size: .62rem;
     text-transform: uppercase;
@@ -3075,7 +2698,6 @@ tbody tr:hover {
     overflow: hidden;
     text-overflow: ellipsis;
 }
-
 .report-summary-card .rs-value {
     font-size: clamp(.95rem, 1vw + .7rem, 1.3rem);
     font-weight: 800;
@@ -3088,17 +2710,14 @@ tbody tr:hover {
     text-overflow: clip;
     min-width: 0;
 }
-
 .report-summary-card .rs-value.primary { color: var(--accent-1); }
 .report-summary-card .rs-value.green { color: var(--accent-4); }
 .report-summary-card .rs-value.red { color: var(--accent-danger); }
 .report-summary-card .rs-value.gold { color: var(--accent-3); }
-
 .report-chart-container {
     position: relative;
     height: 240px;
 }
-
 .report-period-info {
     background: var(--report-period-bg);
     border: 1px solid var(--report-period-border);
@@ -3108,7 +2727,6 @@ tbody tr:hover {
     color: var(--report-period-text);
     font-size: .85rem;
 }
-
 /* ============================================================
    42. ONLINE STATUS
    ============================================================ */
@@ -3122,26 +2740,21 @@ tbody tr:hover {
     border-radius: 20px;
     white-space: nowrap;
 }
-
 .online-status .dot {
     width: 8px;
     height: 8px;
     border-radius: 50%;
 }
-
 .online-status .dot.online { background: var(--online-dot); }
 .online-status .dot.offline { background: var(--offline-dot); }
-
 .online-status.online {
     background: rgba(34,197,94,.12);
     color: var(--online-dot);
 }
-
 .online-status.offline {
     background: rgba(148,163,184,.12);
     color: var(--offline-dot);
 }
-
 /* ============================================================
    43. STATUS TABS
    ============================================================ */
@@ -3151,7 +2764,6 @@ tbody tr:hover {
     margin-bottom: 16px;
     flex-wrap: wrap;
 }
-
 .status-tab {
     padding: 10px 22px;
     border-radius: 24px !important;
@@ -3165,19 +2777,16 @@ tbody tr:hover {
     align-items: center;
     gap: 8px;
 }
-
 .status-tab:hover {
     background: var(--accent-1);
     color: #ffffff;
     border-color: var(--accent-1) !important;
 }
-
 .status-tab.active {
     background: var(--accent-1);
     color: #ffffff;
     border-color: var(--accent-1) !important;
 }
-
 .status-tab .tab-count {
     background: rgba(255,255,255,.25);
     padding: 1px 9px;
@@ -3185,12 +2794,10 @@ tbody tr:hover {
     font-size: .7rem;
     font-weight: 700;
 }
-
 .status-tab:not(.active) .tab-count {
     background: var(--border-color);
     color: var(--text-secondary);
 }
-
 /* ============================================================
    44. AD MEDIA PREVIEW
    ============================================================ */
@@ -3201,7 +2808,6 @@ tbody tr:hover {
     border-radius: 8px;
     border: 1px solid var(--border-color);
 }
-
 .ad-video-preview video {
     max-width: 100%;
     max-height: 240px;
@@ -3209,14 +2815,12 @@ tbody tr:hover {
     background: #000000;
     display: block;
 }
-
 .ad-video-preview img {
     max-width: 240px;
     max-height: 240px;
     border-radius: 6px;
     display: block;
 }
-
 .ad-video-preview .video-meta {
     font-size: .78rem;
     color: var(--text-muted);
@@ -3226,7 +2830,6 @@ tbody tr:hover {
     gap: 10px;
     flex-wrap: wrap;
 }
-
 .ad-media-error {
     color: var(--accent-danger);
     font-size: .8rem;
@@ -3234,11 +2837,9 @@ tbody tr:hover {
     font-weight: 600;
     display: none;
 }
-
 .ad-media-error.show {
     display: block;
 }
-
 .viewer-badge {
     display: inline-flex;
     align-items: center;
@@ -3253,17 +2854,14 @@ tbody tr:hover {
     border: none !important;
     transition: var(--transition);
 }
-
 .viewer-badge:hover {
     background: var(--accent-1);
     color: #ffffff;
     transform: scale(1.05);
 }
-
 .viewer-badge i {
     font-size: .75rem;
 }
-
 .ad-media-placeholder {
     width: 100%;
     height: 100%;
@@ -3278,7 +2876,6 @@ tbody tr:hover {
     flex-direction: column;
     gap: 4px;
 }
-
 .ad-expiry-badge {
     display: inline-flex;
     align-items: center;
@@ -3290,22 +2887,18 @@ tbody tr:hover {
     font-size: .72rem;
     font-weight: 700;
 }
-
 .ad-expiry-badge i {
     font-size: .75rem;
 }
-
 .ad-expiry-badge.urgent {
     background: rgba(239,68,68,.12);
     color: var(--accent-danger);
     animation: pulse-expiry 1.5s ease-in-out infinite;
 }
-
 @keyframes pulse-expiry {
     0%, 100% { opacity: 1; }
     50% { opacity: .6; }
 }
-
 /* ============================================================
    45. AD COMMENTS
    ============================================================ */
@@ -3317,14 +2910,12 @@ tbody tr:hover {
     flex-direction: column;
     min-height: 0;
 }
-
 .ad-comment-input-row {
     display: flex;
     gap: 8px;
     margin-bottom: 8px;
     align-items: center;
 }
-
 .ad-comment-input-row .my-avatar {
     width: 32px;
     height: 32px;
@@ -3332,7 +2923,6 @@ tbody tr:hover {
     object-fit: cover;
     flex-shrink: 0;
 }
-
 .ad-comment-input-row input {
     flex: 1;
     padding: 8px 14px;
@@ -3342,7 +2932,6 @@ tbody tr:hover {
     font-size: 16px;
     color: var(--text-primary);
 }
-
 .ad-comment-input-row .btn {
     padding: 8px 14px;
     border-radius: 20px !important;
@@ -3350,7 +2939,6 @@ tbody tr:hover {
     font-weight: 600;
     white-space: nowrap;
 }
-
 .ad-comment-list {
     height: 150px;
     overflow-y: auto;
@@ -3361,16 +2949,13 @@ tbody tr:hover {
     padding-right: 4px;
     scrollbar-width: thin;
 }
-
 .ad-comment-list::-webkit-scrollbar {
     width: 5px;
 }
-
 .ad-comment-list::-webkit-scrollbar-thumb {
     background: var(--accent-1);
     border-radius: 10px;
 }
-
 .ad-comment-item {
     display: flex;
     align-items: flex-start;
@@ -3379,11 +2964,9 @@ tbody tr:hover {
     border-bottom: 1px solid var(--border-color);
     font-size: .85rem;
 }
-
 .ad-comment-item:last-child {
     border-bottom: none;
 }
-
 .ad-comment-item .ad-comment-avatar {
     width: 34px;
     height: 34px;
@@ -3400,23 +2983,19 @@ tbody tr:hover {
     cursor: pointer;
     transition: transform .2s;
 }
-
 .ad-comment-item .ad-comment-avatar:hover {
     transform: scale(1.1);
     box-shadow: 0 2px 8px rgba(18,140,126,.3);
 }
-
 .ad-comment-item .ad-comment-avatar img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
-
 .ad-comment-item .ad-comment-body {
     flex: 1;
     min-width: 0;
 }
-
 .ad-comment-item .ad-comment-author {
     font-weight: 700;
     color: var(--text-primary);
@@ -3424,12 +3003,10 @@ tbody tr:hover {
     margin-right: 6px;
     cursor: pointer;
 }
-
 .ad-comment-item .ad-comment-author:hover {
     color: var(--accent-1);
     text-decoration: underline;
 }
-
 .ad-comment-item .ad-comment-company {
     font-size: .65rem;
     color: var(--accent-1);
@@ -3439,7 +3016,6 @@ tbody tr:hover {
     margin-right: 6px;
     display: inline-block;
 }
-
 .ad-comment-item .ad-comment-role {
     font-size: .6rem;
     color: #ffffff;
@@ -3450,7 +3026,6 @@ tbody tr:hover {
     display: inline-block;
     font-weight: 700;
 }
-
 .ad-comment-item .ad-comment-text {
     font-size: .85rem;
     color: var(--text-secondary);
@@ -3459,13 +3034,11 @@ tbody tr:hover {
     margin-top: 2px;
     line-height: 1.45;
 }
-
 .ad-comment-item .ad-comment-time {
     font-size: .62rem;
     color: var(--text-muted);
     margin-left: 6px;
 }
-
 .ad-comment-item .ad-comment-delete {
     font-size: .65rem;
     color: var(--accent-danger);
@@ -3475,11 +3048,9 @@ tbody tr:hover {
     padding: 0 4px;
     flex-shrink: 0;
 }
-
 .ad-comment-item .ad-comment-delete:hover {
     opacity: 1;
 }
-
 .ad-comment-empty {
     font-size: .75rem;
     color: var(--text-muted);
@@ -3487,7 +3058,6 @@ tbody tr:hover {
     text-align: center;
     font-style: italic;
 }
-
 .ad-comments-toggle {
     font-size: .75rem;
     color: var(--accent-1);
@@ -3500,11 +3070,9 @@ tbody tr:hover {
     gap: 5px;
     margin-bottom: 4px;
 }
-
 .ad-comments-toggle:hover {
     text-decoration: underline;
 }
-
 /* ============================================================
    46. PROFILE VIEW MODAL
    ============================================================ */
@@ -3513,13 +3081,11 @@ tbody tr:hover {
     text-align: center;
     padding: 32px 28px;
 }
-
 .pvm-avatar-wrap {
     display: flex;
     justify-content: center;
     margin-bottom: 14px;
 }
-
 .pvm-avatar-wrap img {
     width: 110px;
     height: 110px;
@@ -3528,7 +3094,6 @@ tbody tr:hover {
     border: 4px solid var(--accent-1);
     box-shadow: 0 4px 20px rgba(18,140,126,.25);
 }
-
 .pvm-avatar-wrap .pvm-initials {
     width: 110px;
     height: 110px;
@@ -3543,21 +3108,18 @@ tbody tr:hover {
     border: 4px solid var(--accent-1);
     box-shadow: 0 4px 20px rgba(18,140,126,.25);
 }
-
 .pvm-name {
     font-size: 1.4rem;
     font-weight: 800;
     color: var(--text-primary);
     margin-bottom: 4px;
 }
-
 .pvm-company {
     font-size: .95rem;
     color: var(--accent-1);
     font-weight: 700;
     margin-bottom: 8px;
 }
-
 .pvm-role-badge {
     display: inline-block;
     padding: 4px 16px;
@@ -3566,7 +3128,6 @@ tbody tr:hover {
     font-weight: 700;
     margin-bottom: 16px;
 }
-
 .pvm-info-list {
     text-align: left;
     background: var(--input-bg);
@@ -3575,7 +3136,6 @@ tbody tr:hover {
     margin-bottom: 16px;
     border: 1px solid var(--border-color);
 }
-
 .pvm-info-row {
     display: flex;
     align-items: center;
@@ -3584,11 +3144,9 @@ tbody tr:hover {
     font-size: .88rem;
     border-bottom: 1px solid var(--border-color);
 }
-
 .pvm-info-row:last-child {
     border-bottom: none;
 }
-
 .pvm-info-row i {
     width: 20px;
     color: var(--accent-1);
@@ -3596,27 +3154,23 @@ tbody tr:hover {
     text-align: center;
     flex-shrink: 0;
 }
-
 .pvm-info-row .pvm-label {
     color: var(--text-muted);
     font-size: .8rem;
     font-weight: 600;
     min-width: 90px;
 }
-
 .pvm-info-row .pvm-value {
     color: var(--text-primary);
     font-weight: 600;
     flex: 1;
     word-break: break-word;
 }
-
 .pvm-info-row .pvm-value.muted {
     color: var(--text-muted);
     font-weight: 400;
     font-style: italic;
 }
-
 .pvm-status {
     display: inline-flex;
     align-items: center;
@@ -3627,32 +3181,26 @@ tbody tr:hover {
     border-radius: 20px;
     margin-bottom: 16px;
 }
-
 .pvm-status.online {
     background: rgba(34,197,94,.15);
     color: var(--online-dot);
 }
-
 .pvm-status.offline {
     background: rgba(148,163,184,.15);
     color: var(--offline-dot);
 }
-
 .pvm-status .dot {
     width: 8px;
     height: 8px;
     border-radius: 50%;
 }
-
 .pvm-status.online .dot {
     background: var(--online-dot);
     box-shadow: 0 0 6px var(--online-dot);
 }
-
 .pvm-status.offline .dot {
     background: var(--offline-dot);
 }
-
 /* ============================================================
    47. PERMISSION TOGGLES
    ============================================================ */
@@ -3672,28 +3220,23 @@ tbody tr:hover {
     transition: var(--transition);
     white-space: nowrap;
 }
-
 .perm-toggle.on {
     background: rgba(16,185,129,.14);
     color: var(--accent-4);
     border-color: rgba(16,185,129,.4) !important;
 }
-
 .perm-toggle.off {
     background: rgba(239,68,68,.12);
     color: var(--accent-danger);
     border-color: rgba(239,68,68,.35) !important;
 }
-
 .perm-toggle:hover {
     transform: translateY(-1px);
     box-shadow: 0 2px 8px rgba(0,0,0,.08);
 }
-
 .perm-cell {
     min-width: 180px;
 }
-
 .perm-hint {
     font-size: .62rem;
     color: var(--text-muted);
@@ -3701,7 +3244,6 @@ tbody tr:hover {
     margin-top: 3px;
     line-height: 1.3;
 }
-
 .perm-locked-box {
     background: var(--sub-bg);
     border: 1px solid var(--sub-border);
@@ -3714,14 +3256,12 @@ tbody tr:hover {
     align-items: flex-start;
     margin-bottom: 14px;
 }
-
 /* ============================================================
    48. SALE PRICE
    ============================================================ */
 .sale-price-wrap {
     position: relative;
 }
-
 .sale-price-wrap .price-hint {
     font-size: .68rem;
     color: var(--text-muted);
@@ -3730,7 +3270,6 @@ tbody tr:hover {
     align-items: center;
     gap: 4px;
 }
-
 .sale-total-preview {
     display: none;
     background: var(--input-bg);
@@ -3740,33 +3279,27 @@ tbody tr:hover {
     margin-bottom: 14px;
     font-size: .9rem;
 }
-
 .sale-total-preview .stp-row {
     display: flex;
     justify-content: space-between;
     padding: 3px 0;
     gap: 8px;
 }
-
 .sale-total-preview .stp-row .stp-label {
     color: var(--text-muted);
 }
-
 .sale-total-preview .stp-row .stp-value {
     font-weight: 600;
     text-align: right;
 }
-
 .sale-total-preview .stp-row .stp-value.disc {
     color: var(--accent-3);
     font-weight: 700;
 }
-
 .sale-total-preview .stp-row .stp-value.up {
     color: var(--accent-4);
     font-weight: 700;
 }
-
 .sale-total-preview .stp-total {
     border-top: 1px solid var(--border-color);
     margin-top: 6px;
@@ -3775,12 +3308,10 @@ tbody tr:hover {
     justify-content: space-between;
     font-weight: 800;
 }
-
 .sale-total-preview .stp-total .stp-total-value {
     color: var(--accent-1);
     font-size: 1.05rem;
 }
-
 .sale-total-preview .stp-note {
     font-size: .7rem;
     color: var(--text-muted);
@@ -3790,7 +3321,6 @@ tbody tr:hover {
     align-items: flex-start;
     line-height: 1.35;
 }
-
 .sale-price-badge {
     display: inline-flex;
     align-items: center;
@@ -3803,7 +3333,6 @@ tbody tr:hover {
     border-radius: 20px;
     margin-top: 3px;
 }
-
 /* ============================================================
    49. INVENTORY SEARCH
    ============================================================ */
@@ -3813,7 +3342,6 @@ tbody tr:hover {
     display: flex;
     align-items: center;
 }
-
 .inventory-search-wrap .inventory-search-icon {
     position: absolute;
     left: 16px;
@@ -3822,7 +3350,6 @@ tbody tr:hover {
     pointer-events: none;
     z-index: 2;
 }
-
 .inventory-search-input {
     padding-left: 42px !important;
     padding-right: 42px !important;
@@ -3831,12 +3358,10 @@ tbody tr:hover {
     height: 46px;
     width: 100%;
 }
-
 .inventory-search-input:focus {
     border-color: var(--accent-1);
     box-shadow: 0 0 0 3px rgba(18, 140, 126, .15);
 }
-
 .inventory-search-clear {
     position: absolute;
     right: 8px;
@@ -3854,13 +3379,11 @@ tbody tr:hover {
     z-index: 2;
     transition: var(--transition);
 }
-
 .inventory-search-clear:hover {
     background: var(--accent-danger) !important;
     color: #ffffff !important;
     border-color: var(--accent-danger) !important;
 }
-
 .inventory-search-empty {
     text-align: center;
     padding: 40px 20px;
@@ -3868,14 +3391,12 @@ tbody tr:hover {
     font-size: .9rem;
     display: none;
 }
-
 .inventory-search-empty i {
     font-size: 2.5rem;
     opacity: .3;
     display: block;
     margin-bottom: 10px;
 }
-
 .inventory-search-count {
     font-size: .75rem;
     color: var(--text-muted);
@@ -3884,11 +3405,9 @@ tbody tr:hover {
     align-items: center;
     gap: 6px;
 }
-
 .inventory-search-count i {
     color: var(--accent-1);
 }
-
 /* ============================================================
    50. MOBILE MENU & SIDEBAR BACKDROP
    ============================================================ */
@@ -3906,12 +3425,10 @@ tbody tr:hover {
     font-size: 1.1rem;
     flex-shrink: 0;
 }
-
 .mobile-menu-btn:hover {
     background: var(--accent-1);
     color: #fff;
 }
-
 .sidebar-backdrop {
     display: none;
     position: fixed;
@@ -3923,12 +3440,10 @@ tbody tr:hover {
     opacity: 0;
     transition: opacity .3s ease;
 }
-
 .sidebar-backdrop.show {
     display: block;
     opacity: 1;
 }
-
 /* ============================================================
    51. PRINT STYLES
    ============================================================ */
@@ -3963,7 +3478,6 @@ tbody tr:hover {
         display: none !important;
     }
 }
-
 /* ============================================================
    52. RESPONSIVE — TABLET (max 1024px)
    ============================================================ */
@@ -3999,7 +3513,6 @@ tbody tr:hover {
         grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     }
 }
-
 /* ============================================================
    53. RESPONSIVE — MOBILE (max 768px)
    ============================================================ */
@@ -4423,7 +3936,6 @@ tbody tr:hover {
         font-size: .62rem;
     }
 }
-
 /* ============================================================
    54. RESPONSIVE — SMALL MOBILE (max 480px)
    ============================================================ */
@@ -4514,7 +4026,6 @@ tbody tr:hover {
         padding: 8px 10px;
     }
 }
-
 /* ============================================================
    55. RESPONSIVE — LANDSCAPE
    ============================================================ */
@@ -4532,7 +4043,6 @@ tbody tr:hover {
         height: 160px;
     }
 }
-
 /* ============================================================
    56. REDUCED MOTION
    ============================================================ */
@@ -5542,9 +5052,9 @@ en: {
     ads_title_label:'Ad Title',
     ads_content_label:'Ad Content',
     ads_image_label:'Image (optional, max 2 MB)',
-    ads_video_label:'Video (optional, max 60 seconds, max 100 MB)',
+    ads_video_label:'Video (optional, max 60 seconds, max 200 MB)',
     ads_video_too_long:'Video must be 60 seconds or less.',
-    ads_video_too_large:'Video is too large (max 100 MB).',
+    ads_video_too_large:'Video is too large (max 200 MB).',
     ads_video_invalid:'Invalid video file.',
     ads_video_reading:'Reading video...',
     ads_video_ready:'Video ready',
@@ -6116,9 +5626,9 @@ sw: {
     ads_title_label:'Kichwa cha Tangazo',
     ads_content_label:'Maudhui ya Tangazo',
     ads_image_label:'Picha (si lazima, max 2 MB)',
-    ads_video_label:'Video (si lazima, max sekunde 60, max 100 MB)',
+    ads_video_label:'Video (si lazima, max sekunde 60, max 200 MB)',
     ads_video_too_long:'Video lazima iwe sekunde 60 au chini.',
-    ads_video_too_large:'Video ni kubwa mno (max 100 MB).',
+    ads_video_too_large:'Video ni kubwa mno (max 200 MB).',
     ads_video_invalid:'Faili ya video si sahihi.',
     ads_video_reading:'Inasoma video...',
     ads_video_ready:'Video iko tayari',
@@ -6690,9 +6200,9 @@ fr: {
     ads_title_label:"Titre de l'annonce",
     ads_content_label:"Contenu de l'annonce",
     ads_image_label:"Image (facultatif, max 2 Mo)",
-    ads_video_label:"Vidéo (facultatif, max 60 secondes, max 100 Mo)",
+    ads_video_label:"Vidéo (facultatif, max 60 secondes, max 200 Mo)",
     ads_video_too_long:"La vidéo doit durer 60 secondes ou moins.",
-    ads_video_too_large:"La vidéo est trop volumineuse (max 100 Mo).",
+    ads_video_too_large:"La vidéo est trop volumineuse (max 200 Mo).",
     ads_video_invalid:"Fichier vidéo invalide.",
     ads_video_reading:"Lecture de la vidéo...",
     ads_video_ready:"Vidéo prête",
@@ -7264,9 +6774,9 @@ zh: {
     ads_title_label:'广告标题',
     ads_content_label:'广告内容',
     ads_image_label:'图片（可选，最大 2 MB）',
-    ads_video_label:'视频（可选，最长 60 秒，最大 100 MB）',
+    ads_video_label:'视频（可选，最长 60 秒，最大 200 MB）',
     ads_video_too_long:'视频必须不超过 60 秒。',
-    ads_video_too_large:'视频过大（最大 100 MB）。',
+    ads_video_too_large:'视频过大（最大 200 MB）。',
     ads_video_invalid:'无效的视频文件。',
     ads_video_reading:'正在读取视频...',
     ads_video_ready:'视频已就绪',
@@ -7530,7 +7040,7 @@ const MEX_EMPLOYEES_KEY = 'sb_mex_employees';
 const MEX_SESSION_KEY = 'sb_mex_current_employee';
 const AD_PRICE = 5000;
 const MAX_VIDEO_SECONDS = 60;
-const MAX_VIDEO_BYTES = 100 * 1024 * 1024;
+const MAX_VIDEO_BYTES = 200 * 1024 * 1024;
 const MAX_IMAGE_BYTES = 2 * 1024 * 1024;
 const AD_VALIDITY_MS = 2 * 24 * 60 * 60 * 1000;
 
@@ -7723,7 +7233,7 @@ function fallbackCopy(text) {
 }
 
 /* ================================================================
-   SEHEMU YA 7B: COMMISSION PAYMENT STATUS (SUPER ADMIN APPROVAL)
+   SEHEMU YA 7B: COMMISSION PAYMENT STATUS
    ================================================================ */
 function migrateCommissionPaidStatus() {
     const arr = getMexEmployees();
@@ -15333,10 +14843,10 @@ Object.assign(window, {
     payAllCommissions
 });
 
-console.log('✅ MeX PRO v28 — Commission Payment + Revenue Tracking.');
-console.log('   • Super Admin anaweza kuthibitisha malipo ya commission kwa employees');
-console.log('   • Employees wanaona status ya PAID/PENDING kwenye dashboards zao');
-console.log('   • Super Admin Dashboard inaonyesha: Gross Revenue, Commission Paid, Net Profit (MeX)');
+console.log('✅ MeX PRO v29 — Video mpaka 200 MB.');
+console.log('   • MAX_VIDEO_SECONDS = 60');
+console.log('   • MAX_VIDEO_BYTES = 200 * 1024 * 1024 (200 MB)');
+console.log('   • Tafsiri zote zimesasishwa (EN/SW/FR/ZH).');
 </script>
 </body>
 </html>
