@@ -102,7 +102,7 @@ body.dark {
     --service-fee-text: #fcd34d;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; background: var(--bg-body); overscroll-behavior-y: none; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 body {
     font-family: var(--font);
     background: var(--bg-body);
@@ -353,7 +353,6 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
 .app-container {
     display: none;
     height: 100vh;
-    height: -webkit-fill-available;
     height: 100dvh;
     overflow: hidden;
     padding: 12px;
@@ -650,17 +649,10 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
 .content-area {
     flex: 1;
     overflow-y: auto;
-    overflow-x: hidden;
     padding: 24px 28px 32px;
     padding-bottom: calc(32px + var(--safe-bottom));
-    overscroll-behavior-y: contain;
-    -webkit-overflow-scrolling: auto;
-    contain: layout;
-    background: var(--bg-body);
-    isolation: isolate;
-}
-.content-area > * {
-    animation: fadeIn .25s ease;
+    animation: fadeIn .35s ease;
+    -webkit-overflow-scrolling: touch;
 }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin-bottom: 18px; }
@@ -2415,8 +2407,8 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
     .super-dash-stats { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
 }
 @media (max-width: 768px) {
-    .app-container { padding: 0; gap: 0; height: 100dvh; height: -webkit-fill-available; background: var(--bg-body); }
-    .main-content { border-radius: 0; border: none; box-shadow: none; height: 100dvh; height: -webkit-fill-available; background: var(--bg-body); }
+    .app-container { padding: 0; gap: 0; height: 100dvh; }
+    .main-content { border-radius: 0; border: none; box-shadow: none; height: 100dvh; }
     .sidebar {
         position: fixed;
         top: 0;
@@ -2459,7 +2451,7 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
     .sub-alert-btn { padding: 6px 10px; font-size: .72rem; }
     .sub-alert-btn .sub-days { padding: 0 7px; font-size: .65rem; }
     .low-stock-alert-btn { padding: 6px 10px; font-size: .72rem; }
-    .content-area { padding: 12px 12px calc(60px + var(--safe-bottom)); background: var(--bg-body); }
+    .content-area { padding: 12px 12px calc(24px + var(--safe-bottom)); }
     .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 14px; }
     .stat-card { padding: 10px 12px; border-radius: 14px; min-height: 58px; }
     .stat-card .stat-label { font-size: .55rem; padding-right: 20px; letter-spacing: .2px; }
@@ -2590,7 +2582,7 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
     .mobile-menu-btn { width: 38px; height: 38px; }
     .brand-text { font-size: 1rem !important; }
     .section-header h2 { font-size: .95rem; }
-    .content-area { padding: 10px 10px calc(60px + var(--safe-bottom)); }
+    .content-area { padding: 10px 10px calc(20px + var(--safe-bottom)); }
     .card-body { padding: 12px 14px; }
     .card-header { padding: 12px 14px; }
     .mex-cred-row .mex-cred-value { font-size: .88rem; padding: 8px 10px; }
@@ -2606,128 +2598,6 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
         animation-iteration-count: 1 !important;
         transition-duration: .001ms !important;
     }
-}
-
-/* ================================================================
-   MOBILE SCROLL OPTIMIZATION — SOFT SLIDE, FAST RESPONSE
-   ================================================================ */
-@media (min-width: 769px) {
-    html { scroll-behavior: smooth; }
-}
-@media (max-width: 768px) {
-    html, body { scroll-behavior: auto; }
-}
-@media (max-width: 768px) {
-    .content-area {
-        animation: none !important;
-        scroll-padding-bottom: 80px;
-        overscroll-behavior-y: contain;
-        touch-action: pan-y;
-    }
-    .main-content {
-        overscroll-behavior-y: contain;
-        background: var(--bg-body);
-    }
-    .modal-overlay {
-        -webkit-backdrop-filter: blur(2px);
-        backdrop-filter: blur(2px);
-    }
-    .card { box-shadow: 0 2px 10px rgba(0,0,0,.05); }
-    .card:hover { box-shadow: 0 2px 10px rgba(0,0,0,.05); transform: none; }
-    .stat-card:hover { transform: none; }
-    .super-stat-card:hover { transform: none; }
-    .table-wrap {
-        overscroll-behavior-x: contain;
-        touch-action: pan-x pan-y;
-        scroll-snap-type: none;
-    }
-    .sidebar {
-        overscroll-behavior-y: contain;
-        touch-action: pan-y;
-    }
-    video.mex-auto-video {
-        will-change: auto;
-    }
-}
-
-/* ================================================================
-   iOS SAFARI FIX — GHOST GREY/DARK AREA ON SCROLL
-   ================================================================ */
-html {
-    background: var(--bg-body) !important;
-    overscroll-behavior-y: none;
-    -webkit-overflow-scrolling: auto;
-}
-body {
-    background: var(--bg-body) !important;
-    overscroll-behavior-y: none;
-}
-.app-container {
-    background: var(--bg-body) !important;
-    height: 100vh;
-    height: -webkit-fill-available;
-    height: 100dvh;
-}
-.main-content {
-    background: var(--bg-body) !important;
-    height: 100%;
-    min-height: 100%;
-}
-.content-area {
-    background: var(--bg-body) !important;
-    will-change: auto !important;
-    -webkit-transform: none !important;
-    transform: none !important;
-    -webkit-backface-visibility: visible !important;
-    backface-visibility: visible !important;
-    contain: layout !important;
-    isolation: isolate;
-    -webkit-overflow-scrolling: auto;
-}
-@media (max-width: 768px) {
-    .app-container {
-        height: 100vh;
-        height: -webkit-fill-available;
-        height: 100dvh;
-        background: var(--bg-body) !important;
-    }
-    .main-content {
-        height: 100%;
-        background: var(--bg-body) !important;
-    }
-    .content-area {
-        padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px)) !important;
-        min-height: calc(100vh - 60px);
-        min-height: calc(100dvh - 60px);
-        background: var(--bg-body) !important;
-        contain: none !important;
-    }
-}
-@supports (-webkit-touch-callout: none) {
-    html, body {
-        background: var(--bg-body) !important;
-        -webkit-overflow-scrolling: auto;
-    }
-    .content-area {
-        -webkit-overflow-scrolling: auto !important;
-        -webkit-transform: none !important;
-        transform: none !important;
-        will-change: auto !important;
-        contain: none !important;
-        background: var(--bg-body) !important;
-    }
-    .app-container {
-        height: -webkit-fill-available;
-        background: var(--bg-body) !important;
-    }
-}
-body.dark {
-    background: var(--bg-body) !important;
-}
-body.dark .app-container,
-body.dark .main-content,
-body.dark .content-area {
-    background: var(--bg-body) !important;
 }
 </style>
 </head>
@@ -2994,7 +2864,7 @@ body.dark .content-area {
 
 <script>
 /* ================================================================
-   TRANSLATIONS — Imebaki kama ilivyo
+   TRANSLATIONS
    ================================================================ */
 const TRANSLATIONS = {
 en: {
@@ -5296,45 +5166,6 @@ zh: {
 };
 
 /* ================================================================
-   iOS SAFARI SCROLL REPAINT FIX
-   Ina-force repaint baada ya scroll kuisha kwenye iPhone
-   ================================================================ */
-(function() {
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-    if (!isIOS) return;
-    let repaintTimer;
-    const contentArea = document.getElementById('contentArea');
-    if (contentArea) {
-        contentArea.addEventListener('scroll', function() {
-            clearTimeout(repaintTimer);
-            repaintTimer = setTimeout(() => {
-                const bg = getComputedStyle(document.body).backgroundColor;
-                contentArea.style.backgroundColor = bg;
-                void contentArea.offsetHeight;
-            }, 100);
-        }, { passive: true });
-    }
-    let lastHeight = window.innerHeight;
-    window.addEventListener('resize', function() {
-        if (window.innerHeight !== lastHeight) {
-            lastHeight = window.innerHeight;
-            document.body.style.display = 'none';
-            void document.body.offsetHeight;
-            document.body.style.display = '';
-        }
-    });
-    window.addEventListener('orientationchange', function() {
-        setTimeout(() => {
-            document.body.style.display = 'none';
-            void document.body.offsetHeight;
-            document.body.style.display = '';
-        }, 300);
-    });
-    console.log('🍎 iOS detected — scroll repaint fix applied');
-})();
-
-/* ================================================================
    LANGUAGE CONSTANTS
    ================================================================ */
 const LANG_NAMES = { en: 'English', sw: 'Kiswahili', fr: 'Français', zh: '中文' };
@@ -5390,6 +5221,10 @@ const adObjectUrls = {};
 let panelSelectedPlan = 'monthly';
 let panelSelectedPlanAmount = 25000;
 let currentSuperAdminTab = 'companies';
+
+/* ================================================================
+   VIDEO AUTOPLAY ON SCROLL — GLOBAL STATE
+   ================================================================ */
 let videoAutoplayObserver = null;
 let userHasInteracted = false;
 let activeVideo = null;
@@ -5445,6 +5280,7 @@ function markUserInteracted() {
 
 /* ================================================================
    VIDEO AUTOPLAY ON SCROLL — SETUP
+   Video starts immediately WITHOUT black flash (preload=auto + autoplay)
    ================================================================ */
 function setupVideoAutoplayObserver() {
     if (videoAutoplayObserver) {
@@ -5459,7 +5295,7 @@ function setupVideoAutoplayObserver() {
             v.volume = 1;
             v.setAttribute('playsinline', '');
             v.setAttribute('webkit-playsinline', '');
-            v.setAttribute('preload', 'metadata');
+            v.setAttribute('preload', 'auto');
             v.setAttribute('autoplay', '');
             v.style.background = 'transparent';
             const p = v.play();
@@ -9118,7 +8954,7 @@ function renderAdsTab() {
         const hasVideo = ad.mediaType === 'video' || hasInlineVideo;
         let mediaPlaceholder = '';
         if (hasInlineVideo) {
-            mediaPlaceholder = `<video class="mex-auto-video" src="${ad.video}" loop playsinline webkit-playsinline preload="metadata" autoplay></video>`;
+            mediaPlaceholder = `<video class="mex-auto-video" src="${ad.video}" loop playsinline webkit-playsinline preload="auto" autoplay></video>`;
         } else if (hasInlineImage) {
             mediaPlaceholder = `<img src="${ad.image}" alt="Ad"/>`;
         } else {
@@ -9218,7 +9054,7 @@ function renderAdsTab() {
                 }
                 adObjectUrls[ad.id] = url;
                 if (media.type === 'video') {
-                    wrap.innerHTML = `<video class="mex-auto-video" src="${url}" loop playsinline webkit-playsinline preload="metadata" autoplay></video>`;
+                    wrap.innerHTML = `<video class="mex-auto-video" src="${url}" loop playsinline webkit-playsinline preload="auto" autoplay></video>`;
                     const adCard = wrap.closest('.card');
                     if (adCard && !adCard.classList.contains('ad-video-card')) {
                         adCard.classList.add('ad-video-card');
@@ -12153,12 +11989,11 @@ Object.assign(window, {
     setupVideoAutoplayObserver
 });
 
-console.log('✅ MeX PRO v33 — iOS Safari Fixed + Mobile Scroll Optimized');
-console.log('   • iOS ghost grey/dark on scroll — FIXED');
-console.log('   • Background solid on html, body, app-container, main-content, content-area');
-console.log('   • Video preload="metadata" for smoother scroll');
-console.log('   • Mobile native momentum scroll');
-console.log('   • All features preserved');
+console.log('✅ MeX PRO v31 — Video Direct Play (No Dark) + Chat System Fixed');
+console.log('   • Video plays immediately without dark flash');
+console.log('   • Video has sound by default after first click');
+console.log('   • Chat system fully functional with contacts, messages, files');
+console.log('   • Free ads: 3h · Paid ads: 48h');
 </script>
 </body>
 </html>
