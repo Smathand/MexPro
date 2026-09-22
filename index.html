@@ -102,7 +102,7 @@ body.dark {
     --service-fee-text: #fcd34d;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 body {
     font-family: var(--font);
     background: var(--bg-body);
@@ -649,15 +649,10 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
 .content-area {
     flex: 1;
     overflow-y: auto;
-    overflow-x: hidden;
     padding: 24px 28px 32px;
     padding-bottom: calc(32px + var(--safe-bottom));
-    overscroll-behavior-y: contain;
+    animation: fadeIn .35s ease;
     -webkit-overflow-scrolling: touch;
-    contain: layout style;
-}
-.content-area > * {
-    animation: fadeIn .25s ease;
 }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin-bottom: 18px; }
@@ -2603,66 +2598,6 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
         animation-iteration-count: 1 !important;
         transition-duration: .001ms !important;
     }
-}
-
-/* ================================================================
-   MOBILE SCROLL OPTIMIZATION — SOFT SLIDE, FAST RESPONSE
-   ================================================================ */
-@media (min-width: 769px) {
-    html { scroll-behavior: smooth; }
-}
-@media (max-width: 768px) {
-    html, body { scroll-behavior: auto; }
-}
-.content-area {
-    will-change: scroll-position;
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-}
-@media (max-width: 768px) {
-    .content-area {
-        animation: none !important;
-        padding-bottom: calc(80px + var(--safe-bottom));
-        scroll-padding-bottom: 80px;
-        overscroll-behavior-y: contain;
-        touch-action: pan-y;
-    }
-    .main-content {
-        overscroll-behavior-y: contain;
-        -webkit-overflow-scrolling: touch;
-    }
-    .modal-overlay {
-        -webkit-backdrop-filter: blur(2px);
-        backdrop-filter: blur(2px);
-    }
-    .card { box-shadow: 0 2px 10px rgba(0,0,0,.05); }
-    .card:hover { box-shadow: 0 2px 10px rgba(0,0,0,.05); transform: none; }
-    .stat-card:hover { transform: none; }
-    .super-stat-card:hover { transform: none; }
-    .table-wrap {
-        overscroll-behavior-x: contain;
-        touch-action: pan-x pan-y;
-        scroll-snap-type: none;
-    }
-    .sidebar {
-        overscroll-behavior-y: contain;
-        touch-action: pan-y;
-    }
-    video.mex-auto-video {
-        will-change: auto;
-        transform: translateZ(0);
-    }
-}
-@supports (-webkit-touch-callout: none) {
-    .content-area {
-        -webkit-overflow-scrolling: touch;
-        overscroll-behavior-y: contain;
-    }
-}
-body {
-    overscroll-behavior-y: none;
 }
 </style>
 </head>
@@ -5345,6 +5280,7 @@ function markUserInteracted() {
 
 /* ================================================================
    VIDEO AUTOPLAY ON SCROLL — SETUP
+   Video starts immediately WITHOUT black flash (preload=auto + autoplay)
    ================================================================ */
 function setupVideoAutoplayObserver() {
     if (videoAutoplayObserver) {
@@ -5359,7 +5295,7 @@ function setupVideoAutoplayObserver() {
             v.volume = 1;
             v.setAttribute('playsinline', '');
             v.setAttribute('webkit-playsinline', '');
-            v.setAttribute('preload', 'metadata');
+            v.setAttribute('preload', 'auto');
             v.setAttribute('autoplay', '');
             v.style.background = 'transparent';
             const p = v.play();
@@ -9018,7 +8954,7 @@ function renderAdsTab() {
         const hasVideo = ad.mediaType === 'video' || hasInlineVideo;
         let mediaPlaceholder = '';
         if (hasInlineVideo) {
-            mediaPlaceholder = `<video class="mex-auto-video" src="${ad.video}" loop playsinline webkit-playsinline preload="metadata" autoplay></video>`;
+            mediaPlaceholder = `<video class="mex-auto-video" src="${ad.video}" loop playsinline webkit-playsinline preload="auto" autoplay></video>`;
         } else if (hasInlineImage) {
             mediaPlaceholder = `<img src="${ad.image}" alt="Ad"/>`;
         } else {
@@ -9118,7 +9054,7 @@ function renderAdsTab() {
                 }
                 adObjectUrls[ad.id] = url;
                 if (media.type === 'video') {
-                    wrap.innerHTML = `<video class="mex-auto-video" src="${url}" loop playsinline webkit-playsinline preload="metadata" autoplay></video>`;
+                    wrap.innerHTML = `<video class="mex-auto-video" src="${url}" loop playsinline webkit-playsinline preload="auto" autoplay></video>`;
                     const adCard = wrap.closest('.card');
                     if (adCard && !adCard.classList.contains('ad-video-card')) {
                         adCard.classList.add('ad-video-card');
@@ -12053,12 +11989,11 @@ Object.assign(window, {
     setupVideoAutoplayObserver
 });
 
-console.log('✅ MeX PRO v32 — Mobile Scroll Optimized (Soft Slide)');
-console.log('   • Native momentum scroll on mobile');
-console.log('   • No animation jank during scroll');
-console.log('   • Reduced blur & shadows on mobile');
-console.log('   • Video preload="metadata" for smoother scroll');
-console.log('   • All previous features preserved');
+console.log('✅ MeX PRO v31 — Video Direct Play (No Dark) + Chat System Fixed');
+console.log('   • Video plays immediately without dark flash');
+console.log('   • Video has sound by default after first click');
+console.log('   • Chat system fully functional with contacts, messages, files');
+console.log('   • Free ads: 3h · Paid ads: 48h');
 </script>
 </body>
 </html>
