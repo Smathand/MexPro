@@ -2380,6 +2380,167 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
     transition: opacity .3s ease;
 }
 .sidebar-backdrop.show { display: block; opacity: 1; }
+
+/* ============================================================
+   AD MEDIA VIEWER (lightbox) — NEW
+   ============================================================ */
+.ad-media-viewer-modal {
+    background: rgba(0,0,0,.92);
+    z-index: 100005;
+    padding: 0;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    align-items: center;
+    justify-content: center;
+}
+.ad-media-viewer-modal.show { display: flex !important; }
+.ad-media-viewer-modal .amv-box {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    padding-top: calc(64px + var(--safe-top));
+    padding-bottom: calc(20px + var(--safe-bottom));
+    animation: amvFade .25s ease;
+}
+@keyframes amvFade { from { opacity: 0; } to { opacity: 1; } }
+.ad-media-viewer-modal .amv-close {
+    position: absolute;
+    top: calc(14px + var(--safe-top));
+    right: 14px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50% !important;
+    background: rgba(255,255,255,.15) !important;
+    color: #fff !important;
+    border: 1px solid rgba(255,255,255,.2) !important;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 20;
+    transition: var(--transition);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+.ad-media-viewer-modal .amv-close:hover {
+    background: var(--accent-danger) !important;
+    border-color: var(--accent-danger) !important;
+    transform: scale(1.08);
+}
+.ad-media-viewer-modal .amv-counter {
+    position: absolute;
+    top: calc(22px + var(--safe-top));
+    left: 20px;
+    color: #fff;
+    font-size: .8rem;
+    font-weight: 700;
+    padding: 6px 14px;
+    background: rgba(255,255,255,.12);
+    border-radius: 20px;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    letter-spacing: .5px;
+}
+.ad-media-viewer-modal .amv-content {
+    flex: 1;
+    max-width: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    min-height: 0;
+}
+.ad-media-viewer-modal .amv-content img,
+.ad-media-viewer-modal .amv-content video {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 12px;
+    display: block;
+    background: #000;
+    box-shadow: 0 12px 48px rgba(0,0,0,.6);
+}
+.ad-media-viewer-modal .amv-content video:focus { outline: none; }
+.ad-media-viewer-modal .amv-info {
+    color: #fff;
+    text-align: center;
+    margin-top: 14px;
+    font-size: .85rem;
+    max-width: 640px;
+    padding: 0 12px;
+    flex-shrink: 0;
+}
+.ad-media-viewer-modal .amv-info .amv-title {
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 6px;
+    color: #fff;
+    line-height: 1.35;
+}
+.ad-media-viewer-modal .amv-info .amv-company {
+    color: #a5d6a7;
+    font-weight: 600;
+    font-size: .85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.ad-media-viewer-modal .amv-info .amv-expiry {
+    color: #fcd34d;
+    font-size: .72rem;
+    margin-top: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+.ad-media-viewer-modal .amv-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    border-radius: 50% !important;
+    background: rgba(255,255,255,.12) !important;
+    color: #fff !important;
+    border: 1px solid rgba(255,255,255,.2) !important;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    cursor: pointer;
+    z-index: 15;
+    transition: var(--transition);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+.ad-media-viewer-modal .amv-nav:hover { background: var(--accent-1) !important; border-color: var(--accent-1) !important; }
+.ad-media-viewer-modal .amv-nav.prev { left: 14px; }
+.ad-media-viewer-modal .amv-nav.next { right: 14px; }
+.ad-media-viewer-modal.has-multiple .amv-nav { display: flex; }
+.ad-media-viewer-modal .amv-empty {
+    color: #fff;
+    text-align: center;
+    padding: 40px 20px;
+    opacity: .7;
+}
+.ad-media-viewer-modal .amv-empty i {
+    font-size: 3.5rem;
+    opacity: .4;
+    display: block;
+    margin-bottom: 14px;
+}
+@media (max-width: 768px) {
+    .ad-media-viewer-modal .amv-nav { width: 40px; height: 40px; font-size: .95rem; }
+    .ad-media-viewer-modal .amv-nav.prev { left: 6px; }
+    .ad-media-viewer-modal .amv-nav.next { right: 6px; }
+    .ad-media-viewer-modal .amv-info .amv-title { font-size: .9rem; }
+}
 @media print {
     body * { visibility: hidden !important; }
     body .modal-overlay, body .modal-box, body #receiptPrintArea, body #receiptPrintArea * { visibility: visible !important; }
@@ -2857,6 +3018,18 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
                 <button type="submit" class="btn btn-transfer-stock btn-icon"><i class="fas fa-exchange-alt"></i><span data-i18n="transfer_btn">Transfer</span></button>
             </div>
         </form>
+    </div>
+</div>
+
+<!-- AD MEDIA VIEWER — fullscreen lightbox -->
+<div class="modal-overlay ad-media-viewer-modal" id="adMediaViewerModal">
+    <div class="amv-box">
+        <span class="amv-counter" id="amvCounter" style="display:none;"></span>
+        <button class="amv-close" onclick="closeAdMediaViewer()" title="Close"><i class="fas fa-times"></i></button>
+        <button class="amv-nav prev" onclick="navigateAdMediaViewer(-1)" title="Previous"><i class="fas fa-chevron-left"></i></button>
+        <button class="amv-nav next" onclick="navigateAdMediaViewer(1)" title="Next"><i class="fas fa-chevron-right"></i></button>
+        <div class="amv-content" id="amvContent"></div>
+        <div class="amv-info" id="amvInfo"></div>
     </div>
 </div>
 
@@ -3439,7 +3612,10 @@ en: {
     store_label:'Store',
     language:'Language',
     view_profile:'View profile',
-    not_set:'Not set'
+    not_set:'Not set',
+    /* === AD MEDIA VIEWER === */
+    ad_media_viewer_of:'{current} of {total}',
+    ad_media_click_expand:'Click to view'
 },
 sw: {
     login_subtitle:'Ingia kwenye kampuni yako',
@@ -4013,7 +4189,9 @@ sw: {
     store_label:'Duka',
     language:'Lugha',
     view_profile:'Ona wasifu',
-    not_set:'Haijawekwa'
+    not_set:'Haijawekwa',
+    ad_media_viewer_of:'{current} kati ya {total}',
+    ad_media_click_expand:'Bofya kuona'
 },
 fr: {
     login_subtitle:"Connectez-vous à votre entreprise",
@@ -4587,7 +4765,9 @@ fr: {
     store_label:"Magasin",
     language:"Langue",
     view_profile:"Voir le profil",
-    not_set:"Non défini"
+    not_set:"Non défini",
+    ad_media_viewer_of:'{current} sur {total}',
+    ad_media_click_expand:'Cliquez pour voir'
 },
 zh: {
     login_subtitle:'登录到您的公司',
@@ -5161,7 +5341,9 @@ zh: {
     store_label:'门店',
     language:'语言',
     view_profile:'查看资料',
-    not_set:'未设置'
+    not_set:'未设置',
+    ad_media_viewer_of:'第 {current} / {total}',
+    ad_media_click_expand:'点击查看'
 }
 };
 
@@ -5222,6 +5404,11 @@ let panelSelectedPlan = 'monthly';
 let panelSelectedPlanAmount = 25000;
 let currentSuperAdminTab = 'companies';
 
+/* === AD MEDIA VIEWER STATE === */
+let amvCurrentAdId = null;
+let amvAdList = [];
+let amvCurrentIndex = 0;
+
 /* ================================================================
    VIDEO AUTOPLAY ON SCROLL — GLOBAL STATE
    ================================================================ */
@@ -5243,7 +5430,6 @@ const LOW_STOCK_THRESHOLD = 30;
 const GLOBAL_ADS_KEY = 'sb_global_ads';
 const MEX_EMPLOYEES_KEY = 'sb_mex_employees';
 const MEX_SESSION_KEY = 'sb_mex_current_employee';
-/* === ADS: All ads are FREE — expire after 24 hours === */
 const AD_PRICE = 0;
 const AD_FREE_VALIDITY_MS = 24 * 60 * 60 * 1000;
 const AD_PAID_VALIDITY_MS = 24 * 60 * 60 * 1000;
@@ -5281,7 +5467,6 @@ function markUserInteracted() {
 
 /* ================================================================
    VIDEO AUTOPLAY ON SCROLL — SETUP
-   Video starts immediately WITHOUT black flash (preload=auto + autoplay)
    ================================================================ */
 function setupVideoAutoplayObserver() {
     if (videoAutoplayObserver) {
@@ -6003,7 +6188,6 @@ async function deleteAdMedia(id) {
         return false;
     }
 }
-/* === ADS: Validity is ALWAYS 24 hours now (all ads are free) === */
 function getAdValidityMs(ad) {
     return 24 * 60 * 60 * 1000;
 }
@@ -6583,6 +6767,334 @@ function getCommenterAvatar(comment) {
         currentTenantId = oldTenant;
     }
     return 'https://ui-avatars.com/api/?background=128C7E&color=fff&name=' + encodeURIComponent(comment.userName || 'User');
+}
+
+/* ================================================================
+   AD AUTHOR PHOTO
+   ================================================================ */
+function getAdAuthorPhoto(ad) {
+    if (!ad) return '';
+    if (ad.postedBy === 'super') {
+        return 'https://ui-avatars.com/api/?background=f59e0b&color=fff&name=Super+Admin';
+    }
+    if (ad.tenantId && ad.authorUserId) {
+        const old = currentTenantId;
+        currentTenantId = ad.tenantId;
+        try {
+            const users = getTenantData('users', []);
+            const u = users.find(x => Number(x.id) === Number(ad.authorUserId));
+            currentTenantId = old;
+            if (u && u.photo && u.photo.startsWith('data:image')) {
+                return u.photo;
+            }
+        } catch (e) {
+            currentTenantId = old;
+        }
+    }
+    return `https://ui-avatars.com/api/?background=128C7E&color=fff&name=${encodeURIComponent(ad.companyName || 'Company')}`;
+}
+
+/* ================================================================
+   AD MEDIA VIEWER (LIGHTBOX) — NEW
+   ================================================================ */
+async function openAdMediaViewer(adId) {
+    const clickedAd = getGlobalAds().find(a => a.id === Number(adId));
+    if (!clickedAd) {
+        showToast('Ad not found.', 'error');
+        return;
+    }
+    /* Build the list of ads from the same author (for prev/next navigation) */
+    let list = [];
+    if (clickedAd.postedBy === 'super') {
+        list = getGlobalAds().filter(a => a.postedBy === 'super');
+    } else {
+        list = getGlobalAds().filter(a =>
+            a.postedBy === 'company' &&
+            a.tenantId === clickedAd.tenantId &&
+            Number(a.authorUserId) === Number(clickedAd.authorUserId)
+        );
+    }
+    /* Sort newest first — same order as profile modal */
+    list.sort((a, b) => b.timestamp - a.timestamp);
+    if (list.length === 0) list = [clickedAd];
+    const idx = list.findIndex(a => Number(a.id) === Number(clickedAd.id));
+    amvAdList = list;
+    amvCurrentIndex = idx >= 0 ? idx : 0;
+    amvCurrentAdId = clickedAd.id;
+    const ov = document.getElementById('adMediaViewerModal');
+    if (!ov) return;
+    /* Show counter & nav if multiple */
+    ov.classList.toggle('has-multiple', list.length > 1);
+    const counter = document.getElementById('amvCounter');
+    if (counter) {
+        if (list.length > 1) {
+            counter.style.display = 'block';
+            counter.textContent = (t('ad_media_viewer_of') || '{current} of {total}')
+                .replace('{current}', amvCurrentIndex + 1)
+                .replace('{total}', list.length);
+        } else {
+            counter.style.display = 'none';
+        }
+    }
+    ov.classList.add('show');
+    document.body.classList.add('modal-open');
+    /* If profile modal is showing, don't hide it — viewer sits on top */
+    document.body.classList.add('ad-viewer-open');
+    await renderAdMediaViewerContent();
+}
+async function renderAdMediaViewerContent() {
+    const ad = amvAdList[amvCurrentIndex];
+    if (!ad) return;
+    const content = document.getElementById('amvContent');
+    const info = document.getElementById('amvInfo');
+    if (!content) return;
+    content.innerHTML = `<div class="amv-empty"><i class="fas fa-spinner fa-spin"></i><div>${t('ads_media_loading')}</div></div>`;
+    let url = '';
+    let type = 'none';
+    if (ad.video && ad.video.length) {
+        url = ad.video;
+        type = 'video';
+    } else if (ad.image && ad.image.length) {
+        url = ad.image;
+        type = 'image';
+    } else {
+        try {
+            const media = await getAdMedia(ad.id);
+            if (media && media.blob) {
+                if (adObjectUrls[ad.id]) {
+                    url = adObjectUrls[ad.id];
+                } else {
+                    url = URL.createObjectURL(media.blob);
+                    adObjectUrls[ad.id] = url;
+                }
+                type = media.type || 'image';
+            }
+        } catch (e) {
+            console.error('viewer media load', e);
+        }
+    }
+    if (!url) {
+        content.innerHTML = `<div class="amv-empty"><i class="fas fa-image"></i><div>${t('ads_media_unavailable')}</div></div>`;
+    } else if (type === 'video') {
+        content.innerHTML = `<video id="amvVideoEl" src="${url}" controls autoplay playsinline webkit-playsinline preload="auto"></video>`;
+        const v = document.getElementById('amvVideoEl');
+        if (v) {
+            v.play().catch(() => {
+                v.muted = true;
+                v.play().catch(() => {});
+            });
+        }
+    } else {
+        content.innerHTML = `<img src="${url}" alt="${escapeHtml(ad.title || '')}"/>`;
+    }
+    if (info) {
+        info.innerHTML = `
+            <div class="amv-title">${escapeHtml(ad.title || '')}</div>
+            <div class="amv-company"><i class="fas fa-building"></i> ${escapeHtml(ad.companyName || '')}</div>
+            <div class="amv-expiry"><i class="fas fa-hourglass-half"></i> ${formatAdExpiry(ad)}</div>
+        `;
+    }
+}
+function navigateAdMediaViewer(delta) {
+    if (amvAdList.length <= 1) return;
+    amvCurrentIndex = (amvCurrentIndex + delta + amvAdList.length) % amvAdList.length;
+    amvCurrentAdId = amvAdList[amvCurrentIndex].id;
+    const counter = document.getElementById('amvCounter');
+    if (counter) {
+        counter.textContent = (t('ad_media_viewer_of') || '{current} of {total}')
+            .replace('{current}', amvCurrentIndex + 1)
+            .replace('{total}', amvAdList.length);
+    }
+    renderAdMediaViewerContent();
+}
+function closeAdMediaViewer() {
+    const ov = document.getElementById('adMediaViewerModal');
+    const content = document.getElementById('amvContent');
+    if (ov) ov.classList.remove('show');
+    if (content) {
+        const v = content.querySelector('video');
+        if (v) {
+            try { v.pause(); v.removeAttribute('src'); v.load(); } catch (e) {}
+        }
+        content.innerHTML = '';
+    }
+    amvCurrentAdId = null;
+    amvAdList = [];
+    amvCurrentIndex = 0;
+    document.body.classList.remove('ad-viewer-open');
+    /* Only remove modal-open if no other modal is visible */
+    const anyOpen = document.querySelector('.modal-overlay.show');
+    if (!anyOpen) document.body.classList.remove('modal-open');
+}
+
+/* ================================================================
+   AD AUTHOR PROFILE MODAL — Instagram style
+   FIXED: Media loaded from IndexedDB + clickable to open viewer
+   ================================================================ */
+function openAdAuthorProfile(adId) {
+    const clickedAd = getGlobalAds().find(a => a.id === Number(adId));
+    if (!clickedAd) {
+        showToast('Ad not found.', 'error');
+        return;
+    }
+
+    let user = null;
+    let companyName = clickedAd.companyName || 'Company';
+    let allAds = [];
+
+    if (clickedAd.postedBy === 'super') {
+        user = {
+            fullName: 'Super Admin',
+            username: 'Super Admin',
+            role: 'superadmin',
+            photo: '',
+            email: '',
+            phone: ''
+        };
+        allAds = getGlobalAds().filter(a => a.postedBy === 'super');
+    } else {
+        const old = currentTenantId;
+        currentTenantId = clickedAd.tenantId;
+        try {
+            const users = getTenantData('users', []);
+            user = users.find(x => Number(x.id) === Number(clickedAd.authorUserId));
+        } catch (e) {}
+        currentTenantId = old;
+
+        const tenant = getTenant(clickedAd.tenantId);
+        companyName = tenant ? tenant.companyName : companyName;
+
+        allAds = getGlobalAds().filter(a =>
+            a.postedBy === 'company' &&
+            a.tenantId === clickedAd.tenantId &&
+            Number(a.authorUserId) === Number(clickedAd.authorUserId)
+        );
+    }
+
+    const photo = getAdAuthorPhoto(clickedAd);
+    const name = user ? (user.fullName || user.username) : (clickedAd.authorName || 'User');
+    const initials = name.charAt(0).toUpperCase();
+    const isOnline = user && user.id ? isUserOnline(user.id) : false;
+
+    let roleBadge = '';
+    if (clickedAd.postedBy === 'super') {
+        roleBadge = `<span class="badge" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;"><i class="fas fa-crown"></i> Super Admin</span>`;
+    } else if (user) {
+        roleBadge = `<span class="badge ${getRoleBadgeClass(user.role)}">${getRoleLabel(user.role)}</span>`;
+    }
+
+    const avatarHtml = photo
+        ? `<img src="${photo}" style="width:110px;height:110px;border-radius:50%;object-fit:cover;border:4px solid var(--accent-1);box-shadow:0 4px 20px rgba(18,140,126,.25);" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"/><div class="pvm-initials" style="display:none;">${initials}</div>`
+        : `<div class="pvm-initials">${initials}</div>`;
+
+    allAds.sort((a, b) => b.timestamp - a.timestamp);
+
+    const adsHtml = allAds.map(a => {
+        const expLabel = formatAdExpiry(a);
+        const viewerCount = getViewerCount(a);
+        const hasInlineVideo = a.video && a.video.length;
+        const hasInlineImage = a.image && a.image.length;
+        const mediaWrapId = 'profile-ad-media-' + a.id;
+
+        let media = '';
+        if (hasInlineVideo) {
+            media = `<video src="${a.video}" playsinline preload="metadata" muted loop autoplay style="width:100%;height:100%;object-fit:cover;"></video>`;
+        } else if (hasInlineImage) {
+            media = `<img src="${a.image}" alt="" style="width:100%;height:100%;object-fit:cover;"/>`;
+        } else {
+            media = `<div class="ad-media-placeholder" id="${mediaWrapId}">
+                <i class="fas fa-spinner fa-spin" style="font-size:1.1rem;"></i>
+                <span style="font-size:.6rem;">${t('ads_media_loading')}</span>
+            </div>`;
+        }
+
+        const expandHint = (hasInlineVideo || hasInlineImage)
+            ? `<div class="profile-ad-media-expand"><i class="fas fa-expand"></i></div>`
+            : `<div class="profile-ad-media-expand"><i class="fas fa-expand"></i></div>`;
+
+        return `<div class="card" style="margin-bottom:12px;padding:12px;">
+            <div style="display:flex;gap:12px;">
+                <div class="profile-ad-media-box" onclick="openAdMediaViewer('${a.id}')" title="${t('ad_media_click_expand')}" style="width:110px;height:110px;flex-shrink:0;border-radius:8px;overflow:hidden;background:var(--input-bg);position:relative;display:flex;align-items:center;justify-content:center;cursor:pointer;">
+                    <div id="${mediaWrapId}" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
+                        ${media}
+                    </div>
+                    ${expandHint}
+                </div>
+                <div style="flex:1;min-width:0;">
+                    <h4 style="margin:0 0 6px;font-size:.92rem;font-weight:700;color:var(--text-primary);word-break:break-word;">${escapeHtml(a.title || '')}</h4>
+                    <p style="font-size:.8rem;color:var(--text-secondary);margin:0 0 8px;line-height:1.45;word-break:break-word;">${escapeHtml(a.content || '')}</p>
+                    <div style="font-size:.68rem;color:var(--text-muted);display:flex;gap:10px;flex-wrap:wrap;">
+                        <span><i class="far fa-clock"></i> ${fmtDateTime(a.timestamp)}</span>
+                        <span><i class="fas fa-eye"></i> ${viewerCount}</span>
+                        <span><i class="fas fa-hourglass-half"></i> ${expLabel}</span>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+
+    const ov = document.getElementById('modalOverlay');
+    const bx = document.getElementById('modalBox');
+    bx.innerHTML = `
+        <div style="text-align:center;">
+            <div style="display:flex;justify-content:center;margin-bottom:12px;">${avatarHtml}</div>
+            <div style="font-size:1.35rem;font-weight:800;color:var(--text-primary);">${escapeHtml(name)}</div>
+            <div style="color:var(--accent-1);font-weight:700;margin:4px 0 6px;"><i class="fas fa-building"></i> ${escapeHtml(companyName)}</div>
+            <div style="margin-bottom:6px;">${roleBadge}</div>
+            ${user && user.id ? `<span class="online-status ${isOnline ? 'online' : 'offline'}" style="display:inline-flex;margin-bottom:10px;"><span class="dot ${isOnline ? 'online' : 'offline'}"></span>${isOnline ? t('attendance_online') : t('attendance_offline')}</span>` : ''}
+            ${user && user.email ? `<div style="font-size:.78rem;color:var(--text-muted);margin-top:4px;"><i class="fas fa-envelope"></i> ${escapeHtml(user.email)}</div>` : ''}
+            ${user && user.phone ? `<div style="font-size:.78rem;color:var(--text-muted);margin-top:2px;"><i class="fas fa-phone"></i> ${escapeHtml(user.phone)}</div>` : ''}
+        </div>
+
+        <hr style="border:none;border-top:1px solid var(--border-color);margin:16px 0;"/>
+
+        <h4 style="font-size:.92rem;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+            <i class="fas fa-bullhorn" style="color:var(--accent-3);"></i>
+            ${t('ads_title')}
+            <span class="badge badge-primary" style="font-size:.68rem;">${allAds.length}</span>
+        </h4>
+
+        <div style="max-height:55vh;overflow-y:auto;padding-right:4px;">
+            ${adsHtml || `<p style="text-align:center;color:var(--text-muted);padding:24px;font-style:italic;">${t('ads_no_ads')}</p>`}
+        </div>
+
+        <div class="form-actions" style="margin-top:16px;">
+            <button class="btn btn-secondary" onclick="closeModal()">${t('close')}</button>
+        </div>
+    `;
+    ov.classList.add('show');
+    document.body.classList.add('modal-open');
+
+    /* Load media from IndexedDB for ads without inline data */
+    setTimeout(async () => {
+        for (const a of allAds) {
+            if (a.image || a.video) continue;
+            const wrap = document.getElementById('profile-ad-media-' + a.id);
+            if (!wrap) continue;
+            try {
+                const media = await getAdMedia(a.id);
+                if (!media || !media.blob) {
+                    wrap.innerHTML = `<i class="fas fa-image" style="font-size:1.5rem;opacity:.35;"></i>`;
+                    continue;
+                }
+                let url = adObjectUrls[a.id];
+                if (!url) {
+                    url = URL.createObjectURL(media.blob);
+                    adObjectUrls[a.id] = url;
+                }
+                if (media.type === 'video') {
+                    wrap.innerHTML = `<video src="${url}" playsinline preload="metadata" muted loop autoplay style="width:100%;height:100%;object-fit:cover;"></video>`;
+                    const v = wrap.querySelector('video');
+                    if (v) v.play().catch(() => {});
+                } else {
+                    wrap.innerHTML = `<img src="${url}" alt="" style="width:100%;height:100%;object-fit:cover;"/>`;
+                }
+            } catch (e) {
+                console.error('load profile ad media', e);
+                wrap.innerHTML = `<i class="fas fa-image" style="font-size:1.5rem;opacity:.35;"></i>`;
+            }
+        }
+    }, 50);
 }
 
 /* ================================================================
@@ -8927,14 +9439,13 @@ views.statusAdsOnly = function () {
 };
 
 /* ================================================================
-   RENDER ADS TAB — ALL ADS ARE FREE (24h)
+   RENDER ADS TAB — with clickable media to open viewer
    ================================================================ */
 function renderAdsTab() {
     const user = getCurrentUser();
     const initialAds = cleanupExpiredAds();
     if (initialAds.length > 0) trackAdViewers(initialAds.map(a => a.id));
     const ads = cleanupExpiredAds().sort((a, b) => b.timestamp - a.timestamp);
-    /* === ADS: Single button — only Owner or Super Admin can post === */
     const canPost = isSuperAdmin || (!isMexEmployee && user && user.role === 'owner');
     const myAvatar = isSuperAdmin ? 'https://ui-avatars.com/api/?background=f59e0b&color=fff&name=Super+Admin' : getUserPhoto(user);
     const adsHtml = ads.map(ad => {
@@ -8943,7 +9454,7 @@ function renderAdsTab() {
         const authorName = ad.authorName || 'Unknown';
         const canDelete = isSuperAdmin || (!isSuperAdmin && ad.tenantId === currentTenantId);
         const viewerCount = getViewerCount(ad);
-        const avatarUrl = `https://ui-avatars.com/api/?background=${isSuper ? 'f59e0b' : '128C7E'}&color=fff&name=${encodeURIComponent(companyName)}`;
+        const avatarUrl = getAdAuthorPhoto(ad);
         const expiryMs = getAdRemainingMs(ad);
         const expiryLabel = formatAdExpiry(ad);
         const isUrgent = expiryMs < 6 * 60 * 60 * 1000;
@@ -8999,20 +9510,23 @@ function renderAdsTab() {
         return `<div class="card${hasVideo ? ' ad-video-card' : ''}" style="margin-bottom:16px;padding:16px;">
             <div class="status-card">
                 <div class="status-header">
-                    <img src="${avatarUrl}" class="status-avatar" alt="${companyName}" title="${t('view_profile')}"/>
+                    <img src="${avatarUrl}" class="status-avatar" alt="${companyName}" title="${t('view_profile')}"
+                         onclick="openAdAuthorProfile('${ad.id}')" style="cursor:pointer;"/>
                     <div class="status-meta">
-                        <div class="status-name"><i class="fas fa-${isSuper ? 'crown' : 'building'}" style="color:${isSuper ? '#f59e0b' : 'var(--accent-1)'};margin-right:4px;"></i>${companyName}</div>
+                        <div class="status-name" onclick="openAdAuthorProfile('${ad.id}')" style="cursor:pointer;">
+                            <i class="fas fa-${isSuper ? 'crown' : 'building'}" style="color:${isSuper ? '#f59e0b' : 'var(--accent-1)'};margin-right:4px;"></i>${companyName}
+                        </div>
                         <div class="status-time"><i class="far fa-clock"></i> ${fmtDateTime(ad.timestamp)} · ${authorName}</div>
                     </div>
                     ${canDelete ? `<button class="btn btn-danger btn-xs" onclick="deleteGlobalAdConfirm('${ad.id}')" style="margin-left:auto;"><i class="fas fa-trash"></i></button>` : ''}
                 </div>
                 <div class="status-body">
-                    <div class="status-image-wrap" id="ad-media-wrap-${ad.id}">${mediaPlaceholder}</div>
+                    <div class="status-image-wrap" id="ad-media-wrap-${ad.id}" onclick="openAdMediaViewer('${ad.id}')" style="cursor:pointer;" title="${t('ad_media_click_expand')}">${mediaPlaceholder}</div>
                     <div class="status-content">
                         <h3 style="font-size:1.05rem;font-weight:700;margin:0 0 6px;color:var(--text-primary);">${ad.title}</h3>
                         <p class="status-text">${ad.content}</p>
                         <div class="status-actions">
-                            <button class="viewer-badge" onclick="openViewersModal('ad','${ad.id}')"><i class="fas fa-eye"></i> ${viewerCount} ${t('ads_viewers')}</button>
+                            <button class="viewer-badge" onclick="event.stopPropagation();openViewersModal('ad','${ad.id}')"><i class="fas fa-eye"></i> ${viewerCount} ${t('ads_viewers')}</button>
                             <span class="ad-expiry-badge ${isUrgent ? 'urgent' : ''}"><i class="fas fa-hourglass-half"></i> ${expiryLabel}</span>
                             ${isSuper ? `<span class="badge" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;"><i class="fas fa-crown"></i> Admin</span>` : ''}
                         </div>
@@ -9103,7 +9617,7 @@ function renderCompanyStatusTab(user) {
 }
 
 /* ================================================================
-   OPEN AD MODAL — NO PAYMENT (All ads are FREE, 24h)
+   OPEN AD MODAL — FREE (24h)
    ================================================================ */
 function openAdModal(mode) {
     if ((!isSuperAdmin && isSystemLocked()) || isMexEmployee) {
@@ -9158,7 +9672,6 @@ async function submitAd(e, isPaid) {
         showToast(t('toast_fill_fields'), 'error');
         return;
     }
-    /* === ADS: No payment required — all ads are FREE === */
     const adId = uid();
     let mediaType = 'none';
     let mediaSaved = false;
@@ -11195,6 +11708,12 @@ function logout() {
         try { URL.revokeObjectURL(adObjectUrls[id]); } catch (e) {}
         delete adObjectUrls[id];
     });
+    /* Close ad media viewer too */
+    const amv = document.getElementById('adMediaViewerModal');
+    if (amv) amv.classList.remove('show');
+    amvCurrentAdId = null;
+    amvAdList = [];
+    amvCurrentIndex = 0;
     setCurrentUser(null);
     setMexSession(null);
     currentTenantId = null;
@@ -11212,6 +11731,7 @@ function logout() {
         document.getElementById(id).classList.remove('show');
     });
     document.body.classList.remove('modal-open');
+    document.body.classList.remove('ad-viewer-open');
     document.getElementById('loginUsername').value = '';
     document.getElementById('loginPassword').value = '';
     document.getElementById('trialTimerWrap').style.display = 'none';
@@ -11390,6 +11910,15 @@ function bindGlobalEvents() {
     if (mmb) mmb.onclick = toggleMobileSidebar;
     const backdrop = document.getElementById('sidebarBackdrop');
     if (backdrop) backdrop.onclick = closeMobileSidebar;
+    /* Close ad media viewer on backdrop click (but not on content) */
+    const amvModal = document.getElementById('adMediaViewerModal');
+    if (amvModal) {
+        amvModal.onclick = function (e) {
+            if (e.target === this || e.target.classList.contains('amv-box')) {
+                closeAdMediaViewer();
+            }
+        };
+    }
     window.addEventListener('resize', () => {
         if (window.innerWidth > 768) closeMobileSidebar();
     });
@@ -11781,6 +12310,13 @@ function escapeHtml(str) {
    ================================================================ */
 document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
+        /* Ad media viewer takes priority */
+        const amv = document.getElementById('adMediaViewerModal');
+        if (amv && amv.classList.contains('show')) {
+            closeAdMediaViewer();
+            return;
+        }
+        /* Arrow keys for navigation while viewer is open */
         closeModal();
         closeProfileModal();
         closeSubscriptionModal();
@@ -11792,6 +12328,12 @@ document.addEventListener('keydown', function (e) {
         closeMobileSidebar();
         const lm = document.getElementById('langMenu');
         if (lm) lm.classList.remove('show');
+    }
+    /* Arrow navigation for ad media viewer */
+    const amv = document.getElementById('adMediaViewerModal');
+    if (amv && amv.classList.contains('show')) {
+        if (e.key === 'ArrowLeft') navigateAdMediaViewer(-1);
+        else if (e.key === 'ArrowRight') navigateAdMediaViewer(1);
     }
 });
 
@@ -11956,14 +12498,21 @@ Object.assign(window, {
     openEmployeeCommissionModal,
     toggleCommissionPaid,
     payAllCommissions,
-    setupVideoAutoplayObserver
+    setupVideoAutoplayObserver,
+    getAdAuthorPhoto,
+    openAdAuthorProfile,
+    /* === AD MEDIA VIEWER === */
+    openAdMediaViewer,
+    closeAdMediaViewer,
+    navigateAdMediaViewer
 });
 
-console.log('✅ MeX PRO v32 — FREE ADS (24h) + Chat System Fixed');
-console.log('   • ALL ADS ARE FREE — expire after 24 hours');
-console.log('   • No payment required for ads');
-console.log('   • Video plays immediately without dark flash');
-console.log('   • Chat system fully functional with contacts, messages, files');
+console.log('✅ MeX PRO v35 — FIXED: Ad media viewer (lightbox) with play/pause/next/prev');
+console.log('   • Click any ad media (image/video) in profile OR main ads tab to open fullscreen viewer');
+console.log('   • Viewer supports video playback with native controls');
+console.log('   • Arrow keys / on-screen buttons navigate between ads');
+console.log('   • ESC or X closes viewer');
+console.log('   • Media loaded from IndexedDB with object URL reuse');
 </script>
 </body>
 </html>
