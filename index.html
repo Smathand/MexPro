@@ -2382,7 +2382,7 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
 .sidebar-backdrop.show { display: block; opacity: 1; }
 
 /* ============================================================
-   AD MEDIA VIEWER (lightbox) — NEW
+   AD MEDIA VIEWER (lightbox)
    ============================================================ */
 .ad-media-viewer-modal {
     background: rgba(0,0,0,.92);
@@ -2540,6 +2540,88 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
     .ad-media-viewer-modal .amv-nav.prev { left: 6px; }
     .ad-media-viewer-modal .amv-nav.next { right: 6px; }
     .ad-media-viewer-modal .amv-info .amv-title { font-size: .9rem; }
+}
+
+/* ============================================================
+   PROFILE AD MEDIA BOX (single click to expand)
+   ============================================================ */
+.profile-ad-media-box {
+    position: relative;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+.profile-ad-media-box:active {
+    transform: scale(.98);
+}
+.profile-ad-media-expand {
+    position: absolute;
+    bottom: 6px;
+    right: 6px;
+    background: rgba(0,0,0,.55);
+    color: #fff;
+    border-radius: 6px;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .7rem;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    opacity: 0;
+    transition: opacity .25s ease;
+    pointer-events: none;
+    z-index: 5;
+}
+.profile-ad-media-box:hover .profile-ad-media-expand,
+.profile-ad-media-box:active .profile-ad-media-expand {
+    opacity: 1;
+}
+
+/* ============================================================
+   MAIN FEED MEDIA (double-tap wrapper)
+   ============================================================ */
+.ad-double-tap-media {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    transition: transform .2s ease;
+}
+.ad-double-tap-media:active {
+    transform: scale(.995);
+}
+.ad-double-tap-hint {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: rgba(0,0,0,.55);
+    color: #fff;
+    border-radius: 8px;
+    padding: 4px 10px;
+    font-size: .62rem;
+    font-weight: 700;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    opacity: 0;
+    transition: opacity .25s ease;
+    pointer-events: none;
+    z-index: 5;
+    letter-spacing: .3px;
+}
+.ad-double-tap-media:hover .ad-double-tap-hint {
+    opacity: 1;
+}
+@media (max-width: 768px) {
+    .ad-double-tap-hint {
+        opacity: 1;
+        font-size: .58rem;
+        padding: 3px 8px;
+    }
 }
 @media print {
     body * { visibility: hidden !important; }
@@ -3021,7 +3103,6 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
     </div>
 </div>
 
-<!-- AD MEDIA VIEWER — fullscreen lightbox -->
 <div class="modal-overlay ad-media-viewer-modal" id="adMediaViewerModal">
     <div class="amv-box">
         <span class="amv-counter" id="amvCounter" style="display:none;"></span>
@@ -3613,9 +3694,8 @@ en: {
     language:'Language',
     view_profile:'View profile',
     not_set:'Not set',
-    /* === AD MEDIA VIEWER === */
     ad_media_viewer_of:'{current} of {total}',
-    ad_media_click_expand:'Click to view'
+    ad_media_click_expand:'Click to open'
 },
 sw: {
     login_subtitle:'Ingia kwenye kampuni yako',
@@ -4191,7 +4271,7 @@ sw: {
     view_profile:'Ona wasifu',
     not_set:'Haijawekwa',
     ad_media_viewer_of:'{current} kati ya {total}',
-    ad_media_click_expand:'Bofya kuona'
+    ad_media_click_expand:'Bofya kufungua'
 },
 fr: {
     login_subtitle:"Connectez-vous à votre entreprise",
@@ -4767,7 +4847,7 @@ fr: {
     view_profile:"Voir le profil",
     not_set:"Non défini",
     ad_media_viewer_of:'{current} sur {total}',
-    ad_media_click_expand:'Cliquez pour voir'
+    ad_media_click_expand:'Cliquez pour ouvrir'
 },
 zh: {
     login_subtitle:'登录到您的公司',
@@ -5343,7 +5423,7 @@ zh: {
     view_profile:'查看资料',
     not_set:'未设置',
     ad_media_viewer_of:'第 {current} / {total}',
-    ad_media_click_expand:'点击查看'
+    ad_media_click_expand:'点击打开'
 }
 };
 
@@ -5416,6 +5496,7 @@ let videoAutoplayObserver = null;
 let userHasInteracted = false;
 let activeVideo = null;
 let chatRefreshInterval = null;
+let modalObserver = null;
 
 /* ================================================================
    CONSTANTS
@@ -5439,7 +5520,104 @@ const MAX_VIDEO_BYTES = 200 * 1024 * 1024;
 const MAX_IMAGE_BYTES = 2 * 1024 * 1024;
 
 /* ================================================================
+   MODAL / AUDIO FOCUS HELPERS
+   — Ensures ONLY ONE audio source plays at a time
+   ================================================================ */
+function anyModalOpen() {
+    return !!document.querySelector('.modal-overlay.show');
+}
+
+function pauseAllFeedVideos() {
+    document.querySelectorAll('video.mex-auto-video').forEach(v => {
+        if (isVideoInProfileModal(v)) return;
+        try {
+            v.muted = true;
+            v.volume = 0;
+            if (!v.paused) v.pause();
+            const wrap = v.closest('.status-image-wrap');
+            if (wrap) wrap.classList.remove('video-in-view');
+        } catch (e) {}
+    });
+    activeVideo = null;
+}
+
+function resumeFeedInViewVideo() {
+    if (anyModalOpen()) return;
+    const videos = document.querySelectorAll('video.mex-auto-video');
+    if (videos.length === 0) return;
+    const vh = window.innerHeight || document.documentElement.clientHeight;
+    let best = null;
+    let bestRatio = 0;
+    videos.forEach(v => {
+        if (isVideoInProfileModal(v)) return;
+        try {
+            const r = v.getBoundingClientRect();
+            const top = Math.max(0, r.top);
+            const bottom = Math.min(vh, r.bottom);
+            const visible = Math.max(0, bottom - top);
+            const ratio = r.height > 0 ? (visible / r.height) : 0;
+            if (ratio > bestRatio) {
+                bestRatio = ratio;
+                best = v;
+            }
+        } catch (e) {}
+    });
+    if (best && bestRatio >= 0.35) {
+        best.muted = !userHasInteracted;
+        best.volume = 1;
+        best.play().catch(() => {});
+        activeVideo = best;
+        const wrap = best.closest('.status-image-wrap');
+        if (wrap) wrap.classList.add('video-in-view');
+        if (!isVideoInProfileModal(best)) updateSoundBadge(best);
+    }
+}
+
+function muteAllVideosExcept(exceptVideo) {
+    document.querySelectorAll('video').forEach(v => {
+        if (v === exceptVideo) return;
+        try {
+            v.muted = true;
+            v.volume = 0;
+        } catch (e) {}
+    });
+}
+
+function setupModalObserver() {
+    if (modalObserver) {
+        modalObserver.disconnect();
+        modalObserver = null;
+    }
+    modalObserver = new MutationObserver(() => {
+        const open = anyModalOpen();
+        if (open) {
+            pauseAllFeedVideos();
+        } else {
+            /* Give browser a tick for close animation */
+            setTimeout(() => {
+                if (!anyModalOpen()) resumeFeedInViewVideo();
+            }, 60);
+        }
+    });
+    document.querySelectorAll('.modal-overlay').forEach(el => {
+        modalObserver.observe(el, { attributes: true, attributeFilter: ['class'] });
+    });
+}
+
+/* ================================================================
+   HELPER: Is video inside profile modal?
+   ================================================================ */
+function isVideoInProfileModal(v) {
+    if (!v) return false;
+    if (v.dataset && v.dataset.profileMuted === '1') return true;
+    if (v.classList && v.classList.contains('profile-muted-video')) return true;
+    if (v.closest && v.closest('.profile-ad-media-box')) return true;
+    return false;
+}
+
+/* ================================================================
    USER INTERACTION LISTENERS
+   — Skips profile videos (muted forever)
    ================================================================ */
 function markUserInteracted() {
     if (userHasInteracted) return;
@@ -5447,13 +5625,22 @@ function markUserInteracted() {
     const allVideos = document.querySelectorAll('video.mex-auto-video');
     allVideos.forEach(v => {
         try {
+            if (isVideoInProfileModal(v)) {
+                v.muted = true;
+                v.volume = 0;
+                return;
+            }
+            if (anyModalOpen()) {
+                v.muted = true;
+                return;
+            }
             if (!v.paused && v.offsetParent !== null) {
                 v.muted = false;
                 v.volume = 1;
             }
         } catch (e) {}
     });
-    if (activeVideo && !activeVideo.paused) {
+    if (activeVideo && !activeVideo.paused && !isVideoInProfileModal(activeVideo) && !anyModalOpen()) {
         try {
             activeVideo.muted = false;
             activeVideo.volume = 1;
@@ -5467,6 +5654,8 @@ function markUserInteracted() {
 
 /* ================================================================
    VIDEO AUTOPLAY ON SCROLL — SETUP
+   — Profile videos: always muted, no sound badge
+   — When a modal is open: skip everything (observer pauses)
    ================================================================ */
 function setupVideoAutoplayObserver() {
     if (videoAutoplayObserver) {
@@ -5477,8 +5666,13 @@ function setupVideoAutoplayObserver() {
     if (videos.length === 0) return;
     videos.forEach(v => {
         try {
-            v.muted = !userHasInteracted;
-            v.volume = 1;
+            if (isVideoInProfileModal(v)) {
+                v.muted = true;
+                v.volume = 0;
+            } else {
+                v.muted = !userHasInteracted;
+                v.volume = 1;
+            }
             v.setAttribute('playsinline', '');
             v.setAttribute('webkit-playsinline', '');
             v.setAttribute('preload', 'auto');
@@ -5489,6 +5683,8 @@ function setupVideoAutoplayObserver() {
         } catch (e) {}
     });
     videoAutoplayObserver = new IntersectionObserver((entries) => {
+        /* If any modal is open, do not touch feed videos */
+        if (anyModalOpen()) return;
         let bestEntry = null;
         let bestRatio = 0;
         entries.forEach(entry => {
@@ -5503,6 +5699,7 @@ function setupVideoAutoplayObserver() {
                 if (v !== inViewVideo) {
                     try {
                         v.muted = true;
+                        v.volume = 0;
                         if (!v.paused) v.pause();
                     } catch (e) {}
                     const wrap = v.closest('.status-image-wrap');
@@ -5510,8 +5707,13 @@ function setupVideoAutoplayObserver() {
                 }
             });
             activeVideo = inViewVideo;
-            inViewVideo.muted = !userHasInteracted;
-            inViewVideo.volume = 1;
+            if (isVideoInProfileModal(inViewVideo)) {
+                inViewVideo.muted = true;
+                inViewVideo.volume = 0;
+            } else {
+                inViewVideo.muted = !userHasInteracted;
+                inViewVideo.volume = 1;
+            }
             const wrap = inViewVideo.closest('.status-image-wrap');
             if (wrap) wrap.classList.add('video-in-view');
             const p = inViewVideo.play();
@@ -5521,13 +5723,16 @@ function setupVideoAutoplayObserver() {
                     inViewVideo.play().catch(() => {});
                 });
             }
-            updateSoundBadge(inViewVideo);
+            if (!isVideoInProfileModal(inViewVideo)) {
+                updateSoundBadge(inViewVideo);
+            }
         } else {
             entries.forEach(entry => {
                 if (entry.intersectionRatio < 0.2) {
                     const v = entry.target;
                     try {
                         v.muted = true;
+                        v.volume = 0;
                         if (!v.paused) v.pause();
                     } catch (e) {}
                     const wrap = v.closest('.status-image-wrap');
@@ -5543,6 +5748,7 @@ function setupVideoAutoplayObserver() {
 }
 
 function updateSoundBadge(video) {
+    if (isVideoInProfileModal(video)) return;
     const wrap = video.closest('.status-image-wrap');
     if (!wrap) return;
     let badge = wrap.querySelector('.video-sound-badge');
@@ -5553,8 +5759,11 @@ function updateSoundBadge(video) {
         badge.onclick = (e) => {
             e.stopPropagation();
             e.preventDefault();
+            if (isVideoInProfileModal(video)) return;
+            if (anyModalOpen()) return;
             video.muted = !video.muted;
             if (!video.muted) {
+                muteAllVideosExcept(video);
                 video.volume = 1;
                 userHasInteracted = true;
             }
@@ -6795,15 +7004,18 @@ function getAdAuthorPhoto(ad) {
 }
 
 /* ================================================================
-   AD MEDIA VIEWER (LIGHTBOX) — NEW
+   AD MEDIA VIEWER (LIGHTBOX)
+   — Single audio source: only THIS video produces sound
    ================================================================ */
-async function openAdMediaViewer(adId) {
+async function openAdMediaViewer(adId, source) {
     const clickedAd = getGlobalAds().find(a => a.id === Number(adId));
     if (!clickedAd) {
         showToast('Ad not found.', 'error');
         return;
     }
-    /* Build the list of ads from the same author (for prev/next navigation) */
+    /* Mute ALL videos first to prevent sound interference */
+    muteAllVideosExcept(null);
+    /* Build list of same-author ads for prev/next navigation */
     let list = [];
     if (clickedAd.postedBy === 'super') {
         list = getGlobalAds().filter(a => a.postedBy === 'super');
@@ -6814,7 +7026,6 @@ async function openAdMediaViewer(adId) {
             Number(a.authorUserId) === Number(clickedAd.authorUserId)
         );
     }
-    /* Sort newest first — same order as profile modal */
     list.sort((a, b) => b.timestamp - a.timestamp);
     if (list.length === 0) list = [clickedAd];
     const idx = list.findIndex(a => Number(a.id) === Number(clickedAd.id));
@@ -6823,7 +7034,6 @@ async function openAdMediaViewer(adId) {
     amvCurrentAdId = clickedAd.id;
     const ov = document.getElementById('adMediaViewerModal');
     if (!ov) return;
-    /* Show counter & nav if multiple */
     ov.classList.toggle('has-multiple', list.length > 1);
     const counter = document.getElementById('amvCounter');
     if (counter) {
@@ -6838,7 +7048,6 @@ async function openAdMediaViewer(adId) {
     }
     ov.classList.add('show');
     document.body.classList.add('modal-open');
-    /* If profile modal is showing, don't hide it — viewer sits on top */
     document.body.classList.add('ad-viewer-open');
     await renderAdMediaViewerContent();
 }
@@ -6848,6 +7057,8 @@ async function renderAdMediaViewerContent() {
     const content = document.getElementById('amvContent');
     const info = document.getElementById('amvInfo');
     if (!content) return;
+    /* Mute ALL videos again before rendering new content */
+    muteAllVideosExcept(null);
     content.innerHTML = `<div class="amv-empty"><i class="fas fa-spinner fa-spin"></i><div>${t('ads_media_loading')}</div></div>`;
     let url = '';
     let type = 'none';
@@ -6876,10 +7087,14 @@ async function renderAdMediaViewerContent() {
     if (!url) {
         content.innerHTML = `<div class="amv-empty"><i class="fas fa-image"></i><div>${t('ads_media_unavailable')}</div></div>`;
     } else if (type === 'video') {
+        /* In the viewer, the video is the ONLY active audio source — play with sound */
         content.innerHTML = `<video id="amvVideoEl" src="${url}" controls autoplay playsinline webkit-playsinline preload="auto"></video>`;
         const v = document.getElementById('amvVideoEl');
         if (v) {
+            v.muted = false;
+            v.volume = 1;
             v.play().catch(() => {
+                /* If autoplay with sound is blocked, fall back to muted */
                 v.muted = true;
                 v.play().catch(() => {});
             });
@@ -6914,7 +7129,7 @@ function closeAdMediaViewer() {
     if (content) {
         const v = content.querySelector('video');
         if (v) {
-            try { v.pause(); v.removeAttribute('src'); v.load(); } catch (e) {}
+            try { v.pause(); v.muted = true; v.removeAttribute('src'); v.load(); } catch (e) {}
         }
         content.innerHTML = '';
     }
@@ -6922,14 +7137,40 @@ function closeAdMediaViewer() {
     amvAdList = [];
     amvCurrentIndex = 0;
     document.body.classList.remove('ad-viewer-open');
-    /* Only remove modal-open if no other modal is visible */
+    /* Modal observer handles resuming feed videos */
     const anyOpen = document.querySelector('.modal-overlay.show');
     if (!anyOpen) document.body.classList.remove('modal-open');
 }
 
 /* ================================================================
+   DOUBLE-TAP HELPERS (MAIN FEED ONLY)
+   ================================================================ */
+function setupAdMediaDoubleTap() {
+    document.querySelectorAll('.ad-double-tap-media').forEach(el => {
+        if (el.dataset.dblTapReady === '1') return;
+        el.dataset.dblTapReady = '1';
+        let lastTap = 0;
+        el.addEventListener('click', (e) => {
+            if (e.target.closest('.video-sound-badge')) return;
+            if (e.target.closest('button')) return;
+            const now = Date.now();
+            if (now - lastTap < 350) {
+                e.preventDefault();
+                e.stopPropagation();
+                const adId = el.dataset.adId;
+                if (adId) openAdMediaViewer(adId, 'feed');
+                lastTap = 0;
+            } else {
+                lastTap = now;
+            }
+        });
+    });
+}
+
+/* ================================================================
    AD AUTHOR PROFILE MODAL — Instagram style
-   FIXED: Media loaded from IndexedDB + clickable to open viewer
+   — Profile videos muted forever (no sound interference)
+   — Single click on media opens fullscreen viewer (like Instagram)
    ================================================================ */
 function openAdAuthorProfile(adId) {
     const clickedAd = getGlobalAds().find(a => a.id === Number(adId));
@@ -6937,6 +7178,9 @@ function openAdAuthorProfile(adId) {
         showToast('Ad not found.', 'error');
         return;
     }
+
+    /* Pause all feed videos BEFORE rendering profile to avoid sound overlap */
+    pauseAllFeedVideos();
 
     let user = null;
     let companyName = clickedAd.companyName || 'Company';
@@ -6997,8 +7241,9 @@ function openAdAuthorProfile(adId) {
         const mediaWrapId = 'profile-ad-media-' + a.id;
 
         let media = '';
+        /* Profile videos are tagged with profile-muted-video (muted forever) */
         if (hasInlineVideo) {
-            media = `<video src="${a.video}" playsinline preload="metadata" muted loop autoplay style="width:100%;height:100%;object-fit:cover;"></video>`;
+            media = `<video class="profile-muted-video" src="${a.video}" playsinline preload="metadata" muted loop autoplay data-profile-muted="1" style="width:100%;height:100%;object-fit:cover;"></video>`;
         } else if (hasInlineImage) {
             media = `<img src="${a.image}" alt="" style="width:100%;height:100%;object-fit:cover;"/>`;
         } else {
@@ -7008,13 +7253,12 @@ function openAdAuthorProfile(adId) {
             </div>`;
         }
 
-        const expandHint = (hasInlineVideo || hasInlineImage)
-            ? `<div class="profile-ad-media-expand"><i class="fas fa-expand"></i></div>`
-            : `<div class="profile-ad-media-expand"><i class="fas fa-expand"></i></div>`;
+        const expandHint = `<div class="profile-ad-media-expand"><i class="fas fa-expand"></i></div>`;
 
+        /* Profile media: single click opens viewer (like Instagram) */
         return `<div class="card" style="margin-bottom:12px;padding:12px;">
             <div style="display:flex;gap:12px;">
-                <div class="profile-ad-media-box" onclick="openAdMediaViewer('${a.id}')" title="${t('ad_media_click_expand')}" style="width:110px;height:110px;flex-shrink:0;border-radius:8px;overflow:hidden;background:var(--input-bg);position:relative;display:flex;align-items:center;justify-content:center;cursor:pointer;">
+                <div class="profile-ad-media-box" onclick="openAdMediaViewer('${a.id}', 'profile')" title="${t('ad_media_click_expand')}" style="width:110px;height:110px;flex-shrink:0;border-radius:8px;overflow:hidden;background:var(--input-bg);position:relative;display:flex;align-items:center;justify-content:center;">
                     <div id="${mediaWrapId}" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
                         ${media}
                     </div>
@@ -7065,7 +7309,7 @@ function openAdAuthorProfile(adId) {
     ov.classList.add('show');
     document.body.classList.add('modal-open');
 
-    /* Load media from IndexedDB for ads without inline data */
+    /* Load media from IndexedDB — profile videos stay muted forever */
     setTimeout(async () => {
         for (const a of allAds) {
             if (a.image || a.video) continue;
@@ -7083,9 +7327,13 @@ function openAdAuthorProfile(adId) {
                     adObjectUrls[a.id] = url;
                 }
                 if (media.type === 'video') {
-                    wrap.innerHTML = `<video src="${url}" playsinline preload="metadata" muted loop autoplay style="width:100%;height:100%;object-fit:cover;"></video>`;
+                    wrap.innerHTML = `<video class="profile-muted-video" src="${url}" playsinline preload="metadata" muted loop autoplay data-profile-muted="1" style="width:100%;height:100%;object-fit:cover;"></video>`;
                     const v = wrap.querySelector('video');
-                    if (v) v.play().catch(() => {});
+                    if (v) {
+                        v.muted = true;
+                        v.volume = 0;
+                        v.play().catch(() => {});
+                    }
                 } else {
                     wrap.innerHTML = `<img src="${url}" alt="" style="width:100%;height:100%;object-fit:cover;"/>`;
                 }
@@ -9439,7 +9687,7 @@ views.statusAdsOnly = function () {
 };
 
 /* ================================================================
-   RENDER ADS TAB — with clickable media to open viewer
+   RENDER ADS TAB — Double-tap on feed media to open viewer
    ================================================================ */
 function renderAdsTab() {
     const user = getCurrentUser();
@@ -9521,7 +9769,10 @@ function renderAdsTab() {
                     ${canDelete ? `<button class="btn btn-danger btn-xs" onclick="deleteGlobalAdConfirm('${ad.id}')" style="margin-left:auto;"><i class="fas fa-trash"></i></button>` : ''}
                 </div>
                 <div class="status-body">
-                    <div class="status-image-wrap" id="ad-media-wrap-${ad.id}" onclick="openAdMediaViewer('${ad.id}')" style="cursor:pointer;" title="${t('ad_media_click_expand')}">${mediaPlaceholder}</div>
+                    <div class="status-image-wrap ad-double-tap-media" id="ad-media-wrap-${ad.id}" data-ad-id="${ad.id}" title="${t('ad_media_click_expand')}">
+                        ${mediaPlaceholder}
+                        <div class="ad-double-tap-hint"><i class="fas fa-expand"></i> ${t('ad_media_click_expand')}</div>
+                    </div>
                     <div class="status-content">
                         <h3 style="font-size:1.05rem;font-weight:700;margin:0 0 6px;color:var(--text-primary);">${ad.title}</h3>
                         <p class="status-text">${ad.content}</p>
@@ -9556,11 +9807,13 @@ function renderAdsTab() {
                 const media = await getAdMedia(ad.id);
                 const wrap = document.getElementById('ad-media-wrap-' + ad.id);
                 if (!wrap) continue;
+                const hint = wrap.querySelector('.ad-double-tap-hint');
                 if (!media || !media.blob) {
                     wrap.innerHTML = `<div class="ad-media-placeholder">
                         <i class="fas fa-image" style="font-size:1.5rem;opacity:.4;"></i>
                         ${t('ads_media_unavailable')}
                     </div>`;
+                    if (hint) wrap.appendChild(hint);
                     continue;
                 }
                 const url = URL.createObjectURL(media.blob);
@@ -9570,18 +9823,21 @@ function renderAdsTab() {
                 adObjectUrls[ad.id] = url;
                 if (media.type === 'video') {
                     wrap.innerHTML = `<video class="mex-auto-video" src="${url}" loop playsinline webkit-playsinline preload="auto" autoplay></video>`;
+                    if (hint) wrap.appendChild(hint);
                     const adCard = wrap.closest('.card');
                     if (adCard && !adCard.classList.contains('ad-video-card')) {
                         adCard.classList.add('ad-video-card');
                     }
                 } else {
                     wrap.innerHTML = `<img src="${url}" alt="Ad"/>`;
+                    if (hint) wrap.appendChild(hint);
                 }
             } catch (e) {
                 console.error('load ad media', e);
             }
         }
         setupVideoAutoplayObserver();
+        setupAdMediaDoubleTap();
     }, 60);
     return `<div class="section-header">
         <h2><i class="fas fa-bullhorn" style="color:var(--accent-3);"></i> ${t('ads_title')}</h2>
@@ -11703,12 +11959,15 @@ function logout() {
         clearInterval(chatRefreshInterval);
         chatRefreshInterval = null;
     }
+    if (modalObserver) {
+        modalObserver.disconnect();
+        modalObserver = null;
+    }
     activeVideo = null;
     Object.keys(adObjectUrls).forEach(id => {
         try { URL.revokeObjectURL(adObjectUrls[id]); } catch (e) {}
         delete adObjectUrls[id];
     });
-    /* Close ad media viewer too */
     const amv = document.getElementById('adMediaViewerModal');
     if (amv) amv.classList.remove('show');
     amvCurrentAdId = null;
@@ -11860,6 +12119,7 @@ function bindGlobalEvents() {
     document.getElementById('sideLogoutBtn').onclick = logout;
     initChatSystem();
     initLanguageMenu();
+    setupModalObserver();
     document.querySelectorAll('.sidebar-nav .nav-item').forEach(btn => {
         btn.onclick = function () {
             const v = this.dataset.view;
@@ -11910,7 +12170,6 @@ function bindGlobalEvents() {
     if (mmb) mmb.onclick = toggleMobileSidebar;
     const backdrop = document.getElementById('sidebarBackdrop');
     if (backdrop) backdrop.onclick = closeMobileSidebar;
-    /* Close ad media viewer on backdrop click (but not on content) */
     const amvModal = document.getElementById('adMediaViewerModal');
     if (amvModal) {
         amvModal.onclick = function (e) {
@@ -12310,13 +12569,11 @@ function escapeHtml(str) {
    ================================================================ */
 document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
-        /* Ad media viewer takes priority */
         const amv = document.getElementById('adMediaViewerModal');
         if (amv && amv.classList.contains('show')) {
             closeAdMediaViewer();
             return;
         }
-        /* Arrow keys for navigation while viewer is open */
         closeModal();
         closeProfileModal();
         closeSubscriptionModal();
@@ -12329,7 +12586,6 @@ document.addEventListener('keydown', function (e) {
         const lm = document.getElementById('langMenu');
         if (lm) lm.classList.remove('show');
     }
-    /* Arrow navigation for ad media viewer */
     const amv = document.getElementById('adMediaViewerModal');
     if (amv && amv.classList.contains('show')) {
         if (e.key === 'ArrowLeft') navigateAdMediaViewer(-1);
@@ -12501,18 +12757,23 @@ Object.assign(window, {
     setupVideoAutoplayObserver,
     getAdAuthorPhoto,
     openAdAuthorProfile,
-    /* === AD MEDIA VIEWER === */
     openAdMediaViewer,
     closeAdMediaViewer,
-    navigateAdMediaViewer
+    navigateAdMediaViewer,
+    setupAdMediaDoubleTap,
+    pauseAllFeedVideos,
+    resumeFeedInViewVideo,
+    muteAllVideosExcept
 });
 
-console.log('✅ MeX PRO v35 — FIXED: Ad media viewer (lightbox) with play/pause/next/prev');
-console.log('   • Click any ad media (image/video) in profile OR main ads tab to open fullscreen viewer');
-console.log('   • Viewer supports video playback with native controls');
-console.log('   • Arrow keys / on-screen buttons navigate between ads');
-console.log('   • ESC or X closes viewer');
-console.log('   • Media loaded from IndexedDB with object URL reuse');
+console.log('✅ MeX PRO v37 — Single audio source + Instagram-style profile click');
+console.log('   • Only ONE video plays sound at a time (no interference)');
+console.log('   • Opening profile pauses ALL feed videos');
+console.log('   • Profile thumbnails are always muted');
+console.log('   • Single click on a profile post opens it in fullscreen (Instagram-style)');
+console.log('   • Viewer video plays with sound — the ONLY active audio source');
+console.log('   • Closing viewer restores feed audio');
+console.log('   • Main feed still uses double-tap to open viewer');
 </script>
 </body>
 </html>
