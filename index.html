@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#128C7E"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <title>MeX PRO — Multi‑Tenant Business System</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;500;600;700;800&display=swap" rel="stylesheet"/>
@@ -103,17 +104,26 @@ body.dark {
     --service-fee-text: #fcd34d;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    height: 100%;
+    background: var(--bg-body);
+    overscroll-behavior: none;
+}
 body {
     font-family: var(--font);
     background: var(--bg-body);
     color: var(--text-primary);
+    height: 100%;
     min-height: 100vh;
+    min-height: 100dvh;
     transition: background .3s, color .3s;
-    overflow-y: auto;
+    overflow: hidden;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
-    overscroll-behavior-y: none;
+    overscroll-behavior: none;
+    position: relative;
 }
 body.modal-open { overflow: hidden; }
 ::-webkit-scrollbar { width: 7px; height: 7px; }
@@ -389,6 +399,8 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
     padding-bottom: calc(20px + var(--safe-bottom));
     background-size: cover;
     background-image: url(./Temple\ 1.jpeg);
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
 }
 .page-overlay.hidden { display: none; }
 .page-card {
@@ -407,6 +419,8 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
     flex-direction: column;
     justify-content: center;
     animation: cardIn .4s ease;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
 }
 @keyframes cardIn {
     from { opacity: 0; transform: translateY(18px) scale(.98); }
@@ -425,11 +439,13 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
 .app-container {
     display: none;
     height: 100vh;
+    height: -webkit-fill-available;
     height: 100dvh;
     overflow: hidden;
     padding: 12px;
     gap: 12px;
     background: var(--bg-body);
+    overscroll-behavior: none;
 }
 .app-container.active { display: flex; }
 .sidebar {
@@ -445,6 +461,7 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
     border: 1px solid var(--border-color);
     box-shadow: var(--shadow-card);
     -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
 }
 .sidebar-brand {
     display: flex;
@@ -563,6 +580,7 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
     border: 1px solid var(--border-color);
     box-shadow: var(--shadow-card);
     min-width: 0;
+    overscroll-behavior: contain;
 }
 .topbar {
     padding: 14px 28px;
@@ -725,6 +743,9 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
     padding-bottom: calc(32px + var(--safe-bottom));
     animation: fadeIn .35s ease;
     -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    background: var(--bg-body);
+    position: relative;
 }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin-bottom: 18px; }
@@ -816,6 +837,7 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
     padding: 20px;
     padding-top: calc(20px + var(--safe-top));
     padding-bottom: calc(20px + var(--safe-bottom));
+    overscroll-behavior: contain;
 }
 .modal-overlay.show { display: flex; }
 .modal-box {
@@ -830,6 +852,7 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
     box-shadow: var(--shadow-dropdown);
     animation: modalIn .28s ease;
     -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
 }
 @keyframes modalIn { from { opacity: 0; transform: translateY(16px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
 .modal-box h3 { font-size: 1.2rem; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
@@ -937,6 +960,8 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
     overflow-y: auto;
     flex-shrink: 0;
     padding: 8px 0;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
 }
 .chat-modal .modal-box .chat-contacts .contact-item {
     display: flex;
@@ -995,6 +1020,8 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
     display: flex;
     flex-direction: column;
     gap: 4px;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
 }
 .chat-modal .modal-box .chat-messages .no-chat {
     display: flex;
@@ -1534,6 +1561,8 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
     gap: 4px;
     padding-right: 4px;
     scrollbar-width: thin;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
 }
 .status-card .status-body .status-content .status-comments .comment-list::-webkit-scrollbar { width: 5px; }
 .status-card .status-body .status-content .status-comments .comment-list::-webkit-scrollbar-thumb {
@@ -2140,6 +2169,8 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
     gap: 2px;
     padding-right: 4px;
     scrollbar-width: thin;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
 }
 .ad-comment-list::-webkit-scrollbar { width: 5px; }
 .ad-comment-list::-webkit-scrollbar-thumb { background: var(--accent-1); border-radius: 10px; }
@@ -2833,8 +2864,31 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
     .super-dash-stats { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
 }
 @media (max-width: 768px) {
-    .app-container { padding: 0; gap: 0; height: 100dvh; }
-    .main-content { border-radius: 0; border: none; box-shadow: none; height: 100dvh; }
+    html, body {
+        height: 100%;
+        overflow: hidden;
+        background: var(--bg-body);
+        overscroll-behavior: none;
+    }
+    .app-container {
+        padding: 0;
+        gap: 0;
+        height: 100vh;
+        height: -webkit-fill-available;
+        height: 100dvh;
+        background: var(--bg-body);
+        overscroll-behavior: none;
+    }
+    .main-content {
+        border-radius: 0;
+        border: none;
+        box-shadow: none;
+        height: 100vh;
+        height: -webkit-fill-available;
+        height: 100dvh;
+        background: var(--bg-body);
+        overscroll-behavior: contain;
+    }
     .sidebar {
         position: fixed;
         top: 0;
@@ -4493,7 +4547,6 @@ function getAdAuthorPhoto(ad) {
     return `https://ui-avatars.com/api/?background=128C7E&color=fff&name=${encodeURIComponent(ad.companyName || 'Company')}`;
 }
 
-/* ============ NEW: getCompanyPhoto ============ */
 function getCompanyPhoto(tenantId) {
     if (!tenantId) return '';
     const t0 = getTenant(tenantId);
@@ -4746,7 +4799,6 @@ function openAdAuthorProfile(adId) {
     }, 50);
 }
 
-/* ============ NEW: openCompanyProfile ============ */
 function openCompanyProfile(tenantId) {
     if (!tenantId) return;
     const tenant = getTenant(tenantId);
@@ -6878,7 +6930,6 @@ function clearAdSearch() {
     searchAds('');
 }
 
-/* ============ UPDATED: renderCompaniesTab with photos + clickable profile ============ */
 function renderCompaniesTab() {
     if (isSuperAdmin || isMexEmployee || !getCurrentUser()) return '';
     const companies = getAllTenants().filter(t0 => !t0.blocked && t0.id !== currentTenantId);
@@ -9246,7 +9297,7 @@ Object.assign(window, {
     getCompanyPhoto, openCompanyProfile
 });
 
-console.log('✅ MeX PRO v40 — Company profile photos + Clickable profiles with ads');
+console.log('✅ MeX PRO v41 — Safari fixed: no more white background on scroll');
 </script>
 </body>
 </html>
