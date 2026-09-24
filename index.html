@@ -1450,7 +1450,7 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
     border: none !important;
     outline: none !important;
     filter: none !important;
-    transition: transform .25s ease;
+    transition: transform .25s ease, opacity .35s ease;
 }
 .status-card .status-body .status-image-wrap video.mex-auto-video.is-active {
     transform: scale(1.005);
@@ -1516,7 +1516,7 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
     height: 200px;
     border-radius: 10px;
     overflow: hidden;
-    background: transparent;
+    background: linear-gradient(135deg, #0d3d36 0%, #128C7E 100%);
     cursor: pointer;
     position: relative;
 }
@@ -1526,6 +1526,12 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
     height: 100%;
     object-fit: cover;
     display: block;
+    opacity: 0;
+    transition: opacity .35s ease;
+}
+.status-card .status-body .status-image-wrap img.media-ready,
+.status-card .status-body .status-image-wrap video.media-ready {
+    opacity: 1;
 }
 .status-card .status-body .status-content { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
 .status-card .status-body .status-content .status-text {
@@ -2108,13 +2114,44 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--input-bg);
-    color: var(--text-muted);
+    background: linear-gradient(135deg, #0d3d36 0%, #128C7E 50%, #0e6b5f 100%);
+    color: rgba(255,255,255,.85);
     font-size: .75rem;
     text-align: center;
     padding: 8px;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
+    position: relative;
+    overflow: hidden;
+    will-change: transform;
+}
+.ad-media-placeholder::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.18) 50%, transparent 100%);
+    animation: adShimmer 1.4s infinite linear;
+    pointer-events: none;
+}
+@keyframes adShimmer {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(200%); }
+}
+.ad-media-placeholder i {
+    font-size: 1.5rem;
+    opacity: .7;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,.3));
+    position: relative;
+    z-index: 1;
+}
+.ad-media-placeholder span {
+    position: relative;
+    z-index: 1;
+    font-weight: 600;
+    letter-spacing: .3px;
 }
 .ad-expiry-badge {
     display: inline-flex;
@@ -2652,6 +2689,7 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
     -webkit-tap-highlight-color: transparent;
     user-select: none;
     transition: transform .2s ease, box-shadow .2s ease;
+    background: linear-gradient(135deg, #0d3d36 0%, #128C7E 100%);
 }
 .profile-ad-media-box:active {
     transform: scale(.98);
@@ -2989,7 +3027,6 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
         max-height: 480px;
         aspect-ratio: 9/16;
         align-self: center;
-        background: transparent;
     }
     .ad-comment-input-row { flex-wrap: wrap; }
     .ad-comment-input-row .btn { width: 100%; justify-content: center; }
@@ -3417,6 +3454,9 @@ let pendingVideoData = null;
 let expandedAdComments = {};
 let inventorySearchTerm = '';
 const adObjectUrls = {};
+const adMediaCache = new Map();
+const adMediaPromises = new Map();
+let adPreloadStarted = false;
 let panelSelectedPlan = 'monthly';
 let panelSelectedPlanAmount = 25000;
 let currentSuperAdminTab = 'companies';
@@ -4200,6 +4240,7 @@ function cleanupExpiredAds() {
     ads.forEach(ad => {
         if (isAdExpired(ad)) {
             deleteAdMedia(ad.id);
+            adMediaCache.delete(String(ad.id));
             if (adObjectUrls[ad.id]) {
                 try { URL.revokeObjectURL(adObjectUrls[ad.id]); } catch (e) {}
                 delete adObjectUrls[ad.id];
@@ -4454,6 +4495,11 @@ function addGlobalAd(ad) {
 function deleteGlobalAd(id) {
     saveGlobalAds(getGlobalAds().filter(a => a.id !== Number(id)));
     deleteAdMedia(id);
+    adMediaCache.delete(String(id));
+    if (adObjectUrls[id]) {
+        try { URL.revokeObjectURL(adObjectUrls[id]); } catch (e) {}
+        delete adObjectUrls[id];
+    }
 }
 
 function buildViewerRecord() {
@@ -4564,6 +4610,88 @@ function getCompanyPhoto(tenantId) {
     return `https://ui-avatars.com/api/?background=128C7E&color=fff&name=${encodeURIComponent(t0.companyName || 'Company')}`;
 }
 
+/* ============ AD MEDIA CACHE + PERFORMANCE ============ */
+async function getAdMediaCached(id) {
+    const key = String(id);
+    if (adMediaCache.has(key)) return adMediaCache.get(key);
+    if (adMediaPromises.has(key)) return adMediaPromises.get(key);
+    const promise = (async () => {
+        try {
+            const media = await getAdMedia(id);
+            if (media && media.blob) {
+                let url = adObjectUrls[id];
+                if (!url) {
+                    url = URL.createObjectURL(media.blob);
+                    adObjectUrls[id] = url;
+                }
+                const result = { url, type: media.type || 'image', name: media.name || '' };
+                adMediaCache.set(key, result);
+                return result;
+            }
+        } catch (e) { console.error('getAdMediaCached error', e); }
+        return null;
+    })();
+    adMediaPromises.set(key, promise);
+    try { const r = await promise; return r; } finally { adMediaPromises.delete(key); }
+}
+
+function applyMediaToWrap(wrap, media, ad, hint) {
+    if (!media || !media.url) {
+        wrap.innerHTML = `<div class="ad-media-placeholder"><i class="fas fa-image"></i><span>${t('ads_media_unavailable')}</span></div>`;
+        if (hint) wrap.appendChild(hint);
+        return;
+    }
+    if (media.type === 'video') {
+        wrap.innerHTML = `<video class="mex-auto-video" src="${media.url}" loop playsinline webkit-playsinline preload="auto" autoplay muted></video>`;
+        if (hint) wrap.appendChild(hint);
+        const v = wrap.querySelector('video');
+        if (v) {
+            const markReady = () => v.classList.add('media-ready');
+            v.addEventListener('loadeddata', markReady, { once: true });
+            v.addEventListener('canplay', markReady, { once: true });
+            v.muted = !userHasInteracted;
+            v.volume = 1;
+            const p = v.play();
+            if (p && p.catch) p.catch(() => {});
+            if (v.readyState >= 2) markReady();
+        }
+        const adCard = wrap.closest('.card');
+        if (adCard && !adCard.classList.contains('ad-video-card')) adCard.classList.add('ad-video-card');
+    } else {
+        wrap.innerHTML = `<img src="${media.url}" alt="Ad"/>`;
+        if (hint) wrap.appendChild(hint);
+        const img = wrap.querySelector('img');
+        if (img) {
+            const markReady = () => img.classList.add('media-ready');
+            if (img.complete) markReady();
+            else img.addEventListener('load', markReady, { once: true });
+        }
+    }
+}
+
+async function loadAdMediaForList(ads) {
+    const tasks = ads.map(async (ad) => {
+        if (ad.image || ad.video) return;
+        const media = await getAdMediaCached(ad.id);
+        const wrap = document.getElementById('ad-media-wrap-' + ad.id);
+        if (!wrap) return;
+        const hint = wrap.querySelector('.ad-double-tap-hint');
+        applyMediaToWrap(wrap, media, ad, hint);
+    });
+    await Promise.all(tasks);
+}
+
+function preloadAllAdMedia() {
+    if (adPreloadStarted) return;
+    adPreloadStarted = true;
+    const ads = cleanupExpiredAds();
+    ads.forEach(ad => {
+        if (ad.image || ad.video) return;
+        getAdMediaCached(ad.id);
+    });
+}
+/* ============ END AD MEDIA CACHE ============ */
+
 async function openAdMediaViewer(adId, source) {
     const clickedAd = getGlobalAds().find(a => a.id === Number(adId));
     if (!clickedAd) { showToast('Ad not found.', 'error'); return; }
@@ -4599,19 +4727,19 @@ async function renderAdMediaViewerContent() {
     const info = document.getElementById('amvInfo');
     if (!content) return;
     muteAllVideosExcept(null);
-    content.innerHTML = `<div class="amv-empty"><i class="fas fa-spinner fa-spin"></i><div>${t('ads_media_loading')}</div></div>`;
     let url = '', type = 'none';
     if (ad.video && ad.video.length) { url = ad.video; type = 'video'; }
     else if (ad.image && ad.image.length) { url = ad.image; type = 'image'; }
     else {
-        try {
-            const media = await getAdMedia(ad.id);
-            if (media && media.blob) {
-                if (adObjectUrls[ad.id]) url = adObjectUrls[ad.id];
-                else { url = URL.createObjectURL(media.blob); adObjectUrls[ad.id] = url; }
-                type = media.type || 'image';
-            }
-        } catch (e) { console.error('viewer media load', e); }
+        const cached = adMediaCache.get(String(ad.id));
+        if (cached && cached.url) { url = cached.url; type = cached.type; }
+        else {
+            content.innerHTML = `<div class="amv-empty"><i class="fas fa-spinner fa-spin"></i><div>${t('ads_media_loading')}</div></div>`;
+            try {
+                const media = await getAdMediaCached(ad.id);
+                if (media && media.url) { url = media.url; type = media.type; }
+            } catch (e) { console.error('viewer media load', e); }
+        }
     }
     if (!url) content.innerHTML = `<div class="amv-empty"><i class="fas fa-image"></i><div>${t('ads_media_unavailable')}</div></div>`;
     else if (type === 'video') {
@@ -4726,14 +4854,19 @@ function openAdAuthorProfile(adId) {
         const hasInlineVideo = a.video && a.video.length;
         const hasInlineImage = a.image && a.image.length;
         const mediaWrapId = 'profile-ad-media-' + a.id;
+        const cached = adMediaCache.get(String(a.id));
         let media = '';
-        if (hasInlineVideo) media = `<video class="profile-muted-video" src="${a.video}" playsinline preload="metadata" muted loop autoplay data-profile-muted="1" style="width:100%;height:100%;object-fit:cover;"></video>`;
-        else if (hasInlineImage) media = `<img src="${a.image}" alt="" style="width:100%;height:100%;object-fit:cover;"/>`;
-        else media = `<div class="ad-media-placeholder" id="${mediaWrapId}"><i class="fas fa-spinner fa-spin" style="font-size:1.1rem;"></i><span style="font-size:.6rem;">${t('ads_media_loading')}</span></div>`;
+        if (hasInlineVideo) media = `<video class="profile-muted-video media-ready" src="${a.video}" playsinline preload="metadata" muted loop autoplay data-profile-muted="1" style="width:100%;height:100%;object-fit:cover;"></video>`;
+        else if (hasInlineImage) media = `<img class="media-ready" src="${a.image}" alt="" style="width:100%;height:100%;object-fit:cover;"/>`;
+        else if (cached && cached.url) {
+            if (cached.type === 'video') media = `<video class="profile-muted-video media-ready" src="${cached.url}" playsinline preload="metadata" muted loop autoplay data-profile-muted="1" style="width:100%;height:100%;object-fit:cover;"></video>`;
+            else media = `<img class="media-ready" src="${cached.url}" alt="" style="width:100%;height:100%;object-fit:cover;"/>`;
+        }
+        else media = `<div class="ad-media-placeholder"><i class="fas fa-bullhorn"></i><span>${t('ads_media_loading')}</span></div>`;
         const expandHint = `<div class="profile-ad-media-expand"><i class="fas fa-expand"></i></div>`;
         return `<div class="card" style="margin-bottom:12px;padding:12px;">
             <div style="display:flex;gap:12px;">
-                <div class="profile-ad-media-box" onclick="openAdMediaViewer('${a.id}', 'profile')" title="${t('ad_media_click_expand')}" style="width:110px;height:110px;flex-shrink:0;border-radius:8px;overflow:hidden;background:var(--input-bg);position:relative;display:flex;align-items:center;justify-content:center;">
+                <div class="profile-ad-media-box" onclick="openAdMediaViewer('${a.id}', 'profile')" title="${t('ad_media_click_expand')}" style="width:110px;height:110px;flex-shrink:0;border-radius:8px;overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;">
                     <div id="${mediaWrapId}" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">${media}</div>
                     ${expandHint}
                 </div>
@@ -4784,19 +4917,18 @@ function openAdAuthorProfile(adId) {
             if (a.image || a.video) continue;
             const wrap = document.getElementById('profile-ad-media-' + a.id);
             if (!wrap) continue;
+            if (wrap.querySelector('video, img')) continue;
             try {
-                const media = await getAdMedia(a.id);
-                if (!media || !media.blob) { wrap.innerHTML = `<i class="fas fa-image" style="font-size:1.5rem;opacity:.35;"></i>`; continue; }
-                let url = adObjectUrls[a.id];
-                if (!url) { url = URL.createObjectURL(media.blob); adObjectUrls[a.id] = url; }
+                const media = await getAdMediaCached(a.id);
+                if (!media || !media.url) { wrap.innerHTML = `<div class="ad-media-placeholder"><i class="fas fa-image"></i></div>`; continue; }
                 if (media.type === 'video') {
-                    wrap.innerHTML = `<video class="profile-muted-video" src="${url}" playsinline preload="metadata" muted loop autoplay data-profile-muted="1" style="width:100%;height:100%;object-fit:cover;"></video>`;
+                    wrap.innerHTML = `<video class="profile-muted-video media-ready" src="${media.url}" playsinline preload="metadata" muted loop autoplay data-profile-muted="1" style="width:100%;height:100%;object-fit:cover;"></video>`;
                     const v = wrap.querySelector('video');
                     if (v) { v.muted = true; v.volume = 0; v.play().catch(() => {}); }
-                } else wrap.innerHTML = `<img src="${url}" alt="" style="width:100%;height:100%;object-fit:cover;"/>`;
-            } catch (e) { wrap.innerHTML = `<i class="fas fa-image" style="font-size:1.5rem;opacity:.35;"></i>`; }
+                } else wrap.innerHTML = `<img class="media-ready" src="${media.url}" alt="" style="width:100%;height:100%;object-fit:cover;"/>`;
+            } catch (e) { wrap.innerHTML = `<div class="ad-media-placeholder"><i class="fas fa-image"></i></div>`; }
         }
-    }, 50);
+    }, 30);
 }
 
 function openCompanyProfile(tenantId) {
@@ -4838,13 +4970,18 @@ function openCompanyProfile(tenantId) {
         const hasInlineVideo = a.video && a.video.length;
         const hasInlineImage = a.image && a.image.length;
         const mediaWrapId = 'company-ad-media-' + a.id;
+        const cached = adMediaCache.get(String(a.id));
         let media = '';
-        if (hasInlineVideo) media = `<video class="profile-muted-video" src="${a.video}" playsinline preload="metadata" muted loop autoplay data-profile-muted="1" style="width:100%;height:100%;object-fit:cover;"></video>`;
-        else if (hasInlineImage) media = `<img src="${a.image}" alt="" style="width:100%;height:100%;object-fit:cover;"/>`;
-        else media = `<div class="ad-media-placeholder"><i class="fas fa-spinner fa-spin" style="font-size:1.1rem;"></i><span style="font-size:.6rem;">${t('ads_media_loading')}</span></div>`;
+        if (hasInlineVideo) media = `<video class="profile-muted-video media-ready" src="${a.video}" playsinline preload="metadata" muted loop autoplay data-profile-muted="1" style="width:100%;height:100%;object-fit:cover;"></video>`;
+        else if (hasInlineImage) media = `<img class="media-ready" src="${a.image}" alt="" style="width:100%;height:100%;object-fit:cover;"/>`;
+        else if (cached && cached.url) {
+            if (cached.type === 'video') media = `<video class="profile-muted-video media-ready" src="${cached.url}" playsinline preload="metadata" muted loop autoplay data-profile-muted="1" style="width:100%;height:100%;object-fit:cover;"></video>`;
+            else media = `<img class="media-ready" src="${cached.url}" alt="" style="width:100%;height:100%;object-fit:cover;"/>`;
+        }
+        else media = `<div class="ad-media-placeholder"><i class="fas fa-bullhorn"></i><span>${t('ads_media_loading')}</span></div>`;
         return `<div class="card" style="margin-bottom:12px;padding:12px;">
             <div style="display:flex;gap:12px;">
-                <div class="profile-ad-media-box" onclick="openAdMediaViewer('${a.id}', 'profile')" title="${t('ad_media_click_expand')}" style="width:110px;height:110px;flex-shrink:0;border-radius:8px;overflow:hidden;background:var(--input-bg);position:relative;display:flex;align-items:center;justify-content:center;">
+                <div class="profile-ad-media-box" onclick="openAdMediaViewer('${a.id}', 'profile')" title="${t('ad_media_click_expand')}" style="width:110px;height:110px;flex-shrink:0;border-radius:8px;overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;">
                     <div id="${mediaWrapId}" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">${media}</div>
                     <div class="profile-ad-media-expand"><i class="fas fa-expand"></i></div>
                 </div>
@@ -4892,19 +5029,18 @@ function openCompanyProfile(tenantId) {
             if (a.image || a.video) continue;
             const wrap = document.getElementById('company-ad-media-' + a.id);
             if (!wrap) continue;
+            if (wrap.querySelector('video, img')) continue;
             try {
-                const media = await getAdMedia(a.id);
-                if (!media || !media.blob) { wrap.innerHTML = `<i class="fas fa-image" style="font-size:1.5rem;opacity:.35;"></i>`; continue; }
-                let url = adObjectUrls[a.id];
-                if (!url) { url = URL.createObjectURL(media.blob); adObjectUrls[a.id] = url; }
+                const media = await getAdMediaCached(a.id);
+                if (!media || !media.url) { wrap.innerHTML = `<div class="ad-media-placeholder"><i class="fas fa-image"></i></div>`; continue; }
                 if (media.type === 'video') {
-                    wrap.innerHTML = `<video class="profile-muted-video" src="${url}" playsinline preload="metadata" muted loop autoplay data-profile-muted="1" style="width:100%;height:100%;object-fit:cover;"></video>`;
+                    wrap.innerHTML = `<video class="profile-muted-video media-ready" src="${media.url}" playsinline preload="metadata" muted loop autoplay data-profile-muted="1" style="width:100%;height:100%;object-fit:cover;"></video>`;
                     const v = wrap.querySelector('video');
                     if (v) { v.muted = true; v.volume = 0; v.play().catch(() => {}); }
-                } else wrap.innerHTML = `<img src="${url}" alt="" style="width:100%;height:100%;object-fit:cover;"/>`;
-            } catch (e) { wrap.innerHTML = `<i class="fas fa-image" style="font-size:1.5rem;opacity:.35;"></i>`; }
+                } else wrap.innerHTML = `<img class="media-ready" src="${media.url}" alt="" style="width:100%;height:100%;object-fit:cover;"/>`;
+            } catch (e) { wrap.innerHTML = `<div class="ad-media-placeholder"><i class="fas fa-image"></i></div>`; }
         }
-    }, 50);
+    }, 30);
 }
 
 function openViewersModal(type, id) {
@@ -5372,7 +5508,7 @@ function renderSingleStatusCard(s, user) {
             clh += `<div class="comment-item"><div class="comment-avatar">${ac}</div><div class="comment-body"><span class="comment-author">${cn}${renderVerifiedBadge()}</span><span class="comment-text">${c.text}</span><span class="comment-time">${fmtTime(c.timestamp)}</span>${db}</div></div>`;
         });
     }
-    const imgHtml = s.image ? `<div class="status-image-wrap" onclick="openImageModal('${s.image}')"><img src="${s.image}" alt="Status"/></div>` : '';
+    const imgHtml = s.image ? `<div class="status-image-wrap" onclick="openImageModal('${s.image}')"><img src="${s.image}" class="media-ready" alt="Status"/></div>` : '';
     return `<div class="card" style="margin-bottom:16px;padding:16px;">
         <div class="status-card">
             <div class="status-header">
@@ -6858,6 +6994,7 @@ function renderAdsTab() {
     const user = getCurrentUser();
     const initialAds = cleanupExpiredAds();
     if (initialAds.length > 0) trackAdViewers(initialAds.map(a => a.id));
+    setTimeout(() => preloadAllAdMedia(), 50);
     let ads = cleanupExpiredAds().sort((a, b) => b.timestamp - a.timestamp);
     if (adSearchTerm && adSearchTerm.trim()) {
         const q = adSearchTerm.trim().toLowerCase();
@@ -6875,7 +7012,7 @@ function renderAdsTab() {
         await loadAdMediaForList(ads);
         setupVideoAutoplayObserver();
         setupAdMediaDoubleTap();
-    }, 60);
+    }, 30);
     const safeTerm = escapeHtml(adSearchTerm || '');
     return `<div class="section-header">
         <h2><i class="fas fa-bullhorn" style="color:var(--accent-3);"></i> ${t('ads_title')}</h2>
@@ -6918,7 +7055,7 @@ function searchAds(term) {
         await loadAdMediaForList(filtered);
         setupVideoAutoplayObserver();
         setupAdMediaDoubleTap();
-    }, 60);
+    }, 30);
 }
 
 function clearAdSearch() {
@@ -6984,7 +7121,7 @@ function renderFollowingTab() {
         await loadAdMediaForList(allAds);
         setupVideoAutoplayObserver();
         setupAdMediaDoubleTap();
-    }, 60);
+    }, 30);
     if (follows.length === 0) {
         return `<div class="card">
             <div class="card-body">
@@ -7030,10 +7167,15 @@ function renderAdCard(ad, user, myAvatar, canPost, showDoubleTap) {
     const hasInlineImage = ad.image && ad.image.length;
     const hasInlineVideo = ad.video && ad.video.length;
     const hasVideo = ad.mediaType === 'video' || hasInlineVideo;
+    const cached = adMediaCache.get(String(ad.id));
     let mediaPlaceholder = '';
-    if (hasInlineVideo) mediaPlaceholder = `<video class="mex-auto-video" src="${ad.video}" loop playsinline webkit-playsinline preload="auto" autoplay></video>`;
-    else if (hasInlineImage) mediaPlaceholder = `<img src="${ad.image}" alt="Ad"/>`;
-    else mediaPlaceholder = `<div class="ad-media-placeholder" id="ad-media-placeholder-${ad.id}"><i class="fas fa-spinner fa-spin" style="font-size:1.5rem;margin-bottom:6px;"></i>${t('ads_media_loading')}</div>`;
+    if (hasInlineVideo) mediaPlaceholder = `<video class="mex-auto-video media-ready" src="${ad.video}" loop playsinline webkit-playsinline preload="auto" autoplay muted></video>`;
+    else if (hasInlineImage) mediaPlaceholder = `<img class="media-ready" src="${ad.image}" alt="Ad"/>`;
+    else if (cached && cached.url) {
+        if (cached.type === 'video') mediaPlaceholder = `<video class="mex-auto-video media-ready" src="${cached.url}" loop playsinline webkit-playsinline preload="auto" autoplay muted></video>`;
+        else mediaPlaceholder = `<img class="media-ready" src="${cached.url}" alt="Ad"/>`;
+    }
+    else mediaPlaceholder = `<div class="ad-media-placeholder" id="ad-media-placeholder-${ad.id}"><i class="fas fa-bullhorn"></i><span>${t('ads_media_loading')}</span></div>`;
     let commentsHtml = '';
     if (commentsCount === 0) commentsHtml = `<div class="ad-comment-empty">${t('ad_no_comments')}</div>`;
     else {
@@ -7112,37 +7254,6 @@ function renderAdCard(ad, user, myAvatar, canPost, showDoubleTap) {
             </div>
         </div>
     </div>`;
-}
-
-async function loadAdMediaForList(ads) {
-    for (const ad of ads) {
-        if (ad.image || ad.video) continue;
-        try {
-            const media = await getAdMedia(ad.id);
-            const wrap = document.getElementById('ad-media-wrap-' + ad.id);
-            if (!wrap) continue;
-            const hint = wrap.querySelector('.ad-double-tap-hint');
-            if (!media || !media.blob) {
-                wrap.innerHTML = `<div class="ad-media-placeholder"><i class="fas fa-image" style="font-size:1.5rem;opacity:.4;"></i>${t('ads_media_unavailable')}</div>`;
-                if (hint) wrap.appendChild(hint);
-                continue;
-            }
-            const url = URL.createObjectURL(media.blob);
-            if (adObjectUrls[ad.id]) {
-                try { URL.revokeObjectURL(adObjectUrls[ad.id]); } catch (e) {}
-            }
-            adObjectUrls[ad.id] = url;
-            if (media.type === 'video') {
-                wrap.innerHTML = `<video class="mex-auto-video" src="${url}" loop playsinline webkit-playsinline preload="auto" autoplay></video>`;
-                if (hint) wrap.appendChild(hint);
-                const adCard = wrap.closest('.card');
-                if (adCard && !adCard.classList.contains('ad-video-card')) adCard.classList.add('ad-video-card');
-            } else {
-                wrap.innerHTML = `<img src="${url}" alt="Ad"/>`;
-                if (hint) wrap.appendChild(hint);
-            }
-        } catch (e) { console.error('load ad media', e); }
-    }
 }
 
 function renderCompanyStatusTab(user) {
@@ -7238,6 +7349,13 @@ async function submitAd(e, isPaid) {
         mediaType: mediaSaved ? mediaType : 'none'
     };
     addGlobalAd(ad);
+    if (mediaSaved && mediaFile) {
+        adMediaCache.set(String(adId), {
+            url: URL.createObjectURL(mediaFile),
+            type: mediaType,
+            name: mediaFile.name
+        });
+    }
     closeModal();
     showToast(t('toast_ad_posted_free'), 'success');
     currentStatusTab = 'ads';
@@ -7249,6 +7367,7 @@ function deleteGlobalAdConfirm(id) {
     if (!isSuperAdmin && ad.tenantId !== currentTenantId) { showToast(t('toast_ad_delete_denied'), 'error'); return; }
     if (!confirm(t('ads_confirm_delete'))) return;
     deleteAdMedia(id);
+    adMediaCache.delete(String(id));
     if (adObjectUrls[id]) {
         try { URL.revokeObjectURL(adObjectUrls[id]); } catch (e) {}
         delete adObjectUrls[id];
@@ -8774,6 +8893,9 @@ function showToast(msg, type = 'info') {
 function logout() {
     const u = getCurrentUser();
     if (u && !isSuperAdmin && !isMexEmployee) recordUserLogout(u.id);
+    adMediaCache.clear();
+    adMediaPromises.clear();
+    adPreloadStarted = false;
     if (heartbeatInterval) { clearInterval(heartbeatInterval); heartbeatInterval = null; }
     if (trialTimerInterval) { clearInterval(trialTimerInterval); trialTimerInterval = null; }
     if (lockCheckerInterval) { clearInterval(lockCheckerInterval); lockCheckerInterval = null; }
@@ -8823,6 +8945,7 @@ let _appInitialized = false;
 function initApp(user) {
     migrateCommissionPaidStatus();
     migrateBranchPermissions();
+    setTimeout(() => { try { preloadAllAdMedia(); } catch (e) {} }, 400);
     currentLang = getUserLanguage(user);
     applyTheme(user.theme === 'dark');
     updateAllUI(user);
@@ -9294,10 +9417,11 @@ Object.assign(window, {
     renderVerifiedBadge, getFollows, saveFollows, isFollowing, toggleFollowTenant, getFollowerCount,
     renderFollowButton, renderFollowingTab, renderAdCard,
     renderCompaniesTab, searchAds, clearAdSearch,
-    getCompanyPhoto, openCompanyProfile
+    getCompanyPhoto, openCompanyProfile,
+    getAdMediaCached, loadAdMediaForList, preloadAllAdMedia, applyMediaToWrap
 });
 
-console.log('✅ MeX PRO v41 — Safari fixed: no more white background on scroll');
+console.log('✅ MeX PRO v42 — Safari fixed + Ad media cache/performance optimized');
 </script>
 </body>
 </html>
