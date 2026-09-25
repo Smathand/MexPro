@@ -1450,7 +1450,11 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
     border: none !important;
     outline: none !important;
     filter: none !important;
-    transition: transform .25s ease;
+    opacity: 0;
+    transition: transform .25s ease, opacity .35s ease;
+}
+.status-card .status-body .status-image-wrap video.mex-auto-video.is-ready {
+    opacity: 1;
 }
 .status-card .status-body .status-image-wrap video.mex-auto-video.is-active {
     transform: scale(1.005);
@@ -2108,7 +2112,7 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--input-bg);
+    background: transparent;
     color: var(--text-muted);
     font-size: .75rem;
     text-align: center;
@@ -5966,6 +5970,7 @@ function markUserInteracted() {
 // ULTRA-FAST LAZY VIDEO LOADING
 // Video inaanza kupakua KABLA ya kufikia screen (preload ahead)
 // ili iwe tayari ku-play mara moja inapofikia
+// Video inaonekana TU baada ya frame ya kwanza kupatikana
 // ============================================================
 function setupVideoAutoplayObserver() {
     if (videoAutoplayObserver) { videoAutoplayObserver.disconnect(); videoAutoplayObserver = null; }
@@ -5984,6 +5989,15 @@ function setupVideoAutoplayObserver() {
                 v.removeAttribute('autoplay');
             }
             v.style.background = 'transparent';
+            // Fanya video ionekane TU baada ya frame ya kwanza kupatikana
+            if (v.dataset.readyBound !== '1') {
+                v.dataset.readyBound = '1';
+                const markReady = () => { try { v.classList.add('is-ready'); } catch (e) {} };
+                if (v.readyState >= 2) markReady();
+                v.addEventListener('loadeddata', markReady, { once: true });
+                v.addEventListener('canplay', markReady, { once: true });
+                v.addEventListener('playing', markReady, { once: true });
+            }
         } catch (e) {}
     });
     
@@ -9586,6 +9600,7 @@ async function loadAdMediaForList(ads) {
             adObjectUrls[ad.id] = url;
             if (media.type === 'video') {
                 // ULTRA-FAST: preload="none" — itapakuliwa tu inapofikiwa
+                // Video haionekani (opacity:0) mpaka frame ya kwanza ipatikane
                 wrap.innerHTML = `<video class="mex-auto-video" src="${url}" loop playsinline webkit-playsinline preload="none" data-loaded="0"></video>`;
                 if (hint) wrap.appendChild(hint);
                 const adCard = wrap.closest('.card');
@@ -11751,7 +11766,7 @@ Object.assign(window, {
     unloadDistantVideos
 });
 
-console.log('✅ MeX PRO v43 — Ultra-fast video playback: preload ahead 400px, play instantly when in view');
+console.log('✅ MeX PRO v44 — Video fade-in: no white/black background before first frame');
 </script>
 </body>
 </html>
