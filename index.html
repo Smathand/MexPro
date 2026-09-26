@@ -64,6 +64,8 @@
     --service-fee-bg: #fef3c7;
     --service-fee-border: #f59e0b;
     --service-fee-text: #92400e;
+    --promoted-bg: linear-gradient(135deg, #8b5cf6, #6d28d9);
+    --promoted-glow: rgba(139,92,246,.35);
     --safe-top: env(safe-area-inset-top, 0px);
     --safe-bottom: env(safe-area-inset-bottom, 0px);
     --safe-left: env(safe-area-inset-left, 0px);
@@ -102,6 +104,8 @@ body.dark {
     --service-fee-bg: #1a1a2e;
     --service-fee-border: #f59e0b;
     --service-fee-text: #fcd34d;
+    --promoted-bg: linear-gradient(135deg, #7c3aed, #5b21b6);
+    --promoted-glow: rgba(124,58,237,.4);
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html {
@@ -204,6 +208,30 @@ button, .btn {
     width: 100%;
 }
 .btn-register-pay:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(18,140,126,.45) !important; }
+.btn-promote {
+    background: linear-gradient(135deg, #8b5cf6, #6d28d9) !important;
+    color: #ffffff !important;
+    padding: 6px 14px !important;
+    font-size: .75rem !important;
+    border-radius: 20px !important;
+    font-weight: 700;
+    box-shadow: 0 3px 10px rgba(139,92,246,.35) !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all .25s ease;
+}
+.btn-promote:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 6px 18px rgba(139,92,246,.5) !important;
+    filter: brightness(1.08);
+}
+.btn-promote.active {
+    background: var(--input-bg) !important;
+    color: #8b5cf6 !important;
+    border: 1.5px solid #8b5cf6 !important;
+    box-shadow: none !important;
+}
 .btn:active { transform: scale(.98) !important; }
 .card {
     background: var(--bg-card);
@@ -214,6 +242,54 @@ button, .btn {
     transition: box-shadow .3s ease, transform .3s ease;
 }
 .card:hover { box-shadow: 0 8px 28px rgba(0,0,0,.08); }
+.card.ad-promoted {
+    border: 2px solid #8b5cf6;
+    box-shadow: 0 6px 24px var(--promoted-glow), var(--shadow-card);
+    position: relative;
+    overflow: visible;
+}
+.card.ad-promoted::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: var(--radius-card);
+    background: linear-gradient(135deg, rgba(139,92,246,.15), transparent 40%, transparent 60%, rgba(139,92,246,.15));
+    pointer-events: none;
+    z-index: 0;
+    animation: promoGlow 3s ease-in-out infinite;
+}
+@keyframes promoGlow {
+    0%, 100% { opacity: .6; }
+    50% { opacity: 1; }
+}
+.promoted-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--promoted-bg);
+    color: #fff;
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: .68rem;
+    font-weight: 800;
+    letter-spacing: .4px;
+    text-transform: uppercase;
+    box-shadow: 0 2px 8px var(--promoted-glow);
+    animation: pulseSoft 2.5s ease-in-out infinite;
+}
+.promoted-badge i { font-size: .75rem; }
+.promoted-countdown {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(139,92,246,.12);
+    color: #8b5cf6;
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: .68rem;
+    font-weight: 700;
+    border: 1px solid rgba(139,92,246,.3);
+}
 .card-header {
     padding: 16px 24px;
     border-bottom: 1px solid var(--border-color);
@@ -1220,6 +1296,7 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
 .toast.success { border-left-color: var(--accent-4); }
 .toast.error { border-left-color: var(--accent-danger); }
 .toast.warning { border-left-color: var(--accent-3); }
+.toast.promoted { border-left-color: #8b5cf6; background: linear-gradient(135deg, var(--bg-card), rgba(139,92,246,.08)); }
 @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 .sub-modal .modal-box {
     max-width: 680px;
@@ -2849,7 +2926,6 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
     border-bottom: 1px solid var(--border-color);
 }
 
-/* ============ SOCIAL LINKS (Profile) ============ */
 .social-links-wrap {
     display: flex;
     flex-wrap: wrap;
@@ -3367,6 +3443,37 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
     <div class="modal-box" id="modalBox"></div>
 </div>
 
+<!-- ============================================================
+     PROMOTE AD MODAL — texts removed
+     ============================================================ -->
+<div class="modal-overlay sub-modal" id="promoteAdModal">
+    <div class="modal-box" style="max-width:640px;">
+        <h3 id="promoteAdTitle"><i class="fas fa-rocket" style="color:#8b5cf6;"></i> Promote Your Ad</h3>
+        <div id="promoteAdPreview" style="background:var(--input-bg);border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:16px;font-size:.88rem;"></div>
+        <div class="sub-amount-display" style="background:rgba(139,92,246,.08);border-color:rgba(139,92,246,.25);color:#8b5cf6;">
+            <i class="fas fa-coins" style="color:#8b5cf6;"></i> Promotion Fee: <strong style="color:#8b5cf6;">4,990 TSh</strong>
+        </div>
+        <div style="margin-bottom:10px;">
+            <label style="font-size:.75rem;font-weight:600;" data-i18n="sub_payment_method">Select Payment Method</label>
+            <div class="payment-options" id="promotePaymentOptions">
+                <label class="payment-option selected" data-value="vodacom"><input type="radio" name="promotePaymentMethod" value="vodacom" checked/><i class="fas fa-mobile-alt text-danger"></i> Vodacom</label>
+                <label class="payment-option" data-value="mix"><input type="radio" name="promotePaymentMethod" value="mix"/><i class="fas fa-mobile-alt text-warning"></i> Mix by Yas</label>
+                <label class="payment-option" data-value="airtel"><input type="radio" name="promotePaymentMethod" value="airtel"/><i class="fas fa-mobile-alt text-danger"></i> Airtel</label>
+                <label class="payment-option" data-value="mastercard"><input type="radio" name="promotePaymentMethod" value="mastercard"/><i class="fab fa-cc-mastercard text-danger"></i> Mastercard</label>
+            </div>
+        </div>
+        <div class="sub-input-group">
+            <label data-i18n="sub_phone">M-Pesa / Card Number</label>
+            <input type="text" id="promotePhone" placeholder="+255 xxx xxx xxx" inputmode="tel"/>
+        </div>
+        <div id="promoteStatus" class="sub-status"></div>
+        <div class="sub-actions">
+            <button id="promotePayBtn" class="btn btn-icon" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9) !important;color:#fff !important;min-width:180px;justify-content:center;padding:12px 24px;font-weight:700;box-shadow:0 6px 20px rgba(139,92,246,.35) !important;" onclick="handlePromoteAdPayment()"><i class="fas fa-rocket"></i> <span>Pay & Promote</span></button>
+            <button class="btn btn-secondary" onclick="closePromoteAdModal()" data-i18n="sub_later">Not Now</button>
+        </div>
+    </div>
+</div>
+
 <div class="modal-overlay receipt-modal" id="receiptModal">
     <div class="modal-box">
         <div id="receiptPrintArea">
@@ -3668,7 +3775,19 @@ en: {
     not_set:'Not set', ad_media_viewer_of:'{current} of {total}', ad_media_click_expand:'Click to open',
     verified:'Verified', follow:'Follow', following:'Following', unfollow:'Unfollow',
     ia_posts:'Posts', ia_followers:'Followers', ia_view_profile:'View Profile', ia_no_posts:'No posts yet.',
-    following_empty:'You are not following any company yet. Follow companies to see their ads here.'
+    following_empty:'You are not following any company yet. Follow companies to see their ads here.',
+
+    /* PROMOTED ADS translations */
+    promote_btn:'Promote',
+    promote_modal_title:'Promote Your Ad',
+    promote_active:'SPONSORED',
+    promote_badge_short:'Sponsored',
+    promote_hours_left:'{hours}h left',
+    promote_minutes_left:'{minutes}m left',
+    promote_success:'✅ Ad promoted! Live for 48 hours at top + every 15 ads.',
+    promote_already:'This ad is already promoted.',
+    promote_failed:'Promotion failed. Try again.',
+    promote_confirm_delete:'Delete this promoted ad? You will lose the promotion.'
 },
 sw: {
     login_subtitle:'Ingia kwenye kampuni yako', login_username_label:'Jina la mtumiaji', login_password_label:'Nenosiri', login_btn:'Ingia',
@@ -3913,7 +4032,18 @@ sw: {
     not_set:'Haijawekwa', ad_media_viewer_of:'{current} kati ya {total}', ad_media_click_expand:'Bofya kufungua',
     verified:'Imethibitishwa', follow:'Fuatilia', following:'Unaufuatilia', unfollow:'Acha kufuatilia',
     ia_posts:'Matangazo', ia_followers:'Wafuatiliaji', ia_view_profile:'Ona Wasifu', ia_no_posts:'Hakuna matangazo bado.',
-    following_empty:'Bado hujaanza kufuatilia kampuni yoyote. Fuatilia kampuni ili kuona matangazo yao hapa.'
+    following_empty:'Bado hujaanza kufuatilia kampuni yoyote. Fuatilia kampuni ili kuona matangazo yao hapa.',
+
+    promote_btn:'Tangaza',
+    promote_modal_title:'Tangaza Tangazo Lako',
+    promote_active:'IMETANGAZWA',
+    promote_badge_short:'Imetangazwa',
+    promote_hours_left:'saa {hours} zilizobaki',
+    promote_minutes_left:'dakika {minutes} zilizobaki',
+    promote_success:'✅ Tangazo limetangazwa! Hewani kwa masaa 48 juu + kila matangazo 15.',
+    promote_already:'Tangazo hili linatangazwa tayari.',
+    promote_failed:'Kutangaza kumeshindikana. Jaribu tena.',
+    promote_confirm_delete:'Futa tangazo hili lililotangazwa? Utapoteza matangazo.'
 },
 fr: {
     login_subtitle:"Connectez-vous à votre entreprise", login_username_label:"Nom d'utilisateur", login_password_label:"Mot de passe", login_btn:"Connexion",
@@ -4158,7 +4288,18 @@ fr: {
     not_set:"Non défini", ad_media_viewer_of:'{current} sur {total}', ad_media_click_expand:'Cliquez pour ouvrir',
     verified:'Vérifié', follow:'Suivre', following:'Abonné', unfollow:'Se désabonner',
     ia_posts:'Publications', ia_followers:'Abonnés', ia_view_profile:'Voir le profil', ia_no_posts:'Aucune publication.',
-    following_empty:'Vous ne suivez encore aucune entreprise. Suivez des entreprises pour voir leurs annonces ici.'
+    following_empty:'Vous ne suivez encore aucune entreprise. Suivez des entreprises pour voir leurs annonces ici.',
+
+    promote_btn:'Promouvoir',
+    promote_modal_title:'Promouvoir votre annonce',
+    promote_active:'SPONSORISÉ',
+    promote_badge_short:'Sponsorisé',
+    promote_hours_left:'{hours}h restantes',
+    promote_minutes_left:'{minutes}m restantes',
+    promote_success:'✅ Annonce promue ! En ligne 48 heures en haut + tous les 15 posts.',
+    promote_already:'Cette annonce est déjà promue.',
+    promote_failed:'Promotion échouée. Réessayez.',
+    promote_confirm_delete:'Supprimer cette annonce promue ? Vous perdrez la promotion.'
 },
 zh: {
     login_subtitle:'登录到您的公司', login_username_label:'用户名', login_password_label:'密码', login_btn:'登录',
@@ -4402,7 +4543,18 @@ zh: {
     not_set:'未设置', ad_media_viewer_of:'第 {current} / {total}', ad_media_click_expand:'点击打开',
     verified:'已验证', follow:'关注', following:'已关注', unfollow:'取消关注',
     ia_posts:'帖子', ia_followers:'关注者', ia_view_profile:'查看资料', ia_no_posts:'暂无帖子。',
-    following_empty:'您还没有关注任何公司。关注公司以在此查看他们的广告。'
+    following_empty:'您还没有关注任何公司。关注公司以在此查看他们的广告。',
+
+    promote_btn:'推广',
+    promote_modal_title:'推广您的广告',
+    promote_active:'已推广',
+    promote_badge_short:'已推广',
+    promote_hours_left:'剩余 {hours} 小时',
+    promote_minutes_left:'剩余 {minutes} 分钟',
+    promote_success:'✅ 广告已推广！在顶部展示 48 小时 + 每 15 条广告出现。',
+    promote_already:'该广告已被推广。',
+    promote_failed:'推广失败。请重试。',
+    promote_confirm_delete:'删除此推广广告？您将失去推广。'
 }
 };
 
@@ -4486,7 +4638,14 @@ const PRELOAD_AHEAD_PX = 400;
 const ACTIVATE_RATIO = 0.2;
 
 /* ============================================================
-   SOCIAL LINKS (Profile) — WhatsApp, Instagram, Facebook, TikTok, Website
+   PROMOTED AD CONSTANTS
+   ============================================================ */
+const PROMOTED_AD_PRICE = 4990;
+const PROMOTED_AD_DURATION_MS = 48 * 60 * 60 * 1000;   // 48 hours
+const PROMOTED_AD_INTERVAL = 15;                        // Repeat every 15 ads in stream
+
+/* ============================================================
+   SOCIAL LINKS
    ============================================================ */
 const SOCIAL_FIELDS = [
     { key: 'socialWhatsapp', type: 'whatsapp', icon: 'fab fa-whatsapp', labelKey: 'social_whatsapp', phKey: 'social_whatsapp_ph' },
@@ -5249,14 +5408,28 @@ function toggleMobileSidebar() {
 /* ============================================================
    ADS HELPERS
    ============================================================ */
-function getAdValidityMs(ad) { return 24 * 60 * 60 * 1000; }
+function isAdPromoted(ad) {
+    if (!ad || !ad.promoted) return false;
+    if (!ad.promotedUntil) return false;
+    return ad.promotedUntil > Date.now();
+}
+function getAdValidityMs(ad) {
+    return isAdPromoted(ad) ? PROMOTED_AD_DURATION_MS : (24 * 60 * 60 * 1000);
+}
 function isAdExpired(ad) {
     if (!ad || !ad.timestamp) return true;
-    return (Date.now() - ad.timestamp) >= getAdValidityMs(ad);
+    if (ad.promoted && ad.promotedUntil) {
+        return Date.now() >= ad.promotedUntil;
+    }
+    return (Date.now() - ad.timestamp) >= (24 * 60 * 60 * 1000);
 }
 function getAdRemainingMs(ad) {
-    if (!ad || !ad.timestamp) return 0;
-    return Math.max(0, getAdValidityMs(ad) - (Date.now() - ad.timestamp));
+    if (!ad) return 0;
+    if (ad.promoted && ad.promotedUntil) {
+        return Math.max(0, ad.promotedUntil - Date.now());
+    }
+    if (!ad.timestamp) return 0;
+    return Math.max(0, (24 * 60 * 60 * 1000) - (Date.now() - ad.timestamp));
 }
 function formatAdExpiry(ad) {
     const ms = getAdRemainingMs(ad);
@@ -5279,6 +5452,138 @@ function cleanupExpiredAds() {
     });
     if (changed) saveGlobalAds(active);
     return active;
+}
+
+/* ============================================================
+   GET AD FEED ORDER (promoted ads at top + every 15)
+   ============================================================ */
+function getAdFeedOrder(ads) {
+    if (!Array.isArray(ads) || ads.length === 0) return [];
+
+    const promoted = [];
+    const regular = [];
+    ads.forEach(ad => {
+        if (isAdPromoted(ad)) promoted.push(ad);
+        else regular.push(ad);
+    });
+
+    promoted.sort((a, b) => (b.promotedAt || b.timestamp) - (a.promotedAt || a.timestamp));
+    regular.sort((a, b) => b.timestamp - a.timestamp);
+
+    const finalFeed = [];
+
+    if (promoted.length > 0) {
+        finalFeed.push(...promoted);
+    }
+
+    let regularIdx = 0;
+    let promotedCycleIdx = 0;
+    let itemCount = 0;
+    let safety = 0;
+
+    while (regularIdx < regular.length && safety < regular.length * 2 + 100) {
+        safety++;
+        if (promoted.length > 0 && itemCount > 0 && itemCount % PROMOTED_AD_INTERVAL === 0) {
+            finalFeed.push(promoted[promotedCycleIdx % promoted.length]);
+            promotedCycleIdx++;
+        }
+        finalFeed.push(regular[regularIdx]);
+        regularIdx++;
+        itemCount++;
+    }
+
+    return finalFeed;
+}
+
+/* ============================================================
+   PROMOTE AD FLOW
+   ============================================================ */
+let promoteTargetAdId = null;
+
+function openPromoteAdModal(adId) {
+    if (isSystemLocked() || isMexEmployee) { showToast(t('lock_info'), 'warning'); return; }
+    const u = getCurrentUser();
+    if (!u) { showToast('Please log in.', 'error'); return; }
+    const ad = getGlobalAds().find(a => a.id === Number(adId));
+    if (!ad) { showToast('Ad not found.', 'error'); return; }
+    if (!isSuperAdmin && ad.tenantId !== currentTenantId) {
+        showToast(t('toast_ad_delete_denied'), 'error'); return;
+    }
+    if (isAdPromoted(ad)) { showToast(t('promote_already'), 'info'); return; }
+
+    promoteTargetAdId = ad.id;
+
+    const prev = document.getElementById('promoteAdPreview');
+    if (prev) {
+        prev.innerHTML = `
+            <div style="display:flex;align-items:center;gap:10px;">
+                <div style="flex:1;min-width:0;">
+                    <div style="font-weight:700;color:var(--text-primary);font-size:.92rem;margin-bottom:2px;">${escapeHtml(ad.title || '')}</div>
+                    <div style="font-size:.75rem;color:var(--text-muted);"><i class="fas fa-building"></i> ${escapeHtml(ad.companyName || '')} &nbsp;|&nbsp; <i class="far fa-clock"></i> ${fmtDateTime(ad.timestamp)}</div>
+                </div>
+            </div>`;
+    }
+    const st = document.getElementById('promoteStatus');
+    if (st) { st.textContent = ''; st.className = 'sub-status'; }
+    const ph = document.getElementById('promotePhone');
+    if (ph) { ph.value = ''; }
+    document.querySelectorAll('#promotePaymentOptions .payment-option').forEach((o, i) => {
+        o.classList.toggle('selected', i === 0);
+        const r = o.querySelector('input[type="radio"]');
+        if (r) r.checked = i === 0;
+    });
+    const m = document.getElementById('promoteAdModal');
+    if (m) { m.classList.add('show'); document.body.classList.add('modal-open'); }
+}
+function closePromoteAdModal() {
+    const m = document.getElementById('promoteAdModal');
+    if (m) m.classList.remove('show');
+    document.body.classList.remove('modal-open');
+    promoteTargetAdId = null;
+}
+function handlePromoteAdPayment() {
+    if (!promoteTargetAdId) { showToast(t('promote_failed'), 'error'); return; }
+    const phoneInput = document.getElementById('promotePhone');
+    const phone = phoneInput ? phoneInput.value.trim() : '';
+    if (!phone) { showToast('Enter M-Pesa / Card number.', 'error'); return; }
+    const ads = getGlobalAds();
+    const ad = ads.find(a => a.id === Number(promoteTargetAdId));
+    if (!ad) { showToast('Ad not found.', 'error'); return; }
+    if (isAdPromoted(ad)) { showToast(t('promote_already'), 'info'); closePromoteAdModal(); return; }
+
+    ad.promoted = true;
+    ad.promotedAt = Date.now();
+    ad.promotedUntil = Date.now() + PROMOTED_AD_DURATION_MS;
+    ad.promotionPaid = PROMOTED_AD_PRICE;
+    ad.promotionPaymentMethod = document.querySelector('#promotePaymentOptions .payment-option.selected')?.dataset.value || 'vodacom';
+    saveGlobalAds(ads);
+
+    closePromoteAdModal();
+    showToast(t('promote_success'), 'promoted');
+    const av = document.querySelector('.sidebar-nav .nav-item.active');
+    if (av && av.dataset.view === 'status') navigate('status');
+    else navigate('status');
+}
+
+/* ============================================================
+   PROMOTED COUNTDOWN TICKER
+   ============================================================ */
+let promotedTickerInterval = null;
+function startPromotedTicker() {
+    if (promotedTickerInterval) clearInterval(promotedTickerInterval);
+    promotedTickerInterval = setInterval(() => {
+        document.querySelectorAll('[data-promoted-until]').forEach(el => {
+            const until = parseInt(el.dataset.promotedUntil);
+            if (!until || isNaN(until)) return;
+            const ms = until - Date.now();
+            if (ms <= 0) { el.textContent = t('ads_expired'); return; }
+            const hours = Math.floor(ms / 3600000);
+            const minutes = Math.floor((ms % 3600000) / 60000);
+            el.textContent = hours >= 1
+                ? (t('promote_hours_left') || '{hours}h left').replace('{hours}', hours)
+                : (t('promote_minutes_left') || '{minutes}m left').replace('{minutes}', minutes);
+        });
+    }, 30000);
 }
 
 function t(key) {
@@ -5680,10 +5985,12 @@ async function renderAdMediaViewerContent() {
         if (v) { v.muted = false; v.volume = 1; v.play().catch(() => { v.muted = true; v.play().catch(() => {}); }); }
     } else content.innerHTML = `<img src="${url}" alt="${escapeHtml(ad.title || '')}"/>`;
     if (info) {
+        const promoBadge = isAdPromoted(ad) ? `<div style="margin-top:6px;"><span class="promoted-badge"><i class="fas fa-rocket"></i> ${t('promote_active')}</span></div>` : '';
         info.innerHTML = `
             <div class="amv-title">${escapeHtml(ad.title || '')}</div>
             <div class="amv-company"><i class="fas fa-building"></i> ${escapeHtml(ad.companyName || '')}${ad.postedBy !== 'super' ? renderVerifiedBadge('md') : ''}</div>
             <div class="amv-expiry"><i class="fas fa-hourglass-half"></i> ${formatAdExpiry(ad)}</div>
+            ${promoBadge}
         `;
     }
 }
@@ -5788,7 +6095,8 @@ function openAdAuthorProfile(adId) {
         else if (hasInlineImage) media = `<img src="${a.image}" alt="" style="width:100%;height:100%;object-fit:cover;"/>`;
         else media = `<div class="ad-media-placeholder" id="${mediaWrapId}"><i class="fas fa-spinner fa-spin" style="font-size:1.1rem;"></i><span style="font-size:.6rem;">${t('ads_media_loading')}</span></div>`;
         const expandHint = `<div class="profile-ad-media-expand"><i class="fas fa-expand"></i></div>`;
-        return `<div class="card" style="margin-bottom:12px;padding:12px;">
+        const promotedBadge = isAdPromoted(a) ? `<div style="margin-top:6px;"><span class="promoted-badge" style="font-size:.6rem;padding:2px 9px;"><i class="fas fa-rocket"></i> ${t('promote_active')}</span></div>` : '';
+        return `<div class="card${isAdPromoted(a) ? ' ad-promoted' : ''}" style="margin-bottom:12px;padding:12px;">
             <div style="display:flex;gap:12px;">
                 <div class="profile-ad-media-box" onclick="openAdMediaViewer('${a.id}', 'profile')" title="${t('ad_media_click_expand')}" style="width:110px;height:110px;flex-shrink:0;border-radius:8px;overflow:hidden;background:var(--input-bg);position:relative;display:flex;align-items:center;justify-content:center;">
                     <div id="${mediaWrapId}" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">${media}</div>
@@ -5797,7 +6105,8 @@ function openAdAuthorProfile(adId) {
                 <div style="flex:1;min-width:0;">
                     <h4 style="margin:0 0 6px;font-size:.92rem;font-weight:700;color:var(--text-primary);word-break:break-word;">${escapeHtml(a.title || '')}</h4>
                     <p style="font-size:.8rem;color:var(--text-secondary);margin:0 0 8px;line-height:1.45;word-break:break-word;">${escapeHtml(a.content || '')}</p>
-                    <div style="font-size:.68rem;color:var(--text-muted);display:flex;gap:10px;flex-wrap:wrap;">
+                    ${promotedBadge}
+                    <div style="font-size:.68rem;color:var(--text-muted);display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;">
                         <span><i class="far fa-clock"></i> ${fmtDateTime(a.timestamp)}</span>
                         <span><i class="fas fa-eye"></i> ${viewerCount}</span>
                         <span><i class="fas fa-hourglass-half"></i> ${expLabel}</span>
@@ -5900,7 +6209,8 @@ function openCompanyProfile(tenantId) {
         if (hasInlineVideo) media = `<video class="profile-muted-video" src="${a.video}" playsinline preload="metadata" muted loop autoplay data-profile-muted="1" style="width:100%;height:100%;object-fit:cover;"></video>`;
         else if (hasInlineImage) media = `<img src="${a.image}" alt="" style="width:100%;height:100%;object-fit:cover;"/>`;
         else media = `<div class="ad-media-placeholder"><i class="fas fa-spinner fa-spin" style="font-size:1.1rem;"></i><span style="font-size:.6rem;">${t('ads_media_loading')}</span></div>`;
-        return `<div class="card" style="margin-bottom:12px;padding:12px;">
+        const promotedBadge = isAdPromoted(a) ? `<div style="margin-top:6px;"><span class="promoted-badge" style="font-size:.6rem;padding:2px 9px;"><i class="fas fa-rocket"></i> ${t('promote_active')}</span></div>` : '';
+        return `<div class="card${isAdPromoted(a) ? ' ad-promoted' : ''}" style="margin-bottom:12px;padding:12px;">
             <div style="display:flex;gap:12px;">
                 <div class="profile-ad-media-box" onclick="openAdMediaViewer('${a.id}', 'profile')" title="${t('ad_media_click_expand')}" style="width:110px;height:110px;flex-shrink:0;border-radius:8px;overflow:hidden;background:var(--input-bg);position:relative;display:flex;align-items:center;justify-content:center;">
                     <div id="${mediaWrapId}" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">${media}</div>
@@ -5909,7 +6219,8 @@ function openCompanyProfile(tenantId) {
                 <div style="flex:1;min-width:0;">
                     <h4 style="margin:0 0 6px;font-size:.92rem;font-weight:700;color:var(--text-primary);word-break:break-word;">${escapeHtml(a.title || '')}</h4>
                     <p style="font-size:.8rem;color:var(--text-secondary);margin:0 0 8px;line-height:1.45;word-break:break-word;">${escapeHtml(a.content || '')}</p>
-                    <div style="font-size:.68rem;color:var(--text-muted);display:flex;gap:10px;flex-wrap:wrap;">
+                    ${promotedBadge}
+                    <div style="font-size:.68rem;color:var(--text-muted);display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;">
                         <span><i class="far fa-clock"></i> ${fmtDateTime(a.timestamp)}</span>
                         <span><i class="fas fa-eye"></i> ${viewerCount}</span>
                         <span><i class="fas fa-hourglass-half"></i> ${expLabel}</span>
@@ -7871,11 +8182,14 @@ views.statusAdsOnly = function () {
     return `<div class="section-header"><h2><i class="fas fa-bullhorn" style="color:var(--accent-3);"></i> ${t('ads_title')}</h2></div>` + renderAdsTab();
 };
 
+/* ============================================================
+   RENDER ADS TAB — NO info text at all
+   ============================================================ */
 function renderAdsTab() {
     const user = getCurrentUser();
     const initialAds = cleanupExpiredAds();
     if (initialAds.length > 0) trackAdViewers(initialAds.map(a => a.id));
-    let ads = cleanupExpiredAds().sort((a, b) => b.timestamp - a.timestamp);
+    let ads = getAdFeedOrder(cleanupExpiredAds());
     if (adSearchTerm && adSearchTerm.trim()) {
         const q = adSearchTerm.trim().toLowerCase();
         ads = ads.filter(ad =>
@@ -7892,8 +8206,10 @@ function renderAdsTab() {
         await loadAdMediaForList(ads);
         setupVideoAutoplayObserver();
         setupAdMediaDoubleTap();
+        startPromotedTicker();
     }, 60);
     const safeTerm = escapeHtml(adSearchTerm || '');
+    /* NO INFO BOX — removed entirely */
     return `<div class="section-header">
         <h2><i class="fas fa-bullhorn" style="color:var(--accent-3);"></i> ${t('ads_title')}</h2>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
@@ -7905,10 +8221,6 @@ function renderAdsTab() {
         <input type="text" id="adsSearchInput" class="inventory-search-input" placeholder="Tafuta tangazo, bidhaa, au kampuni..." value="${safeTerm}" oninput="searchAds(this.value)" autocomplete="off" spellcheck="false"/>
         <button type="button" class="inventory-search-clear" id="adsSearchClear" onclick="clearAdSearch()" style="display:${adSearchTerm ? 'flex' : 'none'};" title="Futa utafutaji"><i class="fas fa-times"></i></button>
     </div>
-    <div style="background:var(--sub-bg);border:1px solid var(--sub-border);color:var(--sub-text);border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:16px;font-size:.85rem;display:flex;gap:8px;align-items:flex-start;">
-        <i class="fas fa-info-circle" style="margin-top:2px;color:var(--accent-3);"></i>
-        <span>${t('ads_subtitle')}<br><strong>${t('ads_validity')}</strong><br><span style="font-size:.75rem;opacity:.8;">${t('ads_video_label')}</span></span>
-    </div>
     <div id="adsListContainer">${adsHtml || `<div class="card"><div class="card-body"><div class="empty-state"><i class="fas fa-bullhorn"></i><h3>${adSearchTerm ? 'Hakuna matokeo' : t('ads_no_ads')}</h3>${adSearchTerm ? '<p>Jaribu neno lingine la kutafuta.</p>' : ''}</div></div></div>`}</div>`;
 }
 function searchAds(term) {
@@ -7918,7 +8230,7 @@ function searchAds(term) {
     if (clearBtn) clearBtn.style.display = adSearchTerm ? 'flex' : 'none';
     if (!container) return;
     const user = getCurrentUser();
-    const all = cleanupExpiredAds().sort((a, b) => b.timestamp - a.timestamp);
+    const all = getAdFeedOrder(cleanupExpiredAds());
     const q = adSearchTerm.trim().toLowerCase();
     const filtered = q ? all.filter(ad =>
         (ad.title || '').toLowerCase().includes(q) ||
@@ -7934,6 +8246,7 @@ function searchAds(term) {
         await loadAdMediaForList(filtered);
         setupVideoAutoplayObserver();
         setupAdMediaDoubleTap();
+        startPromotedTicker();
     }, 60);
 }
 function clearAdSearch() {
@@ -7988,8 +8301,7 @@ function renderFollowingTab() {
     const user = getCurrentUser();
     if (!user || isSuperAdmin || isMexEmployee) return '';
     const follows = getFollows();
-    const allAds = cleanupExpiredAds().filter(a => follows.indexOf(a.tenantId) !== -1);
-    allAds.sort((a, b) => b.timestamp - a.timestamp);
+    const allAds = getAdFeedOrder(cleanupExpiredAds().filter(a => follows.indexOf(a.tenantId) !== -1));
     if (follows.length > 0 && allAds.length > 0) trackAdViewers(allAds.map(a => a.id));
     const myAvatar = getUserPhoto(user);
     const adsHtml = allAds.map(ad => renderAdCard(ad, user, myAvatar, false, true)).join('');
@@ -7997,6 +8309,7 @@ function renderFollowingTab() {
         await loadAdMediaForList(allAds);
         setupVideoAutoplayObserver();
         setupAdMediaDoubleTap();
+        startPromotedTicker();
     }, 60);
     if (follows.length === 0) {
         return `<div class="card">
@@ -8035,13 +8348,21 @@ function renderAdCard(ad, user, myAvatar, canPost, showDoubleTap) {
     const avatarUrl = getAdAuthorPhoto(ad);
     const expiryMs = getAdRemainingMs(ad);
     const expiryLabel = formatAdExpiry(ad);
-    const isUrgent = expiryMs < 6 * 60 * 60 * 1000;
+    const isUrgent = expiryMs < 6 * 60 * 60 * 1000 && !isAdPromoted(ad);
     const comments = ad.comments || [];
     const commentsCount = comments.length;
     const commentsExpanded = expandedAdComments[ad.id] === true;
     const hasInlineImage = ad.image && ad.image.length;
     const hasInlineVideo = ad.video && ad.video.length;
     const hasVideo = ad.mediaType === 'video' || hasInlineVideo;
+    const isPromoted = isAdPromoted(ad);
+
+    let canPromote = false;
+    if (!isMexEmployee && !isPromoted) {
+        if (isSuperAdmin) canPromote = true;
+        else if (ad.tenantId === currentTenantId && user && user.role === 'owner') canPromote = true;
+    }
+
     let mediaPlaceholder = '';
     if (hasInlineVideo) mediaPlaceholder = `<video class="mex-auto-video" src="${ad.video}" loop playsinline webkit-playsinline preload="none" data-loaded="0"></video>`;
     else if (hasInlineImage) mediaPlaceholder = `<img src="${ad.image}" alt="Ad"/>`;
@@ -8080,18 +8401,33 @@ function renderAdCard(ad, user, myAvatar, canPost, showDoubleTap) {
     const mediaWrapperClass = showDoubleTap ? 'status-image-wrap ad-double-tap-media' : 'status-image-wrap';
     const mediaWrapperAttr = showDoubleTap ? `data-ad-id="${ad.id}" title="${t('ad_media_click_expand')}"` : '';
     const hintHtml = showDoubleTap ? `<div class="ad-double-tap-hint"><i class="fas fa-expand"></i> ${t('ad_media_click_expand')}</div>` : '';
-    return `<div class="card${hasVideo ? ' ad-video-card' : ''}" style="margin-bottom:16px;padding:16px;">
+
+    const promotedHeaderBadge = isPromoted
+        ? `<span class="promoted-badge" style="margin-right:6px;"><i class="fas fa-rocket"></i> ${t('promote_active')}</span>`
+        : '';
+    const promotedCountdown = isPromoted
+        ? `<span class="promoted-countdown"><i class="fas fa-hourglass-half"></i> <span data-promoted-until="${ad.promotedUntil}">${formatAdExpiry(ad)}</span></span>`
+        : '';
+
+    const promoteBtn = canPromote
+        ? `<button class="btn-promote" onclick="event.stopPropagation();openPromoteAdModal('${ad.id}')" title="Promote"><i class="fas fa-rocket"></i> ${t('promote_btn')}</button>`
+        : '';
+
+    return `<div class="card${isPromoted ? ' ad-promoted' : ''}${hasVideo ? ' ad-video-card' : ''}" style="margin-bottom:16px;padding:16px;">
         <div class="status-card">
             <div class="status-header">
                 <img src="${avatarUrl}" class="status-avatar" alt="${companyName}" title="${t('view_profile')}" onclick="openAdAuthorProfile('${ad.id}')" style="cursor:pointer;"/>
                 <div class="status-meta">
                     <div class="status-name" onclick="openAdAuthorProfile('${ad.id}')" style="cursor:pointer;">
-                        <i class="fas fa-${isSuper ? 'crown' : 'building'}" style="color:${isSuper ? '#f59e0b' : 'var(--accent-1)'};margin-right:4px;"></i>${companyName}${!isSuper ? renderVerifiedBadge() : ''}
+                        ${promotedHeaderBadge}<i class="fas fa-${isSuper ? 'crown' : 'building'}" style="color:${isSuper ? '#f59e0b' : 'var(--accent-1)'};margin-right:4px;"></i>${companyName}${!isSuper ? renderVerifiedBadge() : ''}
                     </div>
                     <div class="status-time"><i class="far fa-clock"></i> ${fmtDateTime(ad.timestamp)} · ${authorName}</div>
                 </div>
                 ${followBtn}
-                ${canDelete ? `<button class="btn btn-danger btn-xs" onclick="deleteGlobalAdConfirm('${ad.id}')" ${followBtn ? '' : 'style="margin-left:auto;"'}><i class="fas fa-trash"></i></button>` : ''}
+                <div style="display:flex;gap:6px;align-items:center;margin-left:${followBtn ? '0' : 'auto'};">
+                    ${promoteBtn}
+                    ${canDelete ? `<button class="btn btn-danger btn-xs" onclick="deleteGlobalAdConfirm('${ad.id}')"><i class="fas fa-trash"></i></button>` : ''}
+                </div>
             </div>
             <div class="status-body">
                 <div class="${mediaWrapperClass}" id="ad-media-wrap-${ad.id}" ${mediaWrapperAttr}>
@@ -8101,9 +8437,10 @@ function renderAdCard(ad, user, myAvatar, canPost, showDoubleTap) {
                 <div class="status-content">
                     <h3 style="font-size:1.05rem;font-weight:700;margin:0 0 6px;color:var(--text-primary);">${ad.title}</h3>
                     <p class="status-text">${ad.content}</p>
-                    <div class="status-actions" style="margin-top:10px;">
+                    <div class="status-actions" style="margin-top:10px;flex-wrap:wrap;">
                         <button class="viewer-badge" onclick="event.stopPropagation();openViewersModal('ad','${ad.id}')"><i class="fas fa-eye"></i> ${viewerCount} ${t('ads_viewers')}</button>
                         <span class="ad-expiry-badge ${isUrgent ? 'urgent' : ''}"><i class="fas fa-hourglass-half"></i> ${expiryLabel}</span>
+                        ${promotedCountdown}
                         ${isSuper ? `<span class="badge" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;"><i class="fas fa-crown"></i> Admin</span>` : ''}
                     </div>
                     <div class="ad-comments-section">
@@ -8170,6 +8507,9 @@ function renderCompanyStatusTab(user) {
     ${statusHtml || `<div class="card"><div class="card-body"><div class="empty-state"><i class="fas fa-images"></i><h3>${t('status_post_new')}</h3><p>${t('dash_status_empty')}</p></div></div></div>`}`;
 }
 
+/* ============================================================
+   OPEN AD MODAL — NO info text at all
+   ============================================================ */
 function openAdModal(mode) {
     if ((!isSuperAdmin && isSystemLocked()) || isMexEmployee) { showToast(t('lock_info'), 'warning'); return; }
     const u = getCurrentUser();
@@ -8178,11 +8518,8 @@ function openAdModal(mode) {
     const ov = document.getElementById('modalOverlay');
     const bx = document.getElementById('modalBox');
     const cn = isSuperAdmin ? 'MeX Admin' : (getTenant(currentTenantId)?.companyName || u?.username || 'Company');
+    /* NO INFO BOX — removed entirely */
     bx.innerHTML = `<h3><i class="fas fa-bullhorn" style="color:var(--accent-3);"></i> ${t('ads_post')}</h3>
-    <div style="background:var(--sub-bg);border:1px solid var(--sub-border);color:var(--sub-text);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:14px;font-size:.8rem;display:flex;gap:8px;align-items:flex-start;">
-        <i class="fas fa-hourglass-half" style="margin-top:2px;color:var(--accent-3);"></i>
-        <span>${t('ads_validity')}</span>
-    </div>
     <form id="adForm" onsubmit="submitAd(event,false)">
         <div class="form-group"><label>${t('ads_title_label')} *</label><input type="text" name="title" required maxlength="100"/></div>
         <div class="form-group"><label>${t('ads_content_label')} *</label><textarea name="content" rows="4" required maxlength="1500" style="resize:vertical;"></textarea></div>
@@ -8243,11 +8580,25 @@ async function submitAd(e, isPaid) {
         timestamp: Date.now(),
         isPaid: false,
         viewers: [], comments: [],
-        mediaType: mediaSaved ? mediaType : 'none'
+        mediaType: mediaSaved ? mediaType : 'none',
+        promoted: false, promotedAt: null, promotedUntil: null, promotionPaid: 0
     };
     addGlobalAd(ad);
     closeModal();
     showToast(t('toast_ad_posted_free'), 'success');
+
+    const canPromote = isSuperAdmin || (!isMexEmployee && u && u.role === 'owner');
+    if (canPromote) {
+        setTimeout(() => {
+            if (confirm('🚀 Do you want to promote this ad?\n\n• 4,990 TSh\n• 48 hours visibility\n• Appears at top of everyone\'s feed\n• Repeats every 15 ads\n\nClick OK to promote, Cancel to skip.')) {
+                openPromoteAdModal(adId);
+            } else {
+                currentStatusTab = 'ads';
+                navigate('status');
+            }
+        }, 400);
+        return;
+    }
     currentStatusTab = 'ads';
     navigate('status');
 }
@@ -8255,7 +8606,8 @@ function deleteGlobalAdConfirm(id) {
     const ad = getGlobalAds().find(a => a.id === Number(id));
     if (!ad) { showToast('Not found.', 'error'); return; }
     if (!isSuperAdmin && ad.tenantId !== currentTenantId) { showToast(t('toast_ad_delete_denied'), 'error'); return; }
-    if (!confirm(t('ads_confirm_delete'))) return;
+    const msg = isAdPromoted(ad) ? t('promote_confirm_delete') : t('ads_confirm_delete');
+    if (!confirm(msg)) return;
     deleteAdMedia(id);
     if (adObjectUrls[id]) { try { URL.revokeObjectURL(adObjectUrls[id]); } catch (e) {} delete adObjectUrls[id]; }
     deleteGlobalAd(id);
@@ -9789,6 +10141,7 @@ function logout() {
     if (lockCheckerInterval) { clearInterval(lockCheckerInterval); lockCheckerInterval = null; }
     if (videoAutoplayObserver) { videoAutoplayObserver.disconnect(); videoAutoplayObserver = null; }
     if (chatRefreshInterval) { clearInterval(chatRefreshInterval); chatRefreshInterval = null; }
+    if (promotedTickerInterval) { clearInterval(promotedTickerInterval); promotedTickerInterval = null; }
     if (modalObserver) { modalObserver.disconnect(); modalObserver = null; }
     activeVideo = null;
     Object.keys(adObjectUrls).forEach(id => { try { URL.revokeObjectURL(adObjectUrls[id]); } catch (e) {} delete adObjectUrls[id]; });
@@ -9812,7 +10165,7 @@ function logout() {
     document.getElementById('loginPage').classList.remove('hidden');
     document.getElementById('registerPage').classList.add('hidden');
     document.getElementById('loginError').textContent = '';
-    ['chatModal', 'profileModal', 'subModal', 'receiptModal', 'lowStockModal', 'transferModal', 'profileViewModal'].forEach(id => { document.getElementById(id).classList.remove('show'); });
+    ['chatModal', 'profileModal', 'subModal', 'receiptModal', 'lowStockModal', 'transferModal', 'profileViewModal', 'promoteAdModal'].forEach(id => { document.getElementById(id).classList.remove('show'); });
     document.body.classList.remove('modal-open');
     document.body.classList.remove('ad-viewer-open');
     document.getElementById('loginUsername').value = '';
@@ -9832,6 +10185,7 @@ function initApp(user) {
     applyTheme(user.theme === 'dark');
     updateAllUI(user);
     cleanupExpiredAds();
+    startPromotedTicker();
     if (isMexEmployee) {
         document.querySelectorAll('.sidebar-nav .nav-item').forEach(el => {
             const v = el.dataset.view;
@@ -9940,6 +10294,13 @@ function bindGlobalEvents() {
             this.querySelector('input[type="radio"]').checked = true;
         };
     });
+    document.querySelectorAll('#promotePaymentOptions .payment-option').forEach(opt => {
+        opt.onclick = function () {
+            document.querySelectorAll('#promotePaymentOptions .payment-option').forEach(o => o.classList.remove('selected'));
+            this.classList.add('selected');
+            this.querySelector('input[type="radio"]').checked = true;
+        };
+    });
     const pb = document.getElementById('printReceiptBtn');
     if (pb) pb.onclick = e => { e.preventDefault(); e.stopPropagation(); printReceipt(); };
     const crb = document.getElementById('closeReceiptBtn');
@@ -9958,6 +10319,8 @@ function bindGlobalEvents() {
             if (e.target === this || e.target.classList.contains('amv-box')) closeAdMediaViewer();
         };
     }
+    const promoteModalEl = document.getElementById('promoteAdModal');
+    if (promoteModalEl) promoteModalEl.onclick = function (e) { if (e.target === this) closePromoteAdModal(); };
     window.addEventListener('resize', () => { if (window.innerWidth > 768) closeMobileSidebar(); });
     window.addEventListener('beforeunload', () => {
         const cu = getCurrentUser();
@@ -9965,6 +10328,7 @@ function bindGlobalEvents() {
         if (heartbeatInterval) { clearInterval(heartbeatInterval); heartbeatInterval = null; }
         if (trialTimerInterval) { clearInterval(trialTimerInterval); trialTimerInterval = null; }
         if (lockCheckerInterval) { clearInterval(lockCheckerInterval); lockCheckerInterval = null; }
+        if (promotedTickerInterval) { clearInterval(promotedTickerInterval); promotedTickerInterval = null; }
         Object.keys(adObjectUrls).forEach(id => { try { URL.revokeObjectURL(adObjectUrls[id]); } catch (e) {} });
     });
 }
@@ -10146,6 +10510,7 @@ function deleteChatMessage(msgId) {
     migrateCommissionPaidStatus();
     migrateBranchPermissions();
     initLanguageMenu();
+    startPromotedTicker();
     const mexSess = getMexSession();
     if (mexSess) {
         const emp = findMexEmployeeById(mexSess.id);
@@ -10231,6 +10596,8 @@ document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
         const amv = document.getElementById('adMediaViewerModal');
         if (amv && amv.classList.contains('show')) { closeAdMediaViewer(); return; }
+        const pm = document.getElementById('promoteAdModal');
+        if (pm && pm.classList.contains('show')) { closePromoteAdModal(); return; }
         closeModal();
         closeProfileModal();
         closeSubscriptionModal();
@@ -10290,10 +10657,13 @@ Object.assign(window, {
     renderCompaniesTab, searchAds, clearAdSearch,
     getCompanyPhoto, openCompanyProfile,
     unloadDistantVideos,
-    renderSocialLinks, renderSocialFields, buildSocialUrl, SOCIAL_FIELDS
+    renderSocialLinks, renderSocialFields, buildSocialUrl, SOCIAL_FIELDS,
+    isAdPromoted, openPromoteAdModal, closePromoteAdModal, handlePromoteAdPayment,
+    getAdFeedOrder, startPromotedTicker,
+    PROMOTED_AD_PRICE, PROMOTED_AD_DURATION_MS, PROMOTED_AD_INTERVAL
 });
 
-console.log('✅ MeX PRO v46 — Social links in Profile (WhatsApp, Instagram, Facebook, TikTok, Website) + Working Chat');
+console.log('✅ MeX PRO v48 — Promoted ads (no descriptive text)');
 </script>
 </body>
 </html>
