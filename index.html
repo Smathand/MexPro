@@ -300,17 +300,17 @@ button, .btn {
 .btn-register-pay {
     background: linear-gradient(135deg, #128C7E, #0e6b5f) !important;
     color: #ffffff !important;
-    padding: 10px 20px;
+    padding: 12px 24px;
     font-weight: 700;
-    font-size: .9rem;
-    border-radius: 12px !important;
-    box-shadow: 0 4px 14px rgba(18,140,126,.3) !important;
+    font-size: 1rem;
+    border-radius: 14px !important;
+    box-shadow: 0 6px 20px rgba(18,140,126,.35) !important;
     width: 100%;
 }
 
 .btn-register-pay:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(18,140,126,.4) !important;
+    box-shadow: 0 10px 26px rgba(18,140,126,.45) !important;
 }
 
 .btn-promote {
@@ -344,37 +344,28 @@ button, .btn {
     transform: scale(.98) !important;
 }
 
-/* ===== AD POST BUTTON — COMPACT PROFESSIONAL SIZE ===== */
-.ad-post-btn {
-    display: inline-flex !important;
+/* ===== AD POST BUTTON — FULL WIDTH (restored to original) ===== */
+.ad-post-btn-full {
+    width: 100% !important;
+    display: flex !important;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    padding: 8px 18px !important;
-    font-size: .85rem !important;
-    font-weight: 600 !important;
-    border-radius: 10px !important;
-    background: var(--accent-1) !important;
-    color: #ffffff !important;
-    box-shadow: 0 3px 10px rgba(18,140,126,.28) !important;
-    white-space: nowrap;
-    transition: all .2s ease;
+    gap: 10px;
+    padding: 14px 24px !important;
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    border-radius: 14px !important;
+    box-shadow: 0 6px 20px rgba(18,140,126,.35) !important;
 }
 
-.ad-post-btn i {
-    font-size: .85rem;
-}
-
-.ad-post-btn:hover {
-    background: var(--accent-2) !important;
-    transform: translateY(-1px);
-    box-shadow: 0 5px 14px rgba(18,140,126,.38) !important;
+.ad-post-btn-full i {
+    font-size: 1.1rem;
 }
 
 @media (max-width: 768px) {
-    .ad-post-btn {
-        padding: 7px 14px !important;
-        font-size: .8rem !important;
+    .ad-post-btn-full {
+        padding: 12px 18px !important;
+        font-size: .92rem !important;
     }
 }
 /* ===== END AD POST BUTTON ===== */
@@ -736,9 +727,9 @@ tbody tr:hover {
     margin: 20px auto;
     max-height: 92vh;
     overflow-y: auto;
-    padding: 28px 24px;
+    padding: 32px 28px;
     width: 100%;
-    max-width: 400px;
+    max-width: 420px;
     background: var(--bg-card);
     border-radius: var(--radius-card);
     box-shadow: var(--shadow-dropdown);
@@ -762,59 +753,44 @@ tbody tr:hover {
 }
 
 .page-card .logo-icon {
-    font-size: 44px;
+    font-size: 56px;
     color: var(--accent-1);
-    margin-bottom: 2px;
+    margin-bottom: 4px;
 }
 
 .page-card h2 {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     font-weight: 800;
     color: var(--accent-1);
 }
 
 .page-card .subtitle {
     color: var(--text-muted);
-    margin-bottom: 14px;
-    font-size: .8rem;
+    margin-bottom: 18px;
+    font-size: .85rem;
 }
 
 .page-card .input-group {
     text-align: left;
-    margin-bottom: 10px;
+    margin-bottom: 14px;
 }
 
 .page-card .input-group label {
-    font-size: .72rem;
+    font-size: .75rem;
     text-transform: uppercase;
     letter-spacing: .4px;
-    margin-bottom: 3px;
-}
-
-.page-card .input-group input {
-    padding: 10px 14px;
-    font-size: 15px;
-    border-radius: 10px;
-}
-
-.page-card .divider {
-    margin: 12px 0 10px;
-}
-
-.page-card .link-text {
-    font-size: .85rem;
 }
 
 .error-msg {
     color: var(--accent-danger);
-    font-size: .8rem;
-    margin-top: 6px;
+    font-size: .85rem;
+    margin-top: 8px;
 }
 
 .success-msg {
     color: var(--accent-4);
-    font-size: .8rem;
-    margin-top: 6px;
+    font-size: .85rem;
+    margin-top: 8px;
 }
 
 .link-text {
@@ -4609,15 +4585,8 @@ tbody tr:hover {
         border-radius: 16px;
     }
     .page-card {
-        padding: 22px 18px;
+        padding: 26px 20px;
         border-radius: 18px;
-        max-width: 360px;
-    }
-    .page-card .logo-icon {
-        font-size: 38px;
-    }
-    .page-card h2 {
-        font-size: 1.35rem;
     }
     .toast-container {
         left: 12px;
@@ -4673,30 +4642,6 @@ tbody tr:hover {
     .content-area {
         padding: 10px 10px calc(20px + var(--safe-bottom));
     }
-    .page-card {
-        padding: 20px 16px;
-        max-width: 340px;
-    }
-    .page-card .logo-icon {
-        font-size: 34px;
-    }
-    .page-card h2 {
-        font-size: 1.25rem;
-    }
-    .page-card .subtitle {
-        font-size: .75rem;
-        margin-bottom: 12px;
-    }
-    .page-card .input-group {
-        margin-bottom: 8px;
-    }
-    .page-card .input-group label {
-        font-size: .68rem;
-    }
-    .page-card .input-group input {
-        padding: 9px 12px;
-        font-size: 14px;
-    }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -4712,14 +4657,14 @@ tbody tr:hover {
 <div id="loginPage" class="page-overlay">
     <div class="page-card">
         <div class="logo-icon"><i class="fas fa-store-alt"></i></div>
-        <h2>MeX <span style="font-size:1rem;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;padding:2px 10px;border-radius:10px;">PRO</span></h2>
+        <h2>MeX <span style="font-size:1.2rem;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;padding:2px 12px;border-radius:12px;font-size:.8rem;">PRO</span></h2>
         <p class="subtitle" data-i18n="login_subtitle">Login to your company</p>
         <div class="input-group"><label data-i18n="login_username_label">Username</label><input type="text" id="loginUsername" placeholder="username" autocomplete="username"/></div>
         <div class="input-group"><label data-i18n="login_password_label">Password</label><input type="password" id="loginPassword" placeholder="••••••" autocomplete="current-password"/></div>
         <button id="loginBtn" class="btn btn-primary btn-block"><i class="fas fa-sign-in-alt"></i><span data-i18n="login_btn">Login</span></button>
         <div id="loginError" class="error-msg"></div>
         <div class="divider"></div>
-        <p><span data-i18n="login_no_account">Don't have a company?</span> <span id="goToRegisterLink" class="link-text" data-i18n="login_register_link">Register your company</span></p>
+        <p><span data-i18n="login_no_account">Don't have a company?</span><span id="goToRegisterLink" class="link-text" data-i18n="login_register_link">Register your company</span></p>
     </div>
 </div>
 
@@ -4732,7 +4677,7 @@ tbody tr:hover {
         <div class="input-group"><label data-i18n="register_username_label">Username</label><input type="text" id="regUsername" placeholder="Choose a username" autocomplete="username"/></div>
         <div class="input-group"><label data-i18n="register_password_label">Password</label><input type="password" id="regPassword" placeholder="••••••" autocomplete="new-password"/></div>
         <div class="input-group"><label data-i18n="register_confirm_label">Confirm Password</label><input type="password" id="regConfirm" placeholder="••••••" autocomplete="new-password"/></div>
-        <div class="input-group"><label><i class="fas fa-phone"></i> <span data-i18n="phone_label">Phone</span> (owner)</label><input type="text" id="regPhone" placeholder="+255 xxx xxx xxx" inputmode="tel"/></div>
+        <div class="input-group"><label><i class="fas fa-phone"></i> <span data-i18n="phone_label">Phone Number</span> (owner)</label><input type="text" id="regPhone" placeholder="+255 xxx xxx xxx" inputmode="tel"/></div>
         <div class="input-group">
             <label><i class="fas fa-tag" style="color:#f59e0b;"></i> <span data-i18n="register_promo_label">Promo Code (Optional)</span></label>
             <input type="text" id="regPromoCode" class="promo-code-input" placeholder="MEX-XXXXXX" maxlength="20" autocomplete="off" oninput="checkPromoCode(this.value)"/>
@@ -4744,7 +4689,7 @@ tbody tr:hover {
         <div id="registerError" class="error-msg"></div>
         <div id="registerSuccess" class="success-msg"></div>
         <div class="divider"></div>
-        <p><span data-i18n="register_have_account">Already have a company?</span> <span id="goToLoginLink" class="link-text" data-i18n="register_login_link">Login</span></p>
+        <p><span data-i18n="register_have_account">Already have a company?</span><span id="goToLoginLink" class="link-text" data-i18n="register_login_link">Login</span></p>
     </div>
 </div>
 
@@ -6345,8 +6290,7 @@ function resumeFeedInViewVideo() {
     });
     if (best && bestRatio >= ACTIVATE_RATIO) {
         if (best.dataset.loaded !== '1') { best.preload = 'auto'; best.load(); best.dataset.loaded = '1'; }
-        best.muted = !userHasInteracted;
-        best.volume = 1;
+        best.muted = !userHasInteracted; best.volume = 1;
         best.play().catch(() => {});
         activeVideo = best;
         const wrap = best.closest('.status-image-wrap');
@@ -6401,10 +6345,8 @@ function setupVideoAutoplayObserver() {
     if (videos.length === 0) return;
     videos.forEach(v => {
         try {
-            v.muted = true;
-            v.volume = 0;
-            v.setAttribute('playsinline', '');
-            v.setAttribute('webkit-playsinline', '');
+            v.muted = true; v.volume = 0;
+            v.setAttribute('playsinline', ''); v.setAttribute('webkit-playsinline', '');
             if (v.dataset.loaded !== '1') { v.setAttribute('preload', 'none'); v.removeAttribute('autoplay'); }
             v.style.background = 'transparent';
             if (v.dataset.readyBound !== '1') {
@@ -6539,10 +6481,7 @@ function addMexEmployee(name, phone) {
         promoCode: generatePromoCode(), totalEarned: 0, totalRegistrations: 0, registeredCompanyIds: [],
         createdAt: Date.now(), socialWhatsapp: '', socialInstagram: '', socialFacebook: '', socialTiktok: '', socialWebsite: ''
     };
-    const arr = getMexEmployees();
-    arr.push(emp);
-    saveMexEmployees(arr);
-    return emp;
+    const arr = getMexEmployees(); arr.push(emp); saveMexEmployees(arr); return emp;
 }
 
 function updateMexEmployee(id, updates) {
@@ -6550,8 +6489,7 @@ function updateMexEmployee(id, updates) {
     const idx = arr.findIndex(e => Number(e.id) === Number(id));
     if (idx === -1) return false;
     arr[idx] = { ...arr[idx], ...updates };
-    saveMexEmployees(arr);
-    return arr[idx];
+    saveMexEmployees(arr); return arr[idx];
 }
 
 function deleteMexEmployee(id) { saveMexEmployees(getMexEmployees().filter(e => Number(e.id) !== Number(id))); }
@@ -6592,11 +6530,8 @@ function copyPromoCode(code) {
 
 function fallbackCopy(text) {
     const ta = document.createElement('textarea');
-    ta.value = text;
-    ta.style.position = 'fixed';
-    ta.style.opacity = '0';
-    document.body.appendChild(ta);
-    ta.select();
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
     try { document.execCommand('copy'); } catch (_) {}
     document.body.removeChild(ta);
 }
@@ -6628,8 +6563,7 @@ function markCommissionPaid(employeeId, regIndex, paid) {
     emp.registeredCompanyIds[regIndex].paid = !!paid;
     emp.registeredCompanyIds[regIndex].paidDate = paid ? Date.now() : null;
     emp.registeredCompanyIds[regIndex].paidBy = paid ? 'Super Admin' : null;
-    saveMexEmployees(arr);
-    return true;
+    saveMexEmployees(arr); return true;
 }
 
 function markAllCommissionsPaid(employeeId) {
@@ -6637,11 +6571,9 @@ function markAllCommissionsPaid(employeeId) {
     const arr = getMexEmployees();
     const emp = arr.find(e => Number(e.id) === Number(employeeId));
     if (!emp || !Array.isArray(emp.registeredCompanyIds)) return 0;
-    let count = 0;
-    const now = Date.now();
+    let count = 0; const now = Date.now();
     emp.registeredCompanyIds.forEach(r => { if (!r.paid) { r.paid = true; r.paidDate = now; r.paidBy = 'Super Admin'; count++; } });
-    saveMexEmployees(arr);
-    return count;
+    saveMexEmployees(arr); return count;
 }
 
 function openEmployeeCommissionModal(employeeId) {
@@ -6759,9 +6691,7 @@ function copyAllMexCred(u, p, pc) {
 function confirmDeleteMexEmployee(id) {
     if (!isSuperAdmin) return;
     if (!confirm(t('mex_emp_confirm_delete'))) return;
-    deleteMexEmployee(id);
-    showToast(t('mex_emp_deleted'), 'success');
-    navigate('superadmin');
+    deleteMexEmployee(id); showToast(t('mex_emp_deleted'), 'success'); navigate('superadmin');
 }
 
 function openSuperAddCompanyModal() {
@@ -6846,8 +6776,7 @@ function submitMexPasswordChange(e) {
     if (np.length < 4) { showToast(t('toast_password_short'), 'error'); return; }
     if (np !== cp) { showToast(t('toast_password_mismatch'), 'error'); return; }
     updateMexEmployee(emp.id, { password: np });
-    closeModal();
-    showToast(t('mex_password_changed'), 'success');
+    closeModal(); showToast(t('mex_password_changed'), 'success');
 }
 
 function openMobileSidebar() {
@@ -7100,9 +7029,7 @@ function setUserLanguage(user, lang) {
         const emp = findMexEmployeeById(currentMexEmployeeId);
         if (emp) updateMexEmployee(emp.id, { lang: lang });
         const nu = { ...user, lang: lang };
-        setMexSession(nu);
-        setCurrentUser(null);
-        return;
+        setMexSession(nu); setCurrentUser(null); return;
     }
     const us = getTenantData('users', []);
     const tg = us.find(u => u.id === user.id);
@@ -7341,9 +7268,7 @@ function addGlobalAd(ad) {
     const a = getGlobalAds();
     if (ad.video && ad.video.length > 50000) delete ad.video;
     if (ad.image && ad.image.length > 50000) delete ad.image;
-    a.push(ad);
-    saveGlobalAds(a);
-    return ad;
+    a.push(ad); saveGlobalAds(a); return ad;
 }
 
 function deleteGlobalAd(id) { saveGlobalAds(getGlobalAds().filter(a => a.id !== Number(id))); deleteAdMedia(id); }
@@ -7507,9 +7432,7 @@ function closeAdMediaViewer() {
         if (v) { try { v.pause(); v.muted = true; v.removeAttribute('src'); v.load(); } catch (e) {} }
         content.innerHTML = '';
     }
-    amvCurrentAdId = null;
-    amvAdList = [];
-    amvCurrentIndex = 0;
+    amvCurrentAdId = null; amvAdList = []; amvCurrentIndex = 0;
     document.body.classList.remove('ad-viewer-open');
     const anyOpen = document.querySelector('.modal-overlay.show');
     if (!anyOpen) document.body.classList.remove('modal-open');
@@ -7525,8 +7448,7 @@ function setupAdMediaDoubleTap() {
             if (e.target.closest('button')) return;
             const now = Date.now();
             if (now - lastTap < 350) {
-                e.preventDefault();
-                e.stopPropagation();
+                e.preventDefault(); e.stopPropagation();
                 const adId = el.dataset.adId;
                 if (adId) openAdMediaViewer(adId, 'feed');
                 lastTap = 0;
@@ -8223,8 +8145,7 @@ function renewBranchSubscription(user, amount = 10000) {
     const ne = Math.max(ce, now) + om;
     if (!b.subscription) b.subscription = { active: true, expiry: ne, paidAmount: amount, paymentDate: now };
     else { b.subscription.active = true; b.subscription.expiry = ne; b.subscription.paidAmount = (b.subscription.paidAmount || 0) + amount; b.subscription.paymentDate = now; }
-    saveTenants(ts);
-    return true;
+    saveTenants(ts); return true;
 }
 
 function isBranchAccessAllowed(user) { if (isSuperAdmin || isMexEmployee) return true; if (!user) return false; if (user.role === 'owner') return true; return isBranchSubscriptionActive(user); }
@@ -8317,8 +8238,7 @@ function startTrialTimer() {
     btn.innerHTML = `<i class="fas fa-hourglass-half"></i><span class="trial-label">Trial</span><span class="trial-time">${timeStr}</span>`;
     btn.onclick = () => openSubModal('upgrade');
     if (r <= 0) {
-        tenant.trialExpired = true;
-        tenant.blocked = true;
+        tenant.trialExpired = true; tenant.blocked = true;
         if (tenant.subscription) tenant.subscription.active = false;
         saveTenants(getAllTenants());
         if (trialTimerInterval) { clearInterval(trialTimerInterval); trialTimerInterval = null; }
@@ -8340,11 +8260,8 @@ function activatePaidSubscription(tenantId, amount, plan) {
     const ne = Math.max(ce, now) + (om * months);
     if (!t0.subscription) t0.subscription = { active: true, expiry: ne, paidAmount: amount, paymentDate: now, plan };
     else { t0.subscription.active = true; t0.subscription.expiry = ne; t0.subscription.paidAmount = (t0.subscription.paidAmount || 0) + amount; t0.subscription.paymentDate = now; t0.subscription.plan = plan; }
-    t0.trialExpired = true;
-    t0.trialEnd = 0;
-    t0.blocked = false;
-    saveTenants(ts);
-    return true;
+    t0.trialExpired = true; t0.trialEnd = 0; t0.blocked = false;
+    saveTenants(ts); return true;
 }
 
 function updateSubscriptionAlert() {
@@ -8488,6 +8405,7 @@ function openSubModal(mode) {
         return;
     }
 
+    // default upgrade
     selectedPlan = 'monthly';
     selectedPlanAmount = 25000;
     document.getElementById('subAmountValue').textContent = '25,000 TSh';
@@ -9269,9 +9187,9 @@ function renderAdsTab() {
     const adsHtml = ads.map(ad => renderAdCard(ad, user, myAvatar, canPost, true)).join('');
     setTimeout(async () => { await loadAdMediaForList(ads); setupVideoAutoplayObserver(); setupAdMediaDoubleTap(); startPromotedTicker(); }, 60);
     const safeTerm = escapeHtml(adSearchTerm || '');
-    return `<div class="section-header">
-        <h2><i class="fas fa-bullhorn" style="color:var(--accent-3);"></i> ${t('ads_title')}</h2>
-        ${canPost ? `<button class="btn btn-primary ad-post-btn" onclick="openAdModal('free')"><i class="fas fa-bullhorn"></i> ${t('ads_post')}</button>` : ''}
+    return `<div class="section-header" style="flex-direction:column;align-items:stretch;gap:12px;">
+        <h2 style="margin:0;"><i class="fas fa-bullhorn" style="color:var(--accent-3);"></i> ${t('ads_title')}</h2>
+        ${canPost ? `<button class="btn btn-primary ad-post-btn-full" onclick="openAdModal('free')"><i class="fas fa-bullhorn"></i> ${t('ads_post')}</button>` : ''}
     </div>
     <div class="inventory-search-wrap" style="margin-bottom:12px;"><i class="fas fa-search inventory-search-icon"></i><input type="text" id="adsSearchInput" class="inventory-search-input" placeholder="Tafuta tangazo, bidhaa, au kampuni..." value="${safeTerm}" oninput="searchAds(this.value)" autocomplete="off" spellcheck="false"/><button type="button" class="inventory-search-clear" id="adsSearchClear" onclick="clearAdSearch()" style="display:${adSearchTerm ? 'flex' : 'none'};" title="Futa utafutaji"><i class="fas fa-times"></i></button></div>
     <div id="adsListContainer">${adsHtml || `<div class="card"><div class="card-body"><div class="empty-state"><i class="fas fa-bullhorn"></i><h3>${adSearchTerm ? 'Hakuna matokeo' : t('ads_no_ads')}</h3>${adSearchTerm ? '<p>Jaribu neno lingine la kutafuta.</p>' : ''}</div></div></div>`}</div>`;
@@ -11060,7 +10978,7 @@ Object.assign(window, {
     PROMOTED_AD_WEEKLY_PRICE, PROMOTED_AD_WEEKLY_DURATION_MS
 });
 
-console.log('✅ MeX PRO v53 — Compact registration form + Compact Post Ad button');
+console.log('✅ MeX PRO v52 — Full-width Post Ad button + No branch signup (owner adds branches after login)');
 </script>
 </body>
 </html>
