@@ -982,6 +982,7 @@ tbody tr:hover {
     overflow: hidden;
     background-size: cover !important;
     background-position: center !important;
+    background-repeat: no-repeat !important;
 }
 
 .sidebar-footer .user-info {
@@ -6021,7 +6022,9 @@ const SOCIAL_FIELDS = [
     { key: 'socialWebsite', type: 'website', icon: 'fas fa-globe', labelKey: 'social_website', phKey: 'social_url_ph' }
 ];
 
-/* ===== IMAGE COMPRESSION HELPER ===== */
+/* ============================================================
+   IMAGE COMPRESSION HELPER
+   ============================================================ */
 function compressImage(file, maxDim, quality) {
     return new Promise((resolve, reject) => {
         if (!file || !file.type || !file.type.startsWith('image/')) {
@@ -6061,7 +6064,34 @@ function compressImage(file, maxDim, quality) {
         reader.readAsDataURL(file);
     });
 }
-/* ===== END IMAGE COMPRESSION ===== */
+
+/* ============================================================
+   SAFE CSS URL — wraps dataURL in quotes to prevent breakage
+   ============================================================ */
+function cssUrl(data) {
+    if (!data) return '';
+    return 'url("' + String(data).replace(/"/g, '\\"') + '")';
+}
+
+/* ============================================================
+   SYNC CURRENT USER PHOTO
+   Ensures _currentUser stays in sync with users[] array
+   ============================================================ */
+function syncCurrentUserPhoto(photo) {
+    if (isSuperAdmin || isMexEmployee) return;
+    const us = getTenantData('users', []);
+    const u = getCurrentUser();
+    if (!u) return;
+    const tg = us.find(x => x.id === u.id);
+    if (!tg) return;
+    tg.photo = photo;
+    try {
+        setTenantData('users', us);
+    } catch (e) {
+        console.error('syncCurrentUserPhoto save error:', e);
+    }
+    setCurrentUser(tg);
+}
 
 function buildSocialUrl(type, raw) {
     const v = String(raw || '').trim();
@@ -12083,7 +12113,10 @@ function saveProfile() {
     showToast(t('toast_profile_saved'), 'success');
 }
 
-/* ===== PROFILE PHOTO UPLOAD — WITH COMPRESSION ===== */
+/* ============================================================
+   PROFILE PHOTO UPLOAD — WITH COMPRESSION + SYNC
+   Works for Owner, Admin, Accountant, Employee, MeX Employee, Super Admin
+   ============================================================ */
 document.getElementById('profileUpload').addEventListener('change', async function (e) {
     const f = e.target.files[0];
     if (!f) return;
@@ -12109,9 +12142,13 @@ document.getElementById('profileUpload').addEventListener('change', async functi
         return;
     }
 
+    /* ===== MEX EMPLOYEE ===== */
     if (isMexEmployee) {
         const emp = findMexEmployeeById(currentMexEmployeeId);
-        if (!emp) return;
+        if (!emp) {
+            e.target.value = '';
+            return;
+        }
         updateMexEmployee(emp.id, { photo: du });
         const fresh = findMexEmployeeById(emp.id);
         const newUser = {
@@ -12141,6 +12178,7 @@ document.getElementById('profileUpload').addEventListener('change', async functi
         return;
     }
 
+    /* ===== SUPER ADMIN ===== */
     if (isSuperAdmin) {
         u.photo = du;
         setCurrentUser(u);
@@ -12155,6 +12193,7 @@ document.getElementById('profileUpload').addEventListener('change', async functi
         return;
     }
 
+    /* ===== TENANT USER (Owner / Admin / Accountant / Employee) ===== */
     const us = getTenantData('users', []);
     const tg = us.find(x => x.id === u.id);
     if (!tg) {
@@ -12173,6 +12212,7 @@ document.getElementById('profileUpload').addEventListener('change', async functi
         return;
     }
 
+    /* CRITICAL: sync _currentUser snapshot so getUserPhoto() works everywhere */
     setCurrentUser(tg);
     updateAllUI(tg);
     const prev = document.getElementById('modalProfilePreview');
@@ -12187,8 +12227,9 @@ function updateAllUI(user) {
     const photo = getUserPhoto(user);
     const av = document.getElementById('sideUserAvatar');
     if (av) {
-        if (photo && photo.length > 5) {
-            av.style.backgroundImage = 'url(' + photo + ')';
+        if (photo && photo.length > 5 && photo !== 'null') {
+            /* Use quoted CSS url() to safely handle data URLs */
+            av.style.backgroundImage = cssUrl(photo);
             av.style.backgroundSize = 'cover';
             av.style.backgroundPosition = 'center';
             av.style.backgroundRepeat = 'no-repeat';
@@ -13095,13 +13136,13 @@ Object.assign(window, {
     renderSocialLinks, renderSocialFields, buildSocialUrl, SOCIAL_FIELDS,
     isAdPromoted, openPromoteAdModal, closePromoteAdModal, handlePromoteAdPayment,
     getAdFeedOrder, startPromotedTicker, selectPromotePlan,
-    getSuperAdminPhoto, findUserPhotoInTenant,
+    getSuperAdminPhoto, findUserPhotoInTenant, syncCurrentUserPhoto, cssUrl,
     compressImage,
     PROMOTED_AD_PRICE, PROMOTED_AD_DURATION_MS, PROMOTED_AD_INTERVAL,
     PROMOTED_AD_WEEKLY_PRICE, PROMOTED_AD_WEEKLY_DURATION_MS
 });
 
-console.log('✅ MeX PRO v53 — Sidebar scrollbar removed + Low Stock button matched + Profile photo compression fix');
+console.log('✅ MeX PRO v54 — Profile photos visible everywhere for ALL account types');
 </script>
 </body>
 </html>
