@@ -347,7 +347,6 @@ button, .btn {
     transform: scale(.98) !important;
 }
 
-/* ===== AD POST BUTTON — FULL WIDTH ===== */
 .ad-post-btn-full {
     width: 100% !important;
     display: flex !important;
@@ -371,7 +370,6 @@ button, .btn {
         font-size: .92rem !important;
     }
 }
-/* ===== END AD POST BUTTON ===== */
 
 .card {
     background: var(--bg-card);
@@ -624,7 +622,6 @@ select {
     display: inline;
 }
 
-/* ===== LOW STOCK BUTTON — SAME SIZE AS PROMOTE BUTTON ===== */
 .low-stock-alert-btn {
     display: inline-flex;
     align-items: center;
@@ -676,8 +673,6 @@ select {
     box-shadow: 0 3px 10px rgba(239,68,68,.3) !important;
     animation: pulseSoft 2s infinite;
 }
-
-/* ===== END LOW STOCK BUTTON ===== */
 
 .table-wrap {
     overflow-x: auto;
@@ -842,7 +837,6 @@ tbody tr:hover {
     display: flex;
 }
 
-/* ===== SIDEBAR — NO SCROLLBAR VISIBLE ===== */
 .sidebar {
     width: 240px;
     min-width: 240px;
@@ -864,7 +858,6 @@ tbody tr:hover {
     width: 0;
     height: 0;
 }
-/* ===== END SIDEBAR SCROLLBAR FIX ===== */
 
 .sidebar-brand {
     display: flex;
@@ -5999,6 +5992,14 @@ const MEX_EMPLOYEES_KEY = 'sb_mex_employees';
 const MEX_SESSION_KEY = 'sb_mex_current_employee';
 const SUPER_ADMIN_PHOTO_KEY = 'sb_super_admin_photo';
 const FOLLOWS_KEY_SUFFIX = 'follows';
+
+/* ============================================================
+   🔥 SESSION KEY — GLOBAL (FIX for login persistence bug)
+   Tofauti na awali, session haihifadhiwi kwa tenant key.
+   Hii inasuluhisha: login inafanya kazi baada ya refresh.
+   ============================================================ */
+const SESSION_KEY = 'sb_session_v2';
+
 const AD_PRICE = 0;
 const AD_FREE_VALIDITY_MS = 24 * 60 * 60 * 1000;
 const AD_PAID_VALIDITY_MS = 24 * 60 * 60 * 1000;
@@ -6068,16 +6069,15 @@ function compressImage(file, maxDim, quality) {
 /* ============================================================
    VIDEO COMPRESSION ENGINE — WebM (VP9/VP8 + Opus)
    Inapunguza video hadi ~5-20MB wakati wa kupost
-   Quality ya mwonekano inabaki ile ile (Canvas + MediaRecorder)
    ============================================================ */
 async function compressVideo(file, options) {
     options = options || {};
-    const targetMB    = options.targetMB   || 18;     // target output size (MB)
-    const maxDim      = options.maxDim     || 1280;   // cap longest side (1280 = 720p+)
-    const minVideoBR  = options.minBitrate || 700000; // 0.7 Mbps minimum
-    const maxVideoBR  = options.maxBitrate || 3500000;// 3.5 Mbps maximum (HD)
+    const targetMB    = options.targetMB   || 18;
+    const maxDim      = options.maxDim     || 1280;
+    const minVideoBR  = options.minBitrate || 700000;
+    const maxVideoBR  = options.maxBitrate || 3500000;
     const fps         = options.fps        || 30;
-    const audioBR     = 96000;                        // 96 kbps audio
+    const audioBR     = 96000;
 
     return new Promise(function (resolve, reject) {
         const video = document.createElement('video');
@@ -6109,7 +6109,6 @@ async function compressVideo(file, options) {
                 const vw = video.videoWidth, vh = video.videoHeight;
                 if (!vw || !vh) return fail(new Error('Bad dimensions'));
 
-                // Scale down kama ni kubwa kuliko maxDim
                 let tw = vw, th = vh;
                 const longest = Math.max(vw, vh);
                 if (longest > maxDim) {
@@ -6119,17 +6118,14 @@ async function compressVideo(file, options) {
                 tw -= tw % 2; th -= th % 2;
                 if (tw < 2 || th < 2) return fail(new Error('Bad target size'));
 
-                // Bitrate inalingana na duration ili file lisiwe kubwa
                 const targetBits = targetMB * 8 * 1024 * 1024;
                 let vbr = Math.floor(targetBits / duration);
                 vbr = Math.max(minVideoBR, Math.min(maxVideoBR, vbr));
 
-                // Canvas ya kuchora frames
                 const canvas = document.createElement('canvas');
                 canvas.width = tw; canvas.height = th;
                 const ctx = canvas.getContext('2d', { alpha: false });
 
-                // Audio capture kwa WebAudio (haitoi sauti kwa speakers)
                 let audioCtx = null, audioSrc = null, audioDest = null;
                 try {
                     const AC = window.AudioContext || window.webkitAudioContext;
@@ -6138,7 +6134,6 @@ async function compressVideo(file, options) {
                         audioSrc = audioCtx.createMediaElementSource(video);
                         audioDest = audioCtx.createMediaStreamDestination();
                         audioSrc.connect(audioDest);
-                        // HATU-connect kwenye audioCtx.destination → hakuna sauti inayotoka
                     }
                 } catch (e) { audioCtx = null; audioDest = null; }
 
@@ -6149,7 +6144,6 @@ async function compressVideo(file, options) {
                 }
                 const combined = new MediaStream(tracks);
 
-                // Chagua codec bora
                 const mimes = [
                     'video/webm;codecs=vp9,opus',
                     'video/webm;codecs=vp8,opus',
@@ -6197,7 +6191,6 @@ async function compressVideo(file, options) {
                     rafId = requestAnimationFrame(draw);
                 };
 
-                // Progress callback
                 video.addEventListener('timeupdate', () => {
                     if (options.onProgress && duration > 0) {
                         options.onProgress(Math.min(1, video.currentTime / duration));
@@ -6207,7 +6200,6 @@ async function compressVideo(file, options) {
                 video.onended = () => stopAll();
                 video.onerror = () => fail(new Error('Video playback error'));
 
-                // Watchdog — haina budi kukaa zaidi ya duration + 8s
                 const watchdog = setTimeout(() => stopAll(), duration * 1000 + 8000);
                 rec.addEventListener('stop', () => clearTimeout(watchdog));
 
@@ -6230,16 +6222,13 @@ async function compressVideo(file, options) {
 }
 
 /* ============================================================
-   SAFE CSS URL — wraps dataURL in quotes to prevent breakage
+   SAFE CSS URL
    ============================================================ */
 function cssUrl(data) {
     if (!data) return '';
     return 'url("' + String(data).replace(/"/g, '\\"') + '")';
 }
 
-/* ============================================================
-   SYNC CURRENT USER PHOTO
-   ============================================================ */
 function syncCurrentUserPhoto(photo) {
     if (isSuperAdmin || isMexEmployee) return;
     const us = getTenantData('users', []);
@@ -7149,6 +7138,9 @@ function openSuperAddCompanyModal() {
     document.body.classList.add('modal-open');
 }
 
+/* ============================================================
+   🔥 submitSuperAddCompany — FIX: restore currentTenantId
+   ============================================================ */
 function submitSuperAddCompany(e) {
     e.preventDefault();
     if (!isSuperAdmin) return;
@@ -7182,7 +7174,13 @@ function submitSuperAddCompany(e) {
         }
         validPromo = emp.promoCode;
     }
+    /* Save current context so we can restore it */
+    const __savedContext = currentTenantId;
+    const __savedIsSuper = isSuperAdmin;
     const r = createTenantWithSubscription(company, username, password, phone, 25000, 'monthly', validPromo);
+    /* Restore context */
+    currentTenantId = __savedContext;
+    isSuperAdmin = __savedIsSuper;
     if (!r || !r.success) {
         showToast(r?.msg || 'Failed.', 'error');
         return;
@@ -7821,6 +7819,10 @@ function findUserPhotoInTenant(tenantId, userId) {
     return photo;
 }
 
+/* ============================================================
+   🔥 getCurrentUser / setCurrentUser — FIX: use GLOBAL SESSION_KEY
+   Hii ndiyo fix muhimu inayosuluhisha tatizo la login.
+   ============================================================ */
 function getCurrentUser() {
     if (typeof isMexEmployee !== 'undefined' && isMexEmployee && currentMexEmployeeId) {
         const emp = findMexEmployeeById(currentMexEmployeeId);
@@ -7843,11 +7845,25 @@ function getCurrentUser() {
             };
         }
     }
-    return getTenantData('_currentUser', null);
+    try {
+        const d = localStorage.getItem(SESSION_KEY);
+        return d ? JSON.parse(d) : null;
+    } catch (e) {
+        console.error('getCurrentUser parse error:', e);
+        return null;
+    }
 }
 
 function setCurrentUser(u) {
-    setTenantData('_currentUser', u);
+    try {
+        if (u) {
+            localStorage.setItem(SESSION_KEY, JSON.stringify(u));
+        } else {
+            localStorage.removeItem(SESSION_KEY);
+        }
+    } catch (e) {
+        console.error('setCurrentUser error:', e);
+    }
 }
 
 function getUser(id) {
@@ -8692,9 +8708,6 @@ function getVideoDuration(file) {
     });
 }
 
-/* ============================================================
-   HANDLE AD MEDIA CHANGE — With Video Compression
-   ============================================================ */
 async function handleAdMediaChange(input) {
     const file = input.files[0];
     const previewEl = document.getElementById('adMediaPreview');
@@ -8707,7 +8720,6 @@ async function handleAdMediaChange(input) {
     pendingVideoData = null;
     if (!file) return;
 
-    /* ================= VIDEO (COMPRESSION) ================= */
     if (file.type.startsWith('video/')) {
         if (file.size > MAX_VIDEO_BYTES) {
             if (errorEl) {
@@ -8735,7 +8747,6 @@ async function handleAdMediaChange(input) {
 
             let compressed = file;
 
-            /* Compress tu kama file ni kubwa kuliko 3MB */
             if (file.size > 3 * 1024 * 1024) {
                 let targetMB = 18;
                 if      (dur <= 5)  targetMB = 5;
@@ -8765,7 +8776,6 @@ async function handleAdMediaChange(input) {
                 }
             }
 
-            /* Replace file kwenye input ili submitAd ipate compressed file */
             if (compressed !== file) {
                 try {
                     const dt = new DataTransfer();
@@ -8778,7 +8788,6 @@ async function handleAdMediaChange(input) {
 
             pendingVideoData = { file: compressed, type: 'video' };
 
-            /* Preview na info ya compression */
             const url = URL.createObjectURL(compressed);
             const origMB = (file.size / 1024 / 1024).toFixed(2);
             const newMB  = (compressed.size / 1024 / 1024).toFixed(2);
@@ -8819,9 +8828,7 @@ async function handleAdMediaChange(input) {
         }
         return;
     }
-    /* =============== END VIDEO COMPRESSION =============== */
 
-    /* ================= IMAGE ================= */
     if (file.type.startsWith('image/')) {
         if (file.size > MAX_IMAGE_BYTES) {
             if (errorEl) {
@@ -9591,7 +9598,6 @@ function openSubModal(mode) {
         return;
     }
 
-    // default upgrade
     selectedPlan = 'monthly';
     selectedPlanAmount = 25000;
     document.getElementById('subAmountValue').textContent = '25,000 TSh';
@@ -9706,7 +9712,7 @@ function handleSubscriptionPayment() {
         const { tenant, ownerUser } = r;
         currentTenantId = tenant.id;
         setCurrentUser(ownerUser);
-        recordUserLogin(ownerUser.id, ownerUser.store);
+        try { recordUserLogin(ownerUser.id, ownerUser.store); } catch (e) {}
         closeSubscriptionModal();
         if (validPromo) {
             const cred = creditPromoCommission(validPromo, tenant.id, tenant.companyName, username);
@@ -9811,7 +9817,12 @@ function handlePanelSubscriptionPayment() {
     }
 }
 
+/* ============================================================
+   🔥 createTenantWithSubscription — FIX: inahifadhi & inarudisha
+   currentTenantId baada ya kuunda.
+   ============================================================ */
 function createTenantWithSubscription(companyName, username, password, phone, amount, plan, promoCode) {
+    const __previousTenantId = currentTenantId;
     const ts = getAllTenants();
     const storeName = companyName;
     for (const t0 of ts) {
@@ -9893,6 +9904,8 @@ function createTenantWithSubscription(companyName, username, password, phone, am
     setTenantData('sessions', {});
     setTenantData('punchHistory', []);
     setTenantData(FOLLOWS_KEY_SUFFIX, []);
+    /* Restore previous context if caller had one */
+    if (__previousTenantId) currentTenantId = __previousTenantId;
     return { success: true, tenant, ownerUser };
 }
 
@@ -9994,31 +10007,39 @@ function savePunchHistory(h) {
 
 function recordUserLogin(userId, bn) {
     if (isSuperAdmin || isMexEmployee) return;
-    const s = getSessions();
-    const n = Date.now();
-    s[userId] = { loginTime: n, lastActive: n, status: 'online', branchName: bn || 'Unknown' };
-    saveSessions(s);
-    const h = getPunchHistory();
-    const u = getUser(userId);
-    h.push({ userId, userName: u ? (u.fullName || u.username) : 'User', branchName: bn || 'Unknown', loginTime: n, logoutTime: null, duration: null });
-    if (h.length > 500) h.splice(0, h.length - 500);
-    savePunchHistory(h);
+    try {
+        const s = getSessions();
+        const n = Date.now();
+        s[userId] = { loginTime: n, lastActive: n, status: 'online', branchName: bn || 'Unknown' };
+        saveSessions(s);
+        const h = getPunchHistory();
+        const u = getUser(userId);
+        h.push({ userId, userName: u ? (u.fullName || u.username) : 'User', branchName: bn || 'Unknown', loginTime: n, logoutTime: null, duration: null });
+        if (h.length > 500) h.splice(0, h.length - 500);
+        savePunchHistory(h);
+    } catch (e) {
+        console.warn('recordUserLogin failed:', e);
+    }
 }
 
 function recordUserLogout(userId) {
     if (isSuperAdmin || isMexEmployee) return;
-    const s = getSessions();
-    if (s[userId]) {
-        s[userId].status = 'offline';
-        s[userId].lastActive = Date.now();
-        saveSessions(s);
-    }
-    const h = getPunchHistory();
-    const last = h.filter(x => x.userId === userId && x.logoutTime === null).sort((a, b) => b.loginTime - a.loginTime)[0];
-    if (last) {
-        last.logoutTime = Date.now();
-        last.duration = last.logoutTime - last.loginTime;
-        savePunchHistory(h);
+    try {
+        const s = getSessions();
+        if (s[userId]) {
+            s[userId].status = 'offline';
+            s[userId].lastActive = Date.now();
+            saveSessions(s);
+        }
+        const h = getPunchHistory();
+        const last = h.filter(x => x.userId === userId && x.logoutTime === null).sort((a, b) => b.loginTime - a.loginTime)[0];
+        if (last) {
+            last.logoutTime = Date.now();
+            last.duration = last.logoutTime - last.loginTime;
+            savePunchHistory(h);
+        }
+    } catch (e) {
+        console.warn('recordUserLogout failed:', e);
     }
 }
 
@@ -12352,9 +12373,6 @@ function saveProfile() {
     showToast(t('toast_profile_saved'), 'success');
 }
 
-/* ============================================================
-   PROFILE PHOTO UPLOAD — WITH COMPRESSION + SYNC
-   ============================================================ */
 document.getElementById('profileUpload').addEventListener('change', async function (e) {
     const f = e.target.files[0];
     if (!f) return;
@@ -12505,10 +12523,6 @@ function updateAllUI(user) {
 
 function login(username, password) {
     if (username === SUPER_ADMIN_USERNAME && password === SUPER_ADMIN_PASSWORD) {
-        isSuperAdmin = true;
-        isMexEmployee = false;
-        currentMexEmployeeId = null;
-        currentTenantId = null;
         return {
             user: { id: 0, username: 'Super Admin', fullName: 'Super Admin', role: 'superadmin', store: 'All', theme: 'light', phone: '', lang: 'en', photo: getSuperAdminPhoto() },
             tenant: null,
@@ -12535,8 +12549,6 @@ function login(username, password) {
         currentTenantId = old;
         const u = users.find(x => x.username === username && x.password === password);
         if (u) {
-            isSuperAdmin = false;
-            isMexEmployee = false;
             return { user: u, tenant: t0, isSuperAdmin: false };
         }
     }
@@ -12548,8 +12560,6 @@ function login(username, password) {
             currentTenantId = old;
             const o = users.find(x => x.username === username && x.role === 'owner');
             if (o && o.password === password) {
-                isSuperAdmin = false;
-                isMexEmployee = false;
                 return { user: o, tenant: t0, isSuperAdmin: false };
             }
         }
@@ -12557,61 +12567,111 @@ function login(username, password) {
     return null;
 }
 
+/* ============================================================
+   🔥 LOGIN HANDLER — FIX: try/catch + proper session
+   ============================================================ */
 document.getElementById('loginBtn').addEventListener('click', function () {
     const un = document.getElementById('loginUsername').value.trim();
     const pw = document.getElementById('loginPassword').value.trim();
     const er = document.getElementById('loginError');
+    er.textContent = '';
+
     if (!un || !pw) {
         er.textContent = t('toast_fill_fields');
         return;
     }
-    const r = login(un, pw);
+
+    let r;
+    try {
+        r = login(un, pw);
+    } catch (e) {
+        console.error('Login error:', e);
+        er.textContent = 'Login error: ' + (e.message || 'Unknown');
+        return;
+    }
+
     if (!r) {
         er.textContent = 'Invalid username or password';
         return;
     }
-    er.textContent = '';
+
+    /* MEX EMPLOYEE */
     if (r.isMexEmployee) {
-        isSuperAdmin = false;
-        isMexEmployee = true;
-        currentMexEmployeeId = r.employee.id;
-        currentTenantId = null;
-        setMexSession(r.user);
-        setCurrentUser(null);
-        document.getElementById('loginPage').classList.add('hidden');
-        document.getElementById('appContainer').classList.add('active');
-        initApp(r.user);
-        showToast('💼 ' + t('toast_mex_logged_in') + ' ' + r.user.fullName, 'success');
+        try {
+            isSuperAdmin = false;
+            isMexEmployee = true;
+            currentMexEmployeeId = r.employee.id;
+            currentTenantId = null;
+            setMexSession(r.user);
+            setCurrentUser(null);
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('registerPage').classList.add('hidden');
+            document.getElementById('appContainer').classList.add('active');
+            initApp(r.user);
+            showToast('💼 ' + t('toast_mex_logged_in') + ' ' + r.user.fullName, 'success');
+        } catch (e) {
+            console.error('Mex login error:', e);
+            er.textContent = 'Error: ' + (e.message || 'Unknown');
+            isMexEmployee = false;
+            currentMexEmployeeId = null;
+        }
         return;
     }
-    const { user, tenant, isSuperAdmin: isa } = r;
-    isSuperAdmin = isa;
-    isMexEmployee = false;
-    currentMexEmployeeId = null;
-    if (!isa) {
-        currentTenantId = tenant.id;
-        if (tenant.blocked) {
-            const hasSub = tenant.subscription && tenant.subscription.active && tenant.subscription.paidAmount > 0 && tenant.subscription.expiry > Date.now();
-            const hasTrial = tenant.trialEnd && tenant.trialEnd > Date.now() && !tenant.trialExpired;
-            if (hasSub || hasTrial) {
-                tenant.blocked = false;
-                saveTenants(getAllTenants());
-            } else {
-                setCurrentUser(user);
-                recordUserLogin(user.id, user.store);
-                document.getElementById('loginPage').classList.add('hidden');
-                document.getElementById('appContainer').classList.add('active');
-                initApp(user);
-                setTimeout(() => navigate('subscription'), 500);
-                return;
+
+    /* SUPER ADMIN or REGULAR USER */
+    try {
+        const { user, tenant, isSuperAdmin: isa } = r;
+        isSuperAdmin = isa;
+        isMexEmployee = false;
+        currentMexEmployeeId = null;
+
+        if (!isa) {
+            currentTenantId = tenant.id;
+
+            if (tenant.blocked) {
+                const hasSub = tenant.subscription && tenant.subscription.active && tenant.subscription.paidAmount > 0 && tenant.subscription.expiry > Date.now();
+                const hasTrial = tenant.trialEnd && tenant.trialEnd > Date.now() && !tenant.trialExpired;
+                if (hasSub || hasTrial) {
+                    try {
+                        tenant.blocked = false;
+                        saveTenants(getAllTenants());
+                    } catch (e) { console.warn('unblock save failed:', e); }
+                } else {
+                    setCurrentUser(user);
+                    try { recordUserLogin(user.id, user.store); } catch (e) { console.warn(e); }
+                    document.getElementById('loginPage').classList.add('hidden');
+                    document.getElementById('registerPage').classList.add('hidden');
+                    document.getElementById('appContainer').classList.add('active');
+                    initApp(user);
+                    setTimeout(() => navigate('subscription'), 500);
+                    return;
+                }
             }
+
+            setCurrentUser(user);
+            try {
+                recordUserLogin(user.id, user.store);
+            } catch (e) {
+                console.warn('recordUserLogin failed (storage full?):', e);
+            }
+        } else {
+            setCurrentUser(user);
         }
-        setCurrentUser(user);
-        recordUserLogin(user.id, user.store);
-    } else setCurrentUser(user);
-    document.getElementById('loginPage').classList.add('hidden');
-    document.getElementById('appContainer').classList.add('active');
-    initApp(user);
+
+        document.getElementById('loginPage').classList.add('hidden');
+        document.getElementById('registerPage').classList.add('hidden');
+        document.getElementById('appContainer').classList.add('active');
+        initApp(user);
+    } catch (e) {
+        console.error('Login setup error:', e);
+        er.textContent = 'Error: ' + (e.message || 'Unknown');
+        setCurrentUser(null);
+        currentTenantId = null;
+        isSuperAdmin = false;
+        isMexEmployee = false;
+        document.getElementById('loginPage').classList.remove('hidden');
+        document.getElementById('appContainer').classList.remove('active');
+    }
 });
 
 document.getElementById('loginPassword').addEventListener('keydown', e => {
@@ -12697,9 +12757,14 @@ function showToast(msg, type = 'info') {
     }, 3500);
 }
 
+/* ============================================================
+   🔥 LOGOUT — FIX: clear session FIRST
+   ============================================================ */
 function logout() {
     const u = getCurrentUser();
-    if (u && !isSuperAdmin && !isMexEmployee) recordUserLogout(u.id);
+    if (u && !isSuperAdmin && !isMexEmployee) {
+        try { recordUserLogout(u.id); } catch (e) { console.warn(e); }
+    }
     if (heartbeatInterval) {
         clearInterval(heartbeatInterval);
         heartbeatInterval = null;
@@ -12739,8 +12804,11 @@ function logout() {
     amvAdList = [];
     amvCurrentIndex = 0;
     amvLastProfileAdId = null;
+
+    /* Clear session FIRST */
     setCurrentUser(null);
     setMexSession(null);
+
     currentTenantId = null;
     isSuperAdmin = false;
     isMexEmployee = false;
@@ -12955,7 +13023,9 @@ function bindGlobalEvents() {
     });
     window.addEventListener('beforeunload', () => {
         const cu = getCurrentUser();
-        if (cu && !isSuperAdmin && !isMexEmployee) recordUserLogout(cu.id);
+        if (cu && !isSuperAdmin && !isMexEmployee) {
+            try { recordUserLogout(cu.id); } catch (e) {}
+        }
         if (heartbeatInterval) {
             clearInterval(heartbeatInterval);
             heartbeatInterval = null;
@@ -13198,11 +13268,16 @@ function deleteChatMessage(msgId) {
     showToast(t('toast_msg_deleted'), 'success');
 }
 
+/* ============================================================
+   🔥 AUTO LOGIN — FIX: robust session restore
+   ============================================================ */
 (function autoLogin() {
     migrateCommissionPaidStatus();
     migrateBranchPermissions();
     initLanguageMenu();
     startPromotedTicker();
+
+    /* MEX EMPLOYEE SESSION */
     const mexSess = getMexSession();
     if (mexSess) {
         const emp = findMexEmployeeById(mexSess.id);
@@ -13211,7 +13286,6 @@ function deleteChatMessage(msgId) {
             isMexEmployee = true;
             currentMexEmployeeId = emp.id;
             currentTenantId = null;
-            setCurrentUser(null);
             const freshUser = {
                 id: emp.id,
                 username: emp.username,
@@ -13225,25 +13299,20 @@ function deleteChatMessage(msgId) {
                 lang: emp.lang || 'en'
             };
             setMexSession(freshUser);
+            setCurrentUser(null);
             document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('registerPage').classList.add('hidden');
             document.getElementById('appContainer').classList.add('active');
             initApp(freshUser);
             return;
-        } else setMexSession(null);
+        } else {
+            setMexSession(null);
+        }
     }
+
+    /* REGULAR SESSION */
     const user = getCurrentUser();
     if (!user) {
-        currentLang = 'en';
-        document.getElementById('loginPage').classList.remove('hidden');
-        document.getElementById('appContainer').classList.remove('active');
-        applyTranslations();
-        return;
-    }
-    if (user.username === 'Super Admin' || user.role === 'superadmin') {
-        setCurrentUser(null);
-        currentTenantId = null;
-        isSuperAdmin = false;
-        isMexEmployee = false;
         currentLang = 'en';
         document.getElementById('loginPage').classList.remove('hidden');
         document.getElementById('appContainer').classList.remove('active');
@@ -13251,47 +13320,95 @@ function deleteChatMessage(msgId) {
         applyTranslations();
         return;
     }
-    const ts = getAllTenants();
-    const tenant = ts.find(t0 => t0.id === user.tenantId);
-    if (tenant) {
-        const hasSub = tenant.subscription && tenant.subscription.active && tenant.subscription.paidAmount > 0 && tenant.subscription.expiry > Date.now();
-        const hasTrial = tenant.trialEnd && tenant.trialEnd > Date.now() && !tenant.trialExpired;
-        if (tenant.blocked && (hasSub || hasTrial)) {
+
+    /* Super admin — must log in fresh (no auto-login) */
+    if (user.role === 'superadmin' || user.username === 'Super Admin') {
+        setCurrentUser(null);
+        isSuperAdmin = false;
+        isMexEmployee = false;
+        currentTenantId = null;
+        currentLang = 'en';
+        document.getElementById('loginPage').classList.remove('hidden');
+        document.getElementById('appContainer').classList.remove('active');
+        document.getElementById('registerPage').classList.add('hidden');
+        applyTranslations();
+        return;
+    }
+
+    /* Regular user — verify tenant + user still exist */
+    if (!user.tenantId) {
+        setCurrentUser(null);
+        currentLang = 'en';
+        document.getElementById('loginPage').classList.remove('hidden');
+        document.getElementById('appContainer').classList.remove('active');
+        applyTranslations();
+        return;
+    }
+
+    const tenant = getTenant(user.tenantId);
+    if (!tenant) {
+        setCurrentUser(null);
+        currentTenantId = null;
+        currentLang = 'en';
+        document.getElementById('loginPage').classList.remove('hidden');
+        document.getElementById('appContainer').classList.remove('active');
+        applyTranslations();
+        return;
+    }
+
+    /* Verify user still exists in tenant */
+    const old = currentTenantId;
+    currentTenantId = tenant.id;
+    let freshUser = null;
+    try {
+        const users = getTenantData('users', []);
+        freshUser = users.find(x => Number(x.id) === Number(user.id));
+    } catch (e) {
+        console.error('autoLogin user lookup error:', e);
+    }
+    currentTenantId = old;
+
+    if (!freshUser) {
+        setCurrentUser(null);
+        currentTenantId = null;
+        currentLang = 'en';
+        document.getElementById('loginPage').classList.remove('hidden');
+        document.getElementById('appContainer').classList.remove('active');
+        applyTranslations();
+        return;
+    }
+
+    /* Check block */
+    const hasSub = tenant.subscription && tenant.subscription.active && tenant.subscription.paidAmount > 0 && tenant.subscription.expiry > Date.now();
+    const hasTrial = tenant.trialEnd && tenant.trialEnd > Date.now() && !tenant.trialExpired;
+
+    if (tenant.blocked && (hasSub || hasTrial)) {
+        try {
             tenant.blocked = false;
-            saveTenants(ts);
-        }
-        if (tenant.trialEnd && tenant.trialEnd <= Date.now() && !tenant.trialExpired && !hasSub) {
+            saveTenants(getAllTenants());
+        } catch (e) { console.warn(e); }
+    }
+
+    if (tenant.trialEnd && tenant.trialEnd <= Date.now() && !tenant.trialExpired && !hasSub) {
+        try {
             tenant.trialExpired = true;
             tenant.blocked = true;
             if (tenant.subscription) tenant.subscription.active = false;
-            saveTenants(ts);
-        }
-        if (!tenant.blocked || hasSub || hasTrial) {
-            currentTenantId = tenant.id;
-            isSuperAdmin = false;
-            isMexEmployee = false;
-            document.getElementById('loginPage').classList.add('hidden');
-            document.getElementById('appContainer').classList.add('active');
-            recordUserLogin(user.id, user.store);
-            initApp(user);
-            return;
-        } else {
-            setCurrentUser(null);
-            currentTenantId = null;
-            isSuperAdmin = false;
-            isMexEmployee = false;
-            currentLang = 'en';
-        }
-    } else {
-        setCurrentUser(null);
-        currentTenantId = null;
-        isSuperAdmin = false;
-        isMexEmployee = false;
-        currentLang = 'en';
+            saveTenants(getAllTenants());
+        } catch (e) { console.warn(e); }
     }
-    document.getElementById('loginPage').classList.remove('hidden');
-    document.getElementById('appContainer').classList.remove('active');
-    applyTranslations();
+
+    /* Restore session */
+    currentTenantId = tenant.id;
+    isSuperAdmin = false;
+    isMexEmployee = false;
+    setCurrentUser(freshUser);
+    currentLang = getUserLanguage(freshUser);
+    document.getElementById('loginPage').classList.add('hidden');
+    document.getElementById('registerPage').classList.add('hidden');
+    document.getElementById('appContainer').classList.add('active');
+    try { recordUserLogin(freshUser.id, freshUser.store); } catch (e) { console.warn(e); }
+    initApp(freshUser);
 })();
 
 document.addEventListener('keydown', function (e) {
@@ -13375,7 +13492,7 @@ Object.assign(window, {
     PROMOTED_AD_WEEKLY_PRICE, PROMOTED_AD_WEEKLY_DURATION_MS
 });
 
-console.log('✅ MeX PRO v55 — Video Compression + Full Combined Code');
+console.log('✅ MeX PRO v56 — Login fixes + Video Compression');
 </script>
 </body>
 </html>
