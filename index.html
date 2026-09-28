@@ -3690,6 +3690,53 @@ tbody tr:hover {
 .pvm-status.offline .dot { background: var(--offline-dot); }
 
 /* ============================================================
+   BIO SECTION (NEW)
+   ============================================================ */
+.bio-display {
+    font-size: .85rem;
+    color: var(--text-secondary);
+    padding: 10px 14px;
+    background: var(--input-bg);
+    border-radius: var(--radius-sm);
+    border-left: 3px solid var(--accent-1);
+    text-align: left;
+    line-height: 1.55;
+    margin: 10px 0;
+    word-break: break-word;
+}
+
+.bio-display i.bio-icon {
+    color: var(--accent-1);
+    opacity: .55;
+    margin-right: 6px;
+}
+
+#profileBio {
+    min-height: 76px;
+    resize: vertical;
+    font-family: var(--font);
+    line-height: 1.5;
+}
+
+.bio-hint {
+    font-size: .68rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+    display: flex;
+    gap: 5px;
+    align-items: flex-start;
+    line-height: 1.35;
+}
+
+.bio-counter {
+    font-size: .66rem;
+    color: var(--text-muted);
+    text-align: right;
+    margin-top: 2px;
+    font-weight: 600;
+}
+
+/* ============================================================
    PERMISSIONS
    ============================================================ */
 .perm-toggle {
@@ -4401,7 +4448,19 @@ tbody tr:hover {
     .topbar .topbar-actions .profile-trigger { padding: 3px; }
     .topbar .topbar-actions .profile-trigger .profile-name { display: none; }
     .topbar .topbar-actions .profile-trigger img { width: 34px; height: 34px; }
-    .topbar .topbar-actions .theme-toggle, .topbar .topbar-actions .chat-toggle { width: 38px; height: 38px; }
+    .topbar .topbar-actions .theme-toggle { width: 38px; height: 38px; }
+    .topbar .topbar-actions .chat-toggle { width: 38px; height: 38px; }
+    .topbar .topbar-actions .chat-toggle.visible {
+        width: 40px !important;
+        height: 40px !important;
+        background: linear-gradient(135deg, #128C7E, #0e6b5f) !important;
+        color: #fff !important;
+        border-color: #128C7E !important;
+    }
+    .topbar .topbar-actions .chat-toggle.visible i {
+        color: #fff !important;
+        font-size: 1.05rem;
+    }
     .lang-toggle { min-width: 46px; padding: 6px 8px !important; }
     .sub-alert-btn { padding: 6px 10px; font-size: .72rem; }
     .low-stock-alert-btn { padding: 6px 10px !important; font-size: .72rem !important; }
@@ -4696,6 +4755,15 @@ tbody tr:hover {
         <div class="form-group"><label data-i18n="profile_full_name">Full Name</label><input type="text" id="profileFullName"/></div>
         <div class="form-group"><label data-i18n="profile_email">Email</label><input type="email" id="profileEmail"/></div>
         <div class="form-group"><label data-i18n="phone_label">Phone Number</label><input type="text" id="profilePhone" placeholder="+255 xxx xxx xxx" inputmode="tel"/></div>
+        <div class="form-group">
+            <label data-i18n="profile_bio">Bio / Description</label>
+            <textarea id="profileBio" rows="3" maxlength="300" placeholder="Tell customers about yourself or your business..." style="resize:vertical;font-family:var(--font);"></textarea>
+            <div class="bio-hint">
+                <i class="fas fa-info-circle"></i>
+                <span data-i18n="profile_bio_hint">Max 300 characters. Shown on your public profile.</span>
+            </div>
+            <div class="bio-counter" id="profileBioCounter">0 / 300</div>
+        </div>
         <div class="form-group"><label data-i18n="profile_new_password">New Password</label><input type="password" id="newPassword"/></div>
         <div class="form-group"><label data-i18n="profile_confirm_password">Confirm Password</label><input type="password" id="confirmPassword"/></div>
         <div class="social-fields-container" id="socialFieldsContainer"></div>
@@ -4997,6 +5065,8 @@ const TRANSLATIONS = {
         profile_change_photo: 'Change Photo',
         profile_full_name: 'Full Name',
         profile_email: 'Email',
+        profile_bio: 'Bio / Description',
+        profile_bio_hint: 'Max 300 characters. Shown on your public profile.',
         profile_new_password: 'New Password',
         profile_confirm_password: 'Confirm Password',
         profile_save: 'Save',
@@ -5048,6 +5118,7 @@ const TRANSLATIONS = {
         expenses_th_amount: 'Amount',
         expenses_th_category: 'Category',
         expenses_th_date: 'Date',
+        expenses_th_store: 'Store',
         expenses_th_actions: 'Actions',
         expenses_empty: 'No expenses',
         users_title: 'System Users',
@@ -5350,6 +5421,7 @@ const TRANSLATIONS = {
         profile_view_company: 'Company',
         profile_view_email: 'Email',
         profile_view_phone: 'Phone',
+        profile_view_bio: 'Bio',
         profile_view_not_set: 'Not set',
         username_label: 'Username',
         store_label: 'Store',
@@ -5499,6 +5571,8 @@ const TRANSLATIONS = {
         profile_change_photo: 'Badilisha Picha',
         profile_full_name: 'Jina Kamili',
         profile_email: 'Barua pepe',
+        profile_bio: 'Wasifu / Maelezo',
+        profile_bio_hint: 'Herufi 300 kwa juu. Inaonekana kwenye wasifu wako wa umma.',
         profile_new_password: 'Nenosiri Jipya',
         profile_confirm_password: 'Thibitisha Nenosiri',
         profile_save: 'Hifadhi',
@@ -5548,6 +5622,7 @@ const TRANSLATIONS = {
         expenses_th_amount: 'Kiasi',
         expenses_th_category: 'Kundi',
         expenses_th_date: 'Tarehe',
+        expenses_th_store: 'Duka',
         expenses_th_actions: 'Vitendo',
         expenses_empty: 'Hakuna matumizi',
         users_title: 'Watumiaji wa Mfumo',
@@ -5850,6 +5925,7 @@ const TRANSLATIONS = {
         profile_view_company: 'Kampuni',
         profile_view_email: 'Barua pepe',
         profile_view_phone: 'Simu',
+        profile_view_bio: 'Wasifu',
         profile_view_not_set: 'Haijawekwa',
         username_label: 'Jina la mtumiaji',
         store_label: 'Duka',
@@ -5989,6 +6065,9 @@ const TRANSLATIONS = {
         nav_mex_earnings: "Mes gains",
         nav_mex_companies: "Mes entreprises",
         nav_mex_status: "Annonces",
+        profile_bio: 'Biographie / Description',
+        profile_bio_hint: '300 caractères max. Affiché sur votre profil public.',
+        profile_view_bio: 'Bio',
         close: "Fermer",
         save: "Enregistrer",
         cancel: "Annuler",
@@ -6039,6 +6118,9 @@ const TRANSLATIONS = {
         nav_mex_earnings: '我的收益',
         nav_mex_companies: '我的公司',
         nav_mex_status: '广告',
+        profile_bio: '简介 / 描述',
+        profile_bio_hint: '最多300个字符。显示在您的公开个人资料上。',
+        profile_view_bio: '简介',
         close: '关闭',
         save: '保存',
         cancel: '取消',
@@ -6649,6 +6731,7 @@ function getCurrentUser() {
                 photo: emp.photo || '',
                 theme: emp.theme || 'light',
                 lang: emp.lang || 'en',
+                bio: emp.bio || '',
                 socialWhatsapp: emp.socialWhatsapp || '',
                 socialInstagram: emp.socialInstagram || '',
                 socialFacebook: emp.socialFacebook || '',
@@ -6678,8 +6761,12 @@ function setCurrentUser(u) {
     }
 }
 
+/* ============================================================
+   FIX: getUser uses Number() comparison to handle string IDs
+   from onclick attributes (chat system bug fix)
+   ============================================================ */
 function getUser(id) {
-    return getTenantData('users', []).find(u => u.id === id);
+    return getTenantData('users', []).find(u => Number(u.id) === Number(id));
 }
 
 function getProduct(id) {
@@ -7021,6 +7108,7 @@ function addMexEmployee(name, phone) {
         photo: '',
         theme: 'light',
         lang: 'en',
+        bio: '',
         promoCode: generatePromoCode(),
         totalEarned: 0,
         totalRegistrations: 0,
@@ -7205,6 +7293,7 @@ views.mexEarnings = function () {
     const avatarHtml = emp.photo && emp.photo.length > 5
         ? `<img src="${emp.photo}" style="width:60px;height:60px;border-radius:50%;object-fit:cover;border:3px solid #f59e0b;"/>`
         : `<div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:800;border:3px solid #f59e0b;">${(emp.name || '?').charAt(0).toUpperCase()}</div>`;
+    const bioHtml = emp.bio ? `<div class="bio-display" style="margin-top:8px;"><i class="fas fa-quote-left bio-icon"></i>${escapeHtml(emp.bio)}</div>` : '';
     return `<div class="section-header"><h2><i class="fas fa-coins" style="color:#f59e0b;"></i> ${t('nav_mex_earnings')}</h2></div>
     <div style="background:linear-gradient(135deg, rgba(245,158,11,.12), rgba(217,119,6,.06));border-radius:var(--radius-card);padding:18px 20px;margin-bottom:18px;border:1px solid rgba(245,158,11,.25);display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
         ${avatarHtml}
@@ -7212,6 +7301,7 @@ views.mexEarnings = function () {
             <div style="font-size:.85rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px;">${t('mex_dash_welcome')}</div>
             <div style="font-size:1.6rem;font-weight:800;color:#d97706;margin-top:2px;">${emp.name}</div>
             <div style="font-size:.85rem;color:var(--text-muted);margin-top:4px;"><i class="fas fa-at"></i> ${emp.username}</div>
+            ${bioHtml}
         </div>
         <button class="btn btn-secondary btn-sm" onclick="openProfileModal()"><i class="fas fa-user-cog"></i> ${t('profile_title')}</button>
     </div>
@@ -9716,6 +9806,7 @@ function createTenantWithSubscription(companyName, username, password, phone, am
         tenantId: id,
         theme: 'light',
         lang: currentLang,
+        bio: '',
         createdAt: now,
         socialWhatsapp: '',
         socialInstagram: '',
@@ -9725,9 +9816,9 @@ function createTenantWithSubscription(companyName, username, password, phone, am
     };
     currentTenantId = id;
     const demoUsers = [
-        { id: 2, username: 'admin', password: 'admin123', role: 'admin', store: storeName, fullName: 'Admin User', email: '', phone: '', createdBy: 1, photo: '', tenantId: id, theme: 'light', lang: 'en', createdAt: now, socialWhatsapp: '', socialInstagram: '', socialFacebook: '', socialTiktok: '', socialWebsite: '' },
-        { id: 3, username: 'employee', password: 'emp123', role: 'employee', store: storeName, fullName: 'Employee User', email: '', phone: '', createdBy: 1, photo: '', tenantId: id, theme: 'light', lang: 'en', createdAt: now, socialWhatsapp: '', socialInstagram: '', socialFacebook: '', socialTiktok: '', socialWebsite: '' },
-        { id: 4, username: 'accountant', password: 'acc123', role: 'accountant', store: storeName, fullName: 'Accountant User', email: '', phone: '', createdBy: 1, photo: '', tenantId: id, theme: 'light', lang: 'en', createdAt: now, socialWhatsapp: '', socialInstagram: '', socialFacebook: '', socialTiktok: '', socialWebsite: '' }
+        { id: 2, username: 'admin', password: 'admin123', role: 'admin', store: storeName, fullName: 'Admin User', email: '', phone: '', createdBy: 1, photo: '', tenantId: id, theme: 'light', lang: 'en', bio: '', createdAt: now, socialWhatsapp: '', socialInstagram: '', socialFacebook: '', socialTiktok: '', socialWebsite: '' },
+        { id: 3, username: 'employee', password: 'emp123', role: 'employee', store: storeName, fullName: 'Employee User', email: '', phone: '', createdBy: 1, photo: '', tenantId: id, theme: 'light', lang: 'en', bio: '', createdAt: now, socialWhatsapp: '', socialInstagram: '', socialFacebook: '', socialTiktok: '', socialWebsite: '' },
+        { id: 4, username: 'accountant', password: 'acc123', role: 'accountant', store: storeName, fullName: 'Accountant User', email: '', phone: '', createdBy: 1, photo: '', tenantId: id, theme: 'light', lang: 'en', bio: '', createdAt: now, socialWhatsapp: '', socialInstagram: '', socialFacebook: '', socialTiktok: '', socialWebsite: '' }
     ];
     setTenantData('users', [ownerUser, ...demoUsers]);
     const products = [
@@ -9792,6 +9883,7 @@ function addBranchWithUser(tenantId, bn, ba, bt, un, pw) {
         tenantId,
         theme: 'light',
         lang: 'en',
+        bio: '',
         createdAt: Date.now(),
         socialWhatsapp: '',
         socialInstagram: '',
@@ -10069,7 +10161,7 @@ function updateSaleTotalPreview() {
     if (discount > 0) {
         html += `<div class="stp-row"><span class="stp-label"><i class="fas fa-tag"></i> ${t('modal_sale_discount')}</span><span class="stp-value disc">-${fmtMoney(discount)}</span></div>`;
     } else if (diff < 0) {
-        html += `<div class="stp-row"><span class="stp-label"><i class="fas fa-arrow-up"></i> ${t('receipt_price_adjust') || 'Price Adjustment'}</span><span class="stp-value up">+${fmtMoney(Math.abs(diff) * qty)}</span></div>`;
+        html += `<div class="stp-row"><span class="stp-label"><i class="fas fa-arrow-up"></i> Price Adjustment</span><span class="stp-value up">+${fmtMoney(Math.abs(diff) * qty)}</span></div>`;
     }
     html += `<div class="stp-total"><span>${t('modal_sale_total')}</span><span class="stp-total-value">${fmtMoney(total)}</span></div>`;
     html += `<div class="stp-note"><i class="fas fa-info-circle"></i><span>${t('modal_sale_price_hint')}</span></div>`;
@@ -10647,6 +10739,7 @@ function submitUser(e) {
         tenantId: currentTenantId,
         theme: 'light',
         lang: 'en',
+        bio: '',
         createdAt: Date.now(),
         socialWhatsapp: '',
         socialInstagram: '',
@@ -10837,6 +10930,11 @@ function openProfileModal() {
     document.getElementById('profileFullName').value = u.fullName || '';
     document.getElementById('profileEmail').value = u.email || '';
     document.getElementById('profilePhone').value = u.phone || '';
+    const bioEl = document.getElementById('profileBio');
+    if (bioEl) {
+        bioEl.value = u.bio || '';
+        updateBioCounter();
+    }
     document.getElementById('newPassword').value = '';
     document.getElementById('confirmPassword').value = '';
     const photo = getUserPhoto(u);
@@ -10851,6 +10949,15 @@ function openProfileModal() {
     bindProfileUploadListener();
     document.getElementById('profileModal').classList.add('show');
     document.body.classList.add('modal-open');
+}
+
+function updateBioCounter() {
+    const bioEl = document.getElementById('profileBio');
+    const cnt = document.getElementById('profileBioCounter');
+    if (!bioEl || !cnt) return;
+    const len = (bioEl.value || '').length;
+    cnt.textContent = len + ' / 300';
+    cnt.style.color = len > 280 ? 'var(--accent-danger)' : 'var(--text-muted)';
 }
 
 function bindProfileUploadListener() {
@@ -10899,7 +11006,8 @@ function bindProfileUploadListener() {
                     email: fresh.email || '',
                     photo: du,
                     theme: fresh.theme || 'light',
-                    lang: fresh.lang || 'en'
+                    lang: fresh.lang || 'en',
+                    bio: fresh.bio || ''
                 };
                 setMexSession(newUser);
                 setCurrentUser(null);
@@ -10959,6 +11067,8 @@ function saveProfile() {
     const fn = document.getElementById('profileFullName').value.trim();
     const em = document.getElementById('profileEmail').value.trim();
     const ph = document.getElementById('profilePhone').value.trim();
+    const bioEl = document.getElementById('profileBio');
+    const bio = bioEl ? bioEl.value.trim().substring(0, 300) : '';
     const np = document.getElementById('newPassword').value;
     const cp = document.getElementById('confirmPassword').value;
     const socialData = {};
@@ -10978,6 +11088,7 @@ function saveProfile() {
         u.fullName = fn || 'Super Admin';
         u.email = em;
         u.phone = ph;
+        u.bio = bio;
         if (np) u.password = np;
         Object.assign(u, socialData);
         setCurrentUser(u);
@@ -10993,6 +11104,7 @@ function saveProfile() {
         if (fn) updates.name = fn;
         updates.email = em;
         updates.phone = ph;
+        updates.bio = bio;
         if (np) updates.password = np;
         Object.assign(updates, socialData);
         updateMexEmployee(emp.id, updates);
@@ -11006,7 +11118,8 @@ function saveProfile() {
             email: fresh.email || '',
             photo: fresh.photo || '',
             theme: fresh.theme || 'light',
-            lang: fresh.lang || 'en'
+            lang: fresh.lang || 'en',
+            bio: fresh.bio || ''
         };
         Object.assign(newUser, socialData);
         setMexSession(newUser);
@@ -11022,6 +11135,7 @@ function saveProfile() {
     if (fn) tg.fullName = fn;
     if (em) tg.email = em;
     if (ph) tg.phone = ph;
+    tg.bio = bio;
     if (np) tg.password = np;
     Object.assign(tg, socialData);
     try {
@@ -11107,6 +11221,7 @@ function login(username, password) {
                 theme: 'light',
                 phone: '',
                 lang: 'en',
+                bio: '',
                 photo: getSuperAdminPhoto()
             },
             tenant: null,
@@ -11129,7 +11244,8 @@ function login(username, password) {
                     phone: emp.phone || '',
                     email: emp.email || '',
                     photo: emp.photo || '',
-                    lang: emp.lang || 'en'
+                    lang: emp.lang || 'en',
+                    bio: emp.bio || ''
                 },
                 employee: emp,
                 isMexEmployee: true
@@ -11372,6 +11488,9 @@ function bindGlobalEvents() {
     };
     document.getElementById('saveProfileBtn').onclick = saveProfile;
     document.getElementById('themeToggle').onclick = toggleTheme;
+    /* Bio counter listener */
+    const bioEl = document.getElementById('profileBio');
+    if (bioEl) bioEl.addEventListener('input', updateBioCounter);
     const pvm = document.getElementById('profileViewModal');
     if (pvm) pvm.onclick = function (e) {
         if (e.target === this) closeProfileViewModal();
@@ -11543,7 +11662,7 @@ function loadChatContacts() {
     const contactsEl = document.getElementById('chatContacts');
     if (!contactsEl) return;
     const allUsers = getTenantData('users', []);
-    const contacts = allUsers.filter(u => u.id !== user.id);
+    const contacts = allUsers.filter(u => Number(u.id) !== Number(user.id));
     if (contacts.length === 0) {
         contactsEl.innerHTML = `<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:.8rem;">${t('chat_no_contacts')}</div>`;
         return;
@@ -11552,15 +11671,18 @@ function loadChatContacts() {
         const unread = getUnreadFromContact(c.id, user.id);
         const avatar = getUserPhoto(c);
         const initials = (c.fullName || c.username || '?').charAt(0).toUpperCase();
-        const active = chatCurrentContact && chatCurrentContact.id === c.id ? 'active' : '';
+        const active = chatCurrentContact && Number(chatCurrentContact.id) === Number(c.id) ? 'active' : '';
         const avatarHtml = avatar && avatar.length > 5
             ? `<img src="${avatar}" alt="${c.username}" onerror="this.onerror=null;this.parentElement.textContent='${initials}';"/>`
             : initials;
+        const preview = c.bio
+            ? escapeHtml(c.bio.substring(0, 40)) + (c.bio.length > 40 ? '…' : '')
+            : getRoleLabel(c.role);
         return `<div class="contact-item ${active}" onclick="openChatWith('${c.id}')">
             <div class="contact-avatar">${avatarHtml}</div>
             <div class="contact-info">
                 <div class="contact-name">${c.fullName || c.username}${renderVerifiedBadge()}</div>
-                <div class="contact-last">${getRoleLabel(c.role)}</div>
+                <div class="contact-last">${preview}</div>
             </div>
             ${unread > 0 ? `<div class="contact-unread">${unread}</div>` : ''}
         </div>`;
@@ -11569,19 +11691,22 @@ function loadChatContacts() {
 
 function getUnreadFromContact(fromId, toId) {
     const messages = getMessages();
-    return messages.filter(m => m.from === fromId && m.to === toId && !m.read).length;
+    return messages.filter(m => Number(m.from) === Number(fromId) && Number(m.to) === Number(toId) && !m.read).length;
 }
 
 function openChatWith(contactId) {
     const user = getCurrentUser();
     if (!user) return;
     const contact = getUser(contactId);
-    if (!contact) return;
+    if (!contact) {
+        showToast('Contact not found.', 'error');
+        return;
+    }
     chatCurrentContact = contact;
     const messages = getMessages();
     let changed = false;
     messages.forEach(m => {
-        if (m.from === Number(contactId) && m.to === user.id && !m.read) {
+        if (Number(m.from) === Number(contactId) && Number(m.to) === Number(user.id) && !m.read) {
             m.read = true;
             changed = true;
         }
@@ -11597,14 +11722,14 @@ function renderChatMessages() {
     const messagesEl = document.getElementById('chatMessages');
     if (!user || !chatCurrentContact || !messagesEl) return;
     const messages = getMessages()
-        .filter(m => (m.from === user.id && m.to === chatCurrentContact.id) || (m.from === chatCurrentContact.id && m.to === user.id))
+        .filter(m => (Number(m.from) === Number(user.id) && Number(m.to) === Number(chatCurrentContact.id)) || (Number(m.from) === Number(chatCurrentContact.id) && Number(m.to) === Number(user.id)))
         .sort((a, b) => a.timestamp - b.timestamp);
     if (messages.length === 0) {
         messagesEl.innerHTML = `<div class="no-chat"><i class="fas fa-comment"></i><span>${t('no_messages_yet')}</span></div>`;
         return;
     }
     messagesEl.innerHTML = messages.map(m => {
-        const isSender = m.from === user.id;
+        const isSender = Number(m.from) === Number(user.id);
         const time = fmtTime(m.timestamp);
         let attachHtml = '';
         if (m.file) {
@@ -11695,7 +11820,7 @@ function deleteChatMessage(msgId) {
     const idx = messages.findIndex(m => m.id === Number(msgId));
     if (idx === -1) return;
     const user = getCurrentUser();
-    if (messages[idx].from !== user.id && !isSuperAdmin) {
+    if (Number(messages[idx].from) !== Number(user.id) && !isSuperAdmin) {
         showToast(t('toast_cannot_delete'), 'error');
         return;
     }
@@ -11859,6 +11984,7 @@ function openProfileViewModal(tenantId, userId, isSuper) {
             phone: '',
             photo: getSuperAdminPhoto(),
             tenantId: null,
+            bio: '',
             createdAt: null
         };
     } else {
@@ -11892,6 +12018,7 @@ function openProfileViewModal(tenantId, userId, isSuper) {
         <div class="pvm-company"><i class="fas fa-building"></i> ${companyName}${!isSuper ? renderVerifiedBadge() : ''}</div>
         <div class="pvm-role-badge ${roleBadgeColor}" ${isSuper ? 'style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;"' : ''}>${role}</div>
         ${user.id ? `<div><span class="pvm-status ${isOnline ? 'online' : 'offline'}"><span class="dot"></span>${isOnline ? t('attendance_online') : t('attendance_offline')}</span></div>` : ''}
+        ${user.bio ? `<div class="bio-display"><i class="fas fa-quote-left bio-icon"></i>${escapeHtml(user.bio)}</div>` : ''}
         ${renderSocialLinks(user)}
         <div class="pvm-info-list">
             <div class="pvm-info-row"><i class="fas fa-user-tag"></i><span class="pvm-label">${t('profile_view_role')}</span><span class="pvm-value">${role}</span></div>
@@ -11931,7 +12058,7 @@ function openAdAuthorProfile(adId) {
     let allAds = [];
     const isSuper = clickedAd.postedBy === 'super';
     if (isSuper) {
-        user = { fullName: 'Super Admin', username: 'Super Admin', role: 'superadmin', photo: '', email: '', phone: '' };
+        user = { fullName: 'Super Admin', username: 'Super Admin', role: 'superadmin', photo: '', email: '', phone: '', bio: '' };
         allAds = getGlobalAds().filter(a => a.postedBy === 'super');
     } else {
         const old = currentTenantId;
@@ -11970,6 +12097,9 @@ function openAdAuthorProfile(adId) {
         const following = isFollowing(tenantId);
         followBtnHtml = `<button class="follow-btn ${following ? 'following' : ''}" onclick="event.stopPropagation();toggleFollowTenant('${tenantId}')"><i class="fas fa-user-plus"></i><i class="fas fa-user-check"></i><span class="follow-btn-text">${following ? (t('following') || 'Following') : (t('follow') || 'Follow')}</span></button>`;
     }
+    const bioHtml = user && user.bio
+        ? `<div class="bio-display" style="max-width:600px;margin:10px auto;"><i class="fas fa-quote-left bio-icon"></i>${escapeHtml(user.bio)}</div>`
+        : '';
     const adsHtml = allAds.map(a => {
         const expLabel = isAdPromoted(a) ? '' : formatAdExpiry(a);
         const viewerCount = getViewerCount(a);
@@ -12018,6 +12148,7 @@ function openAdAuthorProfile(adId) {
             ${user && user.id ? `<span class="online-status ${isOnline ? 'online' : 'offline'}" style="display:inline-flex;margin-bottom:10px;"><span class="dot ${isOnline ? 'online' : 'offline'}"></span>${isOnline ? t('attendance_online') : t('attendance_offline')}</span>` : ''}
             ${user && user.email ? `<div style="font-size:.78rem;color:var(--text-muted);margin-top:4px;"><i class="fas fa-envelope"></i> ${escapeHtml(user.email)}</div>` : ''}
             ${user && user.phone ? `<div style="font-size:.78rem;color:var(--text-muted);margin-top:2px;"><i class="fas fa-phone"></i> ${escapeHtml(user.phone)}</div>` : ''}
+            ${bioHtml}
             ${renderSocialLinks(user)}
             <div class="ia-profile-stats">
                 <div class="ia-profile-stat"><div class="num">${postCount}</div><div class="lbl">${t('ia_posts') || 'Posts'}</div></div>
@@ -12104,6 +12235,9 @@ function openCompanyProfile(tenantId) {
         const following = isFollowing(tenantId);
         followBtnHtml = `<button class="follow-btn ${following ? 'following' : ''}" onclick="event.stopPropagation();toggleFollowTenant('${tenantId}')"><i class="fas fa-user-plus"></i><i class="fas fa-user-check"></i><span class="follow-btn-text">${following ? (t('following') || 'Following') : (t('follow') || 'Follow')}</span></button>`;
     }
+    const bioHtml = owner && owner.bio
+        ? `<div class="bio-display" style="max-width:600px;margin:10px auto;"><i class="fas fa-quote-left bio-icon"></i>${escapeHtml(owner.bio)}</div>`
+        : '';
     const adsHtml = allAds.map(a => {
         const expLabel = isAdPromoted(a) ? '' : formatAdExpiry(a);
         const viewerCount = getViewerCount(a);
@@ -12148,6 +12282,7 @@ function openCompanyProfile(tenantId) {
             <div class="ia-profile-name">${escapeHtml(companyName)}</div>
             <div class="ia-profile-company"><i class="fas fa-user"></i> ${escapeHtml(name)}${renderVerifiedBadge('lg')}</div>
             ${owner && owner.id ? `<span class="online-status ${isOnline ? 'online' : 'offline'}" style="display:inline-flex;margin-bottom:10px;"><span class="dot ${isOnline ? 'online' : 'offline'}"></span>${isOnline ? t('attendance_online') : t('attendance_offline')}</span>` : ''}
+            ${bioHtml}
             ${renderSocialLinks(owner)}
             <div class="ia-profile-stats">
                 <div class="ia-profile-stat"><div class="num">${postCount}</div><div class="lbl">${t('ia_posts') || 'Posts'}</div></div>
@@ -12629,7 +12764,7 @@ async function submitAd(e, isPaid) {
     };
     addGlobalAd(ad);
     closeModal();
-    showToast(t('ads_no_ads') === t('ads_no_ads') ? '✅ Ad posted!' : '✅ Ad posted!', 'success');
+    showToast('✅ Ad posted!', 'success');
     const canPromote = isSuperAdmin || (!isMexEmployee && u && u.role === 'owner');
     if (canPromote) {
         setTimeout(() => {
@@ -13143,7 +13278,7 @@ function submitSuperAddCompany(e) {
 }
 
 /* ============================================================
-   VIEW: SUBSCRIPTION (Owner / Branch user)
+   VIEW: SUBSCRIPTION
    ============================================================ */
 views.subscription = function () {
     if (isSuperAdmin || isMexEmployee) return '<div class="card"><div class="card-body"><p>Not available.</p></div></div>';
@@ -14708,7 +14843,8 @@ document.addEventListener('keydown', function (e) {
                 phone: emp.phone || '',
                 email: emp.email || '',
                 photo: emp.photo || '',
-                lang: emp.lang || 'en'
+                lang: emp.lang || 'en',
+                bio: emp.bio || ''
             };
             setMexSession(freshUser);
             setCurrentUser(null);
@@ -14868,6 +15004,7 @@ Object.assign(window, {
     openProfileModal,
     closeProfileModal,
     saveProfile,
+    updateBioCounter,
     updateLowStockBadge,
     openLowStockModal,
     closeLowStockModal,
@@ -15038,7 +15175,7 @@ Object.assign(window, {
     PROMOTED_AD_WEEKLY_DURATION_MS
 });
 
-console.log('✅ MeX PRO v60 — Clean Format + 12,000 TSh Branch Fee');
+console.log('✅ MeX PRO v61 — Bio + Chat Fixes Applied');
 </script>
 </body>
 </html>
