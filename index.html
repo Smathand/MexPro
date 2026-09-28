@@ -2096,8 +2096,8 @@ tbody tr:hover {
 }
 .status-card .status-body .status-image-wrap {
     flex-shrink: 0;
-    width: 200px;
-    height: 200px;
+    width: 320px;
+    height: 220px;
     border-radius: 10px;
     overflow: hidden;
     background: transparent;
@@ -3629,8 +3629,7 @@ tbody tr:hover {
 }
 
 /* ============================================================
-   BIO STYLING (NEW v61) — KAWAIDA, HAIJALALA
-   Bio maneno sasa ni ya kawaida: si italic, hakuna alama za quotation
+   BIO STYLING (v61) — Business Description in NORMAL text
    ============================================================ */
 .profile-bio-wrap {
     margin-bottom: 16px;
@@ -3690,6 +3689,7 @@ tbody tr:hover {
     color: var(--accent-danger);
     font-weight: 700;
 }
+/* Bio display — normal upright text (no italic) */
 .profile-bio-display {
     font-size: .88rem;
     color: var(--text-secondary);
@@ -3701,9 +3701,9 @@ tbody tr:hover {
     margin: 10px 0;
     border-left: 3px solid var(--accent-1);
     word-break: break-word;
-    font-style: normal;
     position: relative;
 }
+/* Bio inline — normal upright text (no italic) */
 .profile-bio-inline {
     font-size: .82rem;
     color: var(--text-secondary);
@@ -3715,7 +3715,6 @@ tbody tr:hover {
     border-left: 3px solid var(--accent-1);
     word-break: break-word;
     text-align: left;
-    font-style: normal;
     position: relative;
 }
 .profile-bio-inline i.bio-icon {
@@ -3727,39 +3726,6 @@ tbody tr:hover {
 .pvm-bio-wrap {
     margin: 12px 0;
     text-align: left;
-}
-
-/* ============================================================
-   FULL-BLEED VIDEO (TikTok / Instagram Reels style)
-   Video inagusa kuta za pembeni kushoto na kulia
-   ============================================================ */
-.ad-video-card .status-body {
-    flex-direction: column !important;
-    gap: 12px !important;
-}
-.ad-video-card .status-card .status-body .status-image-wrap {
-    width: calc(100% + 32px) !important;
-    margin-left: -16px !important;
-    margin-right: -16px !important;
-    height: auto !important;
-    aspect-ratio: 9 / 16 !important;
-    max-height: 85vh !important;
-    border-radius: 0 !important;
-    flex-shrink: 0 !important;
-    align-self: stretch !important;
-    background: #000 !important;
-}
-.ad-video-card .status-card .status-body .status-image-wrap video,
-.ad-video-card .status-card .status-body .status-image-wrap .mex-auto-video {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
-    border-radius: 0 !important;
-    display: block !important;
-    background: #000 !important;
-}
-.ad-video-card .status-card .status-body .status-content {
-    padding: 0 2px;
 }
 
 @media print {
@@ -3814,33 +3780,14 @@ tbody tr:hover {
     .table-wrap { margin: 0 -16px; padding: 0 16px; }
     table { font-size: .82rem; }
     .status-card .status-body { flex-direction: column; align-items: stretch; }
-    .status-card .status-body .status-image-wrap { width: 100%; height: auto; max-height: 480px; aspect-ratio: 9/16; align-self: center; }
+    /* VIDEO WIDER ON MOBILE — 16:10 aspect, less tall */
+    .status-card .status-body .status-image-wrap { width: 100%; height: auto; max-height: 420px; aspect-ratio: 16/10; align-self: center; }
     .report-summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
     .super-dash-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
     .lock-overlay-full { padding: 40px 16px; border-radius: 16px; }
     .page-card { padding: 26px 20px; border-radius: 18px; }
     .toast-container { left: 12px; right: 12px; bottom: calc(12px + var(--safe-bottom)); }
     .toast { max-width: 100%; margin-left: 0; padding: 12px 16px; font-size: .85rem; }
-
-    /* Mobile: full-bleed video inagusa kuta kabisa (hakuna padding) */
-    .ad-video-card {
-        padding: 16px 0 16px 0 !important;
-    }
-    .ad-video-card .status-card .status-header {
-        padding-left: 16px;
-        padding-right: 16px;
-    }
-    .ad-video-card .status-card .status-body .status-image-wrap {
-        width: 100% !important;
-        margin-left: 0 !important;
-        margin-right: 0 !important;
-        border-radius: 0 !important;
-        aspect-ratio: 9 / 16 !important;
-        max-height: 80vh !important;
-    }
-    .ad-video-card .status-card .status-body .status-content {
-        padding: 0 16px;
-    }
 }
 @media (max-width: 480px) {
     .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
@@ -3869,27 +3816,11 @@ tbody tr:hover {
     .modal-overlay { padding: 0 !important; align-items: flex-end !important; padding-bottom: var(--safe-bottom) !important; }
     .modal-box { border-radius: 22px 22px 0 0 !important; padding: 22px 18px !important; max-height: 94dvh !important; width: 100% !important; max-width: 100% !important; margin: 0 !important; }
     .sub-modal .modal-box .sub-plan-selector .plan-btn { min-width: 100% !important; }
-    .status-card .status-body .status-image-wrap { width: 100% !important; height: auto !important; max-height: 480px !important; aspect-ratio: 9/16 !important; align-self: center !important; }
+    /* VIDEO WIDER ON SMALL MOBILE — 16:10 */
+    .status-card .status-body .status-image-wrap { width: 100% !important; height: auto !important; max-height: 420px !important; aspect-ratio: 16/10 !important; align-self: center !important; }
     body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; }
     .topbar { padding-top: max(10px, env(safe-area-inset-top)) !important; }
     .card, .stat-card, .super-stat-card, .report-summary-card { box-shadow: 0 2px 8px rgba(0,0,0,0.04) !important; }
-
-    .ad-video-card {
-        padding: 16px 0 16px 0 !important;
-    }
-    .ad-video-card .status-card .status-header {
-        padding-left: 12px;
-        padding-right: 12px;
-    }
-    .ad-video-card .status-card .status-body .status-image-wrap {
-        width: 100% !important;
-        margin-left: 0 !important;
-        margin-right: 0 !important;
-        border-radius: 0 !important;
-    }
-    .ad-video-card .status-card .status-body .status-content {
-        padding: 0 12px;
-    }
 }
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
@@ -4079,7 +4010,7 @@ tbody tr:hover {
         <!-- BIO FIELD -->
         <div class="profile-bio-wrap">
             <label>
-                <i class="fas fa-align-left" style="color:var(--accent-1);"></i>
+                <i class="fas fa-quote-left" style="color:var(--accent-1);"></i>
                 <span data-i18n="profile_bio">Bio / Business Description</span>
                 <span class="bio-limit">(max 50 words)</span>
             </label>
@@ -11535,7 +11466,7 @@ function openAdAuthorProfile(adId) {
         </div>`;
     }).join('');
     const bioInlineHtml = user && user.bio
-        ? `<div class="profile-bio-inline"><i class="fas fa-align-left bio-icon"></i>${escapeHtml(user.bio)}</div>`
+        ? `<div class="profile-bio-inline"><i class="fas fa-quote-left bio-icon"></i>${escapeHtml(user.bio)}</div>`
         : '';
     const ov = document.getElementById('modalOverlay');
     const bx = document.getElementById('modalBox');
@@ -11672,7 +11603,7 @@ function openCompanyProfile(tenantId) {
         </div>`;
     }).join('');
     const bioInlineHtml = owner && owner.bio
-        ? `<div class="profile-bio-inline"><i class="fas fa-align-left bio-icon"></i>${escapeHtml(owner.bio)}</div>`
+        ? `<div class="profile-bio-inline"><i class="fas fa-quote-left bio-icon"></i>${escapeHtml(owner.bio)}</div>`
         : '';
     const ov = document.getElementById('modalOverlay');
     const bx = document.getElementById('modalBox');
@@ -12224,7 +12155,7 @@ views.mexEarnings = function () {
     const avatarHtml = emp.photo && emp.photo.length > 5
         ? `<img src="${emp.photo}" style="width:60px;height:60px;border-radius:50%;object-fit:cover;border:3px solid #f59e0b;"/>`
         : `<div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:800;border:3px solid #f59e0b;">${(emp.name || '?').charAt(0).toUpperCase()}</div>`;
-    const bioHtml = emp.bio ? `<div class="profile-bio-inline" style="text-align:left;"><i class="fas fa-align-left bio-icon"></i>${escapeHtml(emp.bio)}</div>` : '';
+    const bioHtml = emp.bio ? `<div class="profile-bio-inline" style="text-align:left;"><i class="fas fa-quote-left bio-icon"></i>${escapeHtml(emp.bio)}</div>` : '';
     return `<div class="section-header"><h2><i class="fas fa-coins" style="color:#f59e0b;"></i> ${t('nav_mex_earnings')}</h2></div>
     <div style="background:linear-gradient(135deg, rgba(245,158,11,.12), rgba(217,119,6,.06));border-radius:var(--radius-card);padding:18px 20px;margin-bottom:18px;border:1px solid rgba(245,158,11,.25);display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
         ${avatarHtml}
@@ -15046,7 +14977,7 @@ Object.assign(window, {
     PROMOTED_AD_WEEKLY_PRICE, PROMOTED_AD_WEEKLY_DURATION_MS
 });
 
-console.log('✅ MeX PRO v62 — Full-Bleed Video + Normal Bio Text');
+console.log('✅ MeX PRO v61 — Bio Feature + Chat Fix + 12,000 TSh Branch + Wider Video');
 </script>
 </body>
 </html>
