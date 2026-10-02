@@ -1,4 +1,4 @@
-# MexPro
+# MexPro POS
 
 Multi-tenant POS that stays a static site on GitHub Pages. **Accounts, company data, and media live in Supabase** (Auth, Postgres, Storage, and one Edge Function).
 
