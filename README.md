@@ -1,2 +1,0 @@
-# MexPro
-The Best POS 
