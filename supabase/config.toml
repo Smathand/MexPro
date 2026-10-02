@@ -1,7 +1,0 @@
-project_id = "mexpro"
-
-[functions.pos-admin]
-verify_jwt = false
-
-[functions.flutterwave]
-verify_jwt = false
