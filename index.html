@@ -3409,12 +3409,9 @@ tbody tr:hover { background: rgba(18,140,126,.03); }
 
 <script>
 /* ================================================================
-   MeX PRO — No company/branch/ad payments
-   - Supabase fully intact (auth, products, sales, users, branches,
-     ads, statuses, messages, attendance, uploads, sync)
-   - Login page shows "MeX PRO" with original colors
-   - Branch switcher hidden
-   - No "All features unlocked" banner
+   MeX PRO — Super Admin (Mex/Mex2024@) auto-works
+   - No image uploads for inventory/expenses
+   - Branches table: BRANCH, ADDRESS, USERNAME, STATUS, SUB, MANAGER PERMISSIONS, ACTIONS
    ================================================================ */
 
 const SERVICE_FEE = 0;
@@ -3427,6 +3424,7 @@ const LOW_STOCK_THRESHOLD = 30;
 const GLOBAL_ADS_KEY = 'sb_global_ads';
 const MEX_EMPLOYEES_KEY = 'sb_mex_employees';
 const MEX_SESSION_KEY = 'sb_mex_current_employee';
+const SUPER_ADMIN_SESSION_KEY = 'sb_superadmin_logged_in';
 const FOLLOWS_KEY_SUFFIX = 'follows';
 const AD_FREE_VALIDITY_MS = 24 * 60 * 60 * 1000;
 const AD_VALIDITY_MS = 24 * 60 * 60 * 1000;
@@ -3518,16 +3516,16 @@ function cssUrl(data) { if (!data) return ''; return 'url("' + String(data).repl
 
 const TRANSLATIONS = {
 en: {
-    login_subtitle:'Login to your company',login_username_label:'Username',login_password_label:'Password',login_btn:'Login',login_no_account:"Don't have a company?",login_register_link:'Register your company',register_title:'Register Company',register_subtitle:'Create your company account',register_company_label:'Company Name',register_username_label:'Username (for login)',register_password_label:'Password',register_confirm_label:'Confirm Password',register_promo_label:'Promo Code (Optional)',register_promo_hint:'If a MeX employee referred you, enter their promo code.',register_promo_valid:'✓ Valid promo code',register_promo_invalid:'✗ Invalid promo code',register_btn:'Register',register_have_account:'Already have a company?',register_login_link:'Login',nav_dashboard:'Dashboard',nav_sales:'Sales',nav_inventory:'Inventory',nav_status:'Ads & Status',nav_pnl:'Profit & Loss',nav_expenses:'Expenses',nav_branches:'Branches',nav_users:'Users',nav_roles:'Roles',nav_reports:'Reports',nav_attendance:'Attendance',nav_subscription:'Plan Info',nav_mex_earnings:'My Earnings',nav_mex_companies:'My Companies',nav_mex_status:'Ads',chat_title:'Communication',chat_close:'Close',chat_no_contacts:'No contacts',chat_select_contact:'Select a user to start chatting',chat_send:'Send',type_message:'Type a message...',no_messages_yet:'No messages yet.',profile_title:'My Profile',profile_change_photo:'Change Photo',profile_full_name:'Full Name',profile_email:'Email',profile_new_password:'New Password',profile_confirm_password:'Confirm Password',profile_save:'Save',profile_cancel:'Cancel',sales_title:'Record Sales',sales_add:'New Sale',sales_th_product:'Product',sales_th_qty:'Qty',sales_th_total:'Total',sales_th_unit_price:'Unit Price',sales_th_customer:'Customer',sales_th_date:'Date',sales_th_store:'Store',sales_th_seller:'Seller',sales_th_actions:'Actions',sales_empty:'No sales',inventory_title:'Inventory & Stock',inventory_add:'Add Product',inventory_th_name:'Product',inventory_th_desc:'Description',inventory_th_category:'Category',inventory_th_price:'Price (TSh)',inventory_th_cost:'Cost (TSh)',inventory_th_stock:'Stock',inventory_th_status:'Status',inventory_th_actions:'Actions',inventory_empty:'No products',inventory_search_placeholder:'Search product by name...',inventory_search_empty:'No products match your search.',inventory_search_clear:'Clear search',inventory_items_count:'items',pnl_title:'Profit and Loss',pnl_revenue:'Total Revenue',pnl_cogs:'Cost of Goods Sold (COGS)',pnl_expenses:'Total Expenses',pnl_net:'Net Profit',pnl_monthly_sales:'Monthly Sales',pnl_monthly_expenses:'Monthly Expenses',pnl_breakdown:'P&L Breakdown',expenses_title:'Company Expenses',expenses_add:'Add Expense',expenses_th_desc:'Description',expenses_th_amount:'Amount',expenses_th_category:'Category',expenses_th_date:'Date',expenses_th_store:'Store',expenses_th_actions:'Actions',expenses_empty:'No expenses',users_title:'System Users',users_add:'Add User',users_th_name:'Name',users_th_username:'Username',users_th_role:'Role',users_th_store:'Store',users_th_created:'Created by',users_th_actions:'Actions',users_empty:'No users',roles_title:'Role Management',roles_desc:'Change user roles here. Only Owner can do this.',roles_th_name:'Name',roles_th_username:'Username',roles_th_current:'Current Role',roles_th_change:'Change to',roles_th_actions:'Actions',reports_title:'Reports & Communication',reports_subtitle:'Send reports to the Manager',reports_company_title:'Company Settings',reports_company_name:'Company Name',reports_tin:'TIN Number',reports_address:'Address',reports_ceo_title:'Manager / Company Owner',reports_whatsapp_label:'WhatsApp Number',reports_email_label:'Email',reports_save:'Save',reports_summary:'Report Summary',reports_total_sales:'Total Sales',reports_today_sales:"Today's Sales",reports_week_sales:'7-Day Sales',reports_count:'Sales Count',reports_whatsapp_btn:'Send WhatsApp Report',reports_email_btn:'Send Email Report',reports_info:'Report will be sent to the manager registered above.',report_period:'Report Period',report_day:'Day',report_week:'Week',report_month:'Month',report_year:'Year',report_custom:'Custom',report_apply:'Apply',report_from:'From',report_to:'To',report_no_data:'No data for this period',report_detailed:'Detailed Report',report_period_label:'Period',report_total_sales_label:'Total Sales',report_total_expenses_label:'Total Expenses',report_net_profit_label:'Net Profit',report_transaction_count:'Transaction Count',report_top_product:'Top Product',report_top_seller:'Top Seller',report_sales_chart:'Sales Chart',report_expenses_chart:'Expenses Chart',report_generate:'Generate Report',modal_sale_title:'Record Sale',modal_sale_product:'Product *',modal_sale_qty:'Quantity *',modal_sale_customer:'Customer',modal_sale_store:'Store',modal_sale_unit_price:'Unit Selling Price (TSh) *',modal_sale_total:'Total',modal_sale_original_price:'Original Price',modal_sale_discount:'Discount',modal_sale_price_hint:'You can change the price for discounts or price changes.',modal_product_title:'Add Product',modal_product_name:'Product Name *',modal_product_desc:'Description',modal_product_price:'Selling Price (TSh) *',modal_product_cost:'Cost Price (TSh) *',modal_product_category:'Category',modal_product_qty:'Stock Quantity *',modal_product_store:'Store',modal_expense_title:'Add Expense',modal_expense_desc:'Description *',modal_expense_amount:'Amount (TSh) *',modal_expense_category:'Category',modal_expense_store:'Store',modal_user_title:'Add User',modal_user_fullname:'Full Name',modal_user_username:'Username *',modal_user_password:'Password *',modal_user_role:'Role *',modal_user_store:'Store',modal_adjust_title:'Adjust Stock',modal_adjust_label:'Quantity to add (or subtract with -)',modal_adjust_current:'Current stock',modal_cancel:'Cancel',modal_save:'Save',dash_total_sales:'Total Sales',dash_total_expenses:'Total Expenses',dash_net_profit:'Net Profit',dash_stock_value:'Stock Value',dash_items_left:'Items Remaining',dash_records:'Sales Recorded',dash_chart_sales:'Last 7 Days Sales',dash_chart_expenses:'Expenses by Category',dash_recent_sales:'Recent Sales',dash_recent_sub:'Last 5 transactions',dash_low_stock_alerts:'Low Stock',dash_low_stock_qty:'Stock',dash_low_stock_add:'Add Stock',dash_low_stock_empty:'No products with low stock. Great!',dash_status_title:'Company Status',dash_status_sub:'Latest updates from your team',dash_status_empty:'No status posted yet.',dash_status_view_all:'View All',stock_out:'Out of Stock',stock_low:'Low Stock',stock_ok:'In Stock',role_owner:'Owner',role_admin:'Admin',role_accountant:'Accountant',role_employee:'Employee',no_data:'No data',you:'You',owner_badge:'Owner',close:'Close',save:'Save',cancel:'Cancel',toast_sale_saved:'Sale saved!',toast_product_added:'Product added!',toast_expense_added:'Expense saved!',toast_user_added:'User added!',toast_stock_adjusted:'Stock adjusted!',toast_deleted:'Deleted!',toast_error:'An error occurred',toast_unauthorized:'This section is for Admin only',toast_owner_only:'This section is for Owner only',toast_fill_fields:'Please fill all fields',toast_password_short:'Password must be at least 4 characters',toast_username_taken:'Username already taken',toast_invalid_qty:'Please enter a valid number',toast_stock_negative:'Stock cannot be below 0',toast_product_not_found:'Product not found',toast_stock_insufficient:'Insufficient stock!',toast_password_mismatch:'Passwords do not match',toast_price_invalid:'Please enter a valid selling price',toast_profile_saved:'Profile saved!',toast_file_too_large:'File is too large.',toast_file_attached:'File attached.',toast_file_error:'Error reading file.',toast_select_contact:'Select a user first',toast_msg_empty:'Write a message.',toast_report_whatsapp:'Opening WhatsApp...',toast_report_email:'Opening email...',toast_ceo_saved:'Details saved!',toast_sub_paid:'Activated!',toast_sub_expired:'Never expires.',toast_sub_invalid:'Invalid confirmation.',toast_receipt_print:'Printing...',toast_receipt_whatsapp:'Sending receipt...',toast_company_saved:'Settings saved!',toast_receipt_ready:'Receipt ready!',toast_whatsapp_sent:'Receipt sent!',toast_transfer_done:'Stock transferred! {qty} of {product} to {branch}.',toast_branch_deleted:'Branch deleted!',toast_branch_not_found:'Branch not found.',toast_msg_deleted:'Message deleted!',toast_cannot_delete:"Cannot delete another user's message.",delete_msg_confirm:'Delete this message?',toast_following:'✅ Now following {company}',toast_unfollowed:'Unfollowed {company}',sub_title:'Add Branch',sub_desc:'Create a new branch.',sub_phone:'',sub_note:'',sub_pay:'Create Branch',sub_later:'Cancel',sub_status_active:'Active',sub_status_trial:'Active',sub_status_expired:'Never expires',sub_current_plan:'Current Plan',sub_expires_on:'Expires on',sub_panel_title:'Plan Info',sub_no_sub:'Active',receipt_title:'PAYMENT RECEIPT',receipt_number:'Receipt Number',receipt_date:'Date',receipt_store:'Store',receipt_product:'Product',receipt_qty:'Qty',receipt_unit_price:'Unit Price',receipt_total:'Total',receipt_customer:'Customer',receipt_seller:'Seller',receipt_thanks:'Thank you!',receipt_print:'Print',receipt_whatsapp:'Send WhatsApp',receipt_share:'Share',receipt_whatsapp_placeholder:"Customer's WhatsApp Number",receipt_company:'Company',receipt_tin:'TIN',receipt_address:'Address',receipt_vat:'VAT (18%)',receipt_grand_total:'Grand Total',receipt_efd_note:'Valid for all payments',receipt_share_btn:'Share Receipt',receipt_subtotal:'Subtotal',receipt_price_adjust:'Price Adjustment',empty_no_products:'No products',zero_stock_title:'No Stock',zero_stock_desc:'This branch has no products. Contact Owner.',transfer_title:'Transfer Stock',transfer_product:'Product *',transfer_branch:'Target Branch *',transfer_qty:'Quantity *',transfer_note:'Note',transfer_preview:'Preview',transfer_from:'From',transfer_to:'To',transfer_qty_label:'Qty',transfer_btn:'Transfer',transfer_cancel:'Cancel',transfer_info:'Transfer stock manually.',transfer_success:'Transferred!',transfer_fail_owner_stock:'Owner insufficient: {available}',transfer_fail_branch:'Branch not found.',transfer_fail_product:'Product not found.',emergency_title:'Call MeX',emergency_desc:'Urgent assistance.',emergency_call:'Call',emergency_whatsapp:'WhatsApp',insight_overall_excellent:'🏆 Excellent sales! Total {total} from {count} transactions.',insight_overall_good:'📊 Good sales! Total {total} from {count} transactions.',insight_overall_moderate:'📈 Room to improve. {total} from {count}.',insight_overall_low:'⚠️ Low sales: {total} from {count}.',insight_branch_best:'🏆 Branch "{branch}" leads with {amount}.',insight_branch_worst_severe:'⚠️ Branch "{branch}" underperforming: {amount}.',insight_branch_worst_moderate:'📉 Branch "{branch}" lagging: {amount}.',insight_branch_worst_mild:'ℹ️ Branch "{branch}": {amount}.',insight_single_branch_few_transactions:'📍 Only {count} transactions.',insight_single_branch_low_avg:'📍 Avg: {avg}.',insight_single_branch_steady:'📍 Steady with {count} transactions.',insight_top_product:'📦 Best-seller: "{product}" ({qty}).',insight_trend_up:'📈 Up {pct}%.',insight_trend_down:'📉 Down {pct}%.',attendance_title:'Employee Attendance',attendance_online:'Online',attendance_offline:'Offline',attendance_last_seen:'Last seen',attendance_punch_in:'Punched In',attendance_punch_out:'Punched Out',attendance_duration:'Duration',attendance_branch:'Branch',attendance_no_data:'No records',attendance_today:"Today's Attendance",attendance_online_count:'Online Users',attendance_today_punches:'Punched In Today',attendance_clear_history:'Clear History',toast_attendance_cleared:'Cleared!',attendance_employee:'Employee',attendance_status:'Status',attendance_last_punch:'Last Punch',attendance_clock_in:'Clock In',attendance_clock_out:'Clock Out',history:'History',super_dashboard:'Super Admin Dashboard',companies:'Companies',active_label:'Active',blocked_label:'Blocked',all_companies:'All Companies',company:'Company',owner_label:'Owner',phone_label:'Phone Number',status_label:'Status',expiry_label:'Expiry',actions_label:'Actions',no_companies:'No companies.',block_btn:'Block',unblock_btn:'Unblock',delete_btn:'Delete',users_btn:'Users',super_tab_companies:'Companies',super_tab_employees:'MeX Employees',super_add_employee:'Add Employee',super_add_company:'Add Company',mex_emp_title:'MeX Employees',mex_emp_subtitle:'Employees with promo codes.',mex_emp_name:'Employee Name',mex_emp_phone:'Phone Number',mex_emp_code:'Promo Code',mex_emp_registrations:'Registrations',mex_emp_earnings:'Earnings',mex_emp_actions:'Actions',mex_emp_no_data:'No employees yet.',mex_emp_added:'✅ Employee added!',mex_emp_deleted:'Employee deleted.',mex_emp_confirm_delete:'Delete this employee?',mex_emp_no_code:'--',mex_emp_modal_title:'Add MeX Employee',mex_emp_modal_name:'Full Name *',mex_emp_modal_phone:'Phone Number (Optional)',mex_emp_modal_hint:'A unique username and promo code will be generated.',mex_emp_copied:'Promo code copied!',mex_emp_code_used:'Code used by:',mex_emp_registered_by:'Registered by',mex_emp_promo_invalid:'Promo code not found.',mex_emp_promo_used_by:'Company',super_promo_label:'Promo Code (Optional)',super_promo_hint:'MeX employee promo code.',super_add_company_title:'Add Company (Super Admin)',super_add_company_hint:'Create a new company account directly.',super_add_company_btn:'Create Company',super_company_created:'✅ Company created successfully!',mex_emp_login_hint:'Login with your full name (username) and default password 1234',mex_cred_success_title:'✅ Employee Created — Save These Credentials',mex_cred_username:'Username',mex_cred_password:'Default Password',mex_cred_promo:'Promo Code',mex_cred_note:'Share these credentials with the employee.',mex_cred_copy_all:'Copy All',mex_cred_done:'Done',mex_dash_welcome:'Welcome back',mex_dash_earnings:'Total Earnings',mex_dash_registrations:'Total Registrations',mex_dash_promo_card_title:'Your Promo Code',mex_dash_promo_card_desc:'Share this code with new companies.',mex_dash_recent_companies:'Recent Companies',mex_dash_no_companies:"You haven't registered any company yet.",mex_companies_title:'My Registered Companies',mex_companies_desc:'All companies that used your promo code.',mex_companies_th_company:'Company',mex_companies_th_owner:'Owner',mex_companies_th_date:'Date',mex_companies_th_commission:'Commission',mex_companies_empty:'No companies registered with your promo code yet.',mex_change_password:'Change Password',mex_change_password_title:'Change Password',mex_change_password_current:'Current Password',mex_change_password_new:'New Password',mex_change_password_confirm:'Confirm New Password',mex_change_password_save:'Change Password',mex_password_changed:'✅ Password changed successfully!',mex_current_pwd_wrong:'Current password is incorrect.',toast_mex_logged_in:'Welcome',select_option:'-- Select --',write_comment:'Write a comment...',username_label:'Username',store_label:'Store',language:'Language',view_profile:'View profile',not_set:'Not set',ad_media_viewer_of:'{current} of {total}',ad_media_click_expand:'Click to open',verified:'Verified',follow:'Follow',following:'Following',unfollow:'Unfollow',ia_posts:'Posts',ia_followers:'Followers',ia_view_profile:'View Profile',ia_no_posts:'No posts yet.',following_empty:'You are not following any company yet.',profile_bio:"Bio / Description",profile_bio_hint:"Max 300 characters. Shown on your public profile.",social_links_edit:"Social Media Links (Optional)",social_whatsapp:"WhatsApp",social_instagram:"Instagram",social_facebook:"Facebook",social_tiktok:"TikTok",social_website:"Website",social_whatsapp_ph:"+255 xxx xxx xxx",social_url_ph:"https://...",profile_view_bio:"Bio",promote_btn:"Promote",promote_modal_title:"Promote Your Ad",promote_active:"SPONSORED",promote_choose_plan:"Choose Promotion Duration",promote_plan_48h:"48 Hours",promote_plan_weekly:"1 Week Bundle",promote_best_value:"BEST VALUE",promote_pay_btn:"Promote",promote_already:"This ad is already promoted.",promote_failed:"Promotion failed. Try again.",promote_confirm_delete:"Delete this promoted ad?",promote_success_48h:"✅ Ad promoted for 48 hours!",promote_success_weekly:"✅ Ad promoted for 1 full week!",promote_hours_left:"{hours}h left",promote_minutes_left:"{minutes}m left",perm_denied:"You do not have permission to do that.",perm_sync_failed:"Saved on this device, but could not sync permissions.",perm_sales_create:"Record sales",perm_sales_delete:"Delete sales",perm_inventory_view:"View inventory",perm_inventory_manage:"Add / edit / delete products & adjust stock",perm_expenses_view:"View expenses",perm_expenses_manage:"Add / delete expenses",perm_reports_view:"View reports",perm_pnl_view:"View profit & loss",perm_users_manage:"Manage users",perm_attendance_view:"View attendance",roles_perm_title:"Role permissions",roles_perm_desc:"Choose what each role can do.",roles_perm_col:"Permission",roles_perm_save:"Save permissions",roles_perm_reset:"Reset to defaults",roles_perm_saved:"Permissions saved.",roles_perm_reset_confirm:"Reset all role permissions to the defaults?",branch_create_free:"Create Branch",branch_free_desc:"Adding a branch is free."
+    login_subtitle:'Login to your company',login_username_label:'Username',login_password_label:'Password',login_btn:'Login',login_no_account:"Don't have a company?",login_register_link:'Register your company',register_title:'Register Company',register_subtitle:'Create your company account',register_company_label:'Company Name',register_username_label:'Username (for login)',register_password_label:'Password',register_confirm_label:'Confirm Password',register_promo_label:'Promo Code (Optional)',register_promo_hint:'If a MeX employee referred you, enter their promo code.',register_promo_valid:'✓ Valid promo code',register_promo_invalid:'✗ Invalid promo code',register_btn:'Register',register_have_account:'Already have a company?',register_login_link:'Login',nav_dashboard:'Dashboard',nav_sales:'Sales',nav_inventory:'Inventory',nav_status:'Ads & Status',nav_pnl:'Profit & Loss',nav_expenses:'Expenses',nav_branches:'Branches',nav_users:'Users',nav_roles:'Roles',nav_reports:'Reports',nav_attendance:'Attendance',nav_subscription:'Plan Info',nav_mex_earnings:'My Earnings',nav_mex_companies:'My Companies',nav_mex_status:'Ads',chat_title:'Communication',chat_close:'Close',chat_no_contacts:'No contacts',chat_select_contact:'Select a user to start chatting',chat_send:'Send',type_message:'Type a message...',no_messages_yet:'No messages yet.',profile_title:'My Profile',profile_change_photo:'Change Photo',profile_full_name:'Full Name',profile_email:'Email',profile_new_password:'New Password',profile_confirm_password:'Confirm Password',profile_save:'Save',profile_cancel:'Cancel',sales_title:'Record Sales',sales_add:'New Sale',sales_th_product:'Product',sales_th_qty:'Qty',sales_th_total:'Total',sales_th_unit_price:'Unit Price',sales_th_customer:'Customer',sales_th_date:'Date',sales_th_store:'Store',sales_th_seller:'Seller',sales_th_actions:'Actions',sales_empty:'No sales',inventory_title:'Inventory & Stock',inventory_add:'Add Product',inventory_th_name:'Product',inventory_th_desc:'Description',inventory_th_category:'Category',inventory_th_price:'Price (TSh)',inventory_th_cost:'Cost (TSh)',inventory_th_stock:'Stock',inventory_th_status:'Status',inventory_th_actions:'Actions',inventory_empty:'No products',inventory_search_placeholder:'Search product by name...',inventory_search_empty:'No products match your search.',inventory_search_clear:'Clear search',inventory_items_count:'items',pnl_title:'Profit and Loss',pnl_revenue:'Total Revenue',pnl_cogs:'Cost of Goods Sold (COGS)',pnl_expenses:'Total Expenses',pnl_net:'Net Profit',pnl_monthly_sales:'Monthly Sales',pnl_monthly_expenses:'Monthly Expenses',pnl_breakdown:'P&L Breakdown',expenses_title:'Company Expenses',expenses_add:'Add Expense',expenses_th_desc:'Description',expenses_th_amount:'Amount',expenses_th_category:'Category',expenses_th_date:'Date',expenses_th_store:'Store',expenses_th_actions:'Actions',expenses_empty:'No expenses',users_title:'System Users',users_add:'Add User',users_th_name:'Name',users_th_username:'Username',users_th_role:'Role',users_th_store:'Store',users_th_created:'Created by',users_th_actions:'Actions',users_empty:'No users',roles_title:'Role Management',roles_desc:'Change user roles here. Only Owner can do this.',roles_th_name:'Name',roles_th_username:'Username',roles_th_current:'Current Role',roles_th_change:'Change to',roles_th_actions:'Actions',reports_title:'Reports & Communication',reports_subtitle:'Send reports to the Manager',reports_company_title:'Company Settings',reports_company_name:'Company Name',reports_tin:'TIN Number',reports_address:'Address',reports_ceo_title:'Manager / Company Owner',reports_whatsapp_label:'WhatsApp Number',reports_email_label:'Email',reports_save:'Save',reports_summary:'Report Summary',reports_total_sales:'Total Sales',reports_today_sales:"Today's Sales",reports_week_sales:'7-Day Sales',reports_count:'Sales Count',reports_whatsapp_btn:'Send WhatsApp Report',reports_email_btn:'Send Email Report',reports_info:'Report will be sent to the manager registered above.',report_period:'Report Period',report_day:'Day',report_week:'Week',report_month:'Month',report_year:'Year',report_custom:'Custom',report_apply:'Apply',report_from:'From',report_to:'To',report_no_data:'No data for this period',report_detailed:'Detailed Report',report_period_label:'Period',report_total_sales_label:'Total Sales',report_total_expenses_label:'Total Expenses',report_net_profit_label:'Net Profit',report_transaction_count:'Transaction Count',report_top_product:'Top Product',report_top_seller:'Top Seller',report_sales_chart:'Sales Chart',report_expenses_chart:'Expenses Chart',report_generate:'Generate Report',modal_sale_title:'Record Sale',modal_sale_product:'Product *',modal_sale_qty:'Quantity *',modal_sale_customer:'Customer',modal_sale_store:'Store',modal_sale_unit_price:'Unit Selling Price (TSh) *',modal_sale_total:'Total',modal_sale_original_price:'Original Price',modal_sale_discount:'Discount',modal_sale_price_hint:'You can change the price for discounts or price changes.',modal_product_title:'Add Product',modal_product_name:'Product Name *',modal_product_desc:'Description',modal_product_price:'Selling Price (TSh) *',modal_product_cost:'Cost Price (TSh) *',modal_product_category:'Category',modal_product_qty:'Stock Quantity *',modal_product_store:'Store',modal_expense_title:'Add Expense',modal_expense_desc:'Description *',modal_expense_amount:'Amount (TSh) *',modal_expense_category:'Category',modal_expense_store:'Store',modal_user_title:'Add User',modal_user_fullname:'Full Name',modal_user_username:'Username *',modal_user_password:'Password *',modal_user_role:'Role *',modal_user_store:'Store',modal_adjust_title:'Adjust Stock',modal_adjust_label:'Quantity to add (or subtract with -)',modal_adjust_current:'Current stock',modal_cancel:'Cancel',modal_save:'Save',dash_total_sales:'Total Sales',dash_total_expenses:'Total Expenses',dash_net_profit:'Net Profit',dash_stock_value:'Stock Value',dash_items_left:'Items Remaining',dash_records:'Sales Recorded',dash_chart_sales:'Last 7 Days Sales',dash_chart_expenses:'Expenses by Category',dash_recent_sales:'Recent Sales',dash_recent_sub:'Last 5 transactions',dash_low_stock_alerts:'Low Stock',dash_low_stock_qty:'Stock',dash_low_stock_add:'Add Stock',dash_low_stock_empty:'No products with low stock. Great!',dash_status_title:'Company Status',dash_status_sub:'Latest updates from your team',dash_status_empty:'No status posted yet.',dash_status_view_all:'View All',stock_out:'Out of Stock',stock_low:'Low Stock',stock_ok:'In Stock',role_owner:'Owner',role_admin:'Admin',role_accountant:'Accountant',role_employee:'Employee',no_data:'No data',you:'You',owner_badge:'Owner',close:'Close',save:'Save',cancel:'Cancel',toast_sale_saved:'Sale saved!',toast_product_added:'Product added!',toast_expense_added:'Expense saved!',toast_user_added:'User added!',toast_stock_adjusted:'Stock adjusted!',toast_deleted:'Deleted!',toast_error:'An error occurred',toast_unauthorized:'This section is for Admin only',toast_owner_only:'This section is for Owner only',toast_fill_fields:'Please fill all fields',toast_password_short:'Password must be at least 4 characters',toast_username_taken:'Username already taken',toast_invalid_qty:'Please enter a valid number',toast_stock_negative:'Stock cannot be below 0',toast_product_not_found:'Product not found',toast_stock_insufficient:'Insufficient stock!',toast_password_mismatch:'Passwords do not match',toast_price_invalid:'Please enter a valid selling price',toast_profile_saved:'Profile saved!',toast_file_too_large:'File is too large.',toast_file_attached:'File attached.',toast_file_error:'Error reading file.',toast_select_contact:'Select a user first',toast_msg_empty:'Write a message.',toast_report_whatsapp:'Opening WhatsApp...',toast_report_email:'Opening email...',toast_ceo_saved:'Details saved!',toast_sub_paid:'Activated!',toast_sub_expired:'Never expires.',toast_sub_invalid:'Invalid confirmation.',toast_receipt_print:'Printing...',toast_receipt_whatsapp:'Sending receipt...',toast_company_saved:'Settings saved!',toast_receipt_ready:'Receipt ready!',toast_whatsapp_sent:'Receipt sent!',toast_transfer_done:'Stock transferred! {qty} of {product} to {branch}.',toast_branch_deleted:'Branch deleted!',toast_branch_not_found:'Branch not found.',toast_msg_deleted:'Message deleted!',toast_cannot_delete:"Cannot delete another user's message.",delete_msg_confirm:'Delete this message?',toast_following:'✅ Now following {company}',toast_unfollowed:'Unfollowed {company}',sub_title:'Add Branch',sub_desc:'Create a new branch.',sub_phone:'',sub_note:'',sub_pay:'Create Branch',sub_later:'Cancel',sub_status_active:'Active',sub_status_trial:'Active',sub_status_expired:'Never expires',sub_current_plan:'Current Plan',sub_expires_on:'Expires on',sub_panel_title:'Plan Info',sub_no_sub:'Active',receipt_title:'PAYMENT RECEIPT',receipt_number:'Receipt Number',receipt_date:'Date',receipt_store:'Store',receipt_product:'Product',receipt_qty:'Qty',receipt_unit_price:'Unit Price',receipt_total:'Total',receipt_customer:'Customer',receipt_seller:'Seller',receipt_thanks:'Thank you!',receipt_print:'Print',receipt_whatsapp:'Send WhatsApp',receipt_share:'Share',receipt_whatsapp_placeholder:"Customer's WhatsApp Number",receipt_company:'Company',receipt_tin:'TIN',receipt_address:'Address',receipt_vat:'VAT (18%)',receipt_grand_total:'Grand Total',receipt_efd_note:'Valid for all payments',receipt_share_btn:'Share Receipt',receipt_subtotal:'Subtotal',receipt_price_adjust:'Price Adjustment',empty_no_products:'No products',zero_stock_title:'No Stock',zero_stock_desc:'This branch has no products. Contact Owner.',transfer_title:'Transfer Stock',transfer_product:'Product *',transfer_branch:'Target Branch *',transfer_qty:'Quantity *',transfer_note:'Note',transfer_preview:'Preview',transfer_from:'From',transfer_to:'To',transfer_qty_label:'Qty',transfer_btn:'Transfer',transfer_cancel:'Cancel',transfer_info:'Transfer stock manually.',transfer_success:'Transferred!',transfer_fail_owner_stock:'Owner insufficient: {available}',transfer_fail_branch:'Branch not found.',transfer_fail_product:'Product not found.',emergency_title:'Call MeX',emergency_desc:'Urgent assistance.',emergency_call:'Call',emergency_whatsapp:'WhatsApp',insight_overall_excellent:'🏆 Excellent sales! Total {total} from {count} transactions.',insight_overall_good:'📊 Good sales! Total {total} from {count} transactions.',insight_overall_moderate:'📈 Room to improve. {total} from {count}.',insight_overall_low:'⚠️ Low sales: {total} from {count}.',insight_branch_best:'🏆 Branch "{branch}" leads with {amount}.',insight_branch_worst_severe:'⚠️ Branch "{branch}" underperforming: {amount}.',insight_branch_worst_moderate:'📉 Branch "{branch}" lagging: {amount}.',insight_branch_worst_mild:'ℹ️ Branch "{branch}": {amount}.',insight_single_branch_few_transactions:'📍 Only {count} transactions.',insight_single_branch_low_avg:'📍 Avg: {avg}.',insight_single_branch_steady:'📍 Steady with {count} transactions.',insight_top_product:'📦 Best-seller: "{product}" ({qty}).',insight_trend_up:'📈 Up {pct}%.',insight_trend_down:'📉 Down {pct}%.',attendance_title:'Employee Attendance',attendance_online:'Online',attendance_offline:'Offline',attendance_last_seen:'Last seen',attendance_punch_in:'Punched In',attendance_punch_out:'Punched Out',attendance_duration:'Duration',attendance_branch:'Branch',attendance_no_data:'No records',attendance_today:"Today's Attendance",attendance_online_count:'Online Users',attendance_today_punches:'Punched In Today',attendance_clear_history:'Clear History',toast_attendance_cleared:'Cleared!',attendance_employee:'Employee',attendance_status:'Status',attendance_last_punch:'Last Punch',attendance_clock_in:'Clock In',attendance_clock_out:'Clock Out',history:'History',super_dashboard:'Super Admin Dashboard',companies:'Companies',active_label:'Active',blocked_label:'Blocked',all_companies:'All Companies',company:'Company',owner_label:'Owner',phone_label:'Phone Number',status_label:'Status',expiry_label:'Expiry',actions_label:'Actions',no_companies:'No companies.',block_btn:'Block',unblock_btn:'Unblock',delete_btn:'Delete',users_btn:'Users',super_tab_companies:'Companies',super_tab_employees:'MeX Employees',super_add_employee:'Add Employee',super_add_company:'Add Company',mex_emp_title:'MeX Employees',mex_emp_subtitle:'Employees with promo codes.',mex_emp_name:'Employee Name',mex_emp_phone:'Phone Number',mex_emp_code:'Promo Code',mex_emp_registrations:'Registrations',mex_emp_earnings:'Earnings',mex_emp_actions:'Actions',mex_emp_no_data:'No employees yet.',mex_emp_added:'✅ Employee added!',mex_emp_deleted:'Employee deleted.',mex_emp_confirm_delete:'Delete this employee?',mex_emp_no_code:'--',mex_emp_modal_title:'Add MeX Employee',mex_emp_modal_name:'Full Name *',mex_emp_modal_phone:'Phone Number (Optional)',mex_emp_modal_hint:'A unique username and promo code will be generated.',mex_emp_copied:'Promo code copied!',mex_emp_code_used:'Code used by:',mex_emp_registered_by:'Registered by',mex_emp_promo_invalid:'Promo code not found.',mex_emp_promo_used_by:'Company',super_promo_label:'Promo Code (Optional)',super_promo_hint:'MeX employee promo code.',super_add_company_title:'Add Company (Super Admin)',super_add_company_hint:'Create a new company account directly.',super_add_company_btn:'Create Company',super_company_created:'✅ Company created successfully!',mex_emp_login_hint:'Login with your full name (username) and default password 1234',mex_cred_success_title:'✅ Employee Created — Save These Credentials',mex_cred_username:'Username',mex_cred_password:'Default Password',mex_cred_promo:'Promo Code',mex_cred_note:'Share these credentials with the employee.',mex_cred_copy_all:'Copy All',mex_cred_done:'Done',mex_dash_welcome:'Welcome back',mex_dash_earnings:'Total Earnings',mex_dash_registrations:'Total Registrations',mex_dash_promo_card_title:'Your Promo Code',mex_dash_promo_card_desc:'Share this code with new companies.',mex_dash_recent_companies:'Recent Companies',mex_dash_no_companies:"You haven't registered any company yet.",mex_companies_title:'My Registered Companies',mex_companies_desc:'All companies that used your promo code.',mex_companies_th_company:'Company',mex_companies_th_owner:'Owner',mex_companies_th_date:'Date',mex_companies_th_commission:'Commission',mex_companies_empty:'No companies registered with your promo code yet.',mex_change_password:'Change Password',mex_change_password_title:'Change Password',mex_change_password_current:'Current Password',mex_change_password_new:'New Password',mex_change_password_confirm:'Confirm New Password',mex_change_password_save:'Change Password',mex_password_changed:'✅ Password changed successfully!',mex_current_pwd_wrong:'Current password is incorrect.',toast_mex_logged_in:'Welcome',select_option:'-- Select --',write_comment:'Write a comment...',username_label:'Username',store_label:'Store',language:'Language',view_profile:'View profile',not_set:'Not set',ad_media_viewer_of:'{current} of {total}',ad_media_click_expand:'Click to open',verified:'Verified',follow:'Follow',following:'Following',unfollow:'Unfollow',ia_posts:'Posts',ia_followers:'Followers',ia_view_profile:'View Profile',ia_no_posts:'No posts yet.',following_empty:'You are not following any company yet.',profile_bio:"Bio / Description",profile_bio_hint:"Max 300 characters. Shown on your public profile.",social_links_edit:"Social Media Links (Optional)",social_whatsapp:"WhatsApp",social_instagram:"Instagram",social_facebook:"Facebook",social_tiktok:"TikTok",social_website:"Website",social_whatsapp_ph:"+255 xxx xxx xxx",social_url_ph:"https://...",profile_view_bio:"Bio",promote_btn:"Promote",promote_modal_title:"Promote Your Ad",promote_active:"SPONSORED",promote_choose_plan:"Choose Promotion Duration",promote_plan_48h:"48 Hours",promote_plan_weekly:"1 Week Bundle",promote_best_value:"BEST VALUE",promote_pay_btn:"Promote",promote_already:"This ad is already promoted.",promote_failed:"Promotion failed. Try again.",promote_confirm_delete:"Delete this promoted ad?",promote_success_48h:"✅ Ad promoted for 48 hours!",promote_success_weekly:"✅ Ad promoted for 1 full week!",promote_hours_left:"{hours}h left",promote_minutes_left:"{minutes}m left",perm_denied:"You do not have permission to do that.",perm_sync_failed:"Saved on this device, but could not sync permissions.",perm_sales_create:"Record sales",perm_sales_delete:"Delete sales",perm_inventory_view:"View inventory",perm_inventory_manage:"Add / edit / delete products & adjust stock",perm_expenses_view:"View expenses",perm_expenses_manage:"Add / delete expenses",perm_reports_view:"View reports",perm_pnl_view:"View profit & loss",perm_users_manage:"Manage users",perm_attendance_view:"View attendance",roles_perm_title:"Role permissions",roles_perm_desc:"Choose what each role can do.",roles_perm_col:"Permission",roles_perm_save:"Save permissions",roles_perm_reset:"Reset to defaults",roles_perm_saved:"Permissions saved.",roles_perm_reset_confirm:"Reset all role permissions to the defaults?",branch_create_free:"Create Branch",branch_free_desc:"Adding a branch is free.",branch_th_sub:'Sub'
 },
 sw: {
-    login_subtitle:'Ingia kwenye kampuni yako',login_username_label:'Jina la mtumiaji',login_password_label:'Nenosiri',login_btn:'Ingia',login_no_account:'Huna kampuni?',login_register_link:'Sajili kampuni yako',register_title:'Sajili Kampuni',register_subtitle:'Fungua akaunti ya kampuni yako',register_company_label:'Jina la Kampuni',register_username_label:'Jina la mtumiaji',register_password_label:'Nenosiri',register_confirm_label:'Thibitisha Nenosiri',register_promo_label:'Promo Code (Hiari)',register_promo_hint:'Kama mfanyakazi wa MeX alikuelekeza, weka promo code yake.',register_promo_valid:'✓ Promo code sahihi',register_promo_invalid:'✗ Promo code si sahihi',register_btn:'Sajili',register_have_account:'Tayari una kampuni?',register_login_link:'Ingia',nav_dashboard:'Dashibodi',nav_sales:'Mauzo',nav_inventory:'Bidhaa',nav_status:'Matangazo na Hali',nav_pnl:'Faida na Hasara',nav_expenses:'Matumizi',nav_branches:'Matawi',nav_users:'Watumiaji',nav_roles:'Majukumu',nav_reports:'Ripoti',nav_attendance:'Mahudhurio',nav_subscription:'Mpango',nav_mex_earnings:'Mapato Yangu',nav_mex_companies:'Kampuni Zangu',nav_mex_status:'Matangazo',chat_title:'Mawasiliano',chat_close:'Funga',chat_select_contact:'Chagua mtumiaji kuanza kuzungumza',chat_send:'Tuma',type_message:'Andika ujumbe...',no_messages_yet:'Hakuna ujumbe bado.',profile_title:'Wasifu Wangu',profile_change_photo:'Badilisha Picha',profile_full_name:'Jina Kamili',profile_email:'Barua pepe',profile_new_password:'Nenosiri Jipya',profile_confirm_password:'Thibitisha Nenosiri',profile_save:'Hifadhi',profile_cancel:'Ghairi',sales_title:'Rekodi Mauzo',sales_add:'Uzo Mpya',sales_th_product:'Bidhaa',sales_th_qty:'Idadi',sales_th_total:'Jumla',sales_th_unit_price:'Bei ya Kimoja',sales_th_customer:'Mteja',sales_th_date:'Tarehe',sales_th_store:'Duka',sales_th_seller:'Muuzaji',sales_th_actions:'Vitendo',sales_empty:'Hakuna mauzo',inventory_title:'Bidhaa na Stoo',inventory_add:'Ongeza Bidhaa',inventory_th_name:'Bidhaa',inventory_th_desc:'Maelezo',inventory_th_category:'Kundi',inventory_th_price:'Bei (TSh)',inventory_th_cost:'Gharama (TSh)',inventory_th_stock:'Stoo',inventory_th_status:'Hali',inventory_th_actions:'Vitendo',inventory_empty:'Hakuna bidhaa',inventory_search_placeholder:'Tafuta bidhaa kwa jina...',inventory_search_empty:'Hakuna bidhaa inayolingana.',inventory_search_clear:'Futa utafutaji',inventory_items_count:'bidhaa',pnl_title:'Faida na Hasara',pnl_revenue:'Mapato Yote',pnl_cogs:'Gharama ya Bidhaa Zilizouzwa',pnl_expenses:'Matumizi Yote',pnl_net:'Faida Halisi',pnl_monthly_sales:'Mauzo ya Mwezi',pnl_monthly_expenses:'Matumizi ya Mwezi',pnl_breakdown:'Mchanganuo',expenses_title:'Matumizi ya Kampuni',expenses_add:'Ongeza Matumizi',expenses_th_desc:'Maelezo',expenses_th_amount:'Kiasi',expenses_th_category:'Kundi',expenses_th_date:'Tarehe',expenses_th_store:'Duka',expenses_th_actions:'Vitendo',expenses_empty:'Hakuna matumizi',users_title:'Watumiaji wa Mfumo',users_add:'Ongeza Mtumiaji',users_th_name:'Jina',users_th_username:'Jina la mtumiaji',users_th_role:'Jukumu',users_th_store:'Duka',users_th_created:'Imeundwa na',users_th_actions:'Vitendo',users_empty:'Hakuna watumiaji',roles_title:'Usimamizi wa Majukumu',roles_desc:'Badilisha majukumu ya watumiaji hapa. Mmiliki pekee anaweza kufanya hivi.',roles_th_name:'Jina',roles_th_username:'Jina la mtumiaji',roles_th_current:'Jukumu la Sasa',roles_th_change:'Badilisha kuwa',roles_th_actions:'Vitendo',reports_title:'Ripoti na Mawasiliano',reports_subtitle:'Tuma ripoti kwa Meneja',reports_company_title:'Mipangilio ya Kampuni',reports_company_name:'Jina la Kampuni',reports_tin:'Namba ya TIN',reports_address:'Anwani',reports_whatsapp_label:'Namba ya WhatsApp',reports_email_label:'Barua pepe',reports_save:'Hifadhi',reports_summary:'Muhtasari wa Ripoti',reports_total_sales:'Mauzo Yote',reports_count:'Idadi ya Mauzo',reports_whatsapp_btn:'Tuma Ripoti kwa WhatsApp',reports_email_btn:'Tuma Ripoti kwa Barua pepe',reports_info:'Ripoti itatumwa kwa meneja aliyeandikishwa juu.',report_period:'Kipindi cha Ripoti',report_day:'Siku',report_week:'Wiki',report_month:'Mwezi',report_year:'Mwaka',report_custom:'Maalum',report_apply:'Tumia',report_from:'Kuanzia',report_to:'Hadi',report_no_data:'Hakuna data kwa kipindi hiki',report_detailed:'Ripoti ya Kina',report_period_label:'Kipindi',report_total_sales_label:'Mauzo Yote',report_total_expenses_label:'Matumizi Yote',report_net_profit_label:'Faida Halisi',report_transaction_count:'Idadi ya Miamala',report_top_product:'Bidhaa Bora',report_top_seller:'Muuzaji Bora',report_sales_chart:'Chati ya Mauzo',report_expenses_chart:'Chati ya Matumizi',modal_sale_title:'Rekodi Uzo',modal_sale_product:'Bidhaa *',modal_sale_qty:'Idadi *',modal_sale_customer:'Mteja',modal_sale_store:'Duka',modal_sale_unit_price:'Bei ya Kuuza (TSh) *',modal_sale_total:'Jumla',modal_sale_original_price:'Bei ya Awali',modal_sale_discount:'Punguzo',modal_sale_price_hint:'Unaweza kubadilisha bei.',modal_product_title:'Ongeza Bidhaa',modal_product_name:'Jina la Bidhaa *',modal_product_desc:'Maelezo',modal_product_price:'Bei ya Kuuza (TSh) *',modal_product_cost:'Bei ya Gharama (TSh) *',modal_product_category:'Kundi',modal_product_qty:'Idadi ya Stoo *',modal_product_store:'Duka',modal_expense_title:'Ongeza Matumizi',modal_expense_desc:'Maelezo *',modal_expense_amount:'Kiasi (TSh) *',modal_expense_category:'Kundi',modal_expense_store:'Duka',modal_user_title:'Ongeza Mtumiaji',modal_user_fullname:'Jina Kamili',modal_user_username:'Jina la mtumiaji *',modal_user_password:'Nenosiri *',modal_user_role:'Jukumu *',modal_user_store:'Duka',modal_adjust_title:'Rekebisha Stoo',modal_adjust_label:'Idadi ya kuongeza',modal_adjust_current:'Stoo ya sasa',modal_cancel:'Ghairi',modal_save:'Hifadhi',dash_total_sales:'Mauzo Yote',dash_total_expenses:'Matumizi Yote',dash_net_profit:'Faida Halisi',dash_stock_value:'Thamani ya Stoo',dash_items_left:'Bidhaa Zilizobaki',dash_records:'Mauzo Yaliyorekodiwa',dash_chart_sales:'Mauzo ya Siku 7',dash_chart_expenses:'Matumizi kwa Kundi',dash_low_stock_alerts:'Stoo Ndogo',dash_low_stock_qty:'Stoo',dash_low_stock_add:'Ongeza Stoo',dash_low_stock_empty:'Hakuna bidhaa yenye stoo ndogo.',dash_status_title:'Hali ya Kampuni',dash_status_sub:'Taarifa za hivi karibuni',dash_status_empty:'Hakuna hali iliyowekwa bado.',dash_status_view_all:'Ona Zote',stock_out:'Hakuna Stoo',stock_low:'Stoo Ndogo',stock_ok:'Ipo Stoo',role_owner:'Mmiliki',role_admin:'Msimamizi',role_accountant:'Mhasibu',role_employee:'Mfanyakazi',owner_badge:'Mmiliki',close:'Funga',save:'Hifadhi',cancel:'Ghairi',toast_sale_saved:'Uzo umehifadhiwa!',toast_product_added:'Bidhaa imeongezwa!',toast_expense_added:'Matumizi yamehifadhiwa!',toast_user_added:'Mtumiaji ameongezwa!',toast_stock_adjusted:'Stoo imerekebishwa!',toast_deleted:'Imefutwa!',toast_error:'Hitilafu imetokea',toast_fill_fields:'Tafadhali jaza sehemu zote',toast_password_short:'Nenosiri lazima liwe na herufi 4+',toast_username_taken:'Jina la mtumiaji limechukuliwa',toast_stock_insufficient:'Stoo haitoshi!',toast_password_mismatch:'Manenosiri hayafanani',toast_profile_saved:'Wasifu umehifadhiwa!',toast_receipt_ready:'Risiti iko tayari!',toast_transfer_done:'Stoo imehamishwa! {qty} ya {product} kwenda {branch}.',toast_branch_deleted:'Tawi limefutwa!',toast_following:'✅ Unafuatilia {company}',toast_unfollowed:'Umeacha kufuatilia {company}',sub_title:'Ongeza Tawi',sub_desc:'Unda tawi jipya.',sub_pay:'Unda Tawi',sub_later:'Ghairi',sub_status_active:'Inafanya kazi',status_tab_ads:'Matangazo',status_tab_company:'Hali',status_tab_following:'Inayofuatiliwa',ads_title:'Matangazo ya Kimataifa',ads_subtitle:'Matangazo yanaonekana kwa kampuni zote. Yanapotea baada ya masaa 24.',ads_no_ads:'Hakuna matangazo bado',ads_post:'Tuma Tangazo',ads_title_label:'Kichwa cha Tangazo',ads_content_label:'Maudhui ya Tangazo',ads_image_label:'Picha (si lazima, max 2 MB)',ads_video_label:'Video (si lazima, max sekunde 60)',ads_company_name_label:'Jina la Kampuni',ads_confirm_delete:'Futa tangazo hili?',ads_viewers:'watazamaji',toast_ad_posted_free:'✅ Tangazo limetumwa!',toast_ad_deleted:'Tangazo limefutwa.',status_title:'Hali ya Kampuni',status_post_new:'Tuma Hali',status_new_title:'Hali Mpya',status_image_label:'Picha (si lazima)',status_text_label:'Maandishi (si lazima)',status_you:'Wewe',status_delete:'Futa',ad_comments:'Maoni',ad_no_comments:'Hakuna maoni bado.',ad_write_comment:'Andika maoni...',ad_post_comment:'Tuma',ad_comment_added:'Maoni yametumwa!',ad_comment_deleted:'Maoni yamefutwa.',profile_view_title:'Wasifu',profile_view_role:'Jukumu',profile_view_company:'Kampuni',profile_view_email:'Barua pepe',profile_view_phone:'Simu',profile_view_close:'Funga',branch_perms:'Ruhusa za Meneja',perm_net_profit:'Faida Halisi',perm_expenses:'Matumizi',perm_on:'Inaonekana',perm_off:'Imefichwa',perm_hint:'Washa au kizima kile meneja anaweza kuona.',access_restricted_net:'Faida Halisi imefichwa.',access_restricted_exp:'Matumizi yamefichwa.',add_branch:'Ongeza Tawi',branch_th_branch:'Tawi',branch_th_address:'Anwani',branch_th_username:'Jina la mtumiaji',branch_th_status:'Hali',branch_th_sub:'Sub',branch_th_actions:'Vitendo',branch_main:'Kuu',branch_reset:'Weka upya',no_branches:'Hakuna matawi bado.',history:'Historia',super_dashboard:'Dashibodi ya Msimamizi',companies:'Kampuni',active_label:'Zinafanya kazi',blocked_label:'Zimezuiwa',all_companies:'Kampuni Zote',company:'Kampuni',owner_label:'Mmiliki',phone_label:'Namba ya Simu',status_label:'Hali',actions_label:'Vitendo',no_companies:'Hakuna kampuni.',block_btn:'Zuia',unblock_btn:'Fungua',delete_btn:'Futa',users_btn:'Watumiaji',super_tab_companies:'Kampuni',super_tab_employees:'Wafanyakazi wa MeX',super_add_employee:'Ongeza Mfanyakazi',super_add_company:'Ongeza Kampuni',mex_emp_title:'Wafanyakazi wa MeX',mex_emp_name:'Jina la Mfanyakazi',mex_emp_phone:'Namba ya Simu',mex_emp_code:'Promo Code',mex_emp_registrations:'Usajili',mex_emp_actions:'Vitendo',mex_emp_modal_title:'Ongeza Mfanyakazi wa MeX',mex_emp_modal_name:'Jina Kamili *',mex_emp_modal_phone:'Namba ya Simu (Hiari)',mex_emp_copied:'Promo code imenakiliwa!',mex_cred_success_title:'✅ Mfanyakazi Ameundwa',mex_cred_username:'Jina la mtumiaji',mex_cred_password:'Nenosiri la Kwanza',mex_cred_promo:'Promo Code',mex_cred_copy_all:'Nakili Zote',mex_cred_done:'Sawa',mex_dash_welcome:'Karibu tena',mex_companies_title:'Kampuni Zangu',mex_change_password_title:'Badilisha Nenosiri',mex_change_password_current:'Nenosiri la Sasa',mex_change_password_new:'Nenosiri Jipya',mex_change_password_confirm:'Thibitisha Nenosiri Jipya',mex_change_password_save:'Badilisha',mex_password_changed:'✅ Nenosiri limebadilishwa!',select_option:'-- Chagua --',write_comment:'Andika maoni...',username_label:'Jina la mtumiaji',store_label:'Duka',view_profile:'Ona wasifu',not_set:'Haijawekwa',verified:'Imethibitishwa',follow:'Fuatilia',following:'Unaufuatilia',unfollow:'Acha kufuatilia',ia_posts:'Matangazo',ia_followers:'Wafuatiliaji',ia_no_posts:'Hakuna matangazo bado.',following_empty:'Hujaanza kufuatilia kampuni yoyote.',profile_bio:"Wasifu / Maelezo",profile_bio_hint:"Herufi 300 kwa juu.",social_links_edit:"Link za Mitandao (Hiari)",social_whatsapp:"WhatsApp",social_instagram:"Instagram",social_facebook:"Facebook",social_tiktok:"TikTok",social_website:"Website",social_whatsapp_ph:"+255 xxx xxx xxx",social_url_ph:"https://...",promote_btn:"Tangaza",promote_modal_title:"Tangaza Tangazo Lako",promote_active:"IMETANGAZWA",promote_plan_48h:"Saa 48",promote_plan_weekly:"Wiki 1",promote_best_value:"BORA",promote_pay_btn:"Tangaza",promote_success_48h:"✅ Tangazo limetangazwa kwa saa 48!",promote_success_weekly:"✅ Tangazo limetangazwa kwa wiki 1!",promote_hours_left:"Saa {hours} zilizobaki",promote_minutes_left:"Dakika {minutes} zilizobaki",perm_denied:"Huna ruhusa.",perm_sales_create:"Kurekodi mauzo",perm_sales_delete:"Kufuta mauzo",perm_inventory_view:"Kuona bidhaa",perm_inventory_manage:"Kuhariri bidhaa",perm_expenses_view:"Kuona matumizi",perm_expenses_manage:"Kuhariri matumizi",perm_reports_view:"Kuona ripoti",perm_pnl_view:"Kuona faida",perm_users_manage:"Kusimamia watumiaji",perm_attendance_view:"Kuona mahudhurio",roles_perm_title:"Ruhusa za majukumu",roles_perm_col:"Ruhusa",roles_perm_save:"Hifadhi",roles_perm_reset:"Rudisha",roles_perm_saved:"Ruhusa zimehifadhiwa.",roles_perm_reset_confirm:"Rudisha ruhusa zote?",branch_create_free:"Unda Tawi",branch_free_desc:"Kuongeza tawi ni bure."
+    login_subtitle:'Ingia kwenye kampuni yako',login_username_label:'Jina la mtumiaji',login_password_label:'Nenosiri',login_btn:'Ingia',login_no_account:'Huna kampuni?',login_register_link:'Sajili kampuni yako',register_title:'Sajili Kampuni',register_subtitle:'Fungua akaunti ya kampuni yako',register_company_label:'Jina la Kampuni',register_username_label:'Jina la mtumiaji',register_password_label:'Nenosiri',register_confirm_label:'Thibitisha Nenosiri',register_promo_label:'Promo Code (Hiari)',register_promo_hint:'Kama mfanyakazi wa MeX alikuelekeza, weka promo code yake.',register_promo_valid:'✓ Promo code sahihi',register_promo_invalid:'✗ Promo code si sahihi',register_btn:'Sajili',register_have_account:'Tayari una kampuni?',register_login_link:'Ingia',nav_dashboard:'Dashibodi',nav_sales:'Mauzo',nav_inventory:'Bidhaa',nav_status:'Matangazo na Hali',nav_pnl:'Faida na Hasara',nav_expenses:'Matumizi',nav_branches:'Matawi',nav_users:'Watumiaji',nav_roles:'Majukumu',nav_reports:'Ripoti',nav_attendance:'Mahudhurio',nav_subscription:'Mpango',nav_mex_earnings:'Mapato Yangu',nav_mex_companies:'Kampuni Zangu',nav_mex_status:'Matangazo',chat_title:'Mawasiliano',chat_close:'Funga',chat_select_contact:'Chagua mtumiaji kuanza kuzungumza',chat_send:'Tuma',type_message:'Andika ujumbe...',no_messages_yet:'Hakuna ujumbe bado.',profile_title:'Wasifu Wangu',profile_change_photo:'Badilisha Picha',profile_full_name:'Jina Kamili',profile_email:'Barua pepe',profile_new_password:'Nenosiri Jipya',profile_confirm_password:'Thibitisha Nenosiri',profile_save:'Hifadhi',profile_cancel:'Ghairi',sales_title:'Rekodi Mauzo',sales_add:'Uzo Mpya',sales_th_product:'Bidhaa',sales_th_qty:'Idadi',sales_th_total:'Jumla',sales_th_unit_price:'Bei ya Kimoja',sales_th_customer:'Mteja',sales_th_date:'Tarehe',sales_th_store:'Duka',sales_th_seller:'Muuzaji',sales_th_actions:'Vitendo',sales_empty:'Hakuna mauzo',inventory_title:'Bidhaa na Stoo',inventory_add:'Ongeza Bidhaa',inventory_th_name:'Bidhaa',inventory_th_desc:'Maelezo',inventory_th_category:'Kundi',inventory_th_price:'Bei (TSh)',inventory_th_cost:'Gharama (TSh)',inventory_th_stock:'Stoo',inventory_th_status:'Hali',inventory_th_actions:'Vitendo',inventory_empty:'Hakuna bidhaa',inventory_search_placeholder:'Tafuta bidhaa kwa jina...',inventory_search_empty:'Hakuna bidhaa inayolingana.',inventory_search_clear:'Futa utafutaji',inventory_items_count:'bidhaa',pnl_title:'Faida na Hasara',pnl_revenue:'Mapato Yote',pnl_cogs:'Gharama ya Bidhaa Zilizouzwa',pnl_expenses:'Matumizi Yote',pnl_net:'Faida Halisi',pnl_monthly_sales:'Mauzo ya Mwezi',pnl_monthly_expenses:'Matumizi ya Mwezi',pnl_breakdown:'Mchanganuo',expenses_title:'Matumizi ya Kampuni',expenses_add:'Ongeza Matumizi',expenses_th_desc:'Maelezo',expenses_th_amount:'Kiasi',expenses_th_category:'Kundi',expenses_th_date:'Tarehe',expenses_th_store:'Duka',expenses_th_actions:'Vitendo',expenses_empty:'Hakuna matumizi',users_title:'Watumiaji wa Mfumo',users_add:'Ongeza Mtumiaji',users_th_name:'Jina',users_th_username:'Jina la mtumiaji',users_th_role:'Jukumu',users_th_store:'Duka',users_th_created:'Imeundwa na',users_th_actions:'Vitendo',users_empty:'Hakuna watumiaji',roles_title:'Usimamizi wa Majukumu',roles_desc:'Badilisha majukumu ya watumiaji hapa. Mmiliki pekee anaweza kufanya hivi.',roles_th_name:'Jina',roles_th_username:'Jina la mtumiaji',roles_th_current:'Jukumu la Sasa',roles_th_change:'Badilisha kuwa',roles_th_actions:'Vitendo',reports_title:'Ripoti na Mawasiliano',reports_subtitle:'Tuma ripoti kwa Meneja',reports_company_title:'Mipangilio ya Kampuni',reports_company_name:'Jina la Kampuni',reports_tin:'Namba ya TIN',reports_address:'Anwani',reports_whatsapp_label:'Namba ya WhatsApp',reports_email_label:'Barua pepe',reports_save:'Hifadhi',reports_summary:'Muhtasari wa Ripoti',reports_total_sales:'Mauzo Yote',reports_count:'Idadi ya Mauzo',reports_whatsapp_btn:'Tuma Ripoti kwa WhatsApp',reports_email_btn:'Tuma Ripoti kwa Barua pepe',reports_info:'Ripoti itatumwa kwa meneja aliyeandikishwa juu.',report_period:'Kipindi cha Ripoti',report_day:'Siku',report_week:'Wiki',report_month:'Mwezi',report_year:'Mwaka',report_custom:'Maalum',report_apply:'Tumia',report_from:'Kuanzia',report_to:'Hadi',report_no_data:'Hakuna data kwa kipindi hiki',report_detailed:'Ripoti ya Kina',report_period_label:'Kipindi',report_total_sales_label:'Mauzo Yote',report_total_expenses_label:'Matumizi Yote',report_net_profit_label:'Faida Halisi',report_transaction_count:'Idadi ya Miamala',report_top_product:'Bidhaa Bora',report_top_seller:'Muuzaji Bora',report_sales_chart:'Chati ya Mauzo',report_expenses_chart:'Chati ya Matumizi',modal_sale_title:'Rekodi Uzo',modal_sale_product:'Bidhaa *',modal_sale_qty:'Idadi *',modal_sale_customer:'Mteja',modal_sale_store:'Duka',modal_sale_unit_price:'Bei ya Kuuza (TSh) *',modal_sale_total:'Jumla',modal_sale_original_price:'Bei ya Awali',modal_sale_discount:'Punguzo',modal_sale_price_hint:'Unaweza kubadilisha bei.',modal_product_title:'Ongeza Bidhaa',modal_product_name:'Jina la Bidhaa *',modal_product_desc:'Maelezo',modal_product_price:'Bei ya Kuuza (TSh) *',modal_product_cost:'Bei ya Gharama (TSh) *',modal_product_category:'Kundi',modal_product_qty:'Idadi ya Stoo *',modal_product_store:'Duka',modal_expense_title:'Ongeza Matumizi',modal_expense_desc:'Maelezo *',modal_expense_amount:'Kiasi (TSh) *',modal_expense_category:'Kundi',modal_expense_store:'Duka',modal_user_title:'Ongeza Mtumiaji',modal_user_fullname:'Jina Kamili',modal_user_username:'Jina la mtumiaji *',modal_user_password:'Nenosiri *',modal_user_role:'Jukumu *',modal_user_store:'Duka',modal_adjust_title:'Rekebisha Stoo',modal_adjust_label:'Idadi ya kuongeza',modal_adjust_current:'Stoo ya sasa',modal_cancel:'Ghairi',modal_save:'Hifadhi',dash_total_sales:'Mauzo Yote',dash_total_expenses:'Matumizi Yote',dash_net_profit:'Faida Halisi',dash_stock_value:'Thamani ya Stoo',dash_items_left:'Bidhaa Zilizobaki',dash_records:'Mauzo Yaliyorekodiwa',dash_chart_sales:'Mauzo ya Siku 7',dash_chart_expenses:'Matumizi kwa Kundi',dash_low_stock_alerts:'Stoo Ndogo',dash_low_stock_qty:'Stoo',dash_low_stock_add:'Ongeza Stoo',dash_low_stock_empty:'Hakuna bidhaa yenye stoo ndogo.',dash_status_title:'Hali ya Kampuni',dash_status_sub:'Taarifa za hivi karibuni',dash_status_empty:'Hakuna hali iliyowekwa bado.',dash_status_view_all:'Ona Zote',stock_out:'Hakuna Stoo',stock_low:'Stoo Ndogo',stock_ok:'Ipo Stoo',role_owner:'Mmiliki',role_admin:'Msimamizi',role_accountant:'Mhasibu',role_employee:'Mfanyakazi',owner_badge:'Mmiliki',close:'Funga',save:'Hifadhi',cancel:'Ghairi',toast_sale_saved:'Uzo umehifadhiwa!',toast_product_added:'Bidhaa imeongezwa!',toast_expense_added:'Matumizi yamehifadhiwa!',toast_user_added:'Mtumiaji ameongezwa!',toast_stock_adjusted:'Stoo imerekebishwa!',toast_deleted:'Imefutwa!',toast_error:'Hitilafu imetokea',toast_fill_fields:'Tafadhali jaza sehemu zote',toast_password_short:'Nenosiri lazima liwe na herufi 4+',toast_username_taken:'Jina la mtumiaji limechukuliwa',toast_stock_insufficient:'Stoo haitoshi!',toast_password_mismatch:'Manenosiri hayafanani',toast_profile_saved:'Wasifu umehifadhiwa!',toast_receipt_ready:'Risiti iko tayari!',toast_transfer_done:'Stoo imehamishwa! {qty} ya {product} kwenda {branch}.',toast_branch_deleted:'Tawi limefutwa!',toast_following:'✅ Unafuatilia {company}',toast_unfollowed:'Umeacha kufuatilia {company}',sub_title:'Ongeza Tawi',sub_desc:'Unda tawi jipya.',sub_pay:'Unda Tawi',sub_later:'Ghairi',sub_status_active:'Inafanya kazi',status_tab_ads:'Matangazo',status_tab_company:'Hali',status_tab_following:'Inayofuatiliwa',ads_title:'Matangazo ya Kimataifa',ads_subtitle:'Matangazo yanaonekana kwa kampuni zote. Yanapotea baada ya masaa 24.',ads_no_ads:'Hakuna matangazo bado',ads_post:'Tuma Tangazo',ads_title_label:'Kichwa cha Tangazo',ads_content_label:'Maudhui ya Tangazo',ads_image_label:'Picha (si lazima, max 2 MB)',ads_video_label:'Video (si lazima, max sekunde 60)',ads_company_name_label:'Jina la Kampuni',ads_confirm_delete:'Futa tangazo hili?',ads_viewers:'watazamaji',toast_ad_posted_free:'✅ Tangazo limetumwa!',toast_ad_deleted:'Tangazo limefutwa.',status_title:'Hali ya Kampuni',status_post_new:'Tuma Hali',status_new_title:'Hali Mpya',status_image_label:'Picha (si lazima)',status_text_label:'Maandishi (si lazima)',status_you:'Wewe',status_delete:'Futa',ad_comments:'Maoni',ad_no_comments:'Hakuna maoni bado.',ad_write_comment:'Andika maoni...',ad_post_comment:'Tuma',ad_comment_added:'Maoni yametumwa!',ad_comment_deleted:'Maoni yamefutwa.',profile_view_title:'Wasifu',profile_view_role:'Jukumu',profile_view_company:'Kampuni',profile_view_email:'Barua pepe',profile_view_phone:'Simu',profile_view_close:'Funga',branch_perms:'Ruhusa za Meneja',perm_net_profit:'Faida Halisi',perm_expenses:'Matumizi',perm_on:'Inaonekana',perm_off:'Imefichwa',perm_hint:'Washa au kizima kile meneja anaweza kuona.',access_restricted_net:'Faida Halisi imefichwa.',access_restricted_exp:'Matumizi yamefichwa.',add_branch:'Ongeza Tawi',branch_th_branch:'Tawi',branch_th_address:'Anwani',branch_th_username:'Jina la mtumiaji',branch_th_status:'Hali',branch_th_sub:'Sub',branch_th_actions:'Vitendo',branch_main:'Kuu',branch_reset:'Weka upya',no_branches:'Hakuna matawi bado.',history:'Historia',super_dashboard:'Dashibodi ya Msimamizi',companies:'Kampuni',active_label:'Zinafanya kazi',blocked_label:'Zimezuiwa',all_companies:'Kampuni Zote',company:'Kampuni',owner_label:'Mmiliki',phone_label:'Namba ya Simu',status_label:'Hali',actions_label:'Vitendo',no_companies:'Hakuna kampuni.',block_btn:'Zuia',unblock_btn:'Fungua',delete_btn:'Futa',users_btn:'Watumiaji',super_tab_companies:'Kampuni',super_tab_employees:'Wafanyakazi wa MeX',super_add_employee:'Ongeza Mfanyakazi',super_add_company:'Ongeza Kampuni',mex_emp_title:'Wafanyakazi wa MeX',mex_emp_name:'Jina la Mfanyakazi',mex_emp_phone:'Namba ya Simu',mex_emp_code:'Promo Code',mex_emp_registrations:'Usajili',mex_emp_actions:'Vitendo',mex_emp_modal_title:'Ongeza Mfanyakazi wa MeX',mex_emp_modal_name:'Jina Kamili *',mex_emp_modal_phone:'Namba ya Simu (Hiari)',mex_emp_copied:'Promo code imenakiliwa!',mex_cred_success_title:'✅ Mfanyakazi Ameundwa',mex_cred_username:'Jina la mtumiaji',mex_cred_password:'Nenosiri la Kwanza',mex_cred_promo:'Promo Code',mex_cred_copy_all:'Nakili Zote',mex_cred_done:'Sawa',mex_dash_welcome:'Karibu tena',mex_companies_title:'Kampuni Zangu',mex_change_password_title:'Badilisha Nenosiri',mex_change_password_current:'Nenosiri la Sasa',mex_change_password_new:'Nenosiri Jipya',mex_change_password_confirm:'Thibitisha Nenosiri Jipya',mex_change_password_save:'Badilisha',mex_password_changed:'✅ Nenosiri limebadilishwa!',select_option:'-- Chagua --',write_comment:'Andika maoni...',username_label:'Jina la mtumiaji',store_label:'Duka',view_profile:'Ona wasifu',not_set:'Haijawekwa',verified:'Imethibitishwa',follow:'Fuatilia',following:'Unaufuatilia',unfollow:'Acha kufuatilia',ia_posts:'Matangazo',ia_followers:'Wafuatiliaji',ia_no_posts:'Hakuna matangazo bado.',following_empty:'Hujaanza kufuatilia kampuni yoyote.',profile_bio:"Wasifu / Maelezo",profile_bio_hint:"Herufi 300 kwa juu.",social_links_edit:"Link za Mitandao (Hiari)",social_whatsapp:"WhatsApp",social_instagram:"Instagram",social_facebook:"Facebook",social_tiktok:"TikTok",social_website:"Website",social_whatsapp_ph:"+255 xxx xxx xxx",social_url_ph:"https://...",promote_btn:"Tangaza",promote_modal_title:"Tangaza Tangazo Lako",promote_active:"IMETANGAZWA",promote_plan_48h:"Saa 48",promote_plan_weekly:"Wiki 1",promote_best_value:"BORA",promote_pay_btn:"Tangaza",promote_success_48h:"✅ Tangazo limetangazwa kwa saa 48!",promote_success_weekly:"✅ Tangazo limetangazwa kwa wiki 1!",promote_hours_left:"Saa {hours} zilizobaki",promote_minutes_left:"Dakika {minutes} zilizobaki",perm_denied:"Huna ruhusa.",perm_sales_create:"Kurekodi mauzo",perm_sales_delete:"Kufuta mauzo",perm_inventory_view:"Kuona bidhaa",perm_inventory_manage:"Kuhariri bidhaa",perm_expenses_view:"Kuona matumizi",perm_expenses_manage:"Kuhariri matumizi",perm_reports_view:"Kuona ripoti",perm_pnl_view:"Kuona faida",perm_users_manage:"Kusimamia watumiaji",perm_attendance_view:"Kuona mahudhurio",roles_perm_title:"Ruhusa za majukumu",roles_perm_col:"Ruhusa",roles_perm_save:"Hifadhi",roles_perm_reset:"Rudisha",roles_perm_saved:"Ruhusa zimehifadhiwa.",roles_perm_reset_confirm:"Rudisha ruhusa zote?",branch_create_free:"Unda Tawi",branch_free_desc:"Kuongeza tawi ni bure.",sub_status_expired:'Imeisha'
 },
 fr: {
-    login_subtitle:"Connectez-vous à votre entreprise",login_username_label:"Nom d'utilisateur",login_password_label:"Mot de passe",login_btn:"Connexion",login_no_account:"Vous n'avez pas d'entreprise ?",login_register_link:"Enregistrez votre entreprise",register_title:"Enregistrer l'entreprise",register_subtitle:"Créez le compte de votre entreprise",register_company_label:"Nom de l'entreprise",register_username_label:"Nom d'utilisateur",register_password_label:"Mot de passe",register_confirm_label:"Confirmer le mot de passe",register_promo_label:"Code promo (facultatif)",register_promo_hint:"Si un employé MeX vous a référé, entrez son code promo.",register_promo_valid:'✓ Code promo valide',register_promo_invalid:'✗ Code promo invalide',register_btn:"Enregistrer",register_have_account:"Vous avez déjà une entreprise ?",register_login_link:"Connexion",nav_dashboard:"Tableau de bord",nav_sales:"Ventes",nav_inventory:"Inventaire",nav_status:"Annonces & Statuts",nav_pnl:"Profit & Perte",nav_expenses:"Dépenses",nav_branches:"Succursales",nav_users:"Utilisateurs",nav_roles:"Rôles",nav_reports:"Rapports",nav_attendance:"Présence",nav_subscription:"Plan",nav_mex_earnings:'Mes gains',nav_mex_companies:'Mes entreprises',nav_mex_status:'Annonces',chat_title:"Communication",chat_close:"Fermer",chat_select_contact:"Sélectionnez un utilisateur",chat_send:"Envoyer",type_message:"Écrivez un message...",no_messages_yet:"Aucun message.",profile_title:"Mon profil",profile_change_photo:"Changer la photo",profile_full_name:"Nom complet",profile_email:"E-mail",profile_new_password:"Nouveau mot de passe",profile_confirm_password:"Confirmer",profile_save:"Enregistrer",profile_cancel:"Annuler",sales_title:"Enregistrer les ventes",sales_add:"Nouvelle vente",sales_th_product:"Produit",sales_th_qty:"Qté",sales_th_total:"Total",sales_th_unit_price:"Prix unitaire",sales_th_customer:"Client",sales_th_date:"Date",sales_th_store:"Magasin",sales_th_actions:"Actions",sales_empty:"Aucune vente",inventory_title:"Inventaire & Stock",inventory_add:"Ajouter un produit",inventory_th_name:"Produit",inventory_th_desc:"Description",inventory_th_category:"Catégorie",inventory_th_price:"Prix (TSh)",inventory_th_cost:"Coût (TSh)",inventory_th_stock:"Stock",inventory_th_status:"Statut",inventory_th_actions:"Actions",inventory_empty:"Aucun produit",inventory_search_placeholder:'Rechercher...',inventory_search_empty:'Aucun résultat.',inventory_search_clear:'Effacer',inventory_items_count:'articles',pnl_title:"Profit et Perte",pnl_revenue:"Revenu total",pnl_cogs:"Coût des marchandises",pnl_expenses:"Dépenses totales",pnl_net:"Profit net",pnl_monthly_sales:"Ventes mensuelles",pnl_monthly_expenses:"Dépenses mensuelles",pnl_breakdown:"Détail P&L",expenses_title:"Dépenses",expenses_add:"Ajouter une dépense",expenses_th_desc:"Description",expenses_th_amount:"Montant",expenses_th_category:"Catégorie",expenses_th_date:"Date",expenses_th_store:"Magasin",expenses_th_actions:"Actions",expenses_empty:"Aucune dépense",users_title:"Utilisateurs",users_add:"Ajouter un utilisateur",users_th_name:"Nom",users_th_username:"Nom d'utilisateur",users_th_role:"Rôle",users_th_store:"Magasin",users_th_created:"Créé par",users_th_actions:"Actions",users_empty:"Aucun utilisateur",roles_title:"Gestion des rôles",roles_desc:"Modifiez les rôles des utilisateurs.",roles_th_name:"Nom",roles_th_username:"Nom d'utilisateur",roles_th_current:"Rôle actuel",roles_th_change:"Changer en",roles_th_actions:"Actions",reports_title:"Rapports",reports_subtitle:"Envoyer les rapports au gestionnaire",reports_company_title:"Paramètres",reports_company_name:"Nom",reports_tin:"Numéro TIN",reports_address:"Adresse",reports_whatsapp_label:"Numéro WhatsApp",reports_email_label:"E-mail",reports_save:"Enregistrer",reports_summary:"Résumé",reports_total_sales:"Ventes totales",reports_count:"Nombre de ventes",reports_whatsapp_btn:"Envoyer WhatsApp",reports_email_btn:"Envoyer e-mail",reports_info:"Le rapport sera envoyé au gestionnaire.",report_period:"Période",report_day:"Jour",report_week:"Semaine",report_month:"Mois",report_year:"Année",report_custom:"Personnalisé",report_apply:"Appliquer",report_from:"De",report_to:"À",report_no_data:"Aucune donnée",report_detailed:"Rapport détaillé",report_period_label:"Période",report_total_sales_label:"Ventes",report_total_expenses_label:"Dépenses",report_net_profit_label:"Profit net",report_transaction_count:"Transactions",report_top_product:"Meilleur produit",report_top_seller:"Meilleur vendeur",report_sales_chart:"Graphique ventes",report_expenses_chart:"Graphique dépenses",modal_sale_title:"Enregistrer une vente",modal_sale_product:"Produit *",modal_sale_qty:"Quantité *",modal_sale_customer:"Client",modal_sale_store:"Magasin",modal_sale_unit_price:"Prix unitaire *",modal_sale_total:"Total",modal_sale_original_price:"Prix d'origine",modal_sale_discount:"Remise",modal_sale_price_hint:"Vous pouvez modifier le prix.",modal_product_title:"Ajouter un produit",modal_product_name:"Nom *",modal_product_desc:"Description",modal_product_price:"Prix de vente *",modal_product_cost:"Prix d'achat *",modal_product_category:"Catégorie",modal_product_qty:"Quantité *",modal_product_store:"Magasin",modal_expense_title:"Ajouter une dépense",modal_expense_desc:"Description *",modal_expense_amount:"Montant *",modal_expense_category:"Catégorie",modal_expense_store:"Magasin",modal_user_title:"Ajouter un utilisateur",modal_user_fullname:"Nom complet",modal_user_username:"Nom d'utilisateur *",modal_user_password:"Mot de passe *",modal_user_role:"Rôle *",modal_user_store:"Magasin",modal_adjust_title:"Ajuster le stock",modal_adjust_label:"Quantité",modal_adjust_current:"Stock actuel",modal_cancel:"Annuler",modal_save:"Enregistrer",dash_total_sales:"Ventes",dash_total_expenses:"Dépenses",dash_net_profit:"Profit net",dash_stock_value:"Valeur du stock",dash_items_left:"Articles",dash_records:"Ventes",dash_chart_sales:"Ventes 7 jours",dash_chart_expenses:"Dépenses par catégorie",dash_low_stock_alerts:"Stock faible",dash_low_stock_add:"Ajouter du stock",dash_low_stock_empty:"Aucun produit en stock faible.",dash_status_title:"Statut",dash_status_sub:"Mises à jour",dash_status_empty:"Aucun statut.",dash_status_view_all:"Voir tout",stock_out:"Rupture",stock_low:"Faible",stock_ok:"En stock",role_owner:"Propriétaire",role_admin:"Administrateur",role_accountant:"Comptable",role_employee:"Employé",owner_badge:"Propriétaire",close:"Fermer",save:"Enregistrer",cancel:"Annuler",toast_sale_saved:"Vente enregistrée !",toast_product_added:"Produit ajouté !",toast_expense_added:"Dépense enregistrée !",toast_user_added:"Utilisateur ajouté !",toast_stock_adjusted:"Stock ajusté !",toast_deleted:"Supprimé !",toast_error:"Erreur",toast_fill_fields:"Remplissez tous les champs",toast_password_short:"Mot de passe trop court",toast_username_taken:"Nom d'utilisateur déjà pris",toast_stock_insufficient:"Stock insuffisant !",toast_password_mismatch:"Mots de passe différents",toast_profile_saved:"Profil enregistré !",toast_receipt_ready:"Reçu prêt !",sub_title:'Ajouter une succursale',sub_desc:'Créer une nouvelle succursale.',sub_pay:'Créer',sub_later:'Annuler',status_tab_ads:"Annonces",status_tab_company:"Statuts",status_tab_following:"Abonnements",ads_title:"Annonces globales",ads_subtitle:"Les annonces expirent après 24 heures.",ads_no_ads:"Aucune annonce",ads_post:"Publier",ads_title_label:"Titre",ads_content_label:"Contenu",ads_image_label:"Image",ads_video_label:"Vidéo",ads_company_name_label:"Nom entreprise",ads_confirm_delete:"Supprimer ?",ads_viewers:"vues",toast_ad_posted_free:"✅ Annonce publiée !",toast_ad_deleted:"Annonce supprimée.",status_title:"Statut",status_post_new:"Publier",status_new_title:"Nouveau statut",status_image_label:"Image",status_text_label:"Texte",status_you:"Vous",status_delete:"Supprimer",ad_comments:"Commentaires",ad_no_comments:"Aucun commentaire.",ad_write_comment:"Écrivez...",ad_post_comment:"Publier",ad_comment_added:"Commentaire publié !",ad_comment_deleted:"Commentaire supprimé.",profile_view_title:"Profil",profile_view_role:"Rôle",profile_view_company:"Entreprise",profile_view_email:"E-mail",profile_view_phone:"Téléphone",profile_view_close:"Fermer",branch_perms:"Permissions",perm_net_profit:"Profit net",perm_expenses:"Dépenses",perm_on:"Visible",perm_off:"Masqué",add_branch:"Ajouter une succursale",branch_th_branch:"Succursale",branch_th_address:"Adresse",branch_th_username:"Nom d'utilisateur",branch_th_status:"Statut",branch_th_actions:"Actions",branch_main:"Principale",branch_reset:"Réinitialiser",no_branches:"Aucune succursale.",history:"Historique",super_dashboard:"Tableau de bord Super Admin",companies:"Entreprises",active_label:"Actives",blocked_label:"Bloquées",all_companies:"Toutes les entreprises",company:"Entreprise",owner_label:"Propriétaire",phone_label:"Téléphone",status_label:"Statut",actions_label:"Actions",no_companies:"Aucune entreprise.",block_btn:"Bloquer",unblock_btn:"Débloquer",delete_btn:"Supprimer",users_btn:"Utilisateurs",super_tab_companies:"Entreprises",super_tab_employees:"Employés MeX",super_add_employee:"Ajouter un employé",super_add_company:"Ajouter une entreprise",mex_emp_title:"Employés MeX",mex_emp_name:"Nom",mex_emp_phone:"Téléphone",mex_emp_code:"Code Promo",mex_emp_registrations:"Inscriptions",mex_emp_actions:"Actions",mex_emp_modal_title:"Ajouter un employé",mex_emp_modal_name:"Nom complet *",mex_emp_modal_phone:"Téléphone (facultatif)",mex_emp_copied:"Code copié !",mex_cred_success_title:"✅ Employé créé",mex_cred_username:"Nom d'utilisateur",mex_cred_password:"Mot de passe",mex_cred_promo:"Code promo",mex_cred_copy_all:"Copier tout",mex_cred_done:"Terminé",mex_dash_welcome:"Bon retour",mex_companies_title:"Mes entreprises",mex_change_password_title:"Changer le mot de passe",mex_change_password_current:"Mot de passe actuel",mex_change_password_new:"Nouveau mot de passe",mex_change_password_confirm:"Confirmer",mex_change_password_save:"Changer",mex_password_changed:"✅ Modifié !",select_option:"-- Sélectionner --",write_comment:"Écrivez...",username_label:"Nom d'utilisateur",store_label:"Magasin",view_profile:"Voir le profil",not_set:"Non défini",verified:"Vérifié",follow:"Suivre",following:"Abonné",unfollow:"Se désabonner",ia_posts:"Publications",ia_followers:"Abonnés",ia_no_posts:"Aucune publication.",following_empty:"Vous ne suivez aucune entreprise.",profile_bio:"Bio",profile_bio_hint:"300 caractères max.",social_links_edit:"Réseaux sociaux (facultatif)",social_whatsapp:"WhatsApp",social_instagram:"Instagram",social_facebook:"Facebook",social_tiktok:"TikTok",social_website:"Site web",social_whatsapp_ph:"+255 xxx xxx xxx",social_url_ph:"https://...",promote_btn:"Promouvoir",promote_modal_title:"Promouvoir votre annonce",promote_active:"SPONSORISÉ",promote_plan_48h:"48 heures",promote_plan_weekly:"1 semaine",promote_best_value:"MEILLEUR",promote_pay_btn:"Promouvoir",promote_success_48h:"✅ Annonce promue 48h !",promote_success_weekly:"✅ Annonce promue 1 semaine !",promote_hours_left:"{hours}h restantes",promote_minutes_left:"{minutes}m restantes",branch_create_free:"Créer une succursale",branch_free_desc:"Ajouter une succursale est gratuit."
+    login_subtitle:"Connectez-vous à votre entreprise",login_username_label:"Nom d'utilisateur",login_password_label:"Mot de passe",login_btn:"Connexion",login_no_account:"Vous n'avez pas d'entreprise ?",login_register_link:"Enregistrez votre entreprise",register_title:"Enregistrer l'entreprise",register_subtitle:"Créez le compte de votre entreprise",register_company_label:"Nom de l'entreprise",register_username_label:"Nom d'utilisateur",register_password_label:"Mot de passe",register_confirm_label:"Confirmer le mot de passe",register_promo_label:"Code promo (facultatif)",register_promo_hint:"Si un employé MeX vous a référé, entrez son code promo.",register_promo_valid:'✓ Code promo valide',register_promo_invalid:'✗ Code promo invalide',register_btn:"Enregistrer",register_have_account:"Vous avez déjà une entreprise ?",register_login_link:"Connexion",nav_dashboard:"Tableau de bord",nav_sales:"Ventes",nav_inventory:"Inventaire",nav_status:"Annonces & Statuts",nav_pnl:"Profit & Perte",nav_expenses:"Dépenses",nav_branches:"Succursales",nav_users:"Utilisateurs",nav_roles:"Rôles",nav_reports:"Rapports",nav_attendance:"Présence",nav_subscription:"Plan",nav_mex_earnings:'Mes gains',nav_mex_companies:'Mes entreprises',nav_mex_status:'Annonces',chat_title:"Communication",chat_close:"Fermer",chat_select_contact:"Sélectionnez un utilisateur",chat_send:"Envoyer",type_message:"Écrivez un message...",no_messages_yet:"Aucun message.",profile_title:"Mon profil",profile_change_photo:"Changer la photo",profile_full_name:"Nom complet",profile_email:"E-mail",profile_new_password:"Nouveau mot de passe",profile_confirm_password:"Confirmer",profile_save:"Enregistrer",profile_cancel:"Annuler",sales_title:"Enregistrer les ventes",sales_add:"Nouvelle vente",sales_th_product:"Produit",sales_th_qty:"Qté",sales_th_total:"Total",sales_th_unit_price:"Prix unitaire",sales_th_customer:"Client",sales_th_date:"Date",sales_th_store:"Magasin",sales_th_actions:"Actions",sales_empty:"Aucune vente",inventory_title:"Inventaire & Stock",inventory_add:"Ajouter un produit",inventory_th_name:"Produit",inventory_th_desc:"Description",inventory_th_category:"Catégorie",inventory_th_price:"Prix (TSh)",inventory_th_cost:"Coût (TSh)",inventory_th_stock:"Stock",inventory_th_status:"Statut",inventory_th_actions:"Actions",inventory_empty:"Aucun produit",inventory_search_placeholder:'Rechercher...',inventory_search_empty:'Aucun résultat.',inventory_search_clear:'Effacer',inventory_items_count:'articles',pnl_title:"Profit et Perte",pnl_revenue:"Revenu total",pnl_cogs:"Coût des marchandises",pnl_expenses:"Dépenses totales",pnl_net:"Profit net",pnl_monthly_sales:"Ventes mensuelles",pnl_monthly_expenses:"Dépenses mensuelles",pnl_breakdown:"Détail P&L",expenses_title:"Dépenses",expenses_add:"Ajouter une dépense",expenses_th_desc:"Description",expenses_th_amount:"Montant",expenses_th_category:"Catégorie",expenses_th_date:"Date",expenses_th_store:"Magasin",expenses_th_actions:"Actions",expenses_empty:"Aucune dépense",users_title:"Utilisateurs",users_add:"Ajouter un utilisateur",users_th_name:"Nom",users_th_username:"Nom d'utilisateur",users_th_role:"Rôle",users_th_store:"Magasin",users_th_created:"Créé par",users_th_actions:"Actions",users_empty:"Aucun utilisateur",roles_title:"Gestion des rôles",roles_desc:"Modifiez les rôles des utilisateurs.",roles_th_name:"Nom",roles_th_username:"Nom d'utilisateur",roles_th_current:"Rôle actuel",roles_th_change:"Changer en",roles_th_actions:"Actions",reports_title:"Rapports",reports_subtitle:"Envoyer les rapports au gestionnaire",reports_company_title:"Paramètres",reports_company_name:"Nom",reports_tin:"Numéro TIN",reports_address:"Adresse",reports_whatsapp_label:"Numéro WhatsApp",reports_email_label:"E-mail",reports_save:"Enregistrer",reports_summary:"Résumé",reports_total_sales:"Ventes totales",reports_count:"Nombre de ventes",reports_whatsapp_btn:"Envoyer WhatsApp",reports_email_btn:"Envoyer e-mail",reports_info:"Le rapport sera envoyé au gestionnaire.",report_period:"Période",report_day:"Jour",report_week:"Semaine",report_month:"Mois",report_year:"Année",report_custom:"Personnalisé",report_apply:"Appliquer",report_from:"De",report_to:"À",report_no_data:"Aucune donnée",report_detailed:"Rapport détaillé",report_period_label:"Période",report_total_sales_label:"Ventes",report_total_expenses_label:"Dépenses",report_net_profit_label:"Profit net",report_transaction_count:"Transactions",report_top_product:"Meilleur produit",report_top_seller:"Meilleur vendeur",report_sales_chart:"Graphique ventes",report_expenses_chart:"Graphique dépenses",modal_sale_title:"Enregistrer une vente",modal_sale_product:"Produit *",modal_sale_qty:"Quantité *",modal_sale_customer:"Client",modal_sale_store:"Magasin",modal_sale_unit_price:"Prix unitaire *",modal_sale_total:"Total",modal_sale_original_price:"Prix d'origine",modal_sale_discount:"Remise",modal_sale_price_hint:"Vous pouvez modifier le prix.",modal_product_title:"Ajouter un produit",modal_product_name:"Nom *",modal_product_desc:"Description",modal_product_price:"Prix de vente *",modal_product_cost:"Prix d'achat *",modal_product_category:"Catégorie",modal_product_qty:"Quantité *",modal_product_store:"Magasin",modal_expense_title:"Ajouter une dépense",modal_expense_desc:"Description *",modal_expense_amount:"Montant *",modal_expense_category:"Catégorie",modal_expense_store:"Magasin",modal_user_title:"Ajouter un utilisateur",modal_user_fullname:"Nom complet",modal_user_username:"Nom d'utilisateur *",modal_user_password:"Mot de passe *",modal_user_role:"Rôle *",modal_user_store:"Magasin",modal_adjust_title:"Ajuster le stock",modal_adjust_label:"Quantité",modal_adjust_current:"Stock actuel",modal_cancel:"Annuler",modal_save:"Enregistrer",dash_total_sales:"Ventes",dash_total_expenses:"Dépenses",dash_net_profit:"Profit net",dash_stock_value:"Valeur du stock",dash_items_left:"Articles",dash_records:"Ventes",dash_chart_sales:"Ventes 7 jours",dash_chart_expenses:"Dépenses par catégorie",dash_low_stock_alerts:"Stock faible",dash_low_stock_add:"Ajouter du stock",dash_low_stock_empty:"Aucun produit en stock faible.",dash_status_title:"Statut",dash_status_sub:"Mises à jour",dash_status_empty:"Aucun statut.",dash_status_view_all:"Voir tout",stock_out:"Rupture",stock_low:"Faible",stock_ok:"En stock",role_owner:"Propriétaire",role_admin:"Administrateur",role_accountant:"Comptable",role_employee:"Employé",owner_badge:"Propriétaire",close:"Fermer",save:"Enregistrer",cancel:"Annuler",toast_sale_saved:"Vente enregistrée !",toast_product_added:"Produit ajouté !",toast_expense_added:"Dépense enregistrée !",toast_user_added:"Utilisateur ajouté !",toast_stock_adjusted:"Stock ajusté !",toast_deleted:"Supprimé !",toast_error:"Erreur",toast_fill_fields:"Remplissez tous les champs",toast_password_short:"Mot de passe trop court",toast_username_taken:"Nom d'utilisateur déjà pris",toast_stock_insufficient:"Stock insuffisant !",toast_password_mismatch:"Mots de passe différents",toast_profile_saved:"Profil enregistré !",toast_receipt_ready:"Reçu prêt !",sub_title:'Ajouter une succursale',sub_desc:'Créer une nouvelle succursale.',sub_pay:'Créer',sub_later:'Annuler',status_tab_ads:"Annonces",status_tab_company:"Statuts",status_tab_following:"Abonnements",ads_title:"Annonces globales",ads_subtitle:"Les annonces expirent après 24 heures.",ads_no_ads:"Aucune annonce",ads_post:"Publier",ads_title_label:"Titre",ads_content_label:"Contenu",ads_image_label:"Image",ads_video_label:"Vidéo",ads_company_name_label:"Nom entreprise",ads_confirm_delete:"Supprimer ?",ads_viewers:"vues",toast_ad_posted_free:"✅ Annonce publiée !",toast_ad_deleted:"Annonce supprimée.",status_title:"Statut",status_post_new:"Publier",status_new_title:"Nouveau statut",status_image_label:"Image",status_text_label:"Texte",status_you:"Vous",status_delete:"Supprimer",ad_comments:"Commentaires",ad_no_comments:"Aucun commentaire.",ad_write_comment:"Écrivez...",ad_post_comment:"Publier",ad_comment_added:"Commentaire publié !",ad_comment_deleted:"Commentaire supprimé.",profile_view_title:"Profil",profile_view_role:"Rôle",profile_view_company:"Entreprise",profile_view_email:"E-mail",profile_view_phone:"Téléphone",profile_view_close:"Fermer",branch_perms:"Permissions",perm_net_profit:"Profit net",perm_expenses:"Dépenses",perm_on:"Visible",perm_off:"Masqué",add_branch:"Ajouter une succursale",branch_th_branch:"Succursale",branch_th_address:"Adresse",branch_th_username:"Nom d'utilisateur",branch_th_status:"Statut",branch_th_sub:'Abo',branch_th_actions:"Actions",branch_main:"Principale",branch_reset:"Réinitialiser",no_branches:"Aucune succursale.",history:"Historique",super_dashboard:"Tableau de bord Super Admin",companies:"Entreprises",active_label:"Actives",blocked_label:"Bloquées",all_companies:"Toutes les entreprises",company:"Entreprise",owner_label:"Propriétaire",phone_label:"Téléphone",status_label:"Statut",actions_label:"Actions",no_companies:"Aucune entreprise.",block_btn:"Bloquer",unblock_btn:"Débloquer",delete_btn:"Supprimer",users_btn:"Utilisateurs",super_tab_companies:"Entreprises",super_tab_employees:"Employés MeX",super_add_employee:"Ajouter un employé",super_add_company:"Ajouter une entreprise",mex_emp_title:"Employés MeX",mex_emp_name:"Nom",mex_emp_phone:"Téléphone",mex_emp_code:"Code Promo",mex_emp_registrations:"Inscriptions",mex_emp_actions:"Actions",mex_emp_modal_title:"Ajouter un employé",mex_emp_modal_name:"Nom complet *",mex_emp_modal_phone:"Téléphone (facultatif)",mex_emp_copied:"Code copié !",mex_cred_success_title:"✅ Employé créé",mex_cred_username:"Nom d'utilisateur",mex_cred_password:"Mot de passe",mex_cred_promo:"Code promo",mex_cred_copy_all:"Copier tout",mex_cred_done:"Terminé",mex_dash_welcome:"Bon retour",mex_companies_title:"Mes entreprises",mex_change_password_title:"Changer le mot de passe",mex_change_password_current:"Mot de passe actuel",mex_change_password_new:"Nouveau mot de passe",mex_change_password_confirm:"Confirmer",mex_change_password_save:"Changer",mex_password_changed:"✅ Modifié !",select_option:"-- Sélectionner --",write_comment:"Écrivez...",username_label:"Nom d'utilisateur",store_label:"Magasin",view_profile:"Voir le profil",not_set:"Non défini",verified:"Vérifié",follow:"Suivre",following:"Abonné",unfollow:"Se désabonner",ia_posts:"Publications",ia_followers:"Abonnés",ia_no_posts:"Aucune publication.",following_empty:"Vous ne suivez aucune entreprise.",profile_bio:"Bio",profile_bio_hint:"300 caractères max.",social_links_edit:"Réseaux sociaux (facultatif)",social_whatsapp:"WhatsApp",social_instagram:"Instagram",social_facebook:"Facebook",social_tiktok:"TikTok",social_website:"Site web",social_whatsapp_ph:"+255 xxx xxx xxx",social_url_ph:"https://...",promote_btn:"Promouvoir",promote_modal_title:"Promouvoir votre annonce",promote_active:"SPONSORISÉ",promote_plan_48h:"48 heures",promote_plan_weekly:"1 semaine",promote_best_value:"MEILLEUR",promote_pay_btn:"Promouvoir",promote_success_48h:"✅ Annonce promue 48h !",promote_success_weekly:"✅ Annonce promue 1 semaine !",promote_hours_left:"{hours}h restantes",promote_minutes_left:"{minutes}m restantes",branch_create_free:"Créer une succursale",branch_free_desc:"Ajouter une succursale est gratuit.",sub_status_active:'Actif',sub_status_expired:'Expiré'
 },
 zh: {
-    login_subtitle:'登录到您的公司',login_username_label:'用户名',login_password_label:'密码',login_btn:'登录',login_no_account:'还没有公司？',login_register_link:'注册您的公司',register_title:'注册公司',register_subtitle:'创建您的公司账户',register_company_label:'公司名称',register_username_label:'用户名',register_password_label:'密码',register_confirm_label:'确认密码',register_promo_label:'促销代码（可选）',register_promo_hint:'如果有 MeX 员工推荐您，请输入他们的促销代码。',register_promo_valid:'✓ 有效的促销代码',register_promo_invalid:'✗ 无效的促销代码',register_btn:'注册',register_have_account:'已经有公司了？',register_login_link:'登录',nav_dashboard:'仪表盘',nav_sales:'销售',nav_inventory:'库存',nav_status:'广告与动态',nav_pnl:'利润与亏损',nav_expenses:'支出',nav_branches:'分店',nav_users:'用户',nav_roles:'角色',nav_reports:'报表',nav_attendance:'考勤',nav_subscription:'计划信息',nav_mex_earnings:'我的收益',nav_mex_companies:'我的公司',nav_mex_status:'广告',chat_title:'通讯',chat_close:'关闭',chat_select_contact:'选择一位用户开始聊天',chat_send:'发送',type_message:'输入消息...',no_messages_yet:'暂无消息。',profile_title:'我的资料',profile_change_photo:'更换照片',profile_full_name:'姓名',profile_email:'电子邮箱',profile_new_password:'新密码',profile_confirm_password:'确认密码',profile_save:'保存',profile_cancel:'取消',sales_title:'记录销售',sales_add:'新增销售',sales_th_product:'产品',sales_th_qty:'数量',sales_th_total:'合计',sales_th_unit_price:'单价',sales_th_customer:'客户',sales_th_date:'日期',sales_th_store:'门店',sales_th_actions:'操作',sales_empty:'暂无销售记录',inventory_title:'库存与存货',inventory_add:'添加产品',inventory_th_name:'产品',inventory_th_desc:'描述',inventory_th_category:'类别',inventory_th_price:'售价（TSh）',inventory_th_cost:'成本（TSh）',inventory_th_stock:'库存',inventory_th_status:'状态',inventory_th_actions:'操作',inventory_empty:'暂无产品',inventory_search_placeholder:'按名称搜索产品...',inventory_search_empty:'没有匹配的产品。',inventory_search_clear:'清除搜索',inventory_items_count:'件商品',pnl_title:'利润与亏损',pnl_revenue:'总收入',pnl_cogs:'销货成本',pnl_expenses:'总支出',pnl_net:'净利润',pnl_monthly_sales:'每月销售',pnl_monthly_expenses:'每月支出',pnl_breakdown:'损益明细',expenses_title:'公司支出',expenses_add:'添加支出',expenses_th_desc:'描述',expenses_th_amount:'金额',expenses_th_category:'类别',expenses_th_date:'日期',expenses_th_store:'门店',expenses_th_actions:'操作',expenses_empty:'暂无支出',users_title:'系统用户',users_add:'添加用户',users_th_name:'姓名',users_th_username:'用户名',users_th_role:'角色',users_th_store:'门店',users_th_created:'创建者',users_th_actions:'操作',users_empty:'暂无用户',roles_title:'角色管理',roles_desc:'在此更改用户角色。',roles_th_name:'姓名',roles_th_username:'用户名',roles_th_current:'当前角色',roles_th_change:'更改为',roles_th_actions:'操作',reports_title:'报表与通讯',reports_subtitle:'向经理发送报表',reports_company_title:'公司设置',reports_company_name:'公司名称',reports_tin:'TIN 税号',reports_address:'地址',reports_whatsapp_label:'WhatsApp 号码',reports_email_label:'电子邮箱',reports_save:'保存',reports_summary:'报表摘要',reports_total_sales:'销售总额',reports_count:'销售笔数',reports_whatsapp_btn:'发送 WhatsApp',reports_email_btn:'发送电子邮件',reports_info:'报表将发送至经理。',report_period:'报表期间',report_day:'日',report_week:'周',report_month:'月',report_year:'年',report_custom:'自定义',report_apply:'应用',report_from:'从',report_to:'至',report_no_data:'没有数据',report_detailed:'详细报表',report_period_label:'期间',report_total_sales_label:'销售总额',report_total_expenses_label:'总支出',report_net_profit_label:'净利润',report_transaction_count:'交易笔数',report_top_product:'最畅销产品',report_top_seller:'最佳销售员',report_sales_chart:'销售图表',report_expenses_chart:'支出图表',modal_sale_title:'记录销售',modal_sale_product:'产品 *',modal_sale_qty:'数量 *',modal_sale_customer:'客户',modal_sale_store:'门店',modal_sale_unit_price:'单位售价 *',modal_sale_total:'合计',modal_sale_original_price:'原价',modal_sale_discount:'折扣',modal_sale_price_hint:'您可以修改价格。',modal_product_title:'添加产品',modal_product_name:'产品名称 *',modal_product_desc:'描述',modal_product_price:'售价 *',modal_product_cost:'成本价 *',modal_product_category:'类别',modal_product_qty:'库存数量 *',modal_product_store:'门店',modal_expense_title:'添加支出',modal_expense_desc:'描述 *',modal_expense_amount:'金额 *',modal_expense_category:'类别',modal_expense_store:'门店',modal_user_title:'添加用户',modal_user_fullname:'姓名',modal_user_username:'用户名 *',modal_user_password:'密码 *',modal_user_role:'角色 *',modal_user_store:'门店',modal_adjust_title:'调整库存',modal_adjust_label:'数量',modal_adjust_current:'当前库存',modal_cancel:'取消',modal_save:'保存',dash_total_sales:'销售总额',dash_total_expenses:'总支出',dash_net_profit:'净利润',dash_stock_value:'库存价值',dash_items_left:'剩余商品',dash_records:'已记录销售',dash_chart_sales:'最近 7 天销售',dash_chart_expenses:'按类别的支出',dash_low_stock_alerts:'库存不足',dash_low_stock_add:'补充库存',dash_low_stock_empty:'没有库存不足的产品。',dash_status_title:'公司动态',dash_status_sub:'最新更新',dash_status_empty:'尚未发布动态。',dash_status_view_all:'查看全部',stock_out:'缺货',stock_low:'库存偏低',stock_ok:'库存充足',role_owner:'所有者',role_admin:'管理员',role_accountant:'会计',role_employee:'员工',owner_badge:'所有者',close:'关闭',save:'保存',cancel:'取消',toast_sale_saved:'销售已保存！',toast_product_added:'产品已添加！',toast_expense_added:'支出已保存！',toast_user_added:'用户已添加！',toast_stock_adjusted:'库存已调整！',toast_deleted:'已删除！',toast_error:'发生错误',toast_fill_fields:'请填写所有字段',toast_password_short:'密码太短',toast_username_taken:'用户名已被占用',toast_stock_insufficient:'库存不足！',toast_password_mismatch:'密码不一致',toast_profile_saved:'资料已保存！',toast_receipt_ready:'收据已准备好！',sub_title:'添加分店',sub_desc:'创建新分店。',sub_pay:'创建分店',sub_later:'取消',status_tab_ads:'广告',status_tab_company:'动态',status_tab_following:'关注',ads_title:'全球广告',ads_subtitle:'所有广告24小时后过期。',ads_no_ads:'暂无广告',ads_post:'发布广告',ads_title_label:'广告标题',ads_content_label:'广告内容',ads_image_label:'图片',ads_video_label:'视频',ads_company_name_label:'公司名称',ads_confirm_delete:'删除这条广告？',ads_viewers:'次浏览',toast_ad_posted_free:'✅ 广告已发布！',toast_ad_deleted:'广告已删除。',status_title:'公司动态',status_post_new:'发布动态',status_new_title:'新动态',status_image_label:'图片',status_text_label:'文字',status_you:'您',status_delete:'删除',ad_comments:'评论',ad_no_comments:'暂无评论。',ad_write_comment:'写下评论...',ad_post_comment:'发布',ad_comment_added:'评论已发布！',ad_comment_deleted:'评论已删除。',profile_view_title:'资料',profile_view_role:'角色',profile_view_company:'公司',profile_view_email:'电子邮箱',profile_view_phone:'电话',profile_view_close:'关闭',branch_perms:'经理权限',perm_net_profit:'净利润',perm_expenses:'支出',perm_on:'可见',perm_off:'隐藏',add_branch:'添加分店',branch_th_branch:'分店',branch_th_address:'地址',branch_th_username:'用户名',branch_th_status:'状态',branch_th_actions:'操作',branch_main:'总店',branch_reset:'重置',no_branches:'暂无分店。',history:'历史记录',super_dashboard:'超级管理员仪表盘',companies:'公司',active_label:'有效',blocked_label:'已封禁',all_companies:'所有公司',company:'公司',owner_label:'所有者',phone_label:'电话',status_label:'状态',actions_label:'操作',no_companies:'暂无公司。',block_btn:'封禁',unblock_btn:'解封',delete_btn:'删除',users_btn:'用户',super_tab_companies:'公司',super_tab_employees:'MeX 员工',super_add_employee:'添加员工',super_add_company:'添加公司',mex_emp_title:'MeX 员工',mex_emp_name:'员工姓名',mex_emp_phone:'电话',mex_emp_code:'促销代码',mex_emp_registrations:'注册数',mex_emp_actions:'操作',mex_emp_modal_title:'添加 MeX 员工',mex_emp_modal_name:'姓名 *',mex_emp_modal_phone:'电话（可选）',mex_emp_copied:'促销代码已复制！',mex_cred_success_title:'✅ 员工已创建',mex_cred_username:'用户名',mex_cred_password:'默认密码',mex_cred_promo:'促销代码',mex_cred_copy_all:'全部复制',mex_cred_done:'完成',mex_dash_welcome:'欢迎回来',mex_companies_title:'我注册的公司',mex_change_password_title:'更改密码',mex_change_password_current:'当前密码',mex_change_password_new:'新密码',mex_change_password_confirm:'确认新密码',mex_change_password_save:'更改密码',mex_password_changed:'✅ 密码修改成功！',select_option:'-- 请选择 --',write_comment:'写下评论...',username_label:'用户名',store_label:'门店',view_profile:'查看资料',not_set:'未设置',verified:'已验证',follow:'关注',following:'已关注',unfollow:'取消关注',ia_posts:'帖子',ia_followers:'关注者',ia_no_posts:'暂无帖子。',following_empty:'您还没有关注任何公司。',profile_bio:"简介",profile_bio_hint:"最多300个字符。",social_links_edit:"社交媒体链接（可选）",social_whatsapp:"WhatsApp",social_instagram:"Instagram",social_facebook:"Facebook",social_tiktok:"TikTok",social_website:"网站",social_whatsapp_ph:"+255 xxx xxx xxx",social_url_ph:"https://...",promote_btn:"推广",promote_modal_title:"推广您的广告",promote_active:"已推广",promote_plan_48h:"48小时",promote_plan_weekly:"1周",promote_best_value:"最佳",promote_pay_btn:"推广",promote_success_48h:"✅ 广告已推广48小时！",promote_success_weekly:"✅ 广告已推广1周！",promote_hours_left:"剩余 {hours} 小时",promote_minutes_left:"剩余 {minutes} 分钟",branch_create_free:"创建分店",branch_free_desc:"添加分店是免费的。"
+    login_subtitle:'登录到您的公司',login_username_label:'用户名',login_password_label:'密码',login_btn:'登录',login_no_account:'还没有公司？',login_register_link:'注册您的公司',register_title:'注册公司',register_subtitle:'创建您的公司账户',register_company_label:'公司名称',register_username_label:'用户名',register_password_label:'密码',register_confirm_label:'确认密码',register_promo_label:'促销代码（可选）',register_promo_hint:'如果有 MeX 员工推荐您，请输入他们的促销代码。',register_promo_valid:'✓ 有效的促销代码',register_promo_invalid:'✗ 无效的促销代码',register_btn:'注册',register_have_account:'已经有公司了？',register_login_link:'登录',nav_dashboard:'仪表盘',nav_sales:'销售',nav_inventory:'库存',nav_status:'广告与动态',nav_pnl:'利润与亏损',nav_expenses:'支出',nav_branches:'分店',nav_users:'用户',nav_roles:'角色',nav_reports:'报表',nav_attendance:'考勤',nav_subscription:'计划信息',nav_mex_earnings:'我的收益',nav_mex_companies:'我的公司',nav_mex_status:'广告',chat_title:'通讯',chat_close:'关闭',chat_select_contact:'选择一位用户开始聊天',chat_send:'发送',type_message:'输入消息...',no_messages_yet:'暂无消息。',profile_title:'我的资料',profile_change_photo:'更换照片',profile_full_name:'姓名',profile_email:'电子邮箱',profile_new_password:'新密码',profile_confirm_password:'确认密码',profile_save:'保存',profile_cancel:'取消',sales_title:'记录销售',sales_add:'新增销售',sales_th_product:'产品',sales_th_qty:'数量',sales_th_total:'合计',sales_th_unit_price:'单价',sales_th_customer:'客户',sales_th_date:'日期',sales_th_store:'门店',sales_th_actions:'操作',sales_empty:'暂无销售记录',inventory_title:'库存与存货',inventory_add:'添加产品',inventory_th_name:'产品',inventory_th_desc:'描述',inventory_th_category:'类别',inventory_th_price:'售价（TSh）',inventory_th_cost:'成本（TSh）',inventory_th_stock:'库存',inventory_th_status:'状态',inventory_th_actions:'操作',inventory_empty:'暂无产品',inventory_search_placeholder:'按名称搜索产品...',inventory_search_empty:'没有匹配的产品。',inventory_search_clear:'清除搜索',inventory_items_count:'件商品',pnl_title:'利润与亏损',pnl_revenue:'总收入',pnl_cogs:'销货成本',pnl_expenses:'总支出',pnl_net:'净利润',pnl_monthly_sales:'每月销售',pnl_monthly_expenses:'每月支出',pnl_breakdown:'损益明细',expenses_title:'公司支出',expenses_add:'添加支出',expenses_th_desc:'描述',expenses_th_amount:'金额',expenses_th_category:'类别',expenses_th_date:'日期',expenses_th_store:'门店',expenses_th_actions:'操作',expenses_empty:'暂无支出',users_title:'系统用户',users_add:'添加用户',users_th_name:'姓名',users_th_username:'用户名',users_th_role:'角色',users_th_store:'门店',users_th_created:'创建者',users_th_actions:'操作',users_empty:'暂无用户',roles_title:'角色管理',roles_desc:'在此更改用户角色。',roles_th_name:'姓名',roles_th_username:'用户名',roles_th_current:'当前角色',roles_th_change:'更改为',roles_th_actions:'操作',reports_title:'报表与通讯',reports_subtitle:'向经理发送报表',reports_company_title:'公司设置',reports_company_name:'公司名称',reports_tin:'TIN 税号',reports_address:'地址',reports_whatsapp_label:'WhatsApp 号码',reports_email_label:'电子邮箱',reports_save:'保存',reports_summary:'报表摘要',reports_total_sales:'销售总额',reports_count:'销售笔数',reports_whatsapp_btn:'发送 WhatsApp',reports_email_btn:'发送电子邮件',reports_info:'报表将发送至经理。',report_period:'报表期间',report_day:'日',report_week:'周',report_month:'月',report_year:'年',report_custom:'自定义',report_apply:'应用',report_from:'从',report_to:'至',report_no_data:'没有数据',report_detailed:'详细报表',report_period_label:'期间',report_total_sales_label:'销售总额',report_total_expenses_label:'总支出',report_net_profit_label:'净利润',report_transaction_count:'交易笔数',report_top_product:'最畅销产品',report_top_seller:'最佳销售员',report_sales_chart:'销售图表',report_expenses_chart:'支出图表',modal_sale_title:'记录销售',modal_sale_product:'产品 *',modal_sale_qty:'数量 *',modal_sale_customer:'客户',modal_sale_store:'门店',modal_sale_unit_price:'单位售价 *',modal_sale_total:'合计',modal_sale_original_price:'原价',modal_sale_discount:'折扣',modal_sale_price_hint:'您可以修改价格。',modal_product_title:'添加产品',modal_product_name:'产品名称 *',modal_product_desc:'描述',modal_product_price:'售价 *',modal_product_cost:'成本价 *',modal_product_category:'类别',modal_product_qty:'库存数量 *',modal_product_store:'门店',modal_expense_title:'添加支出',modal_expense_desc:'描述 *',modal_expense_amount:'金额 *',modal_expense_category:'类别',modal_expense_store:'门店',modal_user_title:'添加用户',modal_user_fullname:'姓名',modal_user_username:'用户名 *',modal_user_password:'密码 *',modal_user_role:'角色 *',modal_user_store:'门店',modal_adjust_title:'调整库存',modal_adjust_label:'数量',modal_adjust_current:'当前库存',modal_cancel:'取消',modal_save:'保存',dash_total_sales:'销售总额',dash_total_expenses:'总支出',dash_net_profit:'净利润',dash_stock_value:'库存价值',dash_items_left:'剩余商品',dash_records:'已记录销售',dash_chart_sales:'最近 7 天销售',dash_chart_expenses:'按类别的支出',dash_low_stock_alerts:'库存不足',dash_low_stock_add:'补充库存',dash_low_stock_empty:'没有库存不足的产品。',dash_status_title:'公司动态',dash_status_sub:'最新更新',dash_status_empty:'尚未发布动态。',dash_status_view_all:'查看全部',stock_out:'缺货',stock_low:'库存偏低',stock_ok:'库存充足',role_owner:'所有者',role_admin:'管理员',role_accountant:'会计',role_employee:'员工',owner_badge:'所有者',close:'关闭',save:'保存',cancel:'取消',toast_sale_saved:'销售已保存！',toast_product_added:'产品已添加！',toast_expense_added:'支出已保存！',toast_user_added:'用户已添加！',toast_stock_adjusted:'库存已调整！',toast_deleted:'已删除！',toast_error:'发生错误',toast_fill_fields:'请填写所有字段',toast_password_short:'密码太短',toast_username_taken:'用户名已被占用',toast_stock_insufficient:'库存不足！',toast_password_mismatch:'密码不一致',toast_profile_saved:'资料已保存！',toast_receipt_ready:'收据已准备好！',sub_title:'添加分店',sub_desc:'创建新分店。',sub_pay:'创建分店',sub_later:'取消',status_tab_ads:'广告',status_tab_company:'动态',status_tab_following:'关注',ads_title:'全球广告',ads_subtitle:'所有广告24小时后过期。',ads_no_ads:'暂无广告',ads_post:'发布广告',ads_title_label:'广告标题',ads_content_label:'广告内容',ads_image_label:'图片',ads_video_label:'视频',ads_company_name_label:'公司名称',ads_confirm_delete:'删除这条广告？',ads_viewers:'次浏览',toast_ad_posted_free:'✅ 广告已发布！',toast_ad_deleted:'广告已删除。',status_title:'公司动态',status_post_new:'发布动态',status_new_title:'新动态',status_image_label:'图片',status_text_label:'文字',status_you:'您',status_delete:'删除',ad_comments:'评论',ad_no_comments:'暂无评论。',ad_write_comment:'写下评论...',ad_post_comment:'发布',ad_comment_added:'评论已发布！',ad_comment_deleted:'评论已删除。',profile_view_title:'资料',profile_view_role:'角色',profile_view_company:'公司',profile_view_email:'电子邮箱',profile_view_phone:'电话',profile_view_close:'关闭',branch_perms:'经理权限',perm_net_profit:'净利润',perm_expenses:'支出',perm_on:'可见',perm_off:'隐藏',add_branch:'添加分店',branch_th_branch:'分店',branch_th_address:'地址',branch_th_username:'用户名',branch_th_status:'状态',branch_th_sub:'订阅',branch_th_actions:'操作',branch_main:'总店',branch_reset:'重置',no_branches:'暂无分店。',history:'历史记录',super_dashboard:'超级管理员仪表盘',companies:'公司',active_label:'有效',blocked_label:'已封禁',all_companies:'所有公司',company:'公司',owner_label:'所有者',phone_label:'电话',status_label:'状态',actions_label:'操作',no_companies:'暂无公司。',block_btn:'封禁',unblock_btn:'解封',delete_btn:'删除',users_btn:'用户',super_tab_companies:'公司',super_tab_employees:'MeX 员工',super_add_employee:'添加员工',super_add_company:'添加公司',mex_emp_title:'MeX 员工',mex_emp_name:'员工姓名',mex_emp_phone:'电话',mex_emp_code:'促销代码',mex_emp_registrations:'注册数',mex_emp_actions:'操作',mex_emp_modal_title:'添加 MeX 员工',mex_emp_modal_name:'姓名 *',mex_emp_modal_phone:'电话（可选）',mex_emp_copied:'促销代码已复制！',mex_cred_success_title:'✅ 员工已创建',mex_cred_username:'用户名',mex_cred_password:'默认密码',mex_cred_promo:'促销代码',mex_cred_copy_all:'全部复制',mex_cred_done:'完成',mex_dash_welcome:'欢迎回来',mex_companies_title:'我注册的公司',mex_change_password_title:'更改密码',mex_change_password_current:'当前密码',mex_change_password_new:'新密码',mex_change_password_confirm:'确认新密码',mex_change_password_save:'更改密码',mex_password_changed:'✅ 密码修改成功！',select_option:'-- 请选择 --',write_comment:'写下评论...',username_label:'用户名',store_label:'门店',view_profile:'查看资料',not_set:'未设置',verified:'已验证',follow:'关注',following:'已关注',unfollow:'取消关注',ia_posts:'帖子',ia_followers:'关注者',ia_no_posts:'暂无帖子。',following_empty:'您还没有关注任何公司。',profile_bio:"简介",profile_bio_hint:"最多300个字符。",social_links_edit:"社交媒体链接（可选）",social_whatsapp:"WhatsApp",social_instagram:"Instagram",social_facebook:"Facebook",social_tiktok:"TikTok",social_website:"网站",social_whatsapp_ph:"+255 xxx xxx xxx",social_url_ph:"https://...",promote_btn:"推广",promote_modal_title:"推广您的广告",promote_active:"已推广",promote_plan_48h:"48小时",promote_plan_weekly:"1周",promote_best_value:"最佳",promote_pay_btn:"推广",promote_success_48h:"✅ 广告已推广48小时！",promote_success_weekly:"✅ 广告已推广1周！",promote_hours_left:"剩余 {hours} 小时",promote_minutes_left:"剩余 {minutes} 分钟",branch_create_free:"创建分店",branch_free_desc:"添加分店是免费的。",sub_status_active:'有效',sub_status_expired:'已过期'
 }
 };
 const LANG_NAMES = { en: 'English', sw: 'Kiswahili', fr: 'Français', zh: '中文' };
@@ -3562,6 +3560,10 @@ function saveTenants(ts) {
 }
 function getTenant(id) { return getAllTenants().find(t0 => t0.id === id); }
 function getCurrentUser() {
+    if (isSuperAdmin) {
+        const su = getTenantData('_superadminUser', null);
+        if (su) return su;
+    }
     if (isMexEmployee && currentMexEmployeeId) {
         const emp = findMexEmployeeById(currentMexEmployeeId);
         if (emp) return {
@@ -3595,7 +3597,7 @@ function persistTenantBranches(list) {
         return {
             id: b.id || (i + 1), name: b.name, address: b.address || '', tin: b.tin || '',
             isMain: !!(b.isMain || b.name === mainName),
-            subscription: { active: true, expiry: FREE_EXPIRY, paidAmount: 0, paymentDate: Date.now() },
+            subscription: b.subscription || { active: true, expiry: FREE_EXPIRY, paidAmount: 0, paymentDate: Date.now() },
             permissions: b.permissions || { ...DEFAULT_BRANCH_PERMS }
         };
     });
@@ -3849,6 +3851,7 @@ function migrateBranchPermissions() {
                 if (typeof b.permissions.seeNetProfit !== 'boolean') { b.permissions.seeNetProfit = true; changed = true; }
                 if (typeof b.permissions.seeExpenses !== 'boolean') { b.permissions.seeExpenses = true; changed = true; }
             }
+            if (!b.subscription) { b.subscription = { active: true, expiry: FREE_EXPIRY, paidAmount: 0, paymentDate: Date.now() }; changed = true; }
         });
     });
     if (changed) saveTenants(ts);
@@ -3888,9 +3891,9 @@ function toggleBranchPermission(branchName, perm) {
     persistTenantBranches(t0.branches);
     const on = b.permissions[perm];
     let msg = '';
-    if (perm === 'seeNetProfit') msg = on ? t('perm_net_profit_on') : t('perm_net_profit_off');
-    else msg = on ? t('perm_expenses_on') : t('perm_expenses_off');
-    showToast(msg.replace('{branch}', branchName), on ? 'success' : 'warning');
+    if (perm === 'seeNetProfit') msg = on ? 'Manager CAN see Net Profit for ' + branchName : 'Manager CANNOT see Net Profit for ' + branchName;
+    else msg = on ? 'Manager CAN see Expenses for ' + branchName : 'Manager CANNOT see Expenses for ' + branchName;
+    showToast(msg, on ? 'success' : 'warning');
     navigate('branches');
 }
 
@@ -3929,11 +3932,11 @@ function getAdRemainingMs(ad) {
 }
 function formatAdExpiry(ad) {
     const ms = getAdRemainingMs(ad);
-    if (ms <= 0) return t('ads_expired');
+    if (ms <= 0) return 'Expired';
     const hours = Math.floor(ms / (60 * 60 * 1000));
     const minutes = Math.floor((ms % (60 * 60 * 1000)) / (60 * 1000));
-    if (hours >= 1) return (t('ads_expires_hours') || 'Expires in {hours}h').replace('{hours}', hours);
-    return (t('ads_expires_minutes') || 'Expires in {minutes}m').replace('{minutes}', minutes);
+    if (hours >= 1) return 'Expires in ' + hours + 'h';
+    return 'Expires in ' + minutes + 'm';
 }
 function cleanupExpiredAds() {
     const ads = getGlobalAds();
@@ -4051,8 +4054,8 @@ function toggleFollowTenant(tenantId) {
     const idx = list.indexOf(tenantId);
     const t0 = getTenant(tenantId);
     const cn = t0 ? t0.companyName : 'Company';
-    if (idx === -1) { list.push(tenantId); saveFollows(list); showToast((t('toast_following') || '✅ Now following {company}').replace('{company}', cn), 'success'); }
-    else { list.splice(idx, 1); saveFollows(list); showToast((t('toast_unfollowed') || 'Unfollowed {company}').replace('{company}', cn), 'info'); }
+    if (idx === -1) { list.push(tenantId); saveFollows(list); showToast('✅ Now following ' + cn, 'success'); }
+    else { list.splice(idx, 1); saveFollows(list); showToast('Unfollowed ' + cn, 'info'); }
     const av = document.querySelector('.sidebar-nav .nav-item.active');
     if (av && (av.dataset.view === 'status')) navigate('status');
     else if (document.getElementById('modalOverlay').classList.contains('show')) { if (amvLastProfileAdId) openAdAuthorProfile(amvLastProfileAdId); }
@@ -4104,9 +4107,9 @@ function renderFollowButton(tenantId, isSuper) {
     if (!tenantId) return '';
     if (currentTenantId === tenantId) return '';
     const following = isFollowing(tenantId);
-    return `<button class="follow-btn ${following ? 'following' : ''}" onclick="event.stopPropagation();toggleFollowTenant('${tenantId}')"><i class="fas fa-user-plus"></i><i class="fas fa-user-check"></i><span class="follow-btn-text">${following ? (t('following') || 'Following') : (t('follow') || 'Follow')}</span></button>`;
+    return `<button class="follow-btn ${following ? 'following' : ''}" onclick="event.stopPropagation();toggleFollowTenant('${tenantId}')"><i class="fas fa-user-plus"></i><i class="fas fa-user-check"></i><span class="follow-btn-text">${following ? 'Following' : 'Follow'}</span></button>`;
 }
-function renderVerifiedBadge(size) { const cls = size ? ('verified-badge ' + size) : 'verified-badge'; return `<span class="${cls}" title="${t('verified') || 'Verified'}"><i class="fas fa-check"></i></span>`; }
+function renderVerifiedBadge(size) { const cls = size ? ('verified-badge ' + size) : 'verified-badge'; return `<span class="${cls}" title="Verified"><i class="fas fa-check"></i></span>`; }
 
 function getSuperAdminPhoto() {
     try { const raw = localStorage.getItem(SUPER_ADMIN_PHOTO_KEY); if (raw) return raw; } catch (e) {}
@@ -4356,7 +4359,7 @@ function renderSingleStatusCard(s, user) {
                     <div class="status-actions">
                         <button class="btn ${isLiked ? 'btn-primary' : 'btn-secondary'} btn-sm" onclick="toggleLike('${s.id}')" style="display:inline-flex;align-items:center;gap:4px;"><i class="fas fa-heart"></i> ${likeCount}</button>
                         <button class="btn btn-secondary btn-sm" onclick="toggleCommentInput('${s.id}')" style="display:inline-flex;align-items:center;gap:4px;"><i class="fas fa-comment"></i> ${comments.length}</button>
-                        <button class="viewer-badge" onclick="openViewersModal('status','${s.id}')"><i class="fas fa-eye"></i> ${viewerCount} ${t('ads_viewers')}</button>
+                        <button class="viewer-badge" onclick="openViewersModal('status','${s.id}')"><i class="fas fa-eye"></i> ${viewerCount}</button>
                     </div>
                     <div class="status-comments">
                         <div id="comment-input-${s.id}" style="display:none;margin-bottom:6px;">
@@ -5006,13 +5009,13 @@ function renderCompaniesTab() {
                 ${avatarHtml}
                 <div style="flex:1;min-width:0;">
                     <div style="font-weight:700;font-size:.95rem;display:flex;align-items:center;gap:5px;flex-wrap:wrap;">${escapeHtml(t0.companyName)}${renderVerifiedBadge()}</div>
-                    <div style="font-size:.72rem;color:var(--text-muted);margin-top:2px;"><i class="fas fa-user-friends"></i> ${followers} ${t('ia_followers') || 'followers'} &nbsp;·&nbsp; <i class="fas fa-bullhorn"></i> ${adsCount} ${t('ia_posts') || 'ads'}</div>
+                    <div style="font-size:.72rem;color:var(--text-muted);margin-top:2px;"><i class="fas fa-user-friends"></i> ${followers} followers &nbsp;·&nbsp; <i class="fas fa-bullhorn"></i> ${adsCount} ads</div>
                 </div>
             </div>
             ${renderFollowButton(t0.id)}
         </div>`;
     }).join('');
-    return `<div class="section-header"><h2><i class="fas fa-building" style="color:#0095F6;"></i> ${t('companies') || 'Companies'}</h2><span class="text-muted text-sm">Follow companies to see their ads in "${t('status_tab_following')}" tab</span></div><div>${html}</div>`;
+    return `<div class="section-header"><h2><i class="fas fa-building" style="color:#0095F6;"></i> Companies</h2><span class="text-muted text-sm">Follow companies to see their ads in "Following" tab</span></div><div>${html}</div>`;
 }
 function renderFollowingTab() {
     const user = getCurrentUser();
@@ -5028,9 +5031,9 @@ function renderFollowingTab() {
         setupAdMediaDoubleTap();
         startPromotedTicker();
     }, 60);
-    if (follows.length === 0) return `<div class="card"><div class="card-body"><div class="empty-state"><i class="fas fa-user-plus" style="font-size:3.5rem;color:#0095F6;"></i><h3>${t('ia_followers') || 'Followers'}</h3><p>${t('following_empty') || 'You are not following any company yet.'}</p></div></div></div>`;
-    if (allAds.length === 0) return `<div class="card"><div class="card-body"><div class="empty-state"><i class="fas fa-bullhorn"></i><h3>${t('ads_no_ads')}</h3><p>${t('following_empty')}</p></div></div></div>`;
-    return `<div class="section-header"><h2><i class="fas fa-user-check" style="color:#0095F6;"></i> ${t('status_tab_following')}</h2><span class="text-muted text-sm"><i class="fas fa-users"></i> ${follows.length} ${t('companies') || 'companies'}</span></div><div>${adsHtml}</div>`;
+    if (follows.length === 0) return `<div class="card"><div class="card-body"><div class="empty-state"><i class="fas fa-user-plus" style="font-size:3.5rem;color:#0095F6;"></i><h3>Followers</h3><p>You are not following any company yet.</p></div></div></div>`;
+    if (allAds.length === 0) return `<div class="card"><div class="card-body"><div class="empty-state"><i class="fas fa-bullhorn"></i><h3>${t('ads_no_ads')}</h3><p>You are not following any company yet.</p></div></div></div>`;
+    return `<div class="section-header"><h2><i class="fas fa-user-check" style="color:#0095F6;"></i> Following</h2><span class="text-muted text-sm"><i class="fas fa-users"></i> ${follows.length} companies</span></div><div>${adsHtml}</div>`;
 }
 function renderAdCard(ad, user, myAvatar, canPost, showDoubleTap) {
     const isSuper = ad.postedBy === 'super';
@@ -5057,7 +5060,7 @@ function renderAdCard(ad, user, myAvatar, canPost, showDoubleTap) {
     let mediaPlaceholder = '';
     if (hasInlineVideo) mediaPlaceholder = `<video class="mex-auto-video" src="${ad.video}" loop playsinline webkit-playsinline preload="none" data-loaded="0"></video>`;
     else if (hasInlineImage) mediaPlaceholder = `<img src="${ad.image}" alt="Ad"/>`;
-    else mediaPlaceholder = `<div class="ad-media-placeholder" id="ad-media-placeholder-${ad.id}"><i class="fas fa-spinner fa-spin" style="font-size:1.5rem;margin-bottom:6px;"></i>${t('ads_media_loading')}</div>`;
+    else mediaPlaceholder = `<div class="ad-media-placeholder" id="ad-media-placeholder-${ad.id}"><i class="fas fa-spinner fa-spin" style="font-size:1.5rem;margin-bottom:6px;"></i>Loading...</div>`;
     let commentsHtml = '';
     if (commentsCount === 0) commentsHtml = `<div class="ad-comment-empty">${t('ad_no_comments')}</div>`;
     else {
@@ -5070,7 +5073,7 @@ function renderAdCard(ad, user, myAvatar, canPost, showDoubleTap) {
             if (isSuperAdmin) isOwnComment = cIsSuper;
             else if (isMexEmployee) isOwnComment = cIsMex && c.userId === currentMexEmployeeId;
             else isOwnComment = !cIsSuper && !cIsMex && c.tenantId === currentTenantId && c.userId === (user ? user.id : -1);
-            const deleteBtn = isOwnComment ? `<button class="ad-comment-delete" onclick="deleteAdComment('${ad.id}','${c.id}')" title="${t('ad_delete_comment')}"><i class="fas fa-times"></i></button>` : '';
+            const deleteBtn = isOwnComment ? `<button class="ad-comment-delete" onclick="deleteAdComment('${ad.id}','${c.id}')" title="Delete"><i class="fas fa-times"></i></button>` : '';
             commentsHtml += `<div class="ad-comment-item">
                 <div class="ad-comment-avatar"><img src="${cAvatar}" alt="${c.userName || ''}"/></div>
                 <div class="ad-comment-body">
@@ -5089,14 +5092,14 @@ function renderAdCard(ad, user, myAvatar, canPost, showDoubleTap) {
     }
     const followBtn = (!isSuper && ad.tenantId && !isSuperAdmin && !isMexEmployee && ad.tenantId !== currentTenantId) ? `<div style="margin-left:auto;">${renderFollowButton(ad.tenantId, false)}</div>` : '';
     const mediaWrapperClass = showDoubleTap ? 'status-image-wrap ad-double-tap-media' : 'status-image-wrap';
-    const mediaWrapperAttr = showDoubleTap ? `data-ad-id="${ad.id}" title="${t('ad_media_click_expand')}"` : '';
-    const hintHtml = showDoubleTap ? `<div class="ad-double-tap-hint"><i class="fas fa-expand"></i> ${t('ad_media_click_expand')}</div>` : '';
-    const promotedHeaderBadge = isPromoted ? `<span class="promoted-badge" style="margin-right:6px;"><i class="fas fa-rocket"></i> ${t('promote_active')}</span>` : '';
-    const promoteBtn = canPromote ? `<button class="btn-promote" onclick="event.stopPropagation();openPromoteAdModal('${ad.id}')" title="Promote"><i class="fas fa-rocket"></i> ${t('promote_btn')}</button>` : '';
+    const mediaWrapperAttr = showDoubleTap ? `data-ad-id="${ad.id}" title="Click to open"` : '';
+    const hintHtml = showDoubleTap ? `<div class="ad-double-tap-hint"><i class="fas fa-expand"></i> Click to open</div>` : '';
+    const promotedHeaderBadge = isPromoted ? `<span class="promoted-badge" style="margin-right:6px;"><i class="fas fa-rocket"></i> SPONSORED</span>` : '';
+    const promoteBtn = canPromote ? `<button class="btn-promote" onclick="event.stopPropagation();openPromoteAdModal('${ad.id}')" title="Promote"><i class="fas fa-rocket"></i> Promote</button>` : '';
     return `<div class="card${isPromoted ? ' ad-promoted' : ''}${hasVideo ? ' ad-video-card' : ''}" style="margin-bottom:16px;padding:16px;">
         <div class="status-card">
             <div class="status-header">
-                <img src="${avatarUrl}" class="status-avatar" alt="${companyName}" title="${t('view_profile')}" onclick="openAdAuthorProfile('${ad.id}')" style="cursor:pointer;" onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?background=128C7E&color=fff&name=${encodeURIComponent(companyName)}';"/>
+                <img src="${avatarUrl}" class="status-avatar" alt="${companyName}" title="View profile" onclick="openAdAuthorProfile('${ad.id}')" style="cursor:pointer;" onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?background=128C7E&color=fff&name=${encodeURIComponent(companyName)}';"/>
                 <div class="status-meta">
                     <div class="status-name" onclick="openAdAuthorProfile('${ad.id}')" style="cursor:pointer;">
                         ${promotedHeaderBadge}
@@ -5117,7 +5120,7 @@ function renderAdCard(ad, user, myAvatar, canPost, showDoubleTap) {
                     <h3 style="font-size:1.05rem;font-weight:700;margin:0 0 6px;color:var(--text-primary);">${ad.title}</h3>
                     <p class="status-text">${ad.content}</p>
                     <div class="status-actions" style="margin-top:10px;flex-wrap:wrap;">
-                        <button class="viewer-badge" onclick="event.stopPropagation();openViewersModal('ad','${ad.id}')"><i class="fas fa-eye"></i> ${viewerCount} ${t('ads_viewers')}</button>
+                        <button class="viewer-badge" onclick="event.stopPropagation();openViewersModal('ad','${ad.id}')"><i class="fas fa-eye"></i> ${viewerCount}</button>
                         ${isPromoted ? '' : `<span class="ad-expiry-badge ${isUrgent ? 'urgent' : ''}"><i class="fas fa-hourglass-half"></i> ${expiryLabel}</span>`}
                         ${isSuper ? `<span class="badge" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;"><i class="fas fa-crown"></i> Admin</span>` : ''}
                     </div>
@@ -5149,7 +5152,7 @@ async function loadAdMediaForList(ads) {
             if (!wrap) continue;
             const hint = wrap.querySelector('.ad-double-tap-hint');
             if (!media || !media.blob) {
-                wrap.innerHTML = `<div class="ad-media-placeholder"><i class="fas fa-image" style="font-size:1.5rem;opacity:.4;"></i>${t('ads_media_unavailable')}</div>`;
+                wrap.innerHTML = `<div class="ad-media-placeholder"><i class="fas fa-image" style="font-size:1.5rem;opacity:.4;"></i>No media</div>`;
                 if (hint) wrap.appendChild(hint);
                 continue;
             }
@@ -5180,7 +5183,7 @@ function renderCompanyStatusTab(user) {
     </div>
     <div style="background:var(--input-bg);border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:14px;font-size:.8rem;color:var(--text-muted);display:flex;gap:8px;align-items:flex-start;">
         <i class="fas fa-lock" style="margin-top:2px;"></i>
-        <span>${t('status_subtitle') || 'Status is visible only within your company and its branches.'}</span>
+        <span>Status is visible only within your company and its branches.</span>
     </div>
     ${statusHtml || `<div class="card"><div class="card-body"><div class="empty-state"><i class="fas fa-images"></i><h3>${t('status_post_new')}</h3><p>${t('dash_status_empty')}</p></div></div></div>`}`;
 }
@@ -5227,11 +5230,11 @@ async function submitAd(e, isPaid) {
     let mediaSaved = false;
     if (mediaFile) {
         if (mediaFile.type.startsWith('video/')) {
-            if (mediaFile.size > MAX_VIDEO_BYTES) { showToast(t('ads_video_too_large'), 'error'); return; }
+            if (mediaFile.size > MAX_VIDEO_BYTES) { showToast('Video too large', 'error'); return; }
             let dur = 0;
             try { dur = await getVideoDuration(mediaFile); }
-            catch (err) { showToast(t('ads_video_invalid'), 'error'); return; }
-            if (dur > MAX_VIDEO_SECONDS) { showToast((t('ads_video_too_long') || '') + ' (' + Math.round(dur) + 's)', 'error'); return; }
+            catch (err) { showToast('Invalid video', 'error'); return; }
+            if (dur > MAX_VIDEO_SECONDS) { showToast('Video too long (' + Math.round(dur) + 's)', 'error'); return; }
             const ok = await saveAdMedia(adId, mediaFile, 'video', mediaFile.name);
             if (!ok) { showToast('Could not save video. Try again.', 'error'); return; }
             mediaSaved = ok;
@@ -5260,7 +5263,7 @@ async function submitAd(e, isPaid) {
     };
     addGlobalAd(ad);
     closeModal();
-    showToast(t('toast_ad_posted_free'), 'success');
+    showToast('✅ Ad posted!', 'success');
     const canPromote = isSuperAdmin || (!isMexEmployee && u && u.role === 'owner');
     if (canPromote) {
         setTimeout(() => {
@@ -5276,13 +5279,13 @@ async function submitAd(e, isPaid) {
 function deleteGlobalAdConfirm(id) {
     const ad = getGlobalAds().find(a => a.id === Number(id));
     if (!ad) { showToast('Not found.', 'error'); return; }
-    if (!isSuperAdmin && ad.tenantId !== currentTenantId) { showToast(t('toast_ad_delete_denied'), 'error'); return; }
-    const msg = isAdPromoted(ad) ? t('promote_confirm_delete') : t('ads_confirm_delete');
+    if (!isSuperAdmin && ad.tenantId !== currentTenantId) { showToast('Denied.', 'error'); return; }
+    const msg = isAdPromoted(ad) ? 'Delete this promoted ad?' : 'Delete this ad?';
     if (!confirm(msg)) return;
     deleteAdMedia(id);
     if (adObjectUrls[id]) { try { URL.revokeObjectURL(adObjectUrls[id]); } catch (e) {} delete adObjectUrls[id]; }
     deleteGlobalAd(id);
-    showToast(t('toast_ad_deleted'), 'success');
+    showToast('Ad deleted.', 'success');
     navigate('status');
 }
 
@@ -5444,6 +5447,10 @@ views.expenses = function () {
     </div>`;
 };
 
+/* ============================================================
+   BRANCHES VIEW — Columns: BRANCH, ADDRESS, USERNAME, STATUS,
+   SUB, MANAGER PERMISSIONS, ACTIONS
+   ============================================================ */
 views.branches = function () {
     if (isSuperAdmin || isMexEmployee) return '<div class="card"><div class="card-body"><p>Not available.</p></div></div>';
     const u = getCurrentUser();
@@ -5453,9 +5460,6 @@ views.branches = function () {
     const branches = t0.branches || [];
     const us = getTenantData('users', []);
     let oc = 0;
-    const allProducts = getTenantData('products', []);
-    const allSales = getTenantData('sales', []);
-    const allExpenses = getTenantData('expenses', []);
     const bh = branches.map((b, idx) => {
         const bu = us.find(x => x.store === b.name && x.role === 'employee');
         const isO = bu ? isUserOnline(bu.id) : false;
@@ -5463,24 +5467,22 @@ views.branches = function () {
         const sc = isO ? 'online' : 'offline';
         const sl = isO ? t('attendance_online') : t('attendance_offline');
         const main = b.name === u.store;
-        const itemCount = allProducts.filter(x => x.store === b.name).length;
-        const saleCount = allSales.filter(x => x.store === b.name).length;
-        const expCount = allExpenses.filter(x => x.store === b.name).length;
         const p = b.permissions || DEFAULT_BRANCH_PERMS;
+        const subActive = !b.subscription || b.subscription.active !== false;
+        const subHtml = subActive
+            ? `<span style="display:inline-flex;align-items:center;gap:4px;background:rgba(16,185,129,.15);color:var(--accent-4);font-weight:700;padding:3px 12px;border-radius:20px;white-space:nowrap;font-size:.7rem;"><i class="fas fa-check-circle"></i> ${t('sub_status_active')}</span>`
+            : `<span style="display:inline-flex;align-items:center;gap:4px;background:rgba(239,68,68,.15);color:var(--accent-danger);font-weight:700;padding:3px 12px;border-radius:20px;white-space:nowrap;font-size:.7rem;"><i class="fas fa-times-circle"></i> ${t('sub_status_expired')}</span>`;
         const permCell = main ? `<span class="text-muted text-sm">—</span>` : `<div class="perm-cell">
                 <button class="perm-toggle ${p.seeNetProfit ? 'on' : 'off'}" onclick="toggleBranchPermission('${b.name}','seeNetProfit')" title="${t('perm_net_profit')}"><i class="fas fa-${p.seeNetProfit ? 'eye' : 'eye-slash'}"></i> ${t('perm_net_profit')}</button>
                 <button class="perm-toggle ${p.seeExpenses ? 'on' : 'off'}" onclick="toggleBranchPermission('${b.name}','seeExpenses')" title="${t('perm_expenses')}"><i class="fas fa-${p.seeExpenses ? 'eye' : 'eye-slash'}"></i> ${t('perm_expenses')}</button>
                 <span class="perm-hint">${t('perm_hint')}</span>
             </div>`;
         return `<tr>
-            <td>${idx + 1}</td>
-            <td>${b.name}${main ? ' 🏠' : ''}</td>
+            <td><strong>${b.name}</strong>${main ? ' 🏠' : ''}</td>
             <td>${b.address || 'N/A'}</td>
-            <td>${itemCount}</td>
-            <td>${saleCount}</td>
-            <td>${expCount}</td>
             <td>${bu ? bu.username : '—'}</td>
             <td><span class="online-status ${sc}"><span class="dot ${sc}"></span>${sl}</span></td>
+            <td>${subHtml}</td>
             <td>${permCell}</td>
             <td>${bu ? `<button class="btn btn-xs btn-secondary" onclick="resetBranchPassword('${bu.id}')">${t('branch_reset')}</button>` : ''}${!main ? `<button class="btn btn-danger btn-xs" onclick="deleteBranch('${b.name}')"><i class="fas fa-trash"></i></button>` : `<span class="text-muted text-sm">${t('branch_main')}</span>`}</td>
         </tr>`;
@@ -5493,7 +5495,18 @@ views.branches = function () {
     <div class="card">
         <div class="card-body">
             <div class="table-wrap">
-                <table><thead><tr><th>#</th><th>${t('branch_th_branch')}</th><th>${t('branch_th_address')}</th><th>Items</th><th>Sales</th><th>Expenses</th><th>${t('branch_th_username')}</th><th>${t('branch_th_status')}</th><th>${t('branch_perms')}</th><th>${t('branch_th_actions')}</th></tr></thead><tbody>${bh || `<tr class="empty-row"><td colspan="10">${t('no_branches')}</td></tr>`}</tbody></table>
+                <table>
+                    <thead><tr>
+                        <th>${t('branch_th_branch')}</th>
+                        <th>${t('branch_th_address')}</th>
+                        <th>${t('branch_th_username')}</th>
+                        <th>${t('branch_th_status')}</th>
+                        <th>${t('branch_th_sub')}</th>
+                        <th>${t('branch_perms')}</th>
+                        <th>${t('branch_th_actions')}</th>
+                    </tr></thead>
+                    <tbody>${bh || `<tr class="empty-row"><td colspan="7">${t('no_branches')}</td></tr>`}</tbody>
+                </table>
             </div>
         </div>
     </div>`;
@@ -5552,7 +5565,7 @@ views.roles = function () {
         const s = document.querySelector('.role-select[data-userid="' + uid + '"]');
         if(!s) return;
         if(confirm('Change role?')) changeUserRole(uid, s.value);
-    }));
+    });
     <\/script>`;
 };
 function renderRolePermissionMatrix() {
@@ -5804,40 +5817,35 @@ function generateInsightsText(sales) {
     const bNames = Object.keys(bSales);
     const bf = Math.max(1, bNames.length);
     let insights = [];
-    if (totalSales > 1000000 * bf * .5) insights.push(t('insight_overall_excellent').replace(/\{total\}/g, fmtMoney(totalSales)).replace(/\{count\}/g, cnt));
-    else if (totalSales > 300000 * bf * .5) insights.push(t('insight_overall_good').replace(/\{total\}/g, fmtMoney(totalSales)).replace(/\{count\}/g, cnt));
-    else if (totalSales > 50000 * bf * .5) insights.push(t('insight_overall_moderate').replace(/\{total\}/g, fmtMoney(totalSales)).replace(/\{count\}/g, cnt));
-    else insights.push(t('insight_overall_low').replace(/\{total\}/g, fmtMoney(totalSales)).replace(/\{count\}/g, cnt));
+    if (totalSales > 1000000 * bf * .5) insights.push('🏆 Excellent sales! Total ' + fmtMoney(totalSales) + ' from ' + cnt + ' transactions.');
+    else if (totalSales > 300000 * bf * .5) insights.push('📊 Good sales! Total ' + fmtMoney(totalSales) + ' from ' + cnt + ' transactions.');
+    else if (totalSales > 50000 * bf * .5) insights.push('📈 Room to improve. ' + fmtMoney(totalSales) + ' from ' + cnt + '.');
+    else insights.push('⚠️ Low sales: ' + fmtMoney(totalSales) + ' from ' + cnt + '.');
     if (bNames.length > 1) {
         let bb = '', bs = 0, wb = '', ws = Infinity;
         bNames.forEach(b => { if (bSales[b] > bs) { bs = bSales[b]; bb = b; } if (bSales[b] < ws) { ws = bSales[b]; wb = b; } });
-        if (bb && bs > 0) insights.push(t('insight_branch_best').replace(/\{branch\}/g, bb).replace(/\{amount\}/g, fmtMoney(bs)).replace(/\{pct\}/g, totalSales > 0 ? ((bs / totalSales) * 100).toFixed(1) : 0).replace(/\{count\}/g, bCounts[bb] || 0));
+        if (bb && bs > 0) insights.push('🏆 Branch "' + bb + '" leads with ' + fmtMoney(bs) + '.');
         if (wb && ws > 0) {
             const diff = bs - ws;
             const pctD = bs > 0 ? ((diff / bs) * 100).toFixed(0) : 0;
-            const pct = totalSales > 0 ? ((ws / totalSales) * 100).toFixed(1) : 0;
-            const users = getTenantData('users', []);
-            const bm = users.find(u => u.store === wb && (u.role === 'employee' || u.role === 'admin'));
-            const mgr = bm ? (bm.fullName || bm.username) : 'Manager';
             let m = '';
-            if (pctD > 50) m = t('insight_branch_worst_severe');
-            else if (pctD > 20) m = t('insight_branch_worst_moderate');
-            else m = t('insight_branch_worst_mild');
-            m = m.replace(/\{branch\}/g, wb).replace(/\{amount\}/g, fmtMoney(ws)).replace(/\{pct\}/g, pct).replace(/\{diff\}/g, pctD).replace(/\{manager\}/g, mgr);
+            if (pctD > 50) m = '⚠️ Branch "' + wb + '" underperforming: ' + fmtMoney(ws) + '.';
+            else if (pctD > 20) m = '📉 Branch "' + wb + '" lagging: ' + fmtMoney(ws) + '.';
+            else m = 'ℹ️ Branch "' + wb + '": ' + fmtMoney(ws) + '.';
             insights.push(m);
         }
     } else if (bNames.length === 1) {
         const sb = bNames[0];
         const avg = cnt > 0 ? (totalSales / cnt) : 0;
-        if (cnt < 5) insights.push(t('insight_single_branch_few_transactions').replace(/\{branch\}/g, sb).replace(/\{count\}/g, cnt));
-        else if (avg < 50000) insights.push(t('insight_single_branch_low_avg').replace(/\{branch\}/g, sb).replace(/\{avg\}/g, fmtMoney(avg)));
-        else insights.push(t('insight_single_branch_steady').replace(/\{branch\}/g, sb).replace(/\{count\}/g, cnt));
+        if (cnt < 5) insights.push('📍 Only ' + cnt + ' transactions.');
+        else if (avg < 50000) insights.push('📍 Avg: ' + fmtMoney(avg) + '.');
+        else insights.push('📍 Steady with ' + cnt + ' transactions.');
     }
     const ps = {};
     sales.forEach(s => { const p = getProduct(s.productId); const n = p ? p.name : 'Unknown'; ps[n] = (ps[n] || 0) + s.quantity; });
     let tp = '', tq = 0;
     for (const [n, q] of Object.entries(ps)) { if (q > tq) { tq = q; tp = n; } }
-    if (tp && tq > 0) insights.push(t('insight_top_product').replace(/\{product\}/g, tp).replace(/\{qty\}/g, tq));
+    if (tp && tq > 0) insights.push('📦 Best-seller: "' + tp + '" (' + tq + ').');
     return insights.filter(m => m && m.length > 0).join('\n\n');
 }
 function sendWhatsAppReport() {
@@ -5951,7 +5959,7 @@ function submitTransfer(e) {
     op.quantity -= q;
     bp.quantity += q;
     persistProducts(ps);
-    const msg = t('toast_transfer_done').replace(/\{qty\}/g, q).replace(/\{product\}/g, op.name).replace(/\{branch\}/g, bn);
+    const msg = 'Stock transferred! ' + q + ' of ' + op.name + ' to ' + bn + '.';
     rd.innerHTML = `<div style="background:rgba(16,185,129,.12);color:var(--accent-4);padding:10px;border-radius:8px;">✅ ${msg}</div>`;
     updateLowStockBadge();
     showToast(msg, 'success');
@@ -5988,12 +5996,12 @@ function updateSaleTotalPreview() {
     const diff = origPrice - price;
     const discount = diff > 0 ? diff * qty : 0;
     let html = '';
-    html += `<div class="stp-row"><span class="stp-label">${t('modal_sale_original_price')}</span><span class="stp-value">${fmtMoney(origPrice)}</span></div>`;
-    html += `<div class="stp-row"><span class="stp-label">${t('modal_sale_unit_price')}</span><span class="stp-value ${diff > 0 ? 'disc' : (diff < 0 ? 'up' : '')}">${fmtMoney(price)}</span></div>`;
-    if (discount > 0) html += `<div class="stp-row"><span class="stp-label"><i class="fas fa-tag"></i> ${t('modal_sale_discount')}</span><span class="stp-value disc">-${fmtMoney(discount)}</span></div>`;
-    else if (diff < 0) html += `<div class="stp-row"><span class="stp-label"><i class="fas fa-arrow-up"></i> ${t('receipt_price_adjust')}</span><span class="stp-value up">+${fmtMoney(Math.abs(diff) * qty)}</span></div>`;
-    html += `<div class="stp-total"><span>${t('modal_sale_total')}</span><span class="stp-total-value">${fmtMoney(total)}</span></div>`;
-    html += `<div class="stp-note"><i class="fas fa-info-circle"></i><span>${t('modal_sale_price_hint')}</span></div>`;
+    html += `<div class="stp-row"><span class="stp-label">Original Price</span><span class="stp-value">${fmtMoney(origPrice)}</span></div>`;
+    html += `<div class="stp-row"><span class="stp-label">Unit Price</span><span class="stp-value ${diff > 0 ? 'disc' : (diff < 0 ? 'up' : '')}">${fmtMoney(price)}</span></div>`;
+    if (discount > 0) html += `<div class="stp-row"><span class="stp-label"><i class="fas fa-tag"></i> Discount</span><span class="stp-value disc">-${fmtMoney(discount)}</span></div>`;
+    else if (diff < 0) html += `<div class="stp-row"><span class="stp-label"><i class="fas fa-arrow-up"></i> Price Adjustment</span><span class="stp-value up">+${fmtMoney(Math.abs(diff) * qty)}</span></div>`;
+    html += `<div class="stp-total"><span>Total</span><span class="stp-total-value">${fmtMoney(total)}</span></div>`;
+    html += `<div class="stp-note"><i class="fas fa-info-circle"></i><span>You can change the price for discounts or price changes.</span></div>`;
     box.innerHTML = html;
     box.style.display = 'block';
 }
@@ -6048,23 +6056,23 @@ function generateEFDReceiptHTML(s) {
     const origUnit = Number(s.origUnitPrice) || Number(s.originalPrice) || 0;
     return `<div class="receipt-header">
         <div class="receipt-brand">${storeName}</div>
-        <div class="receipt-sub">${t('receipt_tin')}: ${st || 'N/A'}</div>
+        <div class="receipt-sub">TIN: ${st || 'N/A'}</div>
         <div class="receipt-sub">${sa || 'N/A'}</div>
-        <div class="receipt-number">${t('receipt_number')}: ${rid}</div>
+        <div class="receipt-number">Receipt Number: ${rid}</div>
     </div>
-    <div class="receipt-row"><span class="label">${t('receipt_date')}:</span><span class="value">${fmtDateTime(s.date)}</span></div>
-    <div class="receipt-row"><span class="label">${t('receipt_store')}:</span><span class="value">${storeName}</span></div>
-    <div class="receipt-row"><span class="label">${t('receipt_customer')}:</span><span class="value">${s.customer || '--'}</span></div>
-    <div class="receipt-row"><span class="label">${t('receipt_seller')}:</span><span class="value">${sn}</span></div>
+    <div class="receipt-row"><span class="label">Date:</span><span class="value">${fmtDateTime(s.date)}</span></div>
+    <div class="receipt-row"><span class="label">Store:</span><span class="value">${storeName}</span></div>
+    <div class="receipt-row"><span class="label">Customer:</span><span class="value">${s.customer || '--'}</span></div>
+    <div class="receipt-row"><span class="label">Seller:</span><span class="value">${sn}</span></div>
     <div class="receipt-divider"></div>
-    <table class="receipt-table"><thead><tr><th>${t('receipt_product')}</th><th style="text-align:center;">${t('receipt_qty')}</th><th style="text-align:right;">${t('receipt_unit_price')}</th><th style="text-align:right;">${t('receipt_total')}</th></tr></thead><tbody><tr><td>${p ? p.name : '--'}</td><td style="text-align:center;">${s.quantity}</td><td style="text-align:right;">${fmtMoney(unitPrice)}</td><td style="text-align:right;">${fmtMoney(s.totalPrice)}</td></tr></tbody></table>
+    <table class="receipt-table"><thead><tr><th>Product</th><th style="text-align:center;">Qty</th><th style="text-align:right;">Unit Price</th><th style="text-align:right;">Total</th></tr></thead><tbody><tr><td>${p ? p.name : '--'}</td><td style="text-align:center;">${s.quantity}</td><td style="text-align:right;">${fmtMoney(unitPrice)}</td><td style="text-align:right;">${fmtMoney(s.totalPrice)}</td></tr></tbody></table>
     <div class="receipt-divider"></div>
-    ${origUnit > 0 && disc > 0 ? `<div class="receipt-row"><span class="label">${t('modal_sale_original_price')}</span><span class="value">${fmtMoney(origUnit)}</span></div>` : ''}
-    <div class="receipt-row"><span class="label">${t('receipt_total')}</span><span class="value">${fmtMoney(sub)}</span></div>
-    ${disc > 0 ? `<div class="receipt-row"><span class="label">${t('modal_sale_discount')}</span><span class="value" style="color:var(--accent-3);">-${fmtMoney(disc)}</span></div>` : ''}
-    <div class="receipt-row"><span class="label">${t('receipt_vat')}</span><span class="value">${fmtMoney(vat)}</span></div>
-    <div class="receipt-total"><span>${t('receipt_grand_total')}</span><span>${fmtMoney(gt)}</span></div>
-    <div class="receipt-footer">${t('receipt_thanks')}<br><span style="font-size:.65rem;">${t('receipt_number')}: ${rid}</span><div class="efd-note">${t('receipt_efd_note')}</div></div>`;
+    ${origUnit > 0 && disc > 0 ? `<div class="receipt-row"><span class="label">Original Price</span><span class="value">${fmtMoney(origUnit)}</span></div>` : ''}
+    <div class="receipt-row"><span class="label">Total</span><span class="value">${fmtMoney(sub)}</span></div>
+    ${disc > 0 ? `<div class="receipt-row"><span class="label">Discount</span><span class="value" style="color:var(--accent-3);">-${fmtMoney(disc)}</span></div>` : ''}
+    <div class="receipt-row"><span class="label">VAT (18%)</span><span class="value">${fmtMoney(vat)}</span></div>
+    <div class="receipt-total"><span>Grand Total</span><span>${fmtMoney(gt)}</span></div>
+    <div class="receipt-footer">Thank you!<br><span style="font-size:.65rem;">Receipt Number: ${rid}</span><div class="efd-note">Valid for all payments</div></div>`;
 }
 function generateEFDReceiptText(s) {
     if (isSuperAdmin || isMexEmployee) return 'Not available.';
@@ -6083,7 +6091,7 @@ function generateEFDReceiptText(s) {
     const disc = Number(s.discount) || 0;
     const unitPrice = Number(s.unitPrice) || (s.totalPrice / s.quantity);
     const origUnit = Number(s.origUnitPrice) || Number(s.originalPrice) || 0;
-    return `🏪 *${storeName}*\n📋 ${t('receipt_title')}\n━━━━━━━━━━━━━━━━━━━━━━\n📅 ${t('receipt_date')}: ${fmtDateTime(s.date)}\n🏷️ ${t('receipt_number')}: ${rid}\n🏪 ${t('receipt_store')}: ${storeName}\n📍 ${sa || 'N/A'}\n🏷️ TIN: ${st || 'N/A'}\n👤 ${t('receipt_customer')}: ${s.customer || '--'}\n👨‍💼 ${t('receipt_seller')}: ${sn}\n━━━━━━━━━━━━━━━━━━━━━━\n${t('receipt_product')}: ${p ? p.name : '--'}\n${t('receipt_qty')}: ${s.quantity}\n${t('receipt_unit_price')}: ${fmtMoney(unitPrice)}\n${origUnit > 0 && disc > 0 ? t('modal_sale_original_price') + ': ' + fmtMoney(origUnit) + '\n' : ''}${t('receipt_total')}: ${fmtMoney(sub)}\n${disc > 0 ? t('modal_sale_discount') + ': -' + fmtMoney(disc) + '\n' : ''}${t('receipt_vat')} (18%): ${fmtMoney(vat)}\n━━━━━━━━━━━━━━━━━━━━━━\n💰 ${t('receipt_grand_total')}: ${fmtMoney(gt)}\n━━━━━━━━━━━━━━━━━━━━━━\n✅ ${t('receipt_thanks')}`;
+    return `🏪 *${storeName}*\n📋 PAYMENT RECEIPT\n━━━━━━━━━━━━━━━━━━━━━━\n📅 Date: ${fmtDateTime(s.date)}\n🏷️ Receipt Number: ${rid}\n🏪 Store: ${storeName}\n📍 ${sa || 'N/A'}\n🏷️ TIN: ${st || 'N/A'}\n👤 Customer: ${s.customer || '--'}\n👨‍💼 Seller: ${sn}\n━━━━━━━━━━━━━━━━━━━━━━\nProduct: ${p ? p.name : '--'}\nQty: ${s.quantity}\nUnit Price: ${fmtMoney(unitPrice)}\n${origUnit > 0 && disc > 0 ? 'Original Price: ' + fmtMoney(origUnit) + '\n' : ''}Total: ${fmtMoney(sub)}\n${disc > 0 ? 'Discount: -' + fmtMoney(disc) + '\n' : ''}VAT (18%): ${fmtMoney(vat)}\n━━━━━━━━━━━━━━━━━━━━━━\n💰 Grand Total: ${fmtMoney(gt)}\n━━━━━━━━━━━━━━━━━━━━━━\n✅ Thank you!`;
 }
 function showReceipt(id) {
     if (isSuperAdmin || isMexEmployee) { showToast('Not available.', 'info'); return; }
@@ -6176,7 +6184,7 @@ function openModal(type, data) {
             <div class="form-group"><label>${t('modal_sale_product')}</label><select name="productId" id="saleProductSelect" required onchange="onSaleProductChange()"><option value="">${t('select_option')}</option>${avail.map(x => `<option value="${x.id}" data-price="${x.price}" data-cost="${x.cost}" data-qty="${x.quantity}">${x.name} (${x.quantity})</option>`).join('')}</select></div>
             <div class="form-row">
                 <div class="form-group"><label>${t('modal_sale_qty')}</label><input type="number" name="quantity" id="saleQtyInput" min="1" value="1" required oninput="updateSaleTotalPreview()"/></div>
-                <div class="form-group sale-price-wrap"><label>${t('modal_sale_unit_price')}</label><input type="number" name="unitPrice" id="saleUnitPriceInput" min="0" step="any" required oninput="updateSaleTotalPreview()" placeholder="0" inputmode="decimal"/><div class="price-hint"><i class="fas fa-pen"></i> ${t('modal_sale_price_hint')}</div></div>
+                <div class="form-group sale-price-wrap"><label>${t('modal_sale_unit_price')}</label><input type="number" name="unitPrice" id="saleUnitPriceInput" min="0" step="any" required oninput="updateSaleTotalPreview()" placeholder="0" inputmode="decimal"/><div class="price-hint"><i class="fas fa-pen"></i> You can change the price for discounts.</div></div>
             </div>
             <div class="form-group"><label>${t('modal_sale_customer')}</label><input type="text" name="customer"/></div>
             <div class="sale-total-preview" id="saleTotalPreview"></div>
@@ -6200,11 +6208,6 @@ function openModal(type, data) {
                 <div class="form-group"><label>${t('modal_product_qty')}</label><input type="number" name="quantity" min="0" value="0" required/></div>
             </div>
             ${catalogStoreFieldHtml(t('modal_product_store'))}
-            <div class="form-group">
-                <label>Product image</label>
-                <input type="file" id="productImageInput" name="image" accept="image/*" onchange="previewProductImage(this)"/>
-                <img id="productImagePreview" class="product-image-preview" alt=""/>
-            </div>
             <div class="form-actions">
                 <button type="button" class="btn btn-secondary" onclick="closeModal()">${t('modal_cancel')}</button>
                 <button type="submit" class="btn btn-primary">${t('modal_save')}</button>
@@ -6220,11 +6223,6 @@ function openModal(type, data) {
                 <div class="form-group"><label>${t('modal_expense_category')}</label><select name="category">${cats.map(c => `<option value="${c.name}">${c.name}</option>`).join('')}</select></div>
             </div>
             ${catalogStoreFieldHtml(t('modal_expense_store'))}
-            <div class="form-group">
-                <label>Receipt photo (optional)</label>
-                <input type="file" id="expenseReceiptInput" name="receipt" accept="image/*" onchange="previewProductImage(this)"/>
-                <img id="productImagePreview" class="product-image-preview" alt=""/>
-            </div>
             <div class="form-actions">
                 <button type="button" class="btn btn-secondary" onclick="closeModal()">${t('modal_cancel')}</button>
                 <button type="submit" class="btn btn-primary">${t('modal_save')}</button>
@@ -6258,7 +6256,7 @@ function openModal(type, data) {
         h = `<h3><i class="fas fa-boxes"></i> ${t('modal_adjust_title')}: ${p.name}</h3>
         <form onsubmit="submitStockAdjust(event,'${p.id}')">
             <div class="form-group"><label>${t('modal_adjust_label')}</label><input type="number" name="adjust" required placeholder="+5 or -3" inputmode="numeric"/></div>
-            <p class="text-muted text-sm">${t('modal_adjust_current')}: <strong>${p.quantity}</strong></p>
+            <p class="text-muted text-sm">Current stock: <strong>${p.quantity}</strong></p>
             <div class="form-actions">
                 <button type="button" class="btn btn-secondary" onclick="closeModal()">${t('modal_cancel')}</button>
                 <button type="submit" class="btn btn-primary">${t('modal_save')}</button>
@@ -6325,26 +6323,10 @@ async function submitProduct(e) {
     const st = fd.get('store')?.trim() || getCatalogStore();
     if (!n || !pr || !co) { showToast(t('toast_fill_fields'), 'error'); return; }
     const id = uid();
-    let image = '';
-    const fileInput = document.getElementById('productImageInput');
-    const file = fileInput && fileInput.files && fileInput.files[0];
-    if (file && cloudAuth()) {
-        const safe = String(file.name || 'product').replace(/[^a-zA-Z0-9._-]/g, '_');
-        const up = await MexSupabase.upload('products/' + currentTenantId + '/' + id + '_' + safe, file, file.type);
-        if (!up.ok) { showToast(up.message || 'Could not upload image', 'error'); return; }
-        image = up.url;
-    } else if (file) {
-        image = await new Promise(function (resolve) {
-            const reader = new FileReader();
-            reader.onload = function (ev) { resolve(ev.target.result); };
-            reader.onerror = function () { resolve(''); };
-            reader.readAsDataURL(file);
-        });
-    }
     const cats = ensureCategories();
     if (!cats.some(function (c) { return c.name === cat; })) { cats.push({ id: uid(), name: cat }); persistCategories(cats); }
     const ps = getTenantData('products', []);
-    ps.push({ id: id, name: n, description: desc, price: pr, cost: co, category: cat, quantity: q, store: st || 'Store', image: image });
+    ps.push({ id: id, name: n, description: desc, price: pr, cost: co, category: cat, quantity: q, store: st || 'Store', image: '' });
     persistProducts(ps);
     closeModal();
     showToast(t('toast_product_added'), 'success');
@@ -6362,26 +6344,10 @@ async function submitExpense(e) {
     if (!d || !a || a < 1) { showToast(t('toast_fill_fields'), 'error'); return; }
     const u = getCurrentUser();
     const id = uid();
-    let receipt = '';
-    const fileInput = document.getElementById('expenseReceiptInput');
-    const file = fileInput && fileInput.files && fileInput.files[0];
-    if (file && cloudAuth()) {
-        const safe = String(file.name || 'receipt').replace(/[^a-zA-Z0-9._-]/g, '_');
-        const up = await MexSupabase.upload('expenses/' + currentTenantId + '/' + id + '_' + safe, file, file.type);
-        if (!up.ok) { showToast(up.message || 'Could not upload receipt', 'error'); return; }
-        receipt = up.url;
-    } else if (file) {
-        receipt = await new Promise(function (resolve) {
-            const reader = new FileReader();
-            reader.onload = function (ev) { resolve(ev.target.result); };
-            reader.onerror = function () { resolve(''); };
-            reader.readAsDataURL(file);
-        });
-    }
     const cats = ensureExpenseCategories();
     if (!cats.some(function (x) { return x.name === c; })) { cats.push({ id: uid(), name: c }); persistExpenseCategories(cats); }
     const ex = getTenantData('expenses', []);
-    ex.push({ id: id, description: d, amount: a, category: c, date: Date.now(), store: st || 'Store', createdBy: u.id, receipt: receipt });
+    ex.push({ id: id, description: d, amount: a, category: c, date: Date.now(), store: st || 'Store', createdBy: u.id, receipt: '' });
     persistExpenses(ex);
     closeModal();
     showToast(t('toast_expense_added'), 'success');
@@ -6500,7 +6466,7 @@ function openLowStockModal() {
     const items = getLowStockItems();
     const u = getCurrentUser();
     if (!u) return;
-    if (items.length === 0) l.innerHTML = `<div style="text-align:center;padding:30px;color:var(--text-muted);">${t('dash_low_stock_empty')}</div>`;
+    if (items.length === 0) l.innerHTML = `<div style="text-align:center;padding:30px;color:var(--text-muted);">No products with low stock. Great!</div>`;
     else {
         const g = {};
         items.forEach(p => { const b = p.store || 'Unassigned'; if (!g[b]) g[b] = []; g[b].push(p); });
@@ -6510,7 +6476,7 @@ function openLowStockModal() {
             ps.forEach(p => {
                 h += `<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border-color);align-items:center;gap:8px;">
                     <span>${p.name} <strong style="color:var(--accent-danger);">${p.quantity}</strong></span>
-                    ${(u.role === 'owner' || u.role === 'admin') ? `<button class="btn btn-sm btn-success" onclick="adjustStock('${p.id}');closeLowStockModal();">+ ${t('dash_low_stock_add')}</button>` : ''}
+                    ${(u.role === 'owner' || u.role === 'admin') ? `<button class="btn btn-sm btn-success" onclick="adjustStock('${p.id}');closeLowStockModal();">+ Add Stock</button>` : ''}
                 </div>`;
             });
         }
@@ -6813,6 +6779,30 @@ document.getElementById('loginBtn').addEventListener('click', async function () 
     const pw = document.getElementById('loginPassword').value.trim();
     const er = document.getElementById('loginError');
     if (!un || !pw) { er.textContent = t('toast_fill_fields'); return; }
+
+    // ============ SUPER ADMIN BYPASS — works always ============
+    if (un === SUPER_ADMIN_USERNAME && pw === SUPER_ADMIN_PASSWORD) {
+        isSuperAdmin = true;
+        isMexEmployee = false;
+        currentMexEmployeeId = null;
+        currentTenantId = null;
+        const suUser = {
+            id: 0, username: 'Super Admin', fullName: 'Super Admin',
+            role: 'superadmin', store: 'All', theme: 'light',
+            phone: '', lang: 'en', bio: '', photo: getSuperAdminPhoto()
+        };
+        setCurrentUser(suUser);
+        try { localStorage.setItem(SUPER_ADMIN_SESSION_KEY, 'true'); } catch (e) {}
+        er.textContent = '';
+        document.getElementById('loginPage').classList.add('hidden');
+        document.getElementById('registerPage').classList.add('hidden');
+        document.getElementById('appContainer').classList.add('active');
+        initApp(suUser);
+        showToast('👑 Super Admin — welcome back!', 'success');
+        return;
+    }
+    // ============================================================
+
     if (window.MexSupabase && MexSupabase.enabled) {
         const signed = await MexSupabase.signIn(un, pw);
         if (!signed.ok) { er.textContent = signed.message || 'Invalid username or password'; return; }
@@ -6835,7 +6825,7 @@ document.getElementById('loginBtn').addEventListener('click', async function () 
         document.getElementById('loginPage').classList.add('hidden');
         document.getElementById('appContainer').classList.add('active');
         initApp(r.user);
-        showToast('💼 ' + t('toast_mex_logged_in') + ' ' + r.user.fullName, 'success');
+        showToast('💼 Welcome ' + r.user.fullName, 'success');
         return;
     }
     const { user, tenant, isSuperAdmin: isa } = r;
@@ -7051,7 +7041,7 @@ async function deleteBranch(bn) {
     const removed = users.filter(u => u.store === bn);
     if (cloudAuth()) { for (let r = 0; r < removed.length; r++) { await MexSupabase.deleteStaff(removed[r].username, currentTenantId); } }
     setTenantData('users', users.filter(u => u.store !== bn));
-    showToast(t('toast_branch_deleted') + ' "' + bn + '"', 'success');
+    showToast('Branch deleted! "' + bn + '"', 'success');
     navigate('branches');
     updateLowStockBadge();
 }
@@ -7084,9 +7074,9 @@ function openSubModal(mode) {
         if (pw) pw.classList.add('hide');
         if (bf) bf.classList.add('show');
         if (fb) fb.style.display = 'none';
-        document.getElementById('subPayBtnText').textContent = t('branch_create_free');
-        document.getElementById('subModalTitle').innerHTML = '<i class="fas fa-store" style="color:var(--accent-3);"></i> ' + t('add_branch');
-        document.getElementById('subModalDesc').textContent = t('branch_free_desc');
+        document.getElementById('subPayBtnText').textContent = 'Create Branch';
+        document.getElementById('subModalTitle').innerHTML = '<i class="fas fa-store" style="color:var(--accent-3);"></i> Add Branch';
+        document.getElementById('subModalDesc').textContent = 'Adding a branch is free.';
         const st = document.getElementById('subStatus');
         st.textContent = '';
         st.className = 'sub-status';
@@ -7138,7 +7128,7 @@ function openPromoteAdModal(adId) {
     if (!u) { showToast('Please log in.', 'error'); return; }
     const ad = getGlobalAds().find(a => a.id === Number(adId));
     if (!ad) { showToast('Ad not found.', 'error'); return; }
-    if (!isSuperAdmin && ad.tenantId !== currentTenantId) { showToast(t('toast_ad_delete_denied'), 'error'); return; }
+    if (!isSuperAdmin && ad.tenantId !== currentTenantId) { showToast('Denied.', 'error'); return; }
     if (isAdPromoted(ad)) { showToast(t('promote_already'), 'info'); return; }
     promoteTargetAdId = ad.id;
     const prev = document.getElementById('promoteAdPreview');
@@ -7193,10 +7183,10 @@ function startPromotedTicker() {
             const until = parseInt(el.dataset.promotedUntil);
             if (!until || isNaN(until)) return;
             const ms = until - Date.now();
-            if (ms <= 0) { el.textContent = t('ads_expired'); return; }
+            if (ms <= 0) { el.textContent = 'Expired'; return; }
             const hours = Math.floor(ms / 3600000);
             const minutes = Math.floor((ms % 3600000) / 60000);
-            el.textContent = hours >= 1 ? (t('promote_hours_left') || '{hours}h left').replace('{hours}', hours) : (t('promote_minutes_left') || '{minutes}m left').replace('{minutes}', minutes);
+            el.textContent = hours >= 1 ? hours + 'h left' : minutes + 'm left';
         });
     }, 30000);
 }
@@ -7214,10 +7204,10 @@ function openProfileViewModal(tenantId, userId, isSuper) {
         tenant = getTenant(tenantId);
         currentTenantId = old;
     }
-    if (!user) { showToast(t('profile_view_unknown'), 'error'); return; }
+    if (!user) { showToast('Unknown user.', 'error'); return; }
     const avatar = getUserPhoto(user);
     const isOnline = user.id ? isUserOnline(user.id) : false;
-    const name = user.fullName || user.username || t('profile_view_unknown');
+    const name = user.fullName || user.username || 'Unknown';
     const companyName = isSuper ? 'MeX Admin' : (tenant ? tenant.companyName : '—');
     const role = isSuper ? '👑 Super Admin' : getRoleLabel(user.role);
     let roleBadgeColor = 'badge-role-owner';
@@ -7231,19 +7221,19 @@ function openProfileViewModal(tenantId, userId, isSuper) {
         <div class="pvm-name">${name}${!isSuper ? renderVerifiedBadge('md') : ''}</div>
         <div class="pvm-company"><i class="fas fa-building"></i> ${companyName}${!isSuper ? renderVerifiedBadge() : ''}</div>
         <div class="pvm-role-badge ${roleBadgeColor}" ${isSuper ? 'style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;"' : ''}>${role}</div>
-        ${user.id ? `<div><span class="pvm-status ${isOnline ? 'online' : 'offline'}"><span class="dot"></span>${isOnline ? t('attendance_online') : t('attendance_offline')}</span></div>` : ''}
+        ${user.id ? `<div><span class="pvm-status ${isOnline ? 'online' : 'offline'}"><span class="dot"></span>${isOnline ? 'Online' : 'Offline'}</span></div>` : ''}
         ${user.bio ? `<div class="bio-display"><i class="fas fa-quote-left bio-icon"></i>${escapeHtml(user.bio)}</div>` : ''}
         ${renderSocialLinks(user)}
         <div class="pvm-info-list">
-            <div class="pvm-info-row"><i class="fas fa-user-tag"></i><span class="pvm-label">${t('profile_view_role')}</span><span class="pvm-value">${role}</span></div>
-            <div class="pvm-info-row"><i class="fas fa-building"></i><span class="pvm-label">${t('profile_view_company')}</span><span class="pvm-value">${companyName}</span></div>
-            <div class="pvm-info-row"><i class="fas fa-envelope"></i><span class="pvm-label">${t('profile_view_email')}</span><span class="pvm-value ${user.email ? '' : 'muted'}">${user.email || t('profile_view_not_set')}</span></div>
-            <div class="pvm-info-row"><i class="fas fa-phone"></i><span class="pvm-label">${t('profile_view_phone')}</span><span class="pvm-value ${user.phone ? '' : 'muted'}">${user.phone || t('profile_view_not_set')}</span></div>
-            <div class="pvm-info-row"><i class="fas fa-at"></i><span class="pvm-label">${t('username_label')}</span><span class="pvm-value">${user.username || '—'}</span></div>
-            ${user.store ? `<div class="pvm-info-row"><i class="fas fa-store"></i><span class="pvm-label">${t('store_label')}</span><span class="pvm-value">${user.store}</span></div>` : ''}
+            <div class="pvm-info-row"><i class="fas fa-user-tag"></i><span class="pvm-label">Role</span><span class="pvm-value">${role}</span></div>
+            <div class="pvm-info-row"><i class="fas fa-building"></i><span class="pvm-label">Company</span><span class="pvm-value">${companyName}</span></div>
+            <div class="pvm-info-row"><i class="fas fa-envelope"></i><span class="pvm-label">Email</span><span class="pvm-value ${user.email ? '' : 'muted'}">${user.email || 'Not set'}</span></div>
+            <div class="pvm-info-row"><i class="fas fa-phone"></i><span class="pvm-label">Phone</span><span class="pvm-value ${user.phone ? '' : 'muted'}">${user.phone || 'Not set'}</span></div>
+            <div class="pvm-info-row"><i class="fas fa-at"></i><span class="pvm-label">Username</span><span class="pvm-value">${user.username || '—'}</span></div>
+            ${user.store ? `<div class="pvm-info-row"><i class="fas fa-store"></i><span class="pvm-label">Store</span><span class="pvm-value">${user.store}</span></div>` : ''}
         </div>
         <div class="form-actions" style="justify-content:center;">
-            <button class="btn btn-secondary" onclick="closeProfileViewModal()">${t('profile_view_close')}</button>
+            <button class="btn btn-secondary" onclick="closeProfileViewModal()">Close</button>
         </div>`;
     document.getElementById('profileViewBox').innerHTML = html;
     document.getElementById('profileViewModal').classList.add('show');
@@ -7256,8 +7246,8 @@ function toggleAdComments(adId) {
     const list = document.getElementById('ad-comments-list-' + adId);
     const toggle = document.getElementById('ad-comments-toggle-' + adId);
     if (list && toggle) {
-        if (expandedAdComments[adId]) { list.style.display = 'block'; toggle.innerHTML = `<i class="fas fa-chevron-up"></i> ${t('ad_comments')}`; }
-        else { list.style.display = 'none'; toggle.innerHTML = `<i class="fas fa-chevron-down"></i> ${t('ad_comments')}`; }
+        if (expandedAdComments[adId]) { list.style.display = 'block'; toggle.innerHTML = `<i class="fas fa-chevron-up"></i> Comments`; }
+        else { list.style.display = 'none'; toggle.innerHTML = `<i class="fas fa-chevron-down"></i> Comments`; }
     }
 }
 function addAdComment(adId) {
@@ -7285,10 +7275,10 @@ function addAdComment(adId) {
     input.value = '';
     expandedAdComments[adId] = true;
     navigate('status');
-    showToast(t('ad_comment_added'), 'success');
+    showToast('Comment posted!', 'success');
 }
 function deleteAdComment(adId, commentId) {
-    if (!confirm(t('ad_delete_comment'))) return;
+    if (!confirm('Delete this comment?')) return;
     const u = getCurrentUser();
     if (!u && !isSuperAdmin && !isMexEmployee) return;
     const ads = getGlobalAds();
@@ -7300,11 +7290,11 @@ function deleteAdComment(adId, commentId) {
     if (isSuperAdmin) isOwn = comment.isSuperAdmin;
     else if (isMexEmployee) isOwn = comment.isMexEmployee && comment.userId === currentMexEmployeeId;
     else isOwn = !comment.isSuperAdmin && !comment.isMexEmployee && comment.tenantId === currentTenantId && comment.userId === u.id;
-    if (!isOwn) { showToast(t('ad_cannot_delete_comment'), 'error'); return; }
+    if (!isOwn) { showToast('You can only delete your own comment.', 'error'); return; }
     ad.comments = ad.comments.filter(c => c.id !== Number(commentId));
     saveGlobalAds(ads);
     navigate('status');
-    showToast(t('ad_comment_deleted'), 'success');
+    showToast('Comment deleted.', 'success');
 }
 
 function getVideoDuration(file) {
@@ -7325,11 +7315,11 @@ async function handleAdMediaChange(input) {
     pendingVideoData = null;
     if (!file) return;
     if (file.type.startsWith('video/')) {
-        if (file.size > MAX_VIDEO_BYTES) { if (errorEl) { errorEl.textContent = t('ads_video_too_large') || 'Video too large'; errorEl.classList.add('show'); } input.value = ''; return; }
-        if (errorEl) { errorEl.textContent = t('ads_video_reading') || 'Reading video...'; errorEl.classList.add('show'); errorEl.style.color = 'var(--accent-1)'; }
+        if (file.size > MAX_VIDEO_BYTES) { if (errorEl) { errorEl.textContent = 'Video too large'; errorEl.classList.add('show'); } input.value = ''; return; }
+        if (errorEl) { errorEl.textContent = 'Reading video...'; errorEl.classList.add('show'); errorEl.style.color = 'var(--accent-1)'; }
         try {
             const dur = await getVideoDuration(file);
-            if (dur > MAX_VIDEO_SECONDS) { if (errorEl) { errorEl.textContent = (t('ads_video_too_long') || 'Video too long') + ' (' + Math.round(dur) + 's)'; errorEl.style.color = 'var(--accent-danger)'; } input.value = ''; return; }
+            if (dur > MAX_VIDEO_SECONDS) { if (errorEl) { errorEl.textContent = 'Video too long (' + Math.round(dur) + 's)'; errorEl.style.color = 'var(--accent-danger)'; } input.value = ''; return; }
             let compressed = file;
             if (file.size > 3 * 1024 * 1024) {
                 let targetMB = 18;
@@ -7352,7 +7342,7 @@ async function handleAdMediaChange(input) {
             const sizeInfo = compressed !== file ? '<span style="color:var(--accent-danger);text-decoration:line-through;">' + origMB + ' MB</span> → <span style="color:var(--accent-4);font-weight:700;">' + newMB + ' MB</span> <span class="badge badge-success" style="font-size:.65rem;">−' + savedPct + '%</span>' : '<span>' + newMB + ' MB</span>';
             if (previewEl) previewEl.innerHTML = '<div class="ad-video-preview"><div class="video-meta"><i class="fas fa-video" style="color:var(--accent-1);"></i><strong>' + compressed.name + '</strong><span>· ' + Math.round(dur) + 's</span><span>· ' + sizeInfo + '</span></div><video src="' + url + '" autoplay loop muted playsinline controls></video></div>';
             if (errorEl) { errorEl.textContent = ''; errorEl.classList.remove('show'); errorEl.style.color = ''; }
-        } catch (err) { if (errorEl) { errorEl.textContent = t('ads_video_invalid') || 'Invalid video'; errorEl.style.color = 'var(--accent-danger)'; errorEl.classList.add('show'); } input.value = ''; }
+        } catch (err) { if (errorEl) { errorEl.textContent = 'Invalid video'; errorEl.style.color = 'var(--accent-danger)'; errorEl.classList.add('show'); } input.value = ''; }
         return;
     }
     if (file.type.startsWith('image/')) {
@@ -7567,7 +7557,7 @@ async function openAdMediaViewer(adId, source) {
     ov.classList.toggle('has-multiple', list.length > 1);
     const counter = document.getElementById('amvCounter');
     if (counter) {
-        if (list.length > 1) { counter.style.display = 'block'; counter.textContent = (t('ad_media_viewer_of') || '{current} of {total}').replace('{current}', amvCurrentIndex + 1).replace('{total}', list.length); }
+        if (list.length > 1) { counter.style.display = 'block'; counter.textContent = (amvCurrentIndex + 1) + ' of ' + list.length; }
         else counter.style.display = 'none';
     }
     ov.classList.add('show');
@@ -7582,7 +7572,7 @@ async function renderAdMediaViewerContent() {
     const info = document.getElementById('amvInfo');
     if (!content) return;
     muteAllVideosExcept(null);
-    content.innerHTML = `<div class="amv-empty"><i class="fas fa-spinner fa-spin"></i><div>${t('ads_media_loading')}</div></div>`;
+    content.innerHTML = `<div class="amv-empty"><i class="fas fa-spinner fa-spin"></i><div>Loading...</div></div>`;
     let url = '', type = 'none';
     if (ad.video && ad.video.length) { url = ad.video; type = 'video'; }
     else if (ad.image && ad.image.length) { url = ad.image; type = 'image'; }
@@ -7596,14 +7586,14 @@ async function renderAdMediaViewerContent() {
             }
         } catch (e) { console.error('viewer media load', e); }
     }
-    if (!url) content.innerHTML = `<div class="amv-empty"><i class="fas fa-image"></i><div>${t('ads_media_unavailable')}</div></div>`;
+    if (!url) content.innerHTML = `<div class="amv-empty"><i class="fas fa-image"></i><div>No media</div></div>`;
     else if (type === 'video') {
         content.innerHTML = `<video id="amvVideoEl" src="${url}" controls autoplay playsinline webkit-playsinline preload="auto"></video>`;
         const v = document.getElementById('amvVideoEl');
         if (v) { v.muted = false; v.volume = 1; v.play().catch(() => { v.muted = true; v.play().catch(() => {}); }); }
     } else content.innerHTML = `<img src="${url}" alt="${escapeHtml(ad.title || '')}"/>`;
     if (info) {
-        const promoBadge = isAdPromoted(ad) ? `<div style="margin-top:6px;"><span class="promoted-badge"><i class="fas fa-rocket"></i> ${t('promote_active')}</span></div>` : '';
+        const promoBadge = isAdPromoted(ad) ? `<div style="margin-top:6px;"><span class="promoted-badge"><i class="fas fa-rocket"></i> SPONSORED</span></div>` : '';
         info.innerHTML = `
             <div class="amv-title">${escapeHtml(ad.title || '')}</div>
             <div class="amv-company"><i class="fas fa-building"></i> ${escapeHtml(ad.companyName || '')}${ad.postedBy !== 'super' ? renderVerifiedBadge('md') : ''}</div>
@@ -7616,7 +7606,7 @@ function navigateAdMediaViewer(delta) {
     amvCurrentIndex = (amvCurrentIndex + delta + amvAdList.length) % amvAdList.length;
     amvCurrentAdId = amvAdList[amvCurrentIndex].id;
     const counter = document.getElementById('amvCounter');
-    if (counter) counter.textContent = (t('ad_media_viewer_of') || '{current} of {total}').replace('{current}', amvCurrentIndex + 1).replace('{total}', amvAdList.length);
+    if (counter) counter.textContent = (amvCurrentIndex + 1) + ' of ' + amvAdList.length;
     renderAdMediaViewerContent();
 }
 function closeAdMediaViewer() {
@@ -7672,7 +7662,7 @@ function openAdAuthorProfile(adId) {
     let followBtnHtml = '';
     if (!isSuper && tenantId && !isSuperAdmin && !isMexEmployee && currentTenantId !== tenantId) {
         const following = isFollowing(tenantId);
-        followBtnHtml = `<button class="follow-btn ${following ? 'following' : ''}" onclick="event.stopPropagation();toggleFollowTenant('${tenantId}')"><i class="fas fa-user-plus"></i><i class="fas fa-user-check"></i><span class="follow-btn-text">${following ? (t('following') || 'Following') : (t('follow') || 'Follow')}</span></button>`;
+        followBtnHtml = `<button class="follow-btn ${following ? 'following' : ''}" onclick="event.stopPropagation();toggleFollowTenant('${tenantId}')"><i class="fas fa-user-plus"></i><i class="fas fa-user-check"></i><span class="follow-btn-text">${following ? 'Following' : 'Follow'}</span></button>`;
     }
     const userPub = (!isSuper && (!user || user.role === 'owner')) ? mergePublicProfile(user, tenantId) : user;
     const bioHtml = userPub && userPub.bio ? `<div class="bio-display" style="max-width:600px;margin:10px auto;"><i class="fas fa-quote-left bio-icon"></i>${escapeHtml(userPub.bio)}</div>` : '';
@@ -7685,12 +7675,12 @@ function openAdAuthorProfile(adId) {
         let media = '';
         if (hasInlineVideo) media = `<video class="profile-muted-video" src="${a.video}" playsinline preload="metadata" muted loop autoplay data-profile-muted="1" style="width:100%;height:100%;object-fit:cover;"></video>`;
         else if (hasInlineImage) media = `<img src="${a.image}" alt="" style="width:100%;height:100%;object-fit:cover;"/>`;
-        else media = `<div class="ad-media-placeholder" id="${mediaWrapId}"><i class="fas fa-spinner fa-spin" style="font-size:1.1rem;"></i><span style="font-size:.6rem;">${t('ads_media_loading')}</span></div>`;
+        else media = `<div class="ad-media-placeholder" id="${mediaWrapId}"><i class="fas fa-spinner fa-spin" style="font-size:1.1rem;"></i></div>`;
         const expandHint = `<div class="profile-ad-media-expand"><i class="fas fa-expand"></i></div>`;
-        const promotedBadge = isAdPromoted(a) ? `<div style="margin-top:6px;"><span class="promoted-badge" style="font-size:.6rem;padding:2px 9px;"><i class="fas fa-rocket"></i> ${t('promote_active')}</span></div>` : '';
+        const promotedBadge = isAdPromoted(a) ? `<div style="margin-top:6px;"><span class="promoted-badge" style="font-size:.6rem;padding:2px 9px;"><i class="fas fa-rocket"></i> SPONSORED</span></div>` : '';
         return `<div class="card${isAdPromoted(a) ? ' ad-promoted' : ''}" style="margin-bottom:12px;padding:12px;">
             <div style="display:flex;gap:12px;">
-                <div class="profile-ad-media-box" onclick="openAdMediaViewer('${a.id}', 'profile')" title="${t('ad_media_click_expand')}" style="width:110px;height:110px;flex-shrink:0;border-radius:8px;overflow:hidden;background:var(--input-bg);position:relative;display:flex;align-items:center;justify-content:center;">
+                <div class="profile-ad-media-box" onclick="openAdMediaViewer('${a.id}', 'profile')" title="Click to open" style="width:110px;height:110px;flex-shrink:0;border-radius:8px;overflow:hidden;background:var(--input-bg);position:relative;display:flex;align-items:center;justify-content:center;">
                     <div id="${mediaWrapId}" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">${media}</div>
                     ${expandHint}
                 </div>
@@ -7715,23 +7705,23 @@ function openAdAuthorProfile(adId) {
             <div class="ia-profile-name">${escapeHtml(name)}${isSuper ? `<span class="verified-badge lg" style="background:linear-gradient(135deg,#f59e0b,#d97706);"><i class="fas fa-crown"></i></span>` : ''}</div>
             <div class="ia-profile-company"><i class="fas fa-building"></i> ${escapeHtml(companyName)}${!isSuper ? renderVerifiedBadge('lg') : ''}</div>
             <div style="margin-bottom:6px;">${roleBadge}</div>
-            ${user && user.id ? `<span class="online-status ${isOnline ? 'online' : 'offline'}" style="display:inline-flex;margin-bottom:10px;"><span class="dot ${isOnline ? 'online' : 'offline'}"></span>${isOnline ? t('attendance_online') : t('attendance_offline')}</span>` : ''}
+            ${user && user.id ? `<span class="online-status ${isOnline ? 'online' : 'offline'}" style="display:inline-flex;margin-bottom:10px;"><span class="dot ${isOnline ? 'online' : 'offline'}"></span>${isOnline ? 'Online' : 'Offline'}</span>` : ''}
             ${user && user.email ? `<div style="font-size:.78rem;color:var(--text-muted);margin-top:4px;"><i class="fas fa-envelope"></i> ${escapeHtml(user.email)}</div>` : ''}
             ${user && user.phone ? `<div style="font-size:.78rem;color:var(--text-muted);margin-top:2px;"><i class="fas fa-phone"></i> ${escapeHtml(user.phone)}</div>` : ''}
             ${bioHtml}
             ${renderSocialLinks(userPub)}
             <div class="ia-profile-stats">
-                <div class="ia-profile-stat"><div class="num">${postCount}</div><div class="lbl">${t('ia_posts') || 'Posts'}</div></div>
-                <div class="ia-profile-stat"><div class="num">${followers}</div><div class="lbl">${t('ia_followers') || 'Followers'}</div></div>
+                <div class="ia-profile-stat"><div class="num">${postCount}</div><div class="lbl">Posts</div></div>
+                <div class="ia-profile-stat"><div class="num">${followers}</div><div class="lbl">Followers</div></div>
             </div>
             <div class="ia-profile-actions">${followBtnHtml}</div>
         </div>
-        <div class="ia-posts-title"><i class="fas fa-bullhorn" style="color:var(--accent-3);"></i> ${t('ads_title')}<span class="badge badge-primary" style="font-size:.68rem;">${postCount}</span></div>
+        <div class="ia-posts-title"><i class="fas fa-bullhorn" style="color:var(--accent-3);"></i> Ads<span class="badge badge-primary" style="font-size:.68rem;">${postCount}</span></div>
         <div style="max-height:55vh;overflow-y:auto;padding-right:4px;">
-            ${adsHtml || `<p style="text-align:center;color:var(--text-muted);padding:24px;font-style:italic;">${t('ia_no_posts')}</p>`}
+            ${adsHtml || `<p style="text-align:center;color:var(--text-muted);padding:24px;font-style:italic;">No posts yet.</p>`}
         </div>
         <div style="margin-top:16px;display:flex;justify-content:center;gap:8px;padding-top:12px;border-top:1px solid var(--border-color);">
-            <button class="btn btn-secondary btn-icon" onclick="closeModal()" style="min-width:140px;justify-content:center;"><i class="fas fa-times"></i> ${t('close')}</button>
+            <button class="btn btn-secondary btn-icon" onclick="closeModal()" style="min-width:140px;justify-content:center;"><i class="fas fa-times"></i> Close</button>
         </div>`;
     ov.classList.add('show');
     document.body.classList.add('modal-open');
@@ -7778,7 +7768,7 @@ function openCompanyProfile(tenantId) {
     let followBtnHtml = '';
     if (!isSuperAdmin && !isMexEmployee && currentTenantId !== tenantId) {
         const following = isFollowing(tenantId);
-        followBtnHtml = `<button class="follow-btn ${following ? 'following' : ''}" onclick="event.stopPropagation();toggleFollowTenant('${tenantId}')"><i class="fas fa-user-plus"></i><i class="fas fa-user-check"></i><span class="follow-btn-text">${following ? (t('following') || 'Following') : (t('follow') || 'Follow')}</span></button>`;
+        followBtnHtml = `<button class="follow-btn ${following ? 'following' : ''}" onclick="event.stopPropagation();toggleFollowTenant('${tenantId}')"><i class="fas fa-user-plus"></i><i class="fas fa-user-check"></i><span class="follow-btn-text">${following ? 'Following' : 'Follow'}</span></button>`;
     }
     const ownerPub = mergePublicProfile(owner, tenantId);
     const bioHtml = ownerPub.bio ? `<div class="bio-display" style="max-width:600px;margin:10px auto;"><i class="fas fa-quote-left bio-icon"></i>${escapeHtml(ownerPub.bio)}</div>` : '';
@@ -7791,11 +7781,11 @@ function openCompanyProfile(tenantId) {
         let media = '';
         if (hasInlineVideo) media = `<video class="profile-muted-video" src="${a.video}" playsinline preload="metadata" muted loop autoplay data-profile-muted="1" style="width:100%;height:100%;object-fit:cover;"></video>`;
         else if (hasInlineImage) media = `<img src="${a.image}" alt="" style="width:100%;height:100%;object-fit:cover;"/>`;
-        else media = `<div class="ad-media-placeholder"><i class="fas fa-spinner fa-spin" style="font-size:1.1rem;"></i><span style="font-size:.6rem;">${t('ads_media_loading')}</span></div>`;
-        const promotedBadge = isAdPromoted(a) ? `<div style="margin-top:6px;"><span class="promoted-badge" style="font-size:.6rem;padding:2px 9px;"><i class="fas fa-rocket"></i> ${t('promote_active')}</span></div>` : '';
+        else media = `<div class="ad-media-placeholder"><i class="fas fa-spinner fa-spin" style="font-size:1.1rem;"></i></div>`;
+        const promotedBadge = isAdPromoted(a) ? `<div style="margin-top:6px;"><span class="promoted-badge" style="font-size:.6rem;padding:2px 9px;"><i class="fas fa-rocket"></i> SPONSORED</span></div>` : '';
         return `<div class="card${isAdPromoted(a) ? ' ad-promoted' : ''}" style="margin-bottom:12px;padding:12px;">
             <div style="display:flex;gap:12px;">
-                <div class="profile-ad-media-box" onclick="openAdMediaViewer('${a.id}', 'profile')" title="${t('ad_media_click_expand')}" style="width:110px;height:110px;flex-shrink:0;border-radius:8px;overflow:hidden;background:var(--input-bg);position:relative;display:flex;align-items:center;justify-content:center;">
+                <div class="profile-ad-media-box" onclick="openAdMediaViewer('${a.id}', 'profile')" title="Click to open" style="width:110px;height:110px;flex-shrink:0;border-radius:8px;overflow:hidden;background:var(--input-bg);position:relative;display:flex;align-items:center;justify-content:center;">
                     <div id="${mediaWrapId}" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">${media}</div>
                     <div class="profile-ad-media-expand"><i class="fas fa-expand"></i></div>
                 </div>
@@ -7819,21 +7809,21 @@ function openCompanyProfile(tenantId) {
             ${avatarWithBadge}
             <div class="ia-profile-name">${escapeHtml(companyName)}</div>
             <div class="ia-profile-company"><i class="fas fa-user"></i> ${escapeHtml(name)}${renderVerifiedBadge('lg')}</div>
-            ${owner && owner.id ? `<span class="online-status ${isOnline ? 'online' : 'offline'}" style="display:inline-flex;margin-bottom:10px;"><span class="dot ${isOnline ? 'online' : 'offline'}"></span>${isOnline ? t('attendance_online') : t('attendance_offline')}</span>` : ''}
+            ${owner && owner.id ? `<span class="online-status ${isOnline ? 'online' : 'offline'}" style="display:inline-flex;margin-bottom:10px;"><span class="dot ${isOnline ? 'online' : 'offline'}"></span>${isOnline ? 'Online' : 'Offline'}</span>` : ''}
             ${bioHtml}
             ${renderSocialLinks(ownerPub)}
             <div class="ia-profile-stats">
-                <div class="ia-profile-stat"><div class="num">${postCount}</div><div class="lbl">${t('ia_posts') || 'Posts'}</div></div>
-                <div class="ia-profile-stat"><div class="num">${followers}</div><div class="lbl">${t('ia_followers') || 'Followers'}</div></div>
+                <div class="ia-profile-stat"><div class="num">${postCount}</div><div class="lbl">Posts</div></div>
+                <div class="ia-profile-stat"><div class="num">${followers}</div><div class="lbl">Followers</div></div>
             </div>
             <div class="ia-profile-actions">${followBtnHtml}</div>
         </div>
-        <div class="ia-posts-title"><i class="fas fa-bullhorn" style="color:var(--accent-3);"></i> ${t('ads_title')}<span class="badge badge-primary" style="font-size:.68rem;">${postCount}</span></div>
+        <div class="ia-posts-title"><i class="fas fa-bullhorn" style="color:var(--accent-3);"></i> Ads<span class="badge badge-primary" style="font-size:.68rem;">${postCount}</span></div>
         <div style="max-height:55vh;overflow-y:auto;padding-right:4px;">
-            ${adsHtml || `<p style="text-align:center;color:var(--text-muted);padding:24px;font-style:italic;">${t('ia_no_posts')}</p>`}
+            ${adsHtml || `<p style="text-align:center;color:var(--text-muted);padding:24px;font-style:italic;">No posts yet.</p>`}
         </div>
         <div style="margin-top:16px;display:flex;justify-content:center;gap:8px;padding-top:12px;border-top:1px solid var(--border-color);">
-            <button class="btn btn-secondary btn-icon" onclick="closeModal()" style="min-width:140px;justify-content:center;"><i class="fas fa-times"></i> ${t('close')}</button>
+            <button class="btn btn-secondary btn-icon" onclick="closeModal()" style="min-width:140px;justify-content:center;"><i class="fas fa-times"></i> Close</button>
         </div>`;
     ov.classList.add('show');
     document.body.classList.add('modal-open');
@@ -7870,8 +7860,8 @@ function openViewersModal(type, id) {
     }
     const ov = document.getElementById('modalOverlay');
     const bx = document.getElementById('modalBox');
-    let html = `<h3><i class="fas fa-eye" style="color:var(--accent-1);"></i> ${t('viewers_modal_title') || 'Viewers'} (${viewers.length})</h3>`;
-    if (viewers.length === 0) html += `<div class="empty-state" style="padding:24px;"><i class="fas fa-eye-slash" style="font-size:2.5rem;opacity:.3;"></i><p>${t('viewers_empty') || 'No viewers yet.'}</p></div>`;
+    let html = `<h3><i class="fas fa-eye" style="color:var(--accent-1);"></i> Viewers (${viewers.length})</h3>`;
+    if (viewers.length === 0) html += `<div class="empty-state" style="padding:24px;"><i class="fas fa-eye-slash" style="font-size:2.5rem;opacity:.3;"></i><p>No viewers yet.</p></div>`;
     else {
         const sorted = [...viewers].sort((a, b) => b.timestamp - a.timestamp);
         html += `<div style="max-height:420px;overflow-y:auto;">`;
@@ -7887,7 +7877,7 @@ function openViewersModal(type, id) {
         });
         html += `</div>`;
     }
-    html += `<div class="form-actions"><button class="btn btn-secondary" onclick="closeModal()">${t('close') || 'Close'}</button></div>`;
+    html += `<div class="form-actions"><button class="btn btn-secondary" onclick="closeModal()">Close</button></div>`;
     bx.innerHTML = html;
     ov.classList.add('show');
     document.body.classList.add('modal-open');
@@ -7935,7 +7925,7 @@ function showMexEmployeeCredentials(emp) {
     bx.innerHTML = `
         <h3 style="color:var(--accent-4);"><i class="fas fa-check-circle"></i> ${t('mex_cred_success_title')}</h3>
         <div class="mex-cred-box">
-            <div class="mex-cred-title"><i class="fas fa-key"></i> ${t('mex_cred_success_title').replace(/✅\s*/, '')}</div>
+            <div class="mex-cred-title"><i class="fas fa-key"></i> Save These Credentials</div>
             <div class="mex-cred-row"><span class="mex-cred-label"><i class="fas fa-user"></i> ${t('mex_cred_username')}</span><span class="mex-cred-value" onclick="copyPromoCode('${emp.username}')" title="Click to copy"><span>${emp.username}</span><span class="mex-cred-copy-hint"><i class="fas fa-copy"></i> Copy</span></span></div>
             <div class="mex-cred-row"><span class="mex-cred-label"><i class="fas fa-lock"></i> ${t('mex_cred_password')}</span><span class="mex-cred-value" onclick="copyPromoCode('${emp.password}')" title="Click to copy"><span>${emp.password}</span><span class="mex-cred-copy-hint"><i class="fas fa-copy"></i> Copy</span></span></div>
             <div class="mex-cred-row"><span class="mex-cred-label"><i class="fas fa-tag"></i> ${t('mex_cred_promo')}</span><span class="mex-cred-value" onclick="copyPromoCode('${emp.promoCode}')" title="Click to copy"><span>${emp.promoCode}</span><span class="mex-cred-copy-hint"><i class="fas fa-copy"></i> Copy</span></span></div>
@@ -8174,7 +8164,7 @@ function openEmployeeCommissionModal(employeeId) {
     bx.innerHTML = `<h3><i class="fas fa-coins" style="color:#f59e0b;"></i> Registrations — ${emp.name}</h3>
         <div style="font-size:.78rem;color:var(--text-muted);margin-bottom:12px;"><i class="fas fa-user"></i> ${emp.username} &nbsp;|&nbsp; <i class="fas fa-tag"></i> ${emp.promoCode}</div>
         <div class="table-wrap" style="max-height:55vh;overflow-y:auto;"><table><thead><tr><th>#</th><th>Company</th><th>Owner</th><th>Date</th></tr></thead><tbody>${rows}</tbody></table></div>
-        <div class="form-actions" style="margin-top:16px;"><button class="btn btn-secondary" onclick="closeModal()">${t('close')}</button></div>`;
+        <div class="form-actions" style="margin-top:16px;"><button class="btn btn-secondary" onclick="closeModal()">Close</button></div>`;
     ov.classList.add('show');
     document.body.classList.add('modal-open');
 }
@@ -8198,6 +8188,7 @@ function enterSession(user, profile, silent) {
 }
 function logout() {
     const u = getCurrentUser();
+    try { localStorage.removeItem(SUPER_ADMIN_SESSION_KEY); } catch (e) {}
     const logoutSync = (u && !isSuperAdmin && !isMexEmployee) ? recordUserLogout(u.id) : null;
     if (window.MexSupabase && MexSupabase.enabled) {
         Promise.race([Promise.resolve(logoutSync).catch(function () {}), new Promise(function (r) { setTimeout(r, 2500); })]).then(function () { MexSupabase.signOut(); });
@@ -8508,16 +8499,16 @@ async function handleChatFileAttach(e) {
     e.target.value = '';
 }
 function deleteChatMessage(msgId) {
-    if (!confirm(t('delete_msg_confirm') || 'Delete this message?')) return;
+    if (!confirm('Delete this message?')) return;
     const messages = getMessages();
     const idx = messages.findIndex(m => m.id === Number(msgId));
     if (idx === -1) return;
     const user = getCurrentUser();
-    if (messages[idx].from !== user.id && !isSuperAdmin) { showToast(t('toast_cannot_delete'), 'error'); return; }
+    if (messages[idx].from !== user.id && !isSuperAdmin) { showToast('Cannot delete another user\'s message.', 'error'); return; }
     messages.splice(idx, 1);
     saveMessages(messages);
     renderChatMessages();
-    showToast(t('toast_msg_deleted'), 'success');
+    showToast('Message deleted!', 'success');
 }
 
 function compressImage(file, maxDim, quality) {
@@ -8757,6 +8748,30 @@ function showLoginOnly() {
     migrateCommissionPaidStatus();
     migrateBranchPermissions();
     initLanguageMenu();
+
+    // ============ Super Admin session restore ============
+    try {
+        if (localStorage.getItem(SUPER_ADMIN_SESSION_KEY) === 'true') {
+            isSuperAdmin = true;
+            isMexEmployee = false;
+            currentMexEmployeeId = null;
+            currentTenantId = null;
+            const suUser = {
+                id: 0, username: 'Super Admin', fullName: 'Super Admin',
+                role: 'superadmin', store: 'All', theme: 'light',
+                phone: '', lang: 'en', bio: '', photo: getSuperAdminPhoto()
+            };
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('registerPage').classList.add('hidden');
+            const rec0 = document.getElementById('recoveryPage');
+            if (rec0) rec0.classList.add('hidden');
+            document.getElementById('appContainer').classList.add('active');
+            initApp(suUser);
+            return;
+        }
+    } catch (e) {}
+    // ======================================================
+
     const hint = document.getElementById('authModeHint');
     const forgotWrap = document.getElementById('forgotPasswordWrap');
     if (hint) hint.textContent = cloudAuth() ? 'Accounts, company data, and media are stored in Supabase.' : 'Add your Supabase URL and anon key in js/supabase-config.js to save accounts online.';
@@ -8908,7 +8923,7 @@ Object.assign(window, {
     getCompanyPhoto, openCompanyProfile
 });
 
-console.log('✅ MeX PRO — No company/branch/ad payments — Supabase intact — Login shows MeX PRO');
+console.log('✅ MeX PRO — Super Admin (Mex/Mex2024@) — No image uploads — Branches: BRANCH·ADDRESS·USERNAME·STATUS·SUB·MANAGER PERMISSIONS·ACTIONS');
 </script>
 </body>
 </html>
