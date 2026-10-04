@@ -42,7 +42,7 @@ html,body{scrollbar-width:none;-ms-overflow-style:none;}
 html::-webkit-scrollbar,body::-webkit-scrollbar{width:0;height:0;display:none;}
 *::-webkit-scrollbar{width:0 !important;height:0 !important;display:none !important;}
 html{background:#f0f4f8;overscroll-behavior:none;height:100%;width:100%;scroll-behavior:smooth;}
-html.dark-bg{ background:#0a0a0a; }
+html.dark-bg{background:#0a0a0a;}
 body{font-family:var(--font);background:var(--bg-body);color:var(--text-primary);min-height:100vh;min-height:100dvh;transition:background .3s,color .3s;overflow-y:auto;overflow-x:hidden;overscroll-behavior:none;-webkit-font-smoothing:antialiased;-webkit-overflow-scrolling:touch;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;position:relative;font-feature-settings:'cv02','cv03','cv04','cv11';letter-spacing:-0.005em;}
 input,textarea,select{user-select:text;-webkit-user-select:text;}
 body.modal-open{overflow:hidden;}
@@ -128,7 +128,7 @@ tbody tr:hover{background:rgba(18,140,126,.03);}
 .topbar .topbar-actions .chat-topbar-btn:hover{background:var(--accent-1);color:#fff;}
 .chat-topbar-btn .chat-badge{position:absolute;top:-4px;right:-4px;background:var(--accent-danger);color:#fff;font-size:.6rem;font-weight:700;padding:1px 6px;border-radius:20px;min-width:18px;text-align:center;display:none;}
 .chat-topbar-btn .chat-badge.show{display:block;}
-.topbar .topbar-actions .profile-trigger{display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 12px 4px 4px;border-radius:30px;background:var(--input-bg);border:1px solid var(--border-color) !important;max-width:180px;}
+.topbar .topbar-actions .profile-trigger{display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 12px 4px 4px;border-radius:30px;background:var(--input-bg);border:1px solid var(--border-color) !important;max-width:180px;flex-shrink:0;}
 .topbar .topbar-actions .profile-trigger img{width:32px;height:32px;border-radius:50%;object-fit:cover;}
 .topbar .topbar-actions .profile-trigger .profile-name{font-size:.85rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .lang-wrapper{position:relative;}
@@ -169,9 +169,6 @@ tbody tr:hover{background:rgba(18,140,126,.03);}
 
 @media(min-width:769px) and (max-width:1023px){.status-card .status-body .status-image-wrap{aspect-ratio:auto;height:380px;}}
 @media(min-width:1024px){.status-card .status-body .status-image-wrap{aspect-ratio:auto;height:340px;}}
-@media(max-width:768px){
-  .status-card .status-body .status-image-wrap{width:calc(100% + 32px);max-width:calc(100% + 32px);margin-left:-16px;margin-right:-16px;margin-bottom:12px;border-radius:0;aspect-ratio:4 / 5;max-height:62vh;flex:0 0 auto;}
-}
 
 @media(min-width:1024px){
   .content-area{padding:22px 26px 32px;}
@@ -269,9 +266,6 @@ tbody tr:hover{background:rgba(18,140,126,.03);}
 .comment-item .comment-author{font-weight:800;color:var(--text-primary);font-size:.78rem;margin-right:6px;}
 .comment-item .comment-text{font-size:.85rem;color:var(--text-secondary);font-weight:500;line-height:1.5;}
 .comment-item .comment-time{font-size:.6rem;color:var(--text-muted);margin-left:6px;font-weight:600;}
-.perm-toggle{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px !important;font-size:.68rem;font-weight:700;cursor:pointer;background:var(--input-bg);color:var(--text-muted);margin:2px 3px 2px 0;}
-.perm-toggle.on{background:rgba(16,185,129,.14);color:var(--accent-4);}
-.perm-toggle.off{background:rgba(239,68,68,.12);color:var(--accent-danger);}
 .inventory-search-wrap{position:relative;margin-bottom:16px;display:flex;align-items:center;}
 .inventory-search-wrap .inventory-search-icon{position:absolute;left:16px;color:var(--text-muted);font-size:.9rem;pointer-events:none;z-index:2;}
 .inventory-search-input{padding-left:42px !important;padding-right:42px !important;border-radius:30px !important;font-size:16px !important;height:48px;width:100%;}
@@ -390,20 +384,120 @@ tbody tr:hover{background:rgba(18,140,126,.03);}
 .boot-progress{position:absolute;bottom:0;left:0;right:0;height:4px;background:rgba(255,255,255,.08);overflow:hidden;}
 .boot-progress .bar{height:100%;width:0;background:linear-gradient(90deg,#f59e0b,#10b981,#14b8a6);animation:bootBar 4.4s cubic-bezier(.4,0,.2,1) forwards;}
 @keyframes bootBar{0%{width:0;}20%{width:22%;}55%{width:60%;}85%{width:88%;}100%{width:100%;}}
+
+/* ============================================================
+   MOBILE — Topbar fixed layout (profile always visible on right)
+   ============================================================ */
 @media(max-width:768px){
   .app-container{padding:0;gap:0;height:100dvh;}
-  .main-content{border-radius:0;box-shadow:none;height:100dvh;}
+  .main-content{border-radius:0;box-shadow:none;height:100dvh;min-width:0;}
   .sidebar{position:fixed;top:0;left:0;bottom:0;width:272px;max-width:84vw;height:100dvh;border-radius:0 18px 18px 0;z-index:9999;transform:translateX(-100%);transition:transform .3s;padding:20px 12px;}
   .sidebar.open{transform:translateX(0);}
-  .mobile-menu-btn{display:inline-flex;width:38px;height:38px;font-size:1rem;}
-  .topbar{padding:8px 10px;gap:6px;border-radius:0;flex-wrap:nowrap;align-items:center;}
-  .topbar .page-title{font-size:.95rem;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-right:4px;}
-  .topbar .topbar-actions{display:flex;align-items:center;gap:6px;flex-wrap:nowrap;flex-shrink:0;}
+
+  /* Topbar: compact flex, no overflow */
+  .topbar{
+    padding:6px 8px;
+    gap:6px;
+    border-radius:0;
+    flex-wrap:nowrap;
+    align-items:center;
+    min-width:0;
+    overflow:hidden;
+  }
+  .mobile-menu-btn{
+    display:inline-flex;
+    width:36px;height:36px;min-width:36px;
+    font-size:1rem;
+    flex-shrink:0;
+  }
+  .topbar .page-title{
+    font-size:.92rem;
+    flex:1 1 auto;
+    min-width:0;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    margin:0;
+    padding-right:4px;
+  }
+  .topbar .topbar-actions{
+    display:flex;
+    align-items:center;
+    gap:4px;
+    flex-wrap:nowrap;
+    flex-shrink:0;
+    min-width:0;
+  }
   .topbar .topbar-actions .date-display{display:none;}
-  .topbar .topbar-actions .theme-toggle,.topbar .topbar-actions .chat-topbar-btn{width:36px;height:36px;min-width:36px;font-size:.9rem;}
-  .topbar .topbar-actions .profile-trigger{padding:3px;gap:0;max-width:38px;border-radius:50%;}
-  .topbar .topbar-actions .profile-trigger img{width:30px;height:30px;}
+
+  /* Hide alert text - just show count bubble */
+  .topbar .topbar-actions .low-stock-alert-btn{
+    padding:0 !important;
+    width:36px;height:36px;min-width:36px;
+    border-radius:50% !important;
+    justify-content:center;
+    gap:0;
+    font-size:.9rem;
+  }
+  .topbar .topbar-actions .low-stock-alert-btn .alert-text{display:none;}
+  .topbar .topbar-actions .low-stock-alert-btn .alert-count{
+    position:absolute;
+    top:-4px;right:-4px;
+    padding:1px 5px;
+    font-size:.55rem;
+    min-width:16px;
+    background:var(--accent-danger) !important;
+    line-height:1.2;
+  }
+  .topbar .topbar-actions .low-stock-alert-btn:not(.has-alert) .alert-count{display:none;}
+  .topbar .topbar-actions .low-stock-alert-btn{position:relative;}
+
+  /* Icon buttons */
+  .topbar .topbar-actions .theme-toggle,
+  .topbar .topbar-actions .chat-topbar-btn{
+    width:34px;height:34px;min-width:34px;
+    font-size:.85rem;
+    flex-shrink:0;
+  }
+  .topbar .topbar-actions .chat-topbar-btn .chat-badge{
+    font-size:.55rem;
+    padding:1px 5px;
+    min-width:16px;
+    top:-3px;right:-3px;
+  }
+
+  /* Language: compact */
+  .topbar .topbar-actions .lang-wrapper{flex-shrink:0;}
+  .topbar .topbar-actions .lang-wrapper .lang-toggle{
+    padding:4px 6px !important;
+    font-size:.65rem;
+    min-width:40px;
+    min-height:34px;
+    gap:3px;
+  }
+  .topbar .topbar-actions .lang-wrapper .lang-toggle .lang-flag{font-size:.85rem;}
+
+  /* Profile: SMALL round, ALWAYS on right, never clipped */
+  .topbar .topbar-actions .profile-trigger{
+    padding:2px !important;
+    gap:0;
+    width:34px;
+    height:34px;
+    min-width:34px;
+    max-width:34px;
+    border-radius:50%;
+    flex-shrink:0;
+    overflow:hidden;
+    justify-content:center;
+  }
+  .topbar .topbar-actions .profile-trigger img{
+    width:30px;
+    height:30px;
+    border-radius:50%;
+    flex-shrink:0;
+  }
   .topbar .topbar-actions .profile-trigger .profile-name{display:none;}
+
   .content-area{padding:12px 12px 24px;}
   .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}
   .chart-grid{grid-template-columns:1fr;gap:14px;}
@@ -415,10 +509,31 @@ tbody tr:hover{background:rgba(18,140,126,.03);}
   .table-wrap{margin:0 -16px;padding:0 16px;}
   table{font-size:.82rem;}
   .status-card .status-body{flex-direction:column;align-items:stretch;}
+  .status-card .status-body .status-image-wrap{width:calc(100% + 32px);max-width:calc(100% + 32px);margin-left:-16px;margin-right:-16px;margin-bottom:12px;border-radius:0;aspect-ratio:4 / 5;max-height:62vh;flex:0 0 auto;}
+  .status-card .status-body .status-image-wrap .video-mute-btn{width:34px;height:34px;font-size:.85rem;top:10px;right:10px;}
   .form-row{grid-template-columns:1fr;}
   .page-card{padding:20px 18px;}
   .report-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}
   .report-custom-range{grid-template-columns:1fr;}
+}
+
+/* Very small phones */
+@media(max-width:420px){
+  .topbar{padding:5px 6px;gap:4px;}
+  .mobile-menu-btn{width:34px;height:34px;min-width:34px;font-size:.95rem;}
+  .topbar .page-title{font-size:.85rem;}
+  .topbar .topbar-actions{gap:3px;}
+  .topbar .topbar-actions .lang-wrapper .lang-toggle{min-width:34px;padding:4px 5px !important;}
+  .topbar .topbar-actions .lang-wrapper .lang-toggle #langLabel{display:none;}
+  .topbar .topbar-actions .theme-toggle,
+  .topbar .topbar-actions .chat-topbar-btn{width:32px;height:32px;min-width:32px;font-size:.8rem;}
+  .topbar .topbar-actions .low-stock-alert-btn{width:32px;height:32px;min-width:32px;}
+  .topbar .topbar-actions .profile-trigger{width:32px;height:32px;min-width:32px;max-width:32px;}
+  .topbar .topbar-actions .profile-trigger img{width:28px;height:28px;}
+}
+@media(max-width:360px){
+  .topbar .topbar-actions .lang-wrapper{display:none;}
+  .topbar .page-title{font-size:.8rem;}
 }
 </style>
 </head>
@@ -760,26 +875,18 @@ function extractVideoPoster(file) {
     });
 }
 
-/* ============================================================
-   MEDIA LOADER — with retry and cache-independent loading
-   ============================================================ */
 var _videoRetryCount = {};
-
 function loadVideo(el) {
     if (!el) return;
     var key = el.dataset.mediaKey;
     if (!key) return;
-    
-    /* If already has valid src, just ensure playing */
     if (el.src && el.src.indexOf('blob:') === 0 && el.dataset.mediaLoaded === '1') {
         if (el.paused) { el.muted = true; var p = el.play(); if (p && p.catch) p.catch(function(){}); }
         return;
     }
-    
     el.dataset.mediaLoaded = '1';
     getMediaUrl(key).then(function(url) {
         if (!url) {
-            /* Retry after delay (max 3 attempts) */
             var attempts = _videoRetryCount[key] || 0;
             if (attempts < 3) {
                 _videoRetryCount[key] = attempts + 1;
@@ -841,35 +948,27 @@ function toggleVideoMute(btn) {
     if (wrap) { var tap = wrap.querySelector('.video-tap-sound'); if (tap) tap.classList.add('hidden'); }
 }
 
-/* ============================================================
-   PHOTO HYDRATION — load photos from IndexedDB after logout/login
-   ============================================================ */
 function hydratePhotos() {
     document.querySelectorAll('img[data-photo-key]:not([data-photo-bound])').forEach(function(el) {
         el.setAttribute('data-photo-bound', '1');
         var key = el.dataset.photoKey;
         if (!key) return;
         if (_mediaUrlCache[key]) { el.src = _mediaUrlCache[key]; return; }
-        getMediaUrl(key).then(function(url) {
-            if (url) el.src = url;
-        });
+        getMediaUrl(key).then(function(url) { if (url) el.src = url; });
     });
 }
 
 function hydrateMedia() {
-    /* Videos */
     document.querySelectorAll('video[data-media-key]:not([data-media-bound])').forEach(function(el) {
         el.setAttribute('data-media-bound', '1');
         loadVideo(el);
     });
-    /* Ad images (data-media-key) */
     document.querySelectorAll('img[data-media-key]:not([data-media-bound])').forEach(function(el) {
         el.setAttribute('data-media-bound', '1');
         var key = el.dataset.mediaKey;
         if (_mediaUrlCache[key]) { el.src = _mediaUrlCache[key]; return; }
         getMediaUrl(key).then(function(url) { if (url) el.src = url; });
     });
-    /* Profile photos (data-photo-key) */
     hydratePhotos();
 }
 
@@ -962,13 +1061,7 @@ function toggleFollowTenant(id) { if (isSuperAdmin || isMexEmployee || !id || cu
 function renderFollowButton(id) { if (isSuperAdmin || isMexEmployee || !id || currentTenantId === id) return ''; var f = isFollowing(id); return '<button class="btn btn-sm" style="background:' + (f ? 'var(--input-bg)' : 'var(--verified-blue)') + ' !important;color:' + (f ? 'var(--text-secondary)' : '#fff') + ' !important;border-radius:10px !important;font-weight:700;" onclick="event.stopPropagation();toggleFollowTenant(\'' + id + '\')"><i class="fas fa-' + (f ? 'user-check' : 'user-plus') + '"></i> ' + (f ? 'Following' : 'Follow') + '</button>'; }
 function renderVerifiedBadge() { return '<span class="verified-badge"><i class="fas fa-check"></i></span>'; }
 
-/* ============================================================
-   PHOTO + KEY HELPERS
-   ============================================================ */
-function getUserPhotoKey(user) {
-    if (!user) return '';
-    return user.photoKey || '';
-}
+function getUserPhotoKey(user) { if (!user) return ''; return user.photoKey || ''; }
 function getUserPhoto(user) {
     if (!user) return avatarUrl('User', '128C7E');
     var key = getUserPhotoKey(user);
@@ -978,27 +1071,16 @@ function getUserPhoto(user) {
     if (isMexEmployee) return avatarUrl(name, 'f59e0b');
     return avatarUrl(name, '128C7E');
 }
-function getUserPhotoHtml(user, cssClass, extraStyle, size) {
+function getUserPhotoHtml(user, cssClass, extraStyle) {
     var key = getUserPhotoKey(user);
     var src = getUserPhoto(user);
     var attrs = key ? ' data-photo-key="' + escapeHtml(key) + '"' : '';
     var cls = cssClass ? ' class="' + cssClass + '"' : '';
     var st = extraStyle ? ' style="' + extraStyle + '"' : '';
-    return '<img src="' + src + '"' + cls + st + attrs + ' alt="" onerror="this.src=\'' + avatarUrl((user && (user.fullName || user.username)) || 'User', '128C7E') + '\'"/>';
+    return '<img src="' + src + '"' + cls + st + attrs + ' alt=""/>';
 }
-
-function getCompanyPhotoKey(id) {
-    var t = getTenant(id);
-    if (!t || !t.ownerPublic) return '';
-    return t.ownerPublic.photoKey || '';
-}
-function getCompanyPhoto(id) {
-    var t = getTenant(id);
-    if (!t) return avatarUrl('Company', '128C7E');
-    var op = t.ownerPublic || {};
-    if (op.photoKey && _mediaUrlCache[op.photoKey]) return _mediaUrlCache[op.photoKey];
-    return avatarUrl(t.companyName || 'Company', '128C7E');
-}
+function getCompanyPhotoKey(id) { var t = getTenant(id); if (!t || !t.ownerPublic) return ''; return t.ownerPublic.photoKey || ''; }
+function getCompanyPhoto(id) { var t = getTenant(id); if (!t) return avatarUrl('Company', '128C7E'); var op = t.ownerPublic || {}; if (op.photoKey && _mediaUrlCache[op.photoKey]) return _mediaUrlCache[op.photoKey]; return avatarUrl(t.companyName || 'Company', '128C7E'); }
 function getCompanyPhotoHtml(id, cssClass, extraStyle) {
     var key = getCompanyPhotoKey(id);
     var src = getCompanyPhoto(id);
@@ -1007,19 +1089,10 @@ function getCompanyPhotoHtml(id, cssClass, extraStyle) {
     var st = extraStyle ? ' style="' + extraStyle + '"' : '';
     return '<img src="' + src + '"' + cls + st + attrs + ' alt=""/>';
 }
-
-function getAdAuthorPhotoKey(ad) {
-    if (!ad) return '';
-    if (ad.postedBy === 'super') return _superAdminPhotoKey || '';
-    if (ad.tenantId) {
-        var t = getTenant(ad.tenantId);
-        if (t && t.ownerPublic && t.ownerPublic.photoKey) return t.ownerPublic.photoKey;
-    }
-    return '';
-}
+function getAdAuthorPhotoKey(ad) { if (!ad) return ''; if (ad.postedBy === 'super') return _superAdminPhotoKey || ''; if (ad.tenantId) { var t = getTenant(ad.tenantId); if (t && t.ownerPublic && t.ownerPublic.photoKey) return t.ownerPublic.photoKey; } return ''; }
 function getAdAuthorPhoto(ad) {
     if (!ad) return avatarUrl('Company', '128C7E');
-    if (ad.postedBy === 'super') { return _mediaUrlCache[SUPER_ADMIN_PHOTO_KEY] || avatarUrl(ad.companyName || 'MeX Admin', 'f59e0b'); }
+    if (ad.postedBy === 'super') return _mediaUrlCache[SUPER_ADMIN_PHOTO_KEY] || avatarUrl(ad.companyName || 'MeX Admin', 'f59e0b');
     var key = getAdAuthorPhotoKey(ad);
     if (key && _mediaUrlCache[key]) return _mediaUrlCache[key];
     var t = ad.tenantId ? getTenant(ad.tenantId) : null;
@@ -1035,12 +1108,6 @@ function getAdAuthorPhotoHtml(ad, cssClass, extraStyle, onclick) {
     var oc = onclick ? ' onclick="' + onclick + '"' : '';
     return '<img src="' + src + '"' + cls + st + attrs + oc + ' alt=""/>';
 }
-
-function getCommenterPhotoKey(c) {
-    if (!c) return '';
-    if (c.isSuperAdmin) return _superAdminPhotoKey || '';
-    return '';
-}
 function getCommenterAvatar(c) {
     if (!c) return avatarUrl('User', '128C7E');
     if (c.isSuperAdmin) return _mediaUrlCache[SUPER_ADMIN_PHOTO_KEY] || avatarUrl(c.userName || 'Super Admin', 'f59e0b');
@@ -1054,7 +1121,6 @@ function preloadAllMedia() {
     getAllTenants().forEach(function(t) { var op = t.ownerPublic || {}; if (op.photoKey && !_mediaUrlCache[op.photoKey]) promises.push(getMediaUrl(op.photoKey)); });
     getMexEmployees().forEach(function(e) { if (e.photoKey && !_mediaUrlCache[e.photoKey]) promises.push(getMediaUrl(e.photoKey)); });
     getAllTenants().forEach(function(t) { var old = currentTenantId; currentTenantId = t.id; getTenantData('users', []).forEach(function(u) { if (u.photoKey && !_mediaUrlCache[u.photoKey]) promises.push(getMediaUrl(u.photoKey)); }); currentTenantId = old; });
-    /* Preload ad posters (smaller) */
     getGlobalAds().forEach(function(ad) { if (ad.posterKey && !_mediaUrlCache[ad.posterKey]) promises.push(getMediaUrl(ad.posterKey)); });
     return Promise.all(promises);
 }
@@ -1086,7 +1152,6 @@ function addComment(id) { var u = getCurrentUser(); if (!u) return; var el = doc
 function deleteComment(sid, ci) { if (!confirm('?')) return; var s = getStatuses(); var st = s.find(function(x) { return x.id === Number(sid); }); if (!st || !st.comments) return; st.comments.splice(ci, 1); saveStatuses(s); navigate('status'); }
 function toggleCommentInput(id) { var d = document.getElementById('comment-input-' + id); if (d) d.style.display = d.style.display === 'none' ? 'block' : 'none'; }
 function switchStatusTab(tab) { currentStatusTab = tab; navigate('status'); }
-
 function openPostStatus() { var ov = document.getElementById('modalOverlay'), bx = document.getElementById('modalBox'); bx.innerHTML = '<h3><i class="fas fa-pen"></i> Post Status</h3><form onsubmit="submitStatus(event)"><div class="form-group"><label>Content *</label><textarea id="statusText" rows="4" required maxlength="800"></textarea></div><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="btn btn-primary">Post</button></div></form>'; ov.classList.add('show'); document.body.classList.add('modal-open'); }
 function submitStatus(e) { e.preventDefault(); var text = document.getElementById('statusText').value.trim(); if (!text) return; var u = getCurrentUser(); if (!u) return; var s = getStatuses(); s.push({ id:uid(), userId:u.id, text:text, timestamp:Date.now(), likes:[], comments:[] }); saveStatuses(s); closeModal(); navigate('status'); }
 
@@ -1688,11 +1753,8 @@ function initApp(user) {
     document.getElementById('currentDate').textContent = getTzNowDate();
     updateChatBadge(); updateLowStockBadge();
     if (!_appInitialized) { _appInitialized = true; bindGlobalEvents(); }
-    /* Preload all media AFTER view renders, and re-hydrate photos */
     setTimeout(function() {
-        preloadAllMedia().then(function() {
-            hydratePhotos();
-        });
+        preloadAllMedia().then(function() { hydratePhotos(); });
     }, 200);
 }
 function startPromotedTicker() { if (promotedTickerInterval) clearInterval(promotedTickerInterval); promotedTickerInterval = setInterval(function() { cleanupExpiredAds(); }, 60000); }
@@ -1723,7 +1785,6 @@ function logout() {
     stopChatPolling();
     setCurrentUser(null); setMexSession(null);
     currentTenantId = null; isSuperAdmin = false; isMexEmployee = false; currentMexEmployeeId = null;
-    /* Reset retry counters so videos retry after re-login */
     _videoRetryCount = {};
     document.getElementById('appContainer').classList.remove('active');
     document.getElementById('loginPage').classList.remove('hidden');
@@ -1739,7 +1800,6 @@ function toggleMobileSidebar() { var sb = document.getElementById('sidebar'); if
     function bootHideSplash() { var bs = document.getElementById('bootSplash'); if (!bs) return; bs.classList.add('hide'); setTimeout(function() { try { bs.remove(); } catch(e) {} }, 900); }
     function scheduleHide() { var elapsed = Date.now() - splashStart; setTimeout(bootHideSplash, Math.max(0, BOOT_DURATION - elapsed)); }
     initLanguageMenu();
-    /* Preload all media early */
     setTimeout(preloadAllMedia, 300);
     try { if (localStorage.getItem(SUPER_ADMIN_SESSION_KEY) === 'true') { isSuperAdmin = true; currentTenantId = null; var su = lsGet('sb_superadmin_user', null) || { id:0, username:'Super Admin', fullName:'Super Admin', role:'superadmin', store:'All', theme:'light' }; setCurrentUser(su); document.getElementById('loginPage').classList.add('hidden'); document.getElementById('appContainer').classList.add('active'); initApp(su); scheduleHide(); return; } } catch(e) {}
     var ms = getMexSession();
