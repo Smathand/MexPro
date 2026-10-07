@@ -537,6 +537,70 @@ html[dir="rtl"] .ad-profile-modal .ad-profile-close{right:auto;left:14px;}
   .topbar .page-title{font-size:.8rem;}
   .topbar .topbar-actions .low-stock-alert-btn{padding:0 8px !important;font-size:.68rem;gap:4px;}
 }
+
+/* ===== FIND STAYS ===== */
+.stay-search-bar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+.stay-search-bar .stay-search-input-wrap{position:relative;flex:1;min-width:220px;}
+.stay-search-bar .stay-search-input-wrap i{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--text-muted);pointer-events:none;font-size:.9rem;}
+html[dir="rtl"] .stay-search-bar .stay-search-input-wrap i{left:auto;right:16px;}
+.stay-search-bar input{padding-left:44px !important;border-radius:30px !important;height:48px;font-size:16px !important;}
+html[dir="rtl"] .stay-search-bar input{padding-left:16px !important;padding-right:44px !important;}
+.stay-loc-btn{padding:0 20px !important;border-radius:30px !important;font-weight:700;font-size:.85rem;height:48px;background:linear-gradient(135deg,var(--accent-1),var(--accent-2)) !important;color:#fff !important;display:inline-flex;align-items:center;gap:8px;white-space:nowrap;flex-shrink:0;}
+.stay-loc-btn.locating{background:var(--accent-3) !important;}
+.stay-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center;}
+.stay-chip{padding:9px 16px;border-radius:24px !important;font-weight:700;font-size:.82rem;background:var(--input-bg);color:var(--text-secondary);border:1.5px solid var(--border-color) !important;cursor:pointer;display:inline-flex;align-items:center;gap:6px;min-height:38px;}
+.stay-chip.active{background:var(--accent-1);color:#fff !important;border-color:var(--accent-1) !important;}
+.stay-chip i{font-size:.82rem;}
+.stay-summary-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--input-bg);border-radius:12px;margin-bottom:12px;font-size:.78rem;font-weight:700;color:var(--text-secondary);flex-wrap:wrap;gap:8px;}
+.stay-summary-bar .loc-tag{color:var(--accent-1);display:inline-flex;align-items:center;gap:5px;}
+.stay-card{background:var(--bg-card);border:1px solid var(--border-color);border-radius:18px;overflow:hidden;box-shadow:var(--shadow-card);margin-bottom:14px;display:flex;flex-direction:column;transition:transform .15s ease,box-shadow .15s ease;}
+.stay-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-dropdown);}
+@media(min-width:640px){.stay-card{flex-direction:row;}.stay-card .stay-img{width:260px;min-width:260px;height:auto;min-height:220px;}}
+.stay-img{width:100%;height:200px;background:var(--media-bg);position:relative;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.stay-img img{width:100%;height:100%;object-fit:cover;display:block;}
+.stay-img .stay-type-badge{position:absolute;top:12px;left:12px;background:rgba(0,0,0,.68);color:#fff;padding:5px 12px;border-radius:20px;font-size:.66rem;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;backdrop-filter:blur(6px);display:inline-flex;align-items:center;gap:5px;}
+.stay-img .stay-distance-badge{position:absolute;bottom:12px;left:12px;background:rgba(18,140,126,.94);color:#fff;padding:6px 12px;border-radius:20px;font-size:.72rem;font-weight:800;display:inline-flex;align-items:center;gap:6px;backdrop-filter:blur(6px);}
+.stay-img .stay-distance-badge.uber-style{background:linear-gradient(135deg,#000,#1f1f1f);color:#fff;}
+.stay-img .stay-distance-badge i{font-size:.75rem;}
+.stay-img .stay-photo-count{position:absolute;top:12px;right:12px;background:rgba(0,0,0,.68);color:#fff;padding:5px 10px;border-radius:20px;font-size:.65rem;font-weight:800;display:inline-flex;align-items:center;gap:4px;backdrop-filter:blur(6px);}
+.stay-body{padding:14px 16px;flex:1;display:flex;flex-direction:column;min-width:0;}
+.stay-name{font-size:1rem;font-weight:800;letter-spacing:-0.02em;display:flex;align-items:center;gap:5px;line-height:1.2;}
+.stay-loc{font-size:.78rem;color:var(--text-muted);font-weight:600;margin-top:3px;display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
+.stay-desc{font-size:.82rem;color:var(--text-secondary);margin-top:8px;line-height:1.5;font-weight:500;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.stay-features{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;font-size:.72rem;color:var(--text-muted);font-weight:700;}
+.stay-features span{display:inline-flex;align-items:center;gap:4px;}
+.stay-bottom{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:auto;padding-top:12px;flex-wrap:wrap;}
+.stay-price{font-size:1.15rem;font-weight:900;color:var(--accent-1);letter-spacing:-0.02em;}
+.stay-price small{font-size:.68rem;font-weight:700;color:var(--text-muted);margin-left:2px;}
+.stay-actions{display:flex;gap:6px;flex-wrap:wrap;}
+.stay-actions .btn{padding:7px 12px !important;font-size:.76rem !important;border-radius:10px !important;font-weight:700;display:inline-flex;align-items:center;gap:5px;text-decoration:none;}
+.stay-rating{display:inline-flex;align-items:center;gap:4px;color:var(--accent-3);font-weight:800;font-size:.82rem;}
+.stay-rating i{font-size:.78rem;}
+.stay-detail-hero{position:relative;width:100%;aspect-ratio:16/10;background:var(--media-bg);background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;}
+.stay-detail-hero img{width:100%;height:100%;object-fit:cover;}
+.stay-gallery{display:flex;gap:6px;overflow-x:auto;padding:8px 0;scroll-snap-type:x mandatory;}
+.stay-gallery img{height:70px;width:auto;border-radius:8px;object-fit:cover;flex-shrink:0;scroll-snap-align:start;cursor:pointer;border:2px solid transparent;}
+.stay-gallery img.active{border-color:var(--accent-1);}
+.stay-detail-amenities{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+.stay-amenity{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:20px;background:var(--input-bg);border:1px solid var(--border-color);font-size:.75rem;font-weight:700;color:var(--text-secondary);}
+.stay-map-frame{width:100%;height:240px;border:0;border-radius:14px;margin-top:10px;background:var(--input-bg);}
+.stay-eta-line{display:flex;align-items:center;gap:8px;padding:8px 12px;background:linear-gradient(135deg,rgba(18,140,126,.08),rgba(18,140,126,.02));border:1px solid rgba(18,140,126,.25);border-radius:10px;margin-top:10px;font-size:.78rem;font-weight:700;color:var(--accent-1);}
+.stay-eta-line i{font-size:.85rem;}
+.stay-posts-section{margin-top:18px;padding-top:14px;border-top:1px solid var(--border-color);}
+.stay-post{background:var(--input-bg);border-radius:12px;padding:12px 14px;margin-bottom:10px;}
+.stay-post-text{font-size:.88rem;color:var(--text-primary);line-height:1.5;font-weight:500;}
+.stay-post-time{font-size:.68rem;color:var(--text-muted);font-weight:700;margin-top:6px;display:flex;align-items:center;gap:6px;}
+.stay-post-img{width:100%;max-height:250px;border-radius:10px;object-fit:cover;margin-top:8px;}
+.stay-thumb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:6px;margin-top:8px;}
+.stay-thumb{position:relative;aspect-ratio:1/1;border-radius:8px;overflow:hidden;background:var(--media-bg);}
+.stay-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.stay-thumb button{position:absolute;top:3px;right:3px;background:rgba(239,68,68,.9) !important;color:#fff !important;width:22px;height:22px;border-radius:50% !important;padding:0 !important;font-size:.65rem;display:flex;align-items:center;justify-content:center;}
+@media(max-width:640px){
+  .stay-search-bar{flex-direction:column;align-items:stretch;}
+  .stay-loc-btn{width:100%;justify-content:center;}
+  .stay-card{border-radius:14px;margin-left:-6px;margin-right:-6px;}
+  .stay-img{height:180px;}
+}
 </style>
 </head>
 <body>
@@ -648,9 +712,11 @@ html[dir="rtl"] .ad-profile-modal .ad-profile-close{right:auto;left:14px;}
             <button class="nav-item" data-view="reports" id="navReports"><i class="fas fa-file-alt"></i><span data-i18n="reports">Reports</span></button>
             <button class="nav-item" data-view="attendance" id="navAttendance" style="display:none;"><i class="fas fa-clock"></i><span data-i18n="attendance">Attendance</span></button>
             <button class="nav-item" data-view="superadmin" id="navSuperAdmin" style="display:none;"><i class="fas fa-crown"></i><span data-i18n="superAdmin">Super Admin</span></button>
+            <button class="nav-item" data-view="superStays" id="navSuperStays" style="display:none;"><i class="fas fa-hotel"></i><span data-i18n="manageStays">Manage Stays</span></button>
             <button class="nav-item" data-view="mexEarnings" id="navMexEarnings" style="display:none;"><i class="fas fa-coins"></i><span data-i18n="myEarnings">My Earnings</span></button>
             <button class="nav-item" data-view="mexCompanies" id="navMexCompanies" style="display:none;"><i class="fas fa-building"></i><span data-i18n="myCompanies">My Companies</span></button>
             <button class="nav-item" data-view="mexStatus" id="navMexStatus" style="display:none;"><i class="fas fa-bullhorn"></i><span data-i18n="ads">Ads</span></button>
+            <button class="nav-item" data-view="mexStays" id="navMexStays" style="display:none;"><i class="fas fa-hotel"></i><span data-i18n="findStays">Find Stays</span></button>
         </nav>
         <div class="sidebar-footer">
             <div class="user-avatar" id="sideUserAvatar" data-photo-key=""></div>
@@ -788,22 +854,42 @@ html[dir="rtl"] .ad-profile-modal .ad-profile-close{right:auto;left:14px;}
         <div class="receipt-content" id="receiptContent"></div>
         <div class="receipt-actions">
             <button class="btn btn-primary btn-icon" id="printReceiptBtn"><i class="fas fa-print"></i> <span data-i18n="print">Print</span></button>
+            <button class="btn btn-whatsapp btn-icon" id="whatsappReceiptBtn" onclick="sendReceiptWhatsApp()"><i class="fab fa-whatsapp"></i> <span>WhatsApp</span></button>
             <button class="btn btn-secondary btn-icon" id="closeReceiptBtn"><i class="fas fa-times"></i> <span data-i18n="close">Close</span></button>
         </div>
     </div>
 </div>
 
 <div class="modal-overlay" id="transferModal">
-    <div class="modal-box">
+    <div class="modal-box" style="max-width:520px;">
         <h3><i class="fas fa-exchange-alt" style="color:#8b5cf6;"></i> <span data-i18n="transferStock">Transfer Stock</span></h3>
+        <p style="font-size:.82rem;color:var(--text-muted);font-weight:500;margin-bottom:16px;">
+            <i class="fas fa-info-circle" style="color:#8b5cf6;"></i>
+            <span data-i18n="transferHint">Stock will be deducted from source branch and added to target branch.</span>
+        </p>
         <form onsubmit="submitTransfer(event)">
-            <div class="form-group"><label data-i18n="fromBranch">From Branch *</label><select id="transferFrom" required onchange="onTransferFromChange()"><option value="">--</option></select></div>
-            <div class="form-group"><label data-i18n="product">Product *</label><select id="transferProduct" required><option value="">--</option></select></div>
-            <div class="form-group"><label data-i18n="targetBranch">Target Branch *</label><select id="transferBranch" required><option value="">--</option></select></div>
-            <div class="form-group"><label data-i18n="quantity">Quantity *</label><input type="number" id="transferQty" min="1" value="1" required/></div>
+            <div class="form-group">
+                <label data-i18n="fromBranch">From Branch *</label>
+                <select id="transferFrom" required onchange="onTransferFromChange()"><option value="">--</option></select>
+            </div>
+            <div class="form-group">
+                <label data-i18n="product">Product *</label>
+                <select id="transferProduct" required onchange="onTransferProductChange()"><option value="">--</option></select>
+            </div>
+            <div class="form-group">
+                <label data-i18n="targetBranch">Target Branch *</label>
+                <select id="transferBranch" required><option value="">--</option></select>
+            </div>
+            <div class="form-group">
+                <label data-i18n="quantity">Quantity *</label>
+                <input type="number" id="transferQty" min="1" value="1" required/>
+            </div>
+            <div style="background:rgba(139,92,246,.08);border:1px dashed rgba(139,92,246,.35);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:14px;font-size:.75rem;color:#7c3aed;font-weight:600;">
+                <i class="fas fa-shield-alt"></i> <span data-i18n="transferNote">Only the OWNER can perform stock transfers.</span>
+            </div>
             <div class="form-actions">
                 <button type="button" class="btn btn-secondary" onclick="closeTransferModal()" data-i18n="cancel">Cancel</button>
-                <button type="submit" class="btn btn-primary"><i class="fas fa-exchange-alt"></i> <span data-i18n="transfer">Transfer</span></button>
+                <button type="submit" class="btn btn-primary" style="background:#8b5cf6 !important;"><i class="fas fa-exchange-alt"></i> <span data-i18n="transfer">Transfer</span></button>
             </div>
         </form>
     </div>
@@ -838,7 +924,6 @@ html[dir="rtl"] .ad-profile-modal .ad-profile-close{right:auto;left:14px;}
     </div>
 </div>
 
-<!-- ============ NEW: CREDENTIALS MODAL (Super Admin only) ============ -->
 <div class="modal-overlay" id="credentialsModal">
     <div class="modal-box" style="max-width:720px;">
         <h3 style="margin-bottom:16px;"><i class="fas fa-key" style="color:#8b5cf6;"></i> <span id="credentialsTitle">Company Credentials</span></h3>
@@ -876,6 +961,7 @@ var SUPER_ADMIN_SESSION_KEY = 'sb_superadmin_logged_in';
 var SUPER_ADMIN_PHOTO_KEY = 'sb_super_admin_photo_key';
 var FOLLOWS_KEY_SUFFIX = 'follows';
 var CHAT_KEY = 'sb_chat_messages';
+var TRANSFERS_KEY_SUFFIX = 'transfers';
 var LANG_KEY = 'sb_lang';
 var MAX_VIDEO_MB = 200;
 var BOOT_DURATION = 4500;
@@ -883,7 +969,7 @@ var _superAdminPhotoKey = null;
 
 var TRANSLATIONS = {
   en: {
-    dashboard:'Dashboard',sales:'Sales',debts:'Debts',inventory:'Inventory',adsStatus:'Ads & Status',pnl:'Profit & Loss',expenses:'Expenses',branches:'Branches',users:'Users',roles:'Roles',reports:'Reports',attendance:'Attendance',superAdmin:'Super Admin',myEarnings:'My Earnings',myCompanies:'My Companies',ads:'Ads',
+    dashboard:'Dashboard',sales:'Sales',debts:'Debts',inventory:'Inventory',adsStatus:'Ads & Status',pnl:'Profit & Loss',expenses:'Expenses',branches:'Branches',users:'Users',roles:'Roles',reports:'Reports',attendance:'Attendance',superAdmin:'Super Admin',manageStays:'Manage Stays',myEarnings:'My Earnings',myCompanies:'My Companies',ads:'Ads',
     login:'Login',loginSubtitle:'Login to your account',username:'Username',password:'Password',noAccount:"Don't have an account?",registerCompany:'Register Company',registerAsMember:'Register as Member',createAccount:'Create your company account',companyName:'Company Name',phoneNumber:'Phone Number',confirmPassword:'Confirm Password',promoCode:'Promo Code (Optional)',continueToPayment:'Continue to Payment',alreadyRegistered:'Already registered?',freeRegistration:'Free registration — Get your unique promo code',fullName:'Full Name',createMemberAccount:'Create Member Account',alreadyMember:'Already a member?',
     choosePlan:'Choose Your Plan',planSubtitle:'Select a subscription plan.',selectPlan:'Please select a plan to continue.',submitWaitApproval:'Submit & Wait for Approval',cancel:'Cancel',save:'Save',close:'Close',post:'Post',send:'Send',print:'Print',lowStock:'Low Stock',
     myProfile:'My Profile',changePhoto:'Change Photo',email:'Email',bio:'Bio / Description',newPassword:'New Password',comments:'Comments',addBranch:'Add Branch',addBranchFree:'Adding a branch is free.',branchName:'Branch Name *',branchAddress:'Branch Address *',branchTin:'Branch TIN *',usernameForLogin:'Username (for login) *',createBranch:'Create Branch',chat:'Chat',selectContact:'Select a contact to start chatting',transferStock:'Transfer Stock',fromBranch:'From Branch *',product:'Product *',targetBranch:'Target Branch *',quantity:'Quantity *',transfer:'Transfer',
@@ -902,10 +988,13 @@ var TRANSLATIONS = {
     sendDebtsWhatsApp:'Send Debts to WhatsApp',sendDebtsReport:'Send Debts Report',setWhatsAppFirst:'Please enter a phone number to send',noDebtsToSend:'No debts to send',debtsReport:'DEBTS REPORT',
     sendReport:'Send Report',reportDestination:'Report Destination',whatsappNumber:'WhatsApp Number',emailAddress:'Email Address',sendViaWhatsApp:'Send WhatsApp',sendViaEmail:'Send Email',enterNumberOrEmail:'Enter phone number or email (or both).',
     sendSalesReport:'Send Sales Report',salesReportTitle:'SALES REPORT',noSalesToSend:'No sales to send',sendReportSubtitle:'Enter destination to send report.',enterWhatsapp:'Enter WhatsApp number',enterEmail:'Enter email address',invalidEmail:'Invalid email address',
-    viewCredentials:'View Credentials',companyCredentials:'Credentials',credentialsNote:'Super Admin access only. Handle with care.',showAll:'Show All',hideAll:'Hide All',copyAll:'Copy All',noCredentials:'No credentials found'
+    viewCredentials:'View Credentials',companyCredentials:'Credentials',credentialsNote:'Super Admin access only. Handle with care.',showAll:'Show All',hideAll:'Hide All',copyAll:'Copy All',noCredentials:'No credentials found',
+    transferHint:'Stock will be deducted from source branch and added to target branch.',
+    transferNote:'Only the OWNER can perform stock transfers.',
+    findStays:'Find Stays',apartments:'Apartments',hotels:'Hotels',allTypes:'All',nearMe:'Near Me',getMyLocation:'Use My Location',kmAway:'km',minAway:'min',viewOnMap:'Map',getDirections:'Directions',bookNow:'Book',callHost:'Call',perNight:'/ night',amenities:'Amenities',bedrooms:'Beds',bathrooms:'Baths',maxGuests:'Guests',noStays:'No stays found nearby',searchStays:'Search apartments, hotels, cities...',sortByDistance:'Nearest',sortByPrice:'Cheapest',sortByRating:'Top Rated',filterType:'Type',addStay:'Add Stay',editStay:'Edit Stay',deleteStay:'Delete Stay',stayName:'Property Name',stayType:'Type',stayPrice:'Price / Night',stayAddress:'Address',latitude:'Latitude',longitude:'Longitude',city:'City',contactPhone:'Phone',contactWhatsapp:'WhatsApp',rating:'Rating',stayAdded:'Stay added!',stayUpdated:'Stay updated!',nearbyStays:'Stays Near You',staysFound:'found',propertyDetails:'Property Details',yourLocation:'Your location',getDirectionsHint:'Tap to open Google Maps directions',nightlyRate:'per night',callNow:'Call Now',manageAllStays:'Manage All Stays',addNewStay:'Add New Stay',noStaysYet:'No stays yet. Add your first property!',photos:'Photos',addPhotos:'Add Photos',uploadPhotos:'Upload Photos',postsUpdates:'Posts / Updates',addPost:'Add Post',postText:'Write an update...',postAdded:'Post added!',totalStays:'Total Stays',totalApartments:'Apartments',totalHotels:'Hotels',pickLocation:'Pick Location on Map',useMyLocationForStay:'Use My Current Location',openInGoogleMaps:'Open in Google Maps',pasteGoogleMapsLink:'Paste Google Maps link (optional)',stayDeleted:'Stay deleted',viewOnGoogleMaps:'View on Google Maps',noPhotosYet:'No photos yet',noPostsYet:'No updates yet',dragHint:'Click to upload multiple photos'
   },
   sw: {
-    dashboard:'Dashibodi',sales:'Mauzo',debts:'Madeni',inventory:'Bidhaa',adsStatus:'Matangazo & Hali',pnl:'Faida na Hasara',expenses:'Matumizi',branches:'Matawi',users:'Watumiaji',roles:'Majukumu',reports:'Ripoti',attendance:'Mahudhurio',superAdmin:'Msimamizi Mkuu',myEarnings:'Mapato Yangu',myCompanies:'Kampuni Zangu',ads:'Matangazo',
+    dashboard:'Dashibodi',sales:'Mauzo',debts:'Madeni',inventory:'Bidhaa',adsStatus:'Matangazo & Hali',pnl:'Faida na Hasara',expenses:'Matumizi',branches:'Matawi',users:'Watumiaji',roles:'Majukumu',reports:'Ripoti',attendance:'Mahudhurio',superAdmin:'Msimamizi Mkuu',manageStays:'Simamia Malazi',myEarnings:'Mapato Yangu',myCompanies:'Kampuni Zangu',ads:'Matangazo',
     login:'Ingia',loginSubtitle:'Ingia kwenye akaunti yako',username:'Jina la Mtumiaji',password:'Nenosiri',noAccount:'Hauna akaunti?',registerCompany:'Sajili Kampuni',registerAsMember:'Sajili kama Mwanachama',createAccount:'Unda akaunti ya kampuni yako',companyName:'Jina la Kampuni',phoneNumber:'Namba ya Simu',confirmPassword:'Thibitisha Nenosiri',promoCode:'Kodi ya Promo (Hiari)',continueToPayment:'Endelea kwa Malipo',alreadyRegistered:'Umesajiliwa tayari?',freeRegistration:'Usajili wa bure — Pata kodi yako ya kipekee',fullName:'Jina Kamili',createMemberAccount:'Unda Akaunti ya Mwanachama',alreadyMember:'Tayari wewe ni mwanachama?',
     choosePlan:'Chagua Mpango Wako',planSubtitle:'Chagua mpango wa usajili.',selectPlan:'Tafadhali chagua mpango kuendelea.',submitWaitApproval:'Tuma & Subiri Idhini',cancel:'Ghairi',save:'Hifadhi',close:'Funga',post:'Chapisha',send:'Tuma',print:'Chapisha',lowStock:'Bidhaa Chache',
     myProfile:'Wasifu Wangu',changePhoto:'Badilisha Picha',email:'Barua Pepe',bio:'Maelezo',newPassword:'Nenosiri Jipya',comments:'Maoni',addBranch:'Ongeza Tawi',addBranchFree:'Kuongeza tawi ni bure.',branchName:'Jina la Tawi *',branchAddress:'Anwani ya Tawi *',branchTin:'TIN ya Tawi *',usernameForLogin:'Jina la Mtumiaji (kwa kuingia) *',createBranch:'Unda Tawi',chat:'Gumzo',selectContact:'Chagua mtu kuanza kuzungumza',transferStock:'Hamisha Bidhaa',fromBranch:'Kutoka Tawi *',product:'Bidhaa *',targetBranch:'Tawi Lengwa *',quantity:'Idadi *',transfer:'Hamisha',
@@ -924,10 +1013,13 @@ var TRANSLATIONS = {
     sendDebtsWhatsApp:'Tuma Madeni kwa WhatsApp',sendDebtsReport:'Tuma Ripoti ya Madeni',setWhatsAppFirst:'Tafadhali weka namba ya simu kutuma',noDebtsToSend:'Hakuna madeni ya kutuma',debtsReport:'RIPOTI YA MADENI',
     sendReport:'Tuma Ripoti',reportDestination:'Mahali pa Kutuma',whatsappNumber:'Namba ya WhatsApp',emailAddress:'Barua Pepe',sendViaWhatsApp:'Tuma WhatsApp',sendViaEmail:'Tuma Barua Pepe',enterNumberOrEmail:'Weka namba ya simu au barua pepe (au zote mbili).',
     sendSalesReport:'Tuma Ripoti ya Mauzo',salesReportTitle:'RIPOTI YA MAUZO',noSalesToSend:'Hakuna mauzo ya kutuma',sendReportSubtitle:'Weka mahali pa kutuma ripoti.',enterWhatsapp:'Weka namba ya WhatsApp',enterEmail:'Weka barua pepe',invalidEmail:'Barua pepe si sahihi',
-    viewCredentials:'Ona Nywila',companyCredentials:'Nywila za Kampuni',credentialsNote:'Ufikiaji wa Msimamizi Mkuu tu. Tumia kwa uangalifu.',showAll:'Onyesha Zote',hideAll:'Ficha Zote',copyAll:'Nakili Zote',noCredentials:'Hakuna nywila zilizopatikana'
+    viewCredentials:'Ona Nywila',companyCredentials:'Nywila za Kampuni',credentialsNote:'Ufikiaji wa Msimamizi Mkuu tu. Tumia kwa uangalifu.',showAll:'Onyesha Zote',hideAll:'Ficha Zote',copyAll:'Nakili Zote',noCredentials:'Hakuna nywila zilizopatikana',
+    transferHint:'Bidhaa zitapungua kwenye tawi la chanzo na kuongezwa kwenye tawi lengwa.',
+    transferNote:'Ni MMILIKI pekee anayeweza kufanya uhamisho wa bidhaa.',
+    findStays:'Tafuta Malazi',apartments:'Apartamenti',hotels:'Hoteli',allTypes:'Zote',nearMe:'Karibu Nami',getMyLocation:'Tumia Eneo Langu',kmAway:'km',minAway:'dk',viewOnMap:'Ramani',getDirections:'Maelekezo',bookNow:'Weka',callHost:'Piga Simu',perNight:'/ usiku',amenities:'Huduma',bedrooms:'Vyumba',bathrooms:'Bafu',maxGuests:'Wageni',noStays:'Hakuna malazi yaliyopatikana',searchStays:'Tafuta apartamenti, hoteli, miji...',sortByDistance:'Karibu Zaidi',sortByPrice:'Nafuu',sortByRating:'Bora',filterType:'Aina',addStay:'Ongeza Malazi',editStay:'Badilisha Malazi',deleteStay:'Futa Malazi',stayName:'Jina la Nyumba',stayType:'Aina',stayPrice:'Bei / Usiku',stayAddress:'Anwani',latitude:'Latitudo',longitude:'Longitudo',city:'Mji',contactPhone:'Simu',contactWhatsapp:'WhatsApp',rating:'Kiwango',stayAdded:'Malazi yameongezwa!',stayUpdated:'Malazi yamebadilishwa!',nearbyStays:'Malazi Karibu Nawe',staysFound:'yamepatikana',propertyDetails:'Maelezo ya Nyumba',yourLocation:'Eneo lako',getDirectionsHint:'Gusa kufungua maelekezo ya Google Maps',nightlyRate:'kwa usiku',callNow:'Piga Sasa',manageAllStays:'Simamia Malazi Yote',addNewStay:'Ongeza Malazi Mapya',noStaysYet:'Hakuna malazi bado. Ongeza nyumba yako ya kwanza!',photos:'Picha',addPhotos:'Ongeza Picha',uploadPhotos:'Pakia Picha',postsUpdates:'Machapisho / Taarifa',addPost:'Ongeza Chapisho',postText:'Andika taarifa...',postAdded:'Chapisho limeongezwa!',totalStays:'Jumla ya Malazi',totalApartments:'Apartamenti',totalHotels:'Hoteli',pickLocation:'Chagua Eneo kwenye Ramani',useMyLocationForStay:'Tumia Eneo Langu la Sasa',openInGoogleMaps:'Fungua kwenye Google Maps',pasteGoogleMapsLink:'Bandika linki ya Google Maps (hiari)',stayDeleted:'Malazi yamefutwa',viewOnGoogleMaps:'Ona kwenye Google Maps',noPhotosYet:'Hakuna picha bado',noPostsYet:'Hakuna taarifa bado',dragHint:'Bofya kupakia picha nyingi'
   },
   zh: {
-    dashboard:'仪表盘',sales:'销售',debts:'债务',inventory:'库存',adsStatus:'广告与状态',pnl:'利润与亏损',expenses:'费用',branches:'分支',users:'用户',roles:'角色',reports:'报告',attendance:'出勤',superAdmin:'超级管理员',myEarnings:'我的收入',myCompanies:'我的公司',ads:'广告',
+    dashboard:'仪表盘',sales:'销售',debts:'债务',inventory:'库存',adsStatus:'广告与状态',pnl:'利润与亏损',expenses:'费用',branches:'分支',users:'用户',roles:'角色',reports:'报告',attendance:'出勤',superAdmin:'超级管理员',manageStays:'管理住宿',myEarnings:'我的收入',myCompanies:'我的公司',ads:'广告',
     login:'登录',loginSubtitle:'登录您的账户',username:'用户名',password:'密码',noAccount:'没有账户？',registerCompany:'注册公司',registerAsMember:'注册为会员',createAccount:'创建您的公司账户',companyName:'公司名称',phoneNumber:'电话号码',confirmPassword:'确认密码',promoCode:'优惠码（可选）',continueToPayment:'继续付款',alreadyRegistered:'已注册？',freeRegistration:'免费注册——获取您的专属优惠码',fullName:'全名',createMemberAccount:'创建会员账户',alreadyMember:'已是会员？',
     choosePlan:'选择您的套餐',planSubtitle:'选择一个订阅套餐。',selectPlan:'请选择一个套餐以继续。',submitWaitApproval:'提交并等待批准',cancel:'取消',save:'保存',close:'关闭',post:'发布',send:'发送',print:'打印',lowStock:'低库存',
     myProfile:'我的资料',changePhoto:'更换照片',email:'电子邮件',bio:'简介/描述',newPassword:'新密码',comments:'评论',addBranch:'添加分支',addBranchFree:'添加分支是免费的。',branchName:'分支名称 *',branchAddress:'分支地址 *',branchTin:'分支TIN *',usernameForLogin:'登录用户名 *',createBranch:'创建分支',chat:'聊天',selectContact:'选择联系人开始聊天',transferStock:'转移库存',fromBranch:'从分支 *',product:'产品 *',targetBranch:'目标分支 *',quantity:'数量 *',transfer:'转移',
@@ -946,10 +1038,13 @@ var TRANSLATIONS = {
     sendDebtsWhatsApp:'通过WhatsApp发送债务',sendDebtsReport:'发送债务报告',setWhatsAppFirst:'请输入要发送的电话号码',noDebtsToSend:'没有要发送的债务',debtsReport:'债务报告',
     sendReport:'发送报告',reportDestination:'报告目的地',whatsappNumber:'WhatsApp号码',emailAddress:'电子邮件地址',sendViaWhatsApp:'发送WhatsApp',sendViaEmail:'发送电子邮件',enterNumberOrEmail:'输入电话号码或电子邮件（或两者都填）。',
     sendSalesReport:'发送销售报告',salesReportTitle:'销售报告',noSalesToSend:'没有要发送的销售',sendReportSubtitle:'输入发送报告的目的地。',enterWhatsapp:'输入WhatsApp号码',enterEmail:'输入电子邮件地址',invalidEmail:'电子邮件地址无效',
-    viewCredentials:'查看密码',companyCredentials:'公司凭证',credentialsNote:'仅限超级管理员访问。谨慎处理。',showAll:'显示全部',hideAll:'隐藏全部',copyAll:'复制全部',noCredentials:'未找到凭证'
+    viewCredentials:'查看密码',companyCredentials:'公司凭证',credentialsNote:'仅限超级管理员访问。谨慎处理。',showAll:'显示全部',hideAll:'隐藏全部',copyAll:'复制全部',noCredentials:'未找到凭证',
+    transferHint:'库存将从来源分支扣除并添加到目标分支。',
+    transferNote:'只有所有者可以执行库存转移。',
+    findStays:'查找住宿',apartments:'公寓',hotels:'酒店',allTypes:'全部',nearMe:'我附近',getMyLocation:'使用我的位置',kmAway:'公里',minAway:'分钟',viewOnMap:'地图',getDirections:'路线',bookNow:'预订',callHost:'致电',perNight:'/ 晚',amenities:'设施',bedrooms:'卧室',bathrooms:'浴室',maxGuests:'客人',noStays:'附近未找到住宿',searchStays:'搜索公寓、酒店、城市...',sortByDistance:'最近',sortByPrice:'最便宜',sortByRating:'评分最高',filterType:'类型',addStay:'添加住宿',editStay:'编辑住宿',deleteStay:'删除住宿',stayName:'物业名称',stayType:'类型',stayPrice:'价格/晚',stayAddress:'地址',latitude:'纬度',longitude:'经度',city:'城市',contactPhone:'电话',contactWhatsapp:'WhatsApp',rating:'评分',stayAdded:'已添加！',stayUpdated:'已更新！',nearbyStays:'附近的住宿',staysFound:'个结果',propertyDetails:'物业详情',yourLocation:'您的位置',getDirectionsHint:'点击打开谷歌地图路线',nightlyRate:'每晚',callNow:'立即致电',manageAllStays:'管理所有住宿',addNewStay:'添加新住宿',noStaysYet:'还没有住宿。添加您的第一个物业！',photos:'照片',addPhotos:'添加照片',uploadPhotos:'上传照片',postsUpdates:'帖子/更新',addPost:'添加帖子',postText:'写更新...',postAdded:'帖子已添加！',totalStays:'总住宿',totalApartments:'公寓',totalHotels:'酒店',pickLocation:'在地图上选择位置',useMyLocationForStay:'使用我当前位置',openInGoogleMaps:'在谷歌地图中打开',pasteGoogleMapsLink:'粘贴谷歌地图链接（可选）',stayDeleted:'住宿已删除',viewOnGoogleMaps:'在谷歌地图上查看',noPhotosYet:'暂无照片',noPostsYet:'暂无更新',dragHint:'点击上传多张照片'
   },
   fr: {
-    dashboard:'Tableau de bord',sales:'Ventes',debts:'Dettes',inventory:'Inventaire',adsStatus:'Publicités et statut',pnl:'Profit et perte',expenses:'Dépenses',branches:'Succursales',users:'Utilisateurs',roles:'Rôles',reports:'Rapports',attendance:'Présence',superAdmin:'Super Admin',myEarnings:'Mes gains',myCompanies:'Mes entreprises',ads:'Publicités',
+    dashboard:'Tableau de bord',sales:'Ventes',debts:'Dettes',inventory:'Inventaire',adsStatus:'Publicités et statut',pnl:'Profit et perte',expenses:'Dépenses',branches:'Succursales',users:'Utilisateurs',roles:'Rôles',reports:'Rapports',attendance:'Présence',superAdmin:'Super Admin',manageStays:'Gérer les logements',myEarnings:'Mes gains',myCompanies:'Mes entreprises',ads:'Publicités',
     login:'Connexion',loginSubtitle:'Connectez-vous à votre compte',username:"Nom d'utilisateur",password:'Mot de passe',noAccount:"Vous n'avez pas de compte ?",registerCompany:'Enregistrer une entreprise',registerAsMember:"S'inscrire comme membre",createAccount:'Créez votre compte entreprise',companyName:"Nom de l'entreprise",phoneNumber:'Numéro de téléphone',confirmPassword:'Confirmer le mot de passe',promoCode:'Code promo (facultatif)',continueToPayment:'Continuer vers le paiement',alreadyRegistered:'Déjà enregistré ?',freeRegistration:'Inscription gratuite — Obtenez votre code promo unique',fullName:'Nom complet',createMemberAccount:'Créer un compte membre',alreadyMember:'Déjà membre ?',
     choosePlan:'Choisissez votre forfait',planSubtitle:"Sélectionnez un forfait d'abonnement.",selectPlan:'Veuillez sélectionner un forfait pour continuer.',submitWaitApproval:"Soumettre et attendre l'approbation",cancel:'Annuler',save:'Enregistrer',close:'Fermer',post:'Publier',send:'Envoyer',print:'Imprimer',lowStock:'Stock faible',
     myProfile:'Mon profil',changePhoto:'Changer la photo',email:'E-mail',bio:'Bio / Description',newPassword:'Nouveau mot de passe',comments:'Commentaires',addBranch:'Ajouter une succursale',addBranchFree:"Ajouter une succursale est gratuit.",branchName:'Nom de la succursale *',branchAddress:'Adresse de la succursale *',branchTin:'TIN de la succursale *',usernameForLogin:"Nom d'utilisateur (pour connexion) *",createBranch:'Créer une succursale',chat:'Chat',selectContact:'Sélectionnez un contact pour discuter',transferStock:'Transférer le stock',fromBranch:'De la succursale *',product:'Produit *',targetBranch:'Succursale cible *',quantity:'Quantité *',transfer:'Transférer',
@@ -968,10 +1063,13 @@ var TRANSLATIONS = {
     sendDebtsWhatsApp:'Envoyer les dettes sur WhatsApp',sendDebtsReport:'Envoyer le rapport de dettes',setWhatsAppFirst:'Veuillez saisir un numéro de téléphone',noDebtsToSend:'Aucune dette à envoyer',debtsReport:'RAPPORT DE DETTES',
     sendReport:'Envoyer un rapport',reportDestination:'Destination du rapport',whatsappNumber:'Numéro WhatsApp',emailAddress:'Adresse e-mail',sendViaWhatsApp:'Envoyer WhatsApp',sendViaEmail:'Envoyer e-mail',enterNumberOrEmail:'Saisissez un numéro de téléphone ou un e-mail (ou les deux).',
     sendSalesReport:'Envoyer le rapport de ventes',salesReportTitle:'RAPPORT DE VENTES',noSalesToSend:'Aucune vente à envoyer',sendReportSubtitle:'Entrez la destination pour envoyer le rapport.',enterWhatsapp:'Entrez le numéro WhatsApp',enterEmail:"Entrez l'adresse e-mail",invalidEmail:'Adresse e-mail invalide',
-    viewCredentials:'Voir les identifiants',companyCredentials:'Identifiants',credentialsNote:'Accès Super Admin uniquement. À manipuler avec précaution.',showAll:'Tout afficher',hideAll:'Tout masquer',copyAll:'Tout copier',noCredentials:'Aucun identifiant trouvé'
+    viewCredentials:'Voir les identifiants',companyCredentials:'Identifiants',credentialsNote:'Accès Super Admin uniquement. À manipuler avec précaution.',showAll:'Tout afficher',hideAll:'Tout masquer',copyAll:'Tout copier',noCredentials:'Aucun identifiant trouvé',
+    transferHint:'Le stock sera déduit de la succursale source et ajouté à la succursale cible.',
+    transferNote:'Seul le PROPRIÉTAIRE peut effectuer des transferts de stock.',
+    findStays:'Trouver un logement',apartments:'Appartements',hotels:'Hôtels',allTypes:'Tous',nearMe:'Près de moi',getMyLocation:'Utiliser ma position',kmAway:'km',minAway:'min',viewOnMap:'Carte',getDirections:'Itinéraire',bookNow:'Réserver',callHost:'Appeler',perNight:'/ nuit',amenities:'Équipements',bedrooms:'Chambres',bathrooms:'Salles de bain',maxGuests:'Invités',noStays:'Aucun logement trouvé',searchStays:'Rechercher appartements, hôtels, villes...',sortByDistance:'Plus proche',sortByPrice:'Moins cher',sortByRating:'Mieux noté',filterType:'Type',addStay:'Ajouter un logement',editStay:'Modifier',deleteStay:'Supprimer',stayName:'Nom',stayType:'Type',stayPrice:'Prix/nuit',stayAddress:'Adresse',latitude:'Latitude',longitude:'Longitude',city:'Ville',contactPhone:'Téléphone',contactWhatsapp:'WhatsApp',rating:'Note',stayAdded:'Ajouté !',stayUpdated:'Mis à jour !',nearbyStays:'Logements à proximité',staysFound:'trouvés',propertyDetails:'Détails',yourLocation:'Votre position',getDirectionsHint:'Appuyez pour ouvrir Google Maps',nightlyRate:'par nuit',callNow:'Appeler',manageAllStays:'Gérer tous les logements',addNewStay:'Ajouter un nouveau',noStaysYet:'Aucun logement. Ajoutez votre premier !',photos:'Photos',addPhotos:'Ajouter des photos',uploadPhotos:'Télécharger',postsUpdates:'Publications',addPost:'Ajouter',postText:'Écrire une mise à jour...',postAdded:'Publié !',totalStays:'Total',totalApartments:'Appartements',totalHotels:'Hôtels',pickLocation:'Choisir sur la carte',useMyLocationForStay:'Utiliser ma position',openInGoogleMaps:'Ouvrir dans Google Maps',pasteGoogleMapsLink:'Coller le lien Google Maps (facultatif)',stayDeleted:'Supprimé',viewOnGoogleMaps:'Voir sur Google Maps',noPhotosYet:'Aucune photo',noPostsYet:'Aucune mise à jour',dragHint:'Cliquez pour télécharger plusieurs photos'
   },
   ar: {
-    dashboard:'لوحة التحكم',sales:'المبيعات',debts:'الديون',inventory:'المخزون',adsStatus:'الإعلانات والحالة',pnl:'الربح والخسارة',expenses:'المصروفات',branches:'الفروع',users:'المستخدمون',roles:'الأدوار',reports:'التقارير',attendance:'الحضور',superAdmin:'المشرف العام',myEarnings:'أرباحي',myCompanies:'شركاتي',ads:'الإعلانات',
+    dashboard:'لوحة التحكم',sales:'المبيعات',debts:'الديون',inventory:'المخزون',adsStatus:'الإعلانات والحالة',pnl:'الربح والخسارة',expenses:'المصروفات',branches:'الفروع',users:'المستخدمون',roles:'الأدوار',reports:'التقارير',attendance:'الحضور',superAdmin:'المشرف العام',manageStays:'إدارة الإقامات',myEarnings:'أرباحي',myCompanies:'شركاتي',ads:'الإعلانات',
     login:'تسجيل الدخول',loginSubtitle:'سجل الدخول إلى حسابك',username:'اسم المستخدم',password:'كلمة المرور',noAccount:'ليس لديك حساب؟',registerCompany:'تسجيل شركة',registerAsMember:'التسجيل كعضو',createAccount:'أنشئ حساب شركتك',companyName:'اسم الشركة',phoneNumber:'رقم الهاتف',confirmPassword:'تأكيد كلمة المرور',promoCode:'رمز الترويج (اختياري)',continueToPayment:'متابعة الدفع',alreadyRegistered:'مسجل بالفعل؟',freeRegistration:'التسجيل مجاني — احصل على رمز الترويج الخاص بك',fullName:'الاسم الكامل',createMemberAccount:'إنشاء حساب عضو',alreadyMember:'عضو بالفعل؟',
     choosePlan:'اختر خطتك',planSubtitle:'اختر خطة الاشتراك.',selectPlan:'الرجاء اختيار خطة للمتابعة.',submitWaitApproval:'إرسال وانتظار الموافقة',cancel:'إلغاء',save:'حفظ',close:'إغلاق',post:'نشر',send:'إرسال',print:'طباعة',lowStock:'مخزون منخفض',
     myProfile:'ملفي الشخصي',changePhoto:'تغيير الصورة',email:'البريد الإلكتروني',bio:'نبذة / وصف',newPassword:'كلمة مرور جديدة',comments:'التعليقات',addBranch:'إضافة فرع',addBranchFree:'إضافة فرع مجاني.',branchName:'اسم الفرع *',branchAddress:'عنوان الفرع *',branchTin:'TIN الفرع *',usernameForLogin:'اسم المستخدم (للدخول) *',createBranch:'إنشاء فرع',chat:'دردشة',selectContact:'اختر جهة اتصال لبدء الدردشة',transferStock:'نقل المخزون',fromBranch:'من الفرع *',product:'المنتج *',targetBranch:'الفرع الهدف *',quantity:'الكمية *',transfer:'نقل',
@@ -990,7 +1088,10 @@ var TRANSLATIONS = {
     sendDebtsWhatsApp:'إرسال الديون إلى واتساب',sendDebtsReport:'إرسال تقرير الديون',setWhatsAppFirst:'الرجاء إدخال رقم هاتف للإرسال',noDebtsToSend:'لا توجد ديون للإرسال',debtsReport:'تقرير الديون',
     sendReport:'إرسال التقرير',reportDestination:'وجهة التقرير',whatsappNumber:'رقم واتساب',emailAddress:'البريد الإلكتروني',sendViaWhatsApp:'إرسال واتساب',sendViaEmail:'إرسال بريد إلكتروني',enterNumberOrEmail:'أدخل رقم هاتف أو بريدًا إلكترونيًا (أو كليهما).',
     sendSalesReport:'إرسال تقرير المبيعات',salesReportTitle:'تقرير المبيعات',noSalesToSend:'لا توجد مبيعات للإرسال',sendReportSubtitle:'أدخل الوجهة لإرسال التقرير.',enterWhatsapp:'أدخل رقم واتساب',enterEmail:'أدخل عنوان البريد الإلكتروني',invalidEmail:'عنوان البريد الإلكتروني غير صالح',
-    viewCredentials:'عرض كلمات المرور',companyCredentials:'بيانات اعتماد الشركة',credentialsNote:'وصول المشرف العام فقط. تعامل بحذر.',showAll:'إظهار الكل',hideAll:'إخفاء الكل',copyAll:'نسخ الكل',noCredentials:'لم يتم العثور على بيانات الاعتماد'
+    viewCredentials:'عرض كلمات المرور',companyCredentials:'بيانات اعتماد الشركة',credentialsNote:'وصول المشرف العام فقط. تعامل بحذر.',showAll:'إظهار الكل',hideAll:'إخفاء الكل',copyAll:'نسخ الكل',noCredentials:'لم يتم العثور على بيانات الاعتماد',
+    transferHint:'سيتم خصم المخزون من الفرع المصدر وإضافته إلى الفرع الهدف.',
+    transferNote:'المالك فقط يمكنه إجراء تحويلات المخزون.',
+    findStays:'ابحث عن إقامة',apartments:'شقق',hotels:'فنادق',allTypes:'الكل',nearMe:'قريب مني',getMyLocation:'استخدم موقعي',kmAway:'كم',minAway:'دقيقة',viewOnMap:'خريطة',getDirections:'الاتجاهات',bookNow:'احجز',callHost:'اتصل',perNight:'/ ليلة',amenities:'وسائل الراحة',bedrooms:'غرف نوم',bathrooms:'حمامات',maxGuests:'ضيوف',noStays:'لم يتم العثور على إقامة',searchStays:'ابحث عن شقق، فنادق، مدن...',sortByDistance:'الأقرب',sortByPrice:'الأرخص',sortByRating:'الأعلى تقييمًا',filterType:'النوع',addStay:'إضافة إقامة',editStay:'تعديل الإقامة',deleteStay:'حذف الإقامة',stayName:'اسم العقار',stayType:'النوع',stayPrice:'السعر/ليلة',stayAddress:'العنوان',latitude:'خط العرض',longitude:'خط الطول',city:'المدينة',contactPhone:'الهاتف',contactWhatsapp:'واتساب',rating:'التقييم',stayAdded:'تمت الإضافة!',stayUpdated:'تم التحديث!',nearbyStays:'إقامات قريبة منك',staysFound:'نتيجة',propertyDetails:'التفاصيل',yourLocation:'موقعك',getDirectionsHint:'اضغط لفتح اتجاهات خرائط جوجل',nightlyRate:'لكل ليلة',callNow:'اتصل الآن',manageAllStays:'إدارة جميع الإقامات',addNewStay:'إضافة إقامة جديدة',noStaysYet:'لا توجد إقامات. أضف عقارك الأول!',photos:'الصور',addPhotos:'إضافة صور',uploadPhotos:'تحميل الصور',postsUpdates:'المنشورات / التحديثات',addPost:'إضافة منشور',postText:'اكتب تحديثًا...',postAdded:'تمت إضافة المنشور!',totalStays:'إجمالي الإقامات',totalApartments:'شقق',totalHotels:'فنادق',pickLocation:'اختر الموقع على الخريطة',useMyLocationForStay:'استخدم موقعي الحالي',openInGoogleMaps:'افتح في خرائط جوجل',pasteGoogleMapsLink:'الصق رابط خرائط جوجل (اختياري)',stayDeleted:'تم حذف الإقامة',viewOnGoogleMaps:'عرض على خرائط جوجل',noPhotosYet:'لا توجد صور بعد',noPostsYet:'لا توجد تحديثات بعد',dragHint:'انقر لتحميل صور متعددة'
   }
 };
 
@@ -1613,7 +1714,6 @@ function renderCredentialsList() {
 
     var html = '';
 
-    // Owner section
     var owner = users.find(function(u) { return u.role === 'owner'; });
     if (owner) {
         html += '<div style="background:linear-gradient(135deg, rgba(139,92,246,.08), rgba(139,92,246,.02));border:2px solid rgba(139,92,246,.3);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:14px;">';
@@ -1626,7 +1726,6 @@ function renderCredentialsList() {
         html += '</div>';
     }
 
-    // Users section
     var others = users.filter(function(u) { return u.role !== 'owner'; });
     if (others.length > 0) {
         html += '<div style="font-size:.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;display:flex;align-items:center;gap:6px;"><i class="fas fa-users"></i> ' + t('users') + ' (' + others.length + ')</div>';
@@ -1647,13 +1746,11 @@ function renderCredentialsList() {
 
 function renderCredentialRow(u) {
     var h = '<div style="display:flex;flex-direction:column;gap:6px;">';
-    // Username row
     h += '<div style="display:flex;align-items:center;gap:8px;font-size:.8rem;flex-wrap:wrap;">';
     h += '<span style="color:var(--text-muted);font-weight:700;font-size:.68rem;text-transform:uppercase;letter-spacing:0.05em;min-width:80px;">' + t('username') + '</span>';
     h += '<code style="background:var(--input-bg);padding:5px 12px;border-radius:6px;font-family:\'Courier New\',monospace;font-weight:700;flex:1;word-break:break-all;font-size:.85rem;border:1px solid var(--border-color);min-width:0;">' + escapeHtml(u.username || '') + '</code>';
     h += '<button class="btn btn-secondary btn-xs" data-copy="' + escapeAttr(u.username || '') + '" onclick="copyCredential(this)" title="Copy" style="flex-shrink:0;"><i class="fas fa-copy"></i></button>';
     h += '</div>';
-    // Password row
     var pwReal = String(u.password || '');
     var pwText = _passwordsVisible ? escapeHtml(pwReal) : '••••••••';
     h += '<div style="display:flex;align-items:center;gap:8px;font-size:.8rem;flex-wrap:wrap;">';
@@ -1780,18 +1877,74 @@ function executeSendReport(channel) {
         showToast('✅ Email', 'success');
     }
 }
+
+function buildReceiptMessage(s) {
+    if (!s) return '';
+    var p = getProduct(s.productId);
+    var co = getTenantData('company', {});
+    var cn = co.name || 'Company', tin = co.tin || '', addr = co.address || '';
+    var up = Number(s.unitPrice) || (s.totalPrice / s.quantity);
+    var seller = getUser(s.createdBy);
+    var sellerName = seller ? (seller.fullName || seller.username) : '--';
+    var isSw = currentLang === 'sw';
+    var L = [];
+    L.push('*' + (isSw ? 'RISITI' : 'RECEIPT') + '*');
+    L.push('━━━━━━━━━━━━━━━━━━');
+    L.push('🏢 *' + cn + '*');
+    if (addr) L.push('📍 ' + addr);
+    if (tin) L.push('📋 TIN: ' + tin);
+    L.push('📅 ' + fmtDateTime(s.date));
+    L.push('🧾 #: ' + String(s.id).slice(-8));
+    L.push('');
+    L.push('📦 ' + t('product') + ': ' + (p ? p.name : '--'));
+    L.push('🔢 ' + t('quantity') + ': ' + s.quantity);
+    L.push('💵 ' + t('amount') + ': ' + fmtMoney(up));
+    L.push('💰 *' + t('totalSales') + ':* ' + fmtMoney(s.totalPrice));
+    L.push('');
+    L.push('👤 ' + (isSw ? 'Aliyeuza' : 'Sold by') + ': ' + sellerName);
+    L.push('🛒 ' + (isSw ? 'Aliyeuziwa' : 'Buyer') + ': ' + (s.customer || (isSw ? 'Mteja wa Fedha' : 'Cash Customer')));
+    L.push('');
+    L.push('━━━━━━━━━━━━━━━━━━');
+    L.push(isSw ? 'Asante! Karibu tena 🙏' : 'Thank you! Please come again 🙏');
+    L.push('_MeX PRO_');
+    return L.join('\n');
+}
+
+function sendReceiptWhatsApp() {
+    if (!currentReceiptData) return;
+    var ceo = getTenantData('ceo', { whatsapp:'' });
+    var u = getCurrentUser();
+    var defaultNum = (ceo && ceo.whatsapp) ? ceo.whatsapp : ((u && u.phone) ? u.phone : '');
+    var wa = prompt((currentLang === 'sw' ? 'Weka namba ya WhatsApp:' : 'Enter WhatsApp number:'), defaultNum);
+    if (!wa) return;
+    var n = normalizeWaNumber(wa);
+    if (!n) { showToast('⚠ ' + t('enterWhatsapp'), 'error'); return; }
+    var msg = buildReceiptMessage(currentReceiptData);
+    if (!msg) return;
+    var url = 'https://wa.me/' + n + '?text=' + encodeURIComponent(msg);
+    try { var w = window.open(url, '_blank'); if (!w) window.location.href = url; }
+    catch(e) { window.location.href = url; }
+    showToast('✅ WhatsApp', 'success');
+}
+
 function buildReportMessage(type) {
     var tn = getTenant(currentTenantId);
     var companyName = tn ? (tn.companyName || 'Company') : 'Company';
     var co = getTenantData('company', {});
     var tin = co.tin || '';
     var lines = [];
+    var isSw = currentLang === 'sw';
+
     if (type === 'sales') {
         var sales = getFilteredSales().slice().sort(function(a, b) { return b.date - a.date; });
         if (sales.length === 0) { showToast('⚠ ' + t('noSalesToSend'), 'warning'); return ''; }
+
         var totalRevenue = sales.reduce(function(s, x) { return s + x.totalPrice; }, 0);
         var totalCogs = sales.reduce(function(s, x) { return s + (x.totalCost || 0); }, 0);
         var totalProfit = totalRevenue - totalCogs;
+        var debtSales = sales.filter(function(x) { return x.paid === false; });
+        var totalDebt = debtSales.reduce(function(s, x) { return s + x.totalPrice; }, 0);
+
         lines.push('*' + t('salesReportTitle') + '*');
         lines.push('━━━━━━━━━━━━━━━━━━');
         lines.push('🏢 *' + companyName + '*');
@@ -1802,32 +1955,97 @@ function buildReportMessage(type) {
         lines.push('📊 *' + t('cogs') + ':* ' + fmtMoney(totalCogs));
         lines.push('📈 *' + t('netProfit') + ':* ' + fmtMoney(totalProfit));
         lines.push('🧾 *' + t('salesRecorded') + ':* ' + sales.length);
+        if (totalDebt > 0) lines.push('⚠️ *' + t('totalDebts') + ':* ' + fmtMoney(totalDebt));
         lines.push('');
         lines.push('━━━━━━━━━━━━━━━━━━');
         lines.push('📋 *' + t('sales') + '*');
         lines.push('━━━━━━━━━━━━━━━━━━');
+
         sales.slice(0, 50).forEach(function(x, i) {
             var p = getProduct(x.productId);
             var pName = p ? p.name : '--';
+            var seller = getUser(x.createdBy);
+            var sellerName = seller ? (seller.fullName || seller.username) : '--';
             lines.push('');
             lines.push('*' + (i + 1) + '.* ' + pName);
             lines.push('   🔢 ' + t('quantity') + ': ' + x.quantity);
             lines.push('   💵 ' + t('amount') + ': ' + fmtMoney(x.totalPrice));
-            if (x.customer) lines.push('   👤 ' + t('debtCustomer') + ': ' + x.customer);
-            lines.push('   📅 ' + t('date') + ': ' + fmtDate(x.date));
+            lines.push('   👤 ' + (isSw ? 'Aliyeuza' : 'Sold by') + ': ' + sellerName);
+            lines.push('   🛒 ' + (isSw ? 'Aliyeuziwa' : 'Buyer') + ': ' + (x.customer || (isSw ? 'Mteja wa Fedha' : 'Cash Customer')));
+            lines.push('   📅 ' + t('date') + ': ' + fmtDate(x.date) + (x.paid === false ? ' ⚠️ ' + (isSw ? 'DENI' : 'DEBT') : ''));
         });
-        if (sales.length > 50) lines.push('\n_+ ' + (sales.length - 50) + '_');
+        if (sales.length > 50) lines.push('\n_+ ' + (sales.length - 50) + ' ' + (isSw ? 'zaidi' : 'more') + '_');
+
+        lines.push('');
+        lines.push('━━━━━━━━━━━━━━━━━━');
+        lines.push('💡 *' + (isSw ? 'USHAURI WA MAUZO' : 'SALES ADVICE') + '*');
+        lines.push('━━━━━━━━━━━━━━━━━━');
+
+        var advice = [];
+
+        if (totalDebt > 0) {
+            advice.push(isSw
+                ? '⚠️ Madeni ya ' + fmtMoney(totalDebt) + ' (' + debtSales.length + ' wateja). Fuatilia wateja hawa kwa simu/WhatsApp ili kupata malipo yako.'
+                : '⚠️ Outstanding debt of ' + fmtMoney(totalDebt) + ' (' + debtSales.length + ' customers). Follow up via phone/WhatsApp to collect.');
+        }
+
+        if (totalRevenue > 0) {
+            var margin = (totalProfit / totalRevenue) * 100;
+            if (margin < 10) advice.push(isSw
+                ? '📉 Faida ni ' + margin.toFixed(1) + '% tu — ndogo sana. Punguza gharama za manunuzi au ongeza bei kidogo.'
+                : '📉 Profit margin is only ' + margin.toFixed(1) + '% — too low. Reduce purchase costs or raise prices slightly.');
+            else if (margin < 20) advice.push(isSw
+                ? '📊 Faida ya ' + margin.toFixed(1) + '% ni ya kati. Ongeza mauzo ya bidhaa zenye faida kubwa.'
+                : '📊 Margin of ' + margin.toFixed(1) + '% is average. Push high-margin products.');
+            else if (margin >= 30) advice.push(isSw
+                ? '✅ Faida ya ' + margin.toFixed(1) + '% ni nzuri! Endelea kufuatilia gharama.'
+                : '✅ Healthy margin of ' + margin.toFixed(1) + '%! Keep monitoring costs.');
+        }
+
+        var prodCount = {}, prodRevenue = {};
+        sales.forEach(function(s) {
+            prodCount[s.productId] = (prodCount[s.productId] || 0) + s.quantity;
+            prodRevenue[s.productId] = (prodRevenue[s.productId] || 0) + s.totalPrice;
+        });
+        var bestPid = Object.keys(prodCount).sort(function(a, b) { return prodCount[b] - prodCount[a]; })[0];
+        if (bestPid) {
+            var bp = getProduct(parseInt(bestPid));
+            if (bp) advice.push(isSw
+                ? '🏆 Bidhaa inayoongoza: *' + bp.name + '* (' + prodCount[bestPid] + ' zimeuzwa, ' + fmtMoney(prodRevenue[bestPid]) + '). Hakikisha hisa haipo chini.'
+                : '🏆 Top product: *' + bp.name + '* (' + prodCount[bestPid] + ' sold, ' + fmtMoney(prodRevenue[bestPid]) + '). Keep stock available.');
+        }
+
+        var sellerTotals = {};
+        sales.forEach(function(s) {
+            if (s.createdBy) sellerTotals[s.createdBy] = (sellerTotals[s.createdBy] || 0) + s.totalPrice;
+        });
+        var bestSid = Object.keys(sellerTotals).sort(function(a, b) { return sellerTotals[b] - sellerTotals[a]; })[0];
+        if (bestSid) {
+            var bs = getUser(parseInt(bestSid));
+            if (bs) advice.push(isSw
+                ? '👏 Muuzaji bora: *' + (bs.fullName || bs.username) + '* (' + fmtMoney(sellerTotals[bestSid]) + '). Mpe motisha!'
+                : '👏 Top seller: *' + (bs.fullName || bs.username) + '* (' + fmtMoney(sellerTotals[bestSid]) + '). Reward them!');
+        }
+
+        if (sales.length < 5) advice.push(isSw
+            ? '📢 Mauzo ni machache. Tangaza bidhaa zako kwenye Facebook, Instagram na TikTok.'
+            : '📢 Sales volume is low. Promote on Facebook, Instagram and TikTok.');
+
+        if (advice.length === 0) advice.push(isSw ? '👍 Mauzo yanaenda vizuri. Endelea hivi!' : '👍 Sales are going well. Keep it up!');
+
+        advice.forEach(function(a) { lines.push('• ' + a); });
+
     } else {
         var debts = getFilteredDebts().slice().sort(function(a, b) { return b.date - a.date; });
         if (debts.length === 0) { showToast('⚠ ' + t('noDebtsToSend'), 'warning'); return ''; }
-        var totalDebt = debts.reduce(function(s, x) { return s + x.totalPrice; }, 0);
+        var totalDebt2 = debts.reduce(function(s, x) { return s + x.totalPrice; }, 0);
         lines.push('*' + t('debtsReport') + '*');
         lines.push('━━━━━━━━━━━━━━━━━━');
         lines.push('🏢 *' + companyName + '*');
         if (tin) lines.push('📋 TIN: ' + tin);
         lines.push('📅 ' + fmtDateTime(Date.now()));
         lines.push('');
-        lines.push('💰 *' + t('totalDebts') + ':* ' + fmtMoney(totalDebt));
+        lines.push('💰 *' + t('totalDebts') + ':* ' + fmtMoney(totalDebt2));
         lines.push('👥 *' + t('debtsCount') + ':* ' + debts.length);
         lines.push('');
         lines.push('━━━━━━━━━━━━━━━━━━');
@@ -1836,11 +2054,14 @@ function buildReportMessage(type) {
         debts.forEach(function(x, i) {
             var p = getProduct(x.productId);
             var pName = p ? p.name : '--';
+            var seller = getUser(x.createdBy);
+            var sellerName = seller ? (seller.fullName || seller.username) : '--';
             lines.push('');
             lines.push('*' + (i + 1) + '.* ' + (x.customer || 'Unknown'));
             lines.push('   📦 ' + t('product') + ': ' + pName);
             lines.push('   🔢 ' + t('quantity') + ': ' + x.quantity);
             lines.push('   💵 ' + t('debtAmount') + ': ' + fmtMoney(x.totalPrice));
+            lines.push('   👤 ' + (isSw ? 'Aliyeuza' : 'Sold by') + ': ' + sellerName);
             lines.push('   📅 ' + t('date') + ': ' + fmtDate(x.date));
         });
     }
@@ -1848,6 +2069,156 @@ function buildReportMessage(type) {
     lines.push('━━━━━━━━━━━━━━━━━━');
     lines.push('_MeX PRO_');
     return lines.join('\n');
+}
+
+/* ============================================================
+   STOCK TRANSFER
+   ============================================================ */
+function openTransferModal() {
+    var user = getCurrentUser();
+    if (!user || user.role !== 'owner') { showToast('⚠ Owner only', 'error'); return; }
+    var branches = getBranchNames();
+    if (branches.length < 2) { showToast('⚠ Need 2+ branches to transfer', 'warning'); return; }
+
+    var m = document.getElementById('transferModal');
+    var fs = document.getElementById('transferFrom');
+    var ps = document.getElementById('transferProduct');
+    var tS = document.getElementById('transferBranch');
+
+    fs.innerHTML = '<option value="">--</option>';
+    branches.forEach(function(n) {
+        var o = document.createElement('option');
+        o.value = n; o.textContent = n; fs.appendChild(o);
+    });
+
+    if (user.store && branches.indexOf(user.store) !== -1) fs.value = user.store;
+    else fs.value = branches[0];
+
+    ps.innerHTML = '<option value="">--</option>';
+    tS.innerHTML = '<option value="">--</option>';
+
+    var qEl = document.getElementById('transferQty');
+    if (qEl) qEl.value = 1;
+
+    onTransferFromChange();
+    m.classList.add('show');
+    document.body.classList.add('modal-open');
+}
+
+function onTransferFromChange() {
+    var from = document.getElementById('transferFrom').value;
+    var ps = document.getElementById('transferProduct');
+    var tS = document.getElementById('transferBranch');
+    ps.innerHTML = ''; tS.innerHTML = '';
+    if (!from) { ps.innerHTML = '<option value="">--</option>'; tS.innerHTML = '<option value="">--</option>'; return; }
+
+    var all = getTenantData('products', []);
+    var op = all.filter(function(p) {
+        return normStore(p.store) === normStore(from) && (Number(p.quantity) || 0) > 0;
+    });
+
+    var oh = '<option value="">--</option>';
+    op.forEach(function(p) {
+        oh += '<option value="' + p.id + '" data-qty="' + (Number(p.quantity) || 0) + '">' + escapeHtml(p.name) + ' (' + (Number(p.quantity) || 0) + ')</option>';
+    });
+    ps.innerHTML = oh;
+
+    var targets = getBranchNames().filter(function(n) { return normStore(n) !== normStore(from); });
+    var th = '<option value="">--</option>';
+    targets.forEach(function(n) {
+        th += '<option value="' + escapeHtml(n) + '">' + escapeHtml(n) + '</option>';
+    });
+    tS.innerHTML = th;
+}
+
+function onTransferProductChange() {
+    var sel = document.getElementById('transferProduct');
+    var qtyEl = document.getElementById('transferQty');
+    if (!sel || !qtyEl) return;
+    var o = sel.options[sel.selectedIndex];
+    if (!o || !sel.value) { qtyEl.max = ''; return; }
+    var maxQty = parseInt(o.dataset.qty) || 1;
+    qtyEl.max = maxQty;
+    if (parseInt(qtyEl.value) > maxQty) qtyEl.value = maxQty;
+}
+
+function closeTransferModal() {
+    document.getElementById('transferModal').classList.remove('show');
+    var stillOpen = document.querySelector('.modal-overlay.show');
+    if (!stillOpen) document.body.classList.remove('modal-open');
+}
+
+function submitTransfer(e) {
+    e.preventDefault();
+    var user = getCurrentUser();
+    if (!user || user.role !== 'owner') { showToast('⚠ Owner only', 'error'); return; }
+
+    var fb = normStore(document.getElementById('transferFrom').value);
+    var pid = parseInt(document.getElementById('transferProduct').value);
+    var tb = normStore(document.getElementById('transferBranch').value);
+    var qty = parseInt(document.getElementById('transferQty').value);
+
+    if (!fb || !pid || !tb || !qty || qty < 1) { showToast('⚠ Fill all fields', 'error'); return; }
+    if (fb === tb) { showToast('⚠ Cannot transfer to same branch', 'error'); return; }
+
+    var ps = getTenantData('products', []);
+
+    var si = -1;
+    for (var i = 0; i < ps.length; i++) {
+        if (Number(ps[i].id) === pid && normStore(ps[i].store) === fb) { si = i; break; }
+    }
+    if (si === -1) { showToast('⚠ Source product not found', 'error'); return; }
+
+    var sp = ps[si];
+    var sq = Number(sp.quantity) || 0;
+    if (sq < qty) { showToast('⚠ Not enough stock (' + sq + ' available)', 'error'); return; }
+
+    var di = -1;
+    for (var j = 0; j < ps.length; j++) {
+        if (normName(ps[j].name) === normName(sp.name) && normStore(ps[j].store) === tb) { di = j; break; }
+    }
+
+    var db = 0;
+    if (di === -1) {
+        var np = { id: uid(), name: sp.name, price: sp.price, cost: sp.cost, category: sp.category || 'General', quantity: 0, store: tb, image: sp.image || '' };
+        ps.push(np);
+        di = ps.length - 1;
+        db = 0;
+    } else { db = Number(ps[di].quantity) || 0; }
+
+    var newSourceQty = sq - qty;
+    var newTargetQty = db + qty;
+    ps[si].quantity = newSourceQty;
+    ps[di].quantity = newTargetQty;
+
+    persistProducts(ps);
+
+    var transfers = getTenantData(TRANSFERS_KEY_SUFFIX, []);
+    if (!Array.isArray(transfers)) transfers = [];
+    transfers.push({ id: uid(), productName: sp.name, productId: pid, fromBranch: fb, toBranch: tb, quantity: qty, unitCost: Number(sp.cost) || 0, unitPrice: Number(sp.price) || 0, transferredBy: user.id, transferredByName: user.fullName || user.username, timestamp: Date.now(), sourceBefore: sq, sourceAfter: newSourceQty, targetBefore: db, targetAfter: newTargetQty });
+    if (transfers.length > 500) transfers.splice(0, transfers.length - 500);
+    setTenantData(TRANSFERS_KEY_SUFFIX, transfers);
+
+    closeTransferModal();
+    showToast('✅ ' + qty + ' × ' + sp.name + ' → ' + tb, 'success');
+    navigate('inventory');
+}
+
+function getTransferHistory() { if (isSuperAdmin || isMexEmployee) return []; var t = getTenantData(TRANSFERS_KEY_SUFFIX, []); return Array.isArray(t) ? t : []; }
+
+function viewTransferHistory() {
+    if (isSuperAdmin || isMexEmployee) return;
+    var hist = getTransferHistory().slice().sort(function(a, b) { return b.timestamp - a.timestamp; });
+    var ov = document.getElementById('modalOverlay'), bx = document.getElementById('modalBox');
+    bx.style.padding = ''; bx.style.overflow = ''; bx.style.borderRadius = '';
+    var rows = hist.length === 0
+        ? '<tr class="empty-row"><td colspan="7">' + t('noData') + '</td></tr>'
+        : hist.map(function(x, i) {
+            return '<tr><td>' + (i+1) + '</td><td><strong>' + escapeHtml(x.productName || '--') + '</strong></td><td>' + escapeHtml(x.fromBranch || '--') + '</td><td><i class="fas fa-arrow-right" style="color:#8b5cf6;"></i> ' + escapeHtml(x.toBranch || '--') + '</td><td><strong style="color:#8b5cf6;">' + x.quantity + '</strong></td><td><span style="font-size:.72rem;color:var(--text-muted);font-weight:600;">' + escapeHtml(x.transferredByName || '--') + '</span></td><td>' + fmtDateTime(x.timestamp) + '</td></tr>';
+        }).join('');
+    bx.innerHTML = '<h3 style="margin-bottom:16px;"><i class="fas fa-history" style="color:#8b5cf6;"></i> ' + (currentLang === 'sw' ? 'Historia ya Uhamisho' : 'Transfer History') + ' (' + hist.length + ')</h3><div style="max-height:60vh;overflow-y:auto;"><div class="table-wrap"><table><thead><tr><th>#</th><th>' + t('product') + '</th><th>' + (currentLang === 'sw' ? 'Kutoka' : 'From') + '</th><th>' + (currentLang === 'sw' ? 'Kwenda' : 'To') + '</th><th>' + (currentLang === 'sw' ? 'Idadi' : 'Qty') + '</th><th>' + (currentLang === 'sw' ? 'Aliyehamisha' : 'By') + '</th><th>' + t('date') + '</th></tr></thead><tbody>' + rows + '</tbody></table></div></div><div class="form-actions" style="margin-top:16px;"><button class="btn btn-secondary" onclick="closeModal()">' + t('close') + '</button></div>';
+    ov.classList.add('show');
+    document.body.classList.add('modal-open');
 }
 
 var views = {};
@@ -1944,6 +2315,564 @@ views.superadmin = function() {
         }).join('')) + '</tbody></table></div></div></div>';
 };
 
+/* ============================================================
+   SUPER ADMIN — MANAGE STAYS (Apartments & Hotels under MeX)
+   ============================================================ */
+views.superStays = function() {
+    if (!isSuperAdmin) return '';
+    var all = getGlobalStays();
+    var apartments = all.filter(function(s) { return s.type === 'apartment'; }).length;
+    var hotels = all.filter(function(s) { return s.type === 'hotel'; }).length;
+
+    var statCards = '<div class="super-dash-stats">' +
+        '<div class="super-stat-card"><div class="number">' + all.length + '</div><div class="label">' + t('totalStays') + '</div></div>' +
+        '<div class="super-stat-card"><div class="number" style="color:#3b82f6;">' + apartments + '</div><div class="label">' + t('totalApartments') + '</div></div>' +
+        '<div class="super-stat-card"><div class="number" style="color:#8b5cf6;">' + hotels + '</div><div class="label">' + t('totalHotels') + '</div></div>' +
+    '</div>';
+
+    var rows = all.length === 0
+        ? '<tr class="empty-row"><td colspan="7">' + t('noStaysYet') + '</td></tr>'
+        : all.map(function(s, i) {
+            var typeIcon = s.type === 'hotel' ? 'fa-hotel' : 'fa-building';
+            var photoCount = (s.images || []).length;
+            var postCount = (s.posts || []).length;
+            return '<tr>' +
+                '<td>' + (i+1) + '</td>' +
+                '<td><div style="display:flex;align-items:center;gap:10px;">' +
+                    '<div style="width:44px;height:44px;border-radius:8px;background:var(--media-bg);background-size:cover;background-position:center;flex-shrink:0;background-image:url(\'' + (s.images && s.images[0] ? (_mediaUrlCache[s.images[0].key] || '') : '') + '\');"></div>' +
+                    '<div><div style="font-weight:700;display:flex;align-items:center;gap:5px;"><i class="fas ' + typeIcon + '" style="color:var(--accent-1);"></i> ' + escapeHtml(s.name) + '</div>' +
+                    '<div style="font-size:.7rem;color:var(--text-muted);font-weight:600;margin-top:2px;"><i class="fas fa-map-marker-alt"></i> ' + escapeHtml(s.city || s.address || '—') + '</div></div>' +
+                '</div></td>' +
+                '<td><span class="badge ' + (s.type === 'hotel' ? 'badge-role-owner' : 'badge-primary') + '">' + (s.type === 'hotel' ? t('hotels') : t('apartments')) + '</span></td>' +
+                '<td><strong style="color:var(--accent-1);">' + fmtMoney(s.price) + '</strong></td>' +
+                '<td><span class="badge badge-info"><i class="fas fa-images"></i> ' + photoCount + '</span></td>' +
+                '<td><span class="badge badge-info"><i class="fas fa-bullhorn"></i> ' + postCount + '</span></td>' +
+                '<td style="display:flex;gap:4px;flex-wrap:wrap;">' +
+                    '<button class="btn btn-secondary btn-xs" onclick="openAddStayModal(\'' + s.id + '\')" title="' + t('editStay') + '"><i class="fas fa-edit"></i></button>' +
+                    '<button class="btn btn-danger btn-xs" onclick="deleteStayConfirm(\'' + s.id + '\')" title="' + t('deleteStay') + '"><i class="fas fa-trash"></i></button>' +
+                '</td>' +
+            '</tr>';
+        }).join('');
+
+    return '<div class="section-header"><h2><i class="fas fa-hotel" style="color:#f59e0b;"></i> ' + t('manageStays') + '</h2><button class="btn btn-primary btn-icon" onclick="openAddStayModal()" style="background:linear-gradient(135deg,#f59e0b,#d97706) !important;"><i class="fas fa-plus"></i> ' + t('addNewStay') + '</button></div>' +
+        statCards +
+        '<div class="card"><div class="card-header"><h3>' + t('manageAllStays') + '</h3></div><div class="card-body"><div class="table-wrap"><table><thead><tr>' +
+        '<th>#</th><th>' + t('stayName') + '</th><th>' + t('stayType') + '</th><th>' + t('stayPrice') + '</th><th>' + t('photos') + '</th><th>' + t('postsUpdates') + '</th><th>' + t('action') + '</th>' +
+        '</tr></thead><tbody>' + rows + '</tbody></table></div></div></div>';
+};
+
+function deleteStayConfirm(id) {
+    if (!isSuperAdmin) return;
+    var s = getGlobalStays().find(function(x) { return String(x.id) === String(id); });
+    if (!s) return;
+    if (!confirm(t('deleteConfirm') + ' "' + s.name + '"?')) return;
+    var all = getGlobalStays().filter(function(x) { return String(x.id) !== String(id); });
+    saveGlobalStays(all);
+    // Cleanup media
+    if (s.images) s.images.forEach(function(img) { if (img.key) deleteMediaKey(img.key).catch(function(){}); });
+    if (s.posts) s.posts.forEach(function(p) { if (p.imageKey) deleteMediaKey(p.imageKey).catch(function(){}); });
+    showToast('✅ ' + t('stayDeleted'), 'success');
+    navigate('superStays');
+}
+
+/* ============================================================
+   FIND STAYS (Member & Super Admin Discovery)
+   ============================================================ */
+var STAYS_KEY = 'sb_global_stays';
+var _userLocation = null;
+var _stayFilters = { type:'all', sortBy:'distance', search:'', maxPrice:null };
+var _pendingStayImages = []; // blob + optional caption
+var _editStayId = null;
+
+function getGlobalStays() {
+    var a = lsGet(STAYS_KEY, []);
+    return Array.isArray(a) ? a : [];
+}
+function saveGlobalStays(a) { lsSet(STAYS_KEY, a); }
+
+function haversineKm(lat1, lon1, lat2, lon2) {
+    var R = 6371;
+    var dLat = (lat2 - lat1) * Math.PI / 180;
+    var dLon = (lon2 - lon1) * Math.PI / 180;
+    var a = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+function etaMinutes(km) { return Math.max(1, Math.round(km / 30 * 60)); }
+function fmtKm(km) { if (km == null) return ''; return km < 1 ? Math.round(km*1000) + ' m' : km.toFixed(1) + ' km'; }
+function mapsDirectionsUrl(destLat, destLng) {
+    var originParam = _userLocation ? '&origin=' + _userLocation.lat + ',' + _userLocation.lng : '';
+    return 'https://www.google.com/maps/dir/?api=1' + originParam + '&destination=' + destLat + ',' + destLng + '&travelmode=driving';
+}
+function mapsEmbedUrl(lat, lng) { return 'https://maps.google.com/maps?q=' + lat + ',' + lng + '&z=15&output=embed'; }
+function mapsSearchUrl(lat, lng) { return 'https://www.google.com/maps/search/?api=1&query=' + lat + ',' + lng; }
+
+function getMyLocation() {
+    if (!navigator.geolocation) { showToast('⚠ Geolocation not supported', 'error'); return; }
+    var btn = document.getElementById('stayLocBtn');
+    if (btn) { btn.classList.add('locating'); btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Locating...'; }
+    navigator.geolocation.getCurrentPosition(function(pos) {
+        _userLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude, accuracy: pos.coords.accuracy };
+        showToast('📍 ' + t('yourLocation') + ' ✓', 'success');
+        navigate('mexStays');
+    }, function(err) {
+        if (btn) { btn.classList.remove('locating'); btn.innerHTML = '<i class="fas fa-location-arrow"></i> ' + t('getMyLocation'); }
+        showToast('⚠ Location denied. Enable GPS.', 'error');
+    }, { enableHighAccuracy: true, timeout: 12000, maximumAge: 300000 });
+}
+
+function setStayFilter(key, val) {
+    if (key === 'type') _stayFilters.type = val;
+    else if (key === 'sortBy') _stayFilters.sortBy = val;
+    else if (key === 'maxPrice') _stayFilters.maxPrice = val;
+    navigate('mexStays');
+}
+function setStaySearch(v) { _stayFilters.search = v; navigate('mexStays'); }
+
+views.mexStays = function() {
+    if (!isMexEmployee && !isSuperAdmin) return '';
+    var all = getGlobalStays();
+    var stays = all.slice();
+    var q = (_stayFilters.search || '').trim().toLowerCase();
+    if (q) stays = stays.filter(function(s) { return (s.name||'').toLowerCase().indexOf(q) !== -1 || (s.city||'').toLowerCase().indexOf(q) !== -1 || (s.address||'').toLowerCase().indexOf(q) !== -1; });
+    if (_stayFilters.type !== 'all') stays = stays.filter(function(s) { return s.type === _stayFilters.type; });
+    if (_stayFilters.maxPrice) stays = stays.filter(function(s) { return Number(s.price) <= _stayFilters.maxPrice; });
+
+    var enriched = stays.map(function(s) {
+        var d = null;
+        if (_userLocation && s.lat && s.lng) d = haversineKm(_userLocation.lat, _userLocation.lng, s.lat, s.lng);
+        return Object.assign({}, s, { _dist: d });
+    });
+    if (_stayFilters.sortBy === 'distance' && _userLocation) {
+        enriched.sort(function(a, b) { if (a._dist == null) return 1; if (b._dist == null) return -1; return a._dist - b._dist; });
+    } else if (_stayFilters.sortBy === 'price') {
+        enriched.sort(function(a, b) { return Number(a.price) - Number(b.price); });
+    } else if (_stayFilters.sortBy === 'rating') {
+        enriched.sort(function(a, b) { return (b.rating||0) - (a.rating||0); });
+    }
+
+    var locLabel = _userLocation
+        ? '<span class="loc-tag"><i class="fas fa-crosshairs"></i> ' + t('yourLocation') + '</span>'
+        : '<span class="loc-tag" style="color:var(--accent-3);"><i class="fas fa-exclamation-triangle"></i> ' + t('getMyLocation') + '</span>';
+
+    var typeChips = '<button class="stay-chip ' + (_stayFilters.type === 'all' ? 'active' : '') + '" onclick="setStayFilter(\'type\',\'all\')"><i class="fas fa-th"></i> ' + t('allTypes') + '</button>' +
+        '<button class="stay-chip ' + (_stayFilters.type === 'apartment' ? 'active' : '') + '" onclick="setStayFilter(\'type\',\'apartment\')"><i class="fas fa-building"></i> ' + t('apartments') + '</button>' +
+        '<button class="stay-chip ' + (_stayFilters.type === 'hotel' ? 'active' : '') + '" onclick="setStayFilter(\'type\',\'hotel\')"><i class="fas fa-hotel"></i> ' + t('hotels') + '</button>';
+
+    var sortChips = '<button class="stay-chip ' + (_stayFilters.sortBy === 'distance' ? 'active' : '') + '" onclick="setStayFilter(\'sortBy\',\'distance\')"><i class="fas fa-location-arrow"></i> ' + t('sortByDistance') + '</button>' +
+        '<button class="stay-chip ' + (_stayFilters.sortBy === 'price' ? 'active' : '') + '" onclick="setStayFilter(\'sortBy\',\'price\')"><i class="fas fa-tag"></i> ' + t('sortByPrice') + '</button>' +
+        '<button class="stay-chip ' + (_stayFilters.sortBy === 'rating' ? 'active' : '') + '" onclick="setStayFilter(\'sortBy\',\'rating\')"><i class="fas fa-star"></i> ' + t('sortByRating') + '</button>';
+
+    var cardsHtml = enriched.length === 0
+        ? '<div class="card"><div class="card-body"><div class="empty-state"><i class="fas fa-hotel"></i><h3>' + t('noStays') + '</h3></div></div></div>'
+        : enriched.map(function(s) { return renderStayCard(s); }).join('');
+
+    var header = '<div class="section-header"><h2><i class="fas fa-hotel" style="color:var(--accent-1);"></i> ' + t('findStays') + '</h2></div>';
+
+    var searchBar = '<div class="stay-search-bar">' +
+        '<div class="stay-search-input-wrap"><i class="fas fa-search"></i>' +
+        '<input type="text" placeholder="' + t('searchStays') + '" value="' + escapeHtml(_stayFilters.search) + '" oninput="var v=this.value;clearTimeout(window._staySearchT);window._staySearchT=setTimeout(function(){setStaySearch(v)},400);"/></div>' +
+        '<button class="stay-loc-btn" id="stayLocBtn" onclick="getMyLocation()"><i class="fas fa-location-arrow"></i> ' + t('getMyLocation') + '</button>' +
+        '</div>';
+
+    var summary = '<div class="stay-summary-bar"><span><i class="fas fa-hotel"></i> ' + enriched.length + ' ' + t('staysFound') + '</span>' + locLabel + '</div>';
+
+    return header + searchBar +
+        '<div class="stay-filters">' + typeChips + '<span style="width:1px;height:24px;background:var(--border-color);margin:0 4px;"></span>' + sortChips + '</div>' +
+        summary + '<div>' + cardsHtml + '</div>';
+};
+
+function renderStayCard(s) {
+    var typeIcon = s.type === 'hotel' ? 'fa-hotel' : 'fa-building';
+    var typeLabel = s.type === 'hotel' ? t('hotels') : t('apartments');
+    var distBadge = '';
+    if (s._dist != null) {
+        distBadge = '<div class="stay-distance-badge uber-style"><i class="fas fa-car"></i> ' + etaMinutes(s._dist) + ' ' + t('minAway') + ' · ' + fmtKm(s._dist) + '</div>';
+    }
+    var photoCount = (s.images || []).length;
+    var photoBadge = photoCount > 0 ? '<div class="stay-photo-count"><i class="fas fa-camera"></i> ' + photoCount + '</div>' : '';
+    var waNum = (s.whatsapp || s.phone || '').replace(/[^\d]/g,'');
+    var bookUrl = waNum ? ('https://wa.me/' + waNum + '?text=' + encodeURIComponent('Habari, ningependa kuweka nafasi kwa ' + s.name)) : '';
+    var dirUrl = (s.lat && s.lng) ? mapsDirectionsUrl(s.lat, s.lng) : ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.address || s.city || s.name));
+    var firstImgKey = (s.images && s.images[0] && s.images[0].key) ? s.images[0].key : null;
+    var imgStyle = firstImgKey && _mediaUrlCache[firstImgKey] ? ' style="background-image:url(\'' + _mediaUrlCache[firstImgKey] + '\');"' : '';
+    var postBadge = (s.posts && s.posts.length > 0) ? '<div style="position:absolute;bottom:12px;right:12px;background:rgba(245,158,11,.9);color:#fff;padding:5px 10px;border-radius:20px;font-size:.65rem;font-weight:800;display:inline-flex;align-items:center;gap:4px;backdrop-filter:blur(6px);"><i class="fas fa-bullhorn"></i> ' + s.posts.length + '</div>' : '';
+    return '<div class="stay-card">' +
+        '<div class="stay-img" ' + imgStyle + (firstImgKey ? ' data-img-key="' + escapeHtml(firstImgKey) + '"' : '') + '>' +
+            '<span class="stay-type-badge"><i class="fas ' + typeIcon + '"></i> ' + typeLabel + '</span>' +
+            photoBadge +
+            distBadge +
+            postBadge +
+        '</div>' +
+        '<div class="stay-body">' +
+            '<div class="stay-name"><i class="fas ' + typeIcon + '" style="color:var(--accent-1);"></i> ' + escapeHtml(s.name) + '</div>' +
+            '<div class="stay-loc"><i class="fas fa-map-marker-alt"></i> ' + escapeHtml(s.address || s.city || '—') + ' · <span class="stay-rating"><i class="fas fa-star"></i> ' + (s.rating || 4.5) + '</span> <span style="color:var(--text-muted);font-weight:600;">(' + (s.reviews || 0) + ')</span></div>' +
+            '<div class="stay-desc">' + escapeHtml(s.desc || '') + '</div>' +
+            '<div class="stay-features">' +
+                (s.bedrooms ? '<span><i class="fas fa-bed"></i> ' + s.bedrooms + '</span>' : '') +
+                (s.bathrooms ? '<span><i class="fas fa-bath"></i> ' + s.bathrooms + '</span>' : '') +
+                (s.maxGuests ? '<span><i class="fas fa-user-friends"></i> ' + s.maxGuests + '</span>' : '') +
+                (s.amenities && s.amenities.indexOf('wifi') !== -1 ? '<span><i class="fas fa-wifi"></i> Wi-Fi</span>' : '') +
+                (s.amenities && s.amenities.indexOf('pool') !== -1 ? '<span><i class="fas fa-swimmer"></i> Pool</span>' : '') +
+            '</div>' +
+            '<div class="stay-bottom">' +
+                '<div class="stay-price">' + fmtMoney(s.price) + ' <small>' + t('perNight') + '</small></div>' +
+                '<div class="stay-actions">' +
+                    '<button class="btn btn-secondary" onclick="openStayDetail(\'' + s.id + '\')"><i class="fas fa-info-circle"></i> ' + t('propertyDetails') + '</button>' +
+                    '<a class="btn btn-primary" href="' + dirUrl + '" target="_blank" rel="noopener"><i class="fas fa-route"></i> ' + t('getDirections') + '</a>' +
+                    (bookUrl ? '<a class="btn btn-whatsapp" href="' + bookUrl + '" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> ' + t('bookNow') + '</a>' : '') +
+                '</div>' +
+            '</div>' +
+        '</div>' +
+    '</div>';
+}
+
+function openStayDetail(id) {
+    var s = getGlobalStays().find(function(x) { return String(x.id) === String(id); });
+    if (!s) return;
+    var ov = document.getElementById('modalOverlay'), bx = document.getElementById('modalBox');
+    bx.style.padding = '0'; bx.style.overflow = 'hidden'; bx.style.borderRadius = 'var(--radius-card)'; bx.style.maxWidth = '680px';
+    var dist = null;
+    if (_userLocation && s.lat && s.lng) dist = haversineKm(_userLocation.lat, _userLocation.lng, s.lat, s.lng);
+    var typeIcon = s.type === 'hotel' ? 'fa-hotel' : 'fa-building';
+    var waNum = (s.whatsapp || s.phone || '').replace(/[^\d]/g,'');
+    var bookUrl = waNum ? ('https://wa.me/' + waNum + '?text=' + encodeURIComponent('Habari, ningependa kuweka nafasi kwa ' + s.name)) : '';
+    var dirUrl = (s.lat && s.lng) ? mapsDirectionsUrl(s.lat, s.lng) : ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.address || s.city || s.name));
+    var amenitiesHtml = (s.amenities || []).map(function(a) {
+        var icon = { wifi:'fa-wifi', parking:'fa-parking', pool:'fa-swimmer', ac:'fa-snowflake', kitchen:'fa-utensils', gym:'fa-dumbbell', breakfast:'fa-coffee', beach:'fa-umbrella-beach', safari:'fa-binoculars', dinner:'fa-utensils' }[a] || 'fa-check';
+        return '<span class="stay-amenity"><i class="fas ' + icon + '"></i> ' + a + '</span>';
+    }).join('');
+
+    var etaHtml = dist != null ? '<div class="stay-eta-line"><i class="fas fa-car"></i> ' + etaMinutes(dist) + ' ' + t('minAway') + ' (' + fmtKm(dist) + ' ' + t('kmAway') + ') · ' + t('getDirectionsHint') + '</div>' : '';
+
+    // Gallery images
+    var images = (s.images || []);
+    var heroImg = images.length > 0 && images[0].key ? (_mediaUrlCache[images[0].key] || '') : '';
+    var heroStyle = heroImg ? ' style="background-image:url(\'' + heroImg + '\');"' : '';
+    var galleryHtml = '';
+    if (images.length > 1) {
+        galleryHtml = '<div class="stay-gallery">' + images.map(function(img, idx) {
+            var url = _mediaUrlCache[img.key] || '';
+            return '<img src="' + url + '" alt="" onclick="switchStayHero(this)" data-src="' + url + '"' + (idx === 0 ? ' class="active"' : '') + ' loading="lazy"/>';
+        }).join('') + '</div>';
+    }
+
+    // Posts
+    var postsHtml = '';
+    if (s.posts && s.posts.length > 0) {
+        postsHtml = '<div class="stay-posts-section"><div style="font-size:.72rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;display:flex;align-items:center;gap:6px;"><i class="fas fa-bullhorn" style="color:var(--accent-3);"></i> ' + t('postsUpdates') + ' (' + s.posts.length + ')</div>' +
+            s.posts.slice().sort(function(a, b) { return b.timestamp - a.timestamp; }).map(function(p) {
+                var postImg = p.imageKey && _mediaUrlCache[p.imageKey] ? '<img class="stay-post-img" src="' + _mediaUrlCache[p.imageKey] + '" alt=""/>' : '';
+                return '<div class="stay-post"><div class="stay-post-text">' + escapeHtml(p.text) + '</div>' + postImg + '<div class="stay-post-time"><i class="far fa-clock"></i> ' + fmtDateTime(p.timestamp) + '</div></div>';
+            }).join('') + '</div>';
+    }
+
+    bx.innerHTML =
+        '<div style="position:relative;">' +
+            '<button class="btn btn-secondary" onclick="closeModal()" style="position:absolute;top:12px;right:12px;z-index:10;width:38px;height:38px;border-radius:50% !important;padding:0 !important;background:rgba(0,0,0,.55) !important;color:#fff !important;"><i class="fas fa-times"></i></button>' +
+            '<span class="stay-type-badge" style="position:absolute;top:12px;left:12px;z-index:10;"><i class="fas ' + typeIcon + '"></i> ' + (s.type === 'hotel' ? t('hotels') : t('apartments')) + '</span>' +
+            '<div class="stay-detail-hero" id="stayDetailHero"' + heroStyle + '></div>' +
+        '</div>' +
+        '<div style="padding:20px 22px;max-height:65vh;overflow-y:auto;">' +
+            galleryHtml +
+            '<div style="font-size:1.3rem;font-weight:800;letter-spacing:-0.02em;display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px;">' + escapeHtml(s.name) + '<span class="stay-rating"><i class="fas fa-star"></i> ' + (s.rating || 4.5) + '</span></div>' +
+            '<div style="font-size:.82rem;color:var(--text-muted);font-weight:600;margin-top:6px;display:flex;align-items:center;gap:6px;"><i class="fas fa-map-marker-alt"></i> ' + escapeHtml(s.address || '—') + ' · ' + escapeHtml(s.city || '') + '</div>' +
+            etaHtml +
+            '<div style="font-size:.9rem;color:var(--text-secondary);margin-top:14px;line-height:1.6;font-weight:500;">' + escapeHtml(s.desc || '') + '</div>' +
+            '<div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:14px;font-weight:700;font-size:.85rem;">' +
+                (s.bedrooms ? '<span><i class="fas fa-bed" style="color:var(--accent-1);"></i> ' + s.bedrooms + ' ' + t('bedrooms') + '</span>' : '') +
+                (s.bathrooms ? '<span><i class="fas fa-bath" style="color:var(--accent-1);"></i> ' + s.bathrooms + ' ' + t('bathrooms') + '</span>' : '') +
+                (s.maxGuests ? '<span><i class="fas fa-user-friends" style="color:var(--accent-1);"></i> ' + s.maxGuests + ' ' + t('maxGuests') + '</span>' : '') +
+            '</div>' +
+            (amenitiesHtml ? '<div style="font-size:.72rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-top:16px;">' + t('amenities') + '</div><div class="stay-detail-amenities">' + amenitiesHtml + '</div>' : '') +
+            '<div style="font-size:1.5rem;font-weight:900;color:var(--accent-1);margin-top:16px;letter-spacing:-0.02em;">' + fmtMoney(s.price) + ' <small style="font-size:.7rem;color:var(--text-muted);font-weight:700;">' + t('perNight') + '</small></div>' +
+            (s.lat && s.lng ? '<iframe class="stay-map-frame" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="' + mapsEmbedUrl(s.lat, s.lng) + '"></iframe>' : '') +
+            '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;">' +
+                '<a class="btn btn-primary" href="' + dirUrl + '" target="_blank" rel="noopener" style="flex:1;min-width:140px;justify-content:center;display:inline-flex;align-items:center;gap:6px;"><i class="fas fa-route"></i> ' + t('getDirections') + '</a>' +
+                (bookUrl ? '<a class="btn btn-whatsapp" href="' + bookUrl + '" target="_blank" rel="noopener" style="flex:1;min-width:140px;justify-content:center;display:inline-flex;align-items:center;gap:6px;"><i class="fab fa-whatsapp"></i> ' + t('bookNow') + '</a>' : '') +
+                (s.phone ? '<a class="btn btn-secondary" href="tel:' + s.phone + '" style="flex:1;min-width:140px;justify-content:center;display:inline-flex;align-items:center;gap:6px;"><i class="fas fa-phone"></i> ' + t('callNow') + '</a>' : '') +
+            '</div>' +
+            postsHtml +
+        '</div>';
+    ov.classList.add('show'); document.body.classList.add('modal-open');
+    setTimeout(hydrateMedia, 30);
+}
+
+function switchStayHero(imgEl) {
+    var hero = document.getElementById('stayDetailHero');
+    if (!hero) return;
+    hero.style.backgroundImage = 'url("' + imgEl.dataset.src + '")';
+    var all = document.querySelectorAll('.stay-gallery img');
+    all.forEach(function(i) { i.classList.remove('active'); });
+    imgEl.classList.add('active');
+}
+
+/* ============================================================
+   ADD / EDIT STAY MODAL — for Super Admin
+   ============================================================ */
+function openAddStayModal(id) {
+    if (!isSuperAdmin) return;
+    _editStayId = id || null;
+    _pendingStayImages = []; // [{ blob, key (if existing), caption, _previewUrl }]
+    var existing = null;
+    if (id) {
+        existing = getGlobalStays().find(function(x) { return String(x.id) === String(id); });
+        if (existing) {
+            // Convert existing image keys to items
+            (existing.images || []).forEach(function(img) {
+                _pendingStayImages.push({ key: img.key, blob: null, caption: img.caption || '', _existing: true });
+            });
+        }
+    }
+    var ov = document.getElementById('modalOverlay'), bx = document.getElementById('modalBox');
+    bx.style.padding = ''; bx.style.overflow = ''; bx.style.borderRadius = ''; bx.style.maxWidth = '720px';
+
+    var s = existing || {};
+    var title = id ? t('editStay') : t('addStay');
+
+    bx.innerHTML = '<h3><i class="fas fa-hotel" style="color:#f59e0b;"></i> ' + title + '</h3>' +
+        '<form onsubmit="submitStayForm(event)">' +
+        '<div class="form-group"><label>' + t('stayName') + ' *</label><input type="text" name="name" required value="' + escapeHtml(s.name||'') + '"/></div>' +
+        '<div class="form-row">' +
+            '<div class="form-group"><label>' + t('stayType') + ' *</label><select name="type" required>' +
+                '<option value="apartment"' + (s.type === 'apartment' ? ' selected' : '') + '>' + t('apartments') + '</option>' +
+                '<option value="hotel"' + (s.type === 'hotel' ? ' selected' : '') + '>' + t('hotels') + '</option>' +
+            '</select></div>' +
+            '<div class="form-group"><label>' + t('stayPrice') + ' * (TSh)</label><input type="number" name="price" min="0" required value="' + (s.price || '') + '"/></div>' +
+        '</div>' +
+        '<div class="form-row">' +
+            '<div class="form-group"><label>' + t('city') + '</label><input type="text" name="city" value="' + escapeHtml(s.city||'') + '"/></div>' +
+            '<div class="form-group"><label>' + t('stayAddress') + '</label><input type="text" name="address" value="' + escapeHtml(s.address||'') + '"/></div>' +
+        '</div>' +
+        '<div class="form-row">' +
+            '<div class="form-group"><label>' + t('latitude') + ' *</label><input type="number" step="any" name="lat" id="stayLat" required value="' + (s.lat != null ? s.lat : '') + '"/></div>' +
+            '<div class="form-group"><label>' + t('longitude') + ' *</label><input type="number" step="any" name="lng" id="stayLng" required value="' + (s.lng != null ? s.lng : '') + '"/></div>' +
+        '</div>' +
+        '<div style="background:var(--input-bg);border-radius:12px;padding:12px 14px;margin-bottom:14px;">' +
+            '<div style="font-size:.72rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;display:flex;align-items:center;gap:6px;"><i class="fas fa-map-marked-alt" style="color:var(--accent-1);"></i> ' + t('pickLocation') + '</div>' +
+            '<div style="display:flex;gap:6px;flex-wrap:wrap;">' +
+                '<button type="button" class="btn btn-secondary btn-sm" onclick="useMyLocationForStayForm()"><i class="fas fa-crosshairs"></i> ' + t('useMyLocationForStay') + '</button>' +
+                '<button type="button" class="btn btn-secondary btn-sm" onclick="previewStayLocation()"><i class="fas fa-map"></i> ' + t('openInGoogleMaps') + '</button>' +
+            '</div>' +
+            '<div id="stayMapPreview" style="margin-top:10px;"></div>' +
+        '</div>' +
+        '<div class="form-row">' +
+            '<div class="form-group"><label>' + t('contactPhone') + '</label><input type="tel" name="phone" value="' + escapeHtml(s.phone||'') + '"/></div>' +
+            '<div class="form-group"><label>' + t('contactWhatsapp') + '</label><input type="tel" name="whatsapp" value="' + escapeHtml(s.whatsapp||'') + '"/></div>' +
+        '</div>' +
+        '<div class="form-row">' +
+            '<div class="form-group"><label>' + t('bedrooms') + '</label><input type="number" name="bedrooms" value="' + (s.bedrooms || 1) + '"/></div>' +
+            '<div class="form-group"><label>' + t('bathrooms') + '</label><input type="number" name="bathrooms" value="' + (s.bathrooms || 1) + '"/></div>' +
+        '</div>' +
+        '<div class="form-row">' +
+            '<div class="form-group"><label>' + t('maxGuests') + '</label><input type="number" name="maxGuests" value="' + (s.maxGuests || 2) + '"/></div>' +
+            '<div class="form-group"><label>' + t('rating') + '</label><input type="number" step="0.1" min="0" max="5" name="rating" value="' + (s.rating || 4.5) + '"/></div>' +
+        '</div>' +
+        '<div class="form-group"><label>' + t('description') + '</label><textarea name="desc" rows="3" maxlength="800">' + escapeHtml(s.desc||'') + '</textarea></div>' +
+        '<div class="form-group"><label>' + t('amenities') + ' (comma-separated)</label><input type="text" name="amenities" placeholder="wifi, parking, pool, ac, kitchen" value="' + escapeHtml((s.amenities||[]).join(', ')) + '"/></div>' +
+        '<div class="form-group">' +
+            '<label><i class="fas fa-images" style="color:#8b5cf6;"></i> ' + t('photos') + '</label>' +
+            '<input type="file" id="stayPhotosInput" accept="image/*" multiple onchange="onStayPhotosSelected(this)"/>' +
+            '<div class="media-upload-hint"><i class="fas fa-info-circle"></i> ' + t('dragHint') + '</div>' +
+            '<div id="stayPhotosPreview" class="stay-thumb-grid"></div>' +
+        '</div>' +
+        '<div class="form-actions">' +
+            '<button type="button" class="btn btn-secondary" onclick="closeModal()">' + t('cancel') + '</button>' +
+            '<button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> ' + t('save') + '</button>' +
+        '</div>' +
+        '</form>';
+    ov.classList.add('show'); document.body.classList.add('modal-open');
+    renderStayPhotosPreview();
+    previewStayLocation();
+}
+
+function useMyLocationForStayForm() {
+    if (!navigator.geolocation) { showToast('⚠ GPS unavailable', 'error'); return; }
+    showToast('📡 ' + t('useMyLocationForStay') + '...', 'info');
+    navigator.geolocation.getCurrentPosition(function(pos) {
+        var latEl = document.getElementById('stayLat'), lngEl = document.getElementById('stayLng');
+        if (latEl) latEl.value = pos.coords.latitude;
+        if (lngEl) lngEl.value = pos.coords.longitude;
+        previewStayLocation();
+        showToast('✅ ' + t('yourLocation') + ' ✓', 'success');
+    }, function() { showToast('⚠ Location denied', 'error'); }, { enableHighAccuracy: true, timeout: 10000 });
+}
+
+function previewStayLocation() {
+    var latEl = document.getElementById('stayLat'), lngEl = document.getElementById('stayLng');
+    var box = document.getElementById('stayMapPreview');
+    if (!latEl || !lngEl || !box) return;
+    var lat = parseFloat(latEl.value), lng = parseFloat(lngEl.value);
+    if (isNaN(lat) || isNaN(lng)) { box.innerHTML = ''; return; }
+    box.innerHTML = '<iframe class="stay-map-frame" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="' + mapsEmbedUrl(lat, lng) + '" style="height:180px;margin-top:0;"></iframe>';
+}
+
+function onStayPhotosSelected(input) {
+    var files = Array.from(input.files || []);
+    if (!files.length) return;
+    var remaining = 20 - _pendingStayImages.length;
+    if (remaining <= 0) { showToast('⚠ Max 20 photos', 'warning'); input.value = ''; return; }
+    files.slice(0, remaining).forEach(function(f) {
+        if (f.size > 15 * 1024 * 1024) { showToast('⚠ ' + f.name + ' too large', 'error'); return; }
+        _pendingStayImages.push({ blob: f, key: null, caption: '', _previewUrl: URL.createObjectURL(f) });
+    });
+    renderStayPhotosPreview();
+    input.value = '';
+}
+
+function renderStayPhotosPreview() {
+    var box = document.getElementById('stayPhotosPreview');
+    if (!box) return;
+    if (_pendingStayImages.length === 0) { box.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:16px;color:var(--text-muted);font-size:.8rem;font-weight:600;">' + t('noPhotosYet') + '</div>'; return; }
+    box.innerHTML = _pendingStayImages.map(function(img, i) {
+        var url = img._previewUrl || (img.key && _mediaUrlCache[img.key]) || '';
+        return '<div class="stay-thumb"><img src="' + url + '" alt=""/><button type="button" onclick="removeStayPhoto(' + i + ')"><i class="fas fa-times"></i></button></div>';
+    }).join('');
+}
+
+function removeStayPhoto(i) {
+    if (i < 0 || i >= _pendingStayImages.length) return;
+    _pendingStayImages.splice(i, 1);
+    renderStayPhotosPreview();
+}
+
+function submitStayForm(e) {
+    e.preventDefault();
+    if (!isSuperAdmin) return;
+    var fd = new FormData(e.target);
+    var name = (fd.get('name') || '').trim();
+    var lat = parseFloat(fd.get('lat')), lng = parseFloat(fd.get('lng'));
+    if (!name || isNaN(lat) || isNaN(lng)) { showToast('⚠ ' + t('fillFields'), 'error'); return; }
+    var btn = e.target.querySelector('button[type="submit"]');
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ...'; }
+
+    // Save all pending blobs to IndexedDB first
+    var savePromises = _pendingStayImages.map(function(img) {
+        if (img.blob) {
+            return saveMediaBlob(img.blob, 'stay_').then(function(k) {
+                img.key = k;
+                img.blob = null;
+                return img;
+            });
+        }
+        return Promise.resolve(img);
+    });
+
+    Promise.all(savePromises).then(function(savedImgs) {
+        var amenities = (fd.get('amenities') || '').split(',').map(function(x){ return x.trim().toLowerCase(); }).filter(Boolean);
+        var base = {
+            name: name,
+            type: fd.get('type') || 'apartment',
+            price: parseFloat(fd.get('price')) || 0,
+            city: (fd.get('city') || '').trim(),
+            address: (fd.get('address') || '').trim(),
+            lat: lat,
+            lng: lng,
+            phone: (fd.get('phone') || '').trim(),
+            whatsapp: (fd.get('whatsapp') || '').trim(),
+            bedrooms: parseInt(fd.get('bedrooms')) || 1,
+            bathrooms: parseInt(fd.get('bathrooms')) || 1,
+            maxGuests: parseInt(fd.get('maxGuests')) || 2,
+            rating: parseFloat(fd.get('rating')) || 4.5,
+            desc: (fd.get('desc') || '').trim(),
+            amenities: amenities,
+            images: savedImgs.map(function(img) { return { key: img.key, caption: img.caption || '' }; }),
+            addedBy: 'super'
+        };
+
+        var all = getGlobalStays();
+        if (_editStayId) {
+            var idx = all.findIndex(function(x) { return String(x.id) === String(_editStayId); });
+            if (idx !== -1) {
+                base.id = all[idx].id;
+                base.reviews = all[idx].reviews || 0;
+                base.posts = all[idx].posts || [];
+                base.createdAt = all[idx].createdAt;
+                base.updatedAt = Date.now();
+                all[idx] = base;
+                showToast('✅ ' + t('stayUpdated'), 'success');
+            }
+        } else {
+            base.id = uid();
+            base.reviews = 0;
+            base.posts = [];
+            base.createdAt = Date.now();
+            all.push(base);
+            showToast('✅ ' + t('stayAdded'), 'success');
+        }
+        saveGlobalStays(all);
+        _pendingStayImages = [];
+        _editStayId = null;
+        closeModal();
+        navigate('superStays');
+    }).catch(function(err) {
+        console.error(err);
+        showToast('⚠ Error saving', 'error');
+        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> ' + t('save'); }
+    });
+}
+
+/* ============================================================
+   ADD POST TO STAY (Super Admin)
+   ============================================================ */
+function openAddStayPostModal(stayId) {
+    if (!isSuperAdmin) return;
+    var s = getGlobalStays().find(function(x) { return String(x.id) === String(stayId); });
+    if (!s) return;
+    var ov = document.getElementById('modalOverlay'), bx = document.getElementById('modalBox');
+    bx.style.padding = ''; bx.style.overflow = ''; bx.style.borderRadius = ''; bx.style.maxWidth = '560px';
+    bx.innerHTML = '<h3><i class="fas fa-bullhorn" style="color:var(--accent-3);"></i> ' + t('addPost') + ' — ' + escapeHtml(s.name) + '</h3>' +
+        '<form onsubmit="submitStayPost(event, \'' + stayId + '\')">' +
+        '<div class="form-group"><label>' + t('postText') + '</label><textarea name="text" rows="3" required maxlength="600"></textarea></div>' +
+        '<div class="form-group"><label>' + t('photos') + ' (optional)</label><input type="file" id="stayPostImg" accept="image/*" onchange="onStayPostImgSelected(this)"/><div id="stayPostImgPreview" style="margin-top:8px;"></div></div>' +
+        '<div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">' + t('cancel') + '</button><button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> ' + t('post') + '</button></div>' +
+        '</form>';
+    ov.classList.add('show'); document.body.classList.add('modal-open');
+    window._stayPostImgBlob = null;
+}
+
+function onStayPostImgSelected(input) {
+    var f = input.files && input.files[0];
+    var box = document.getElementById('stayPostImgPreview');
+    window._stayPostImgBlob = null;
+    if (!f || !box) return;
+    if (f.size > 10 * 1024 * 1024) { showToast('⚠ Max 10MB', 'error'); input.value = ''; return; }
+    window._stayPostImgBlob = f;
+    var url = URL.createObjectURL(f);
+    box.innerHTML = '<img src="' + url + '" style="max-width:100%;border-radius:10px;max-height:200px;"/>';
+}
+
+function submitStayPost(e, stayId) {
+    e.preventDefault();
+    if (!isSuperAdmin) return;
+    var text = (new FormData(e.target).get('text') || '').trim();
+    if (!text) return;
+    var blob = window._stayPostImgBlob;
+    var finish = function(imgKey) {
+        var all = getGlobalStays();
+        var s = all.find(function(x) { return String(x.id) === String(stayId); });
+        if (!s) return;
+        if (!Array.isArray(s.posts)) s.posts = [];
+        s.posts.push({ id: uid(), text: text, imageKey: imgKey || null, timestamp: Date.now(), addedBy: 'super' });
+        saveGlobalStays(all);
+        window._stayPostImgBlob = null;
+        closeModal();
+        showToast('✅ ' + t('postAdded'), 'success');
+        navigate('superStays');
+    };
+    if (blob) {
+        saveMediaBlob(blob, 'staypost_').then(function(k) { getMediaUrl(k); finish(k); }).catch(function() { finish(null); });
+    } else finish(null);
+}
+
+/* ============================================================
+   ADD POST BUTTON on Stay rows (Super Admin view)
+   ============================================================ */
+// extend superStays table with "add post" button — modify the row action buttons:
+// (already added via deleteStayConfirm; add post button is added on the view after edit)
+
+/* ============================================================
+   MEX EMPLOYEE VIEWS
+   ============================================================ */
 views.mexEarnings = function() {
     if (!isMexEmployee) return '';
     var emp = findMexEmployeeById(currentMexEmployeeId); if (!emp) return '';
@@ -2054,18 +2983,7 @@ function quickAddComment(adId) {
     var ads = getGlobalAds(); var ad = ads.find(function(a) { return a.id === Number(adId); });
     if (!ad) return;
     if (!Array.isArray(ad.comments)) ad.comments = [];
-    ad.comments.push({
-        id:uid(),
-        userId:isSuperAdmin?0:(isMexEmployee?currentMexEmployeeId:u.id),
-        userName:isSuperAdmin?'Super Admin':(u.fullName||u.username),
-        photoKey:getCurrentCommenterPhotoKey(u),
-        isSuperAdmin:isSuperAdmin,
-        isMexEmployee:isMexEmployee,
-        tenantId:(isSuperAdmin||isMexEmployee)?null:currentTenantId,
-        text:tx,
-        timestamp:Date.now(),
-        replies:[]
-    });
+    ad.comments.push({ id:uid(), userId:isSuperAdmin?0:(isMexEmployee?currentMexEmployeeId:u.id), userName:isSuperAdmin?'Super Admin':(u.fullName||u.username), photoKey:getCurrentCommenterPhotoKey(u), isSuperAdmin:isSuperAdmin, isMexEmployee:isMexEmployee, tenantId:(isSuperAdmin||isMexEmployee)?null:currentTenantId, text:tx, timestamp:Date.now(), replies:[] });
     saveGlobalAds(ads);
     inp.value = '';
     updateAdCardCommentCount(ad.id);
@@ -2136,17 +3054,7 @@ function postCommentFromModal() {
     var ads = getGlobalAds(); var ad = ads.find(function(a) { return a.id === Number(currentCommentsAdId); });
     if (!ad) return;
     if (!Array.isArray(ad.comments)) ad.comments = [];
-    var newC = {
-        id:uid(),
-        userId:isSuperAdmin?0:(isMexEmployee?currentMexEmployeeId:u.id),
-        userName:isSuperAdmin?'Super Admin':(u.fullName||u.username),
-        photoKey:getCurrentCommenterPhotoKey(u),
-        isSuperAdmin:isSuperAdmin,
-        isMexEmployee:isMexEmployee,
-        tenantId:(isSuperAdmin||isMexEmployee)?null:currentTenantId,
-        text:tx,
-        timestamp:Date.now()
-    };
+    var newC = { id:uid(), userId:isSuperAdmin?0:(isMexEmployee?currentMexEmployeeId:u.id), userName:isSuperAdmin?'Super Admin':(u.fullName||u.username), photoKey:getCurrentCommenterPhotoKey(u), isSuperAdmin:isSuperAdmin, isMexEmployee:isMexEmployee, tenantId:(isSuperAdmin||isMexEmployee)?null:currentTenantId, text:tx, timestamp:Date.now() };
     if (replyToCommentId) {
         var parent = ad.comments.find(function(x) { return x.id === Number(replyToCommentId); });
         if (parent) { if (!Array.isArray(parent.replies)) parent.replies = []; newC.parentId = parent.id; parent.replies.push(newC); }
@@ -2331,11 +3239,17 @@ function deleteGlobalAdConfirm(id) { if (!confirm(t('deleteConfirm'))) return; d
 views.sales = function() {
     if (isSuperAdmin || isMexEmployee) return '';
     var s = getFilteredSales().slice().reverse();
-    var headerActions = '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
-        (s.length > 0 ? '<button class="btn btn-whatsapp btn-icon" onclick="openSendReportModal(\'sales\')"><i class="fab fa-whatsapp"></i> <span>' + t('sendSalesReport') + '</span></button>' : '') +
-        (canRecordSales() ? '<button class="btn btn-primary btn-icon" onclick="openModal(\'sale\')"><i class="fas fa-plus"></i> ' + t('newSale') + '</button>' : '') +
-        '</div>';
-    return '<div class="section-header"><h2><i class="fas fa-cart-plus"></i> ' + t('sales') + '</h2>' + headerActions + '</div><div class="card"><div class="card-header"><h3>' + t('sales') + '</h3>' + (s.length > 0 ? '<button class="btn btn-whatsapp btn-sm btn-icon" onclick="openSendReportModal(\'sales\')"><i class="fab fa-whatsapp"></i> ' + t('send') + '</button>' : '') + '</div><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>' + t('product') + '</th><th>' + t('quantity') + '</th><th>' + t('amount') + '</th><th>' + t('totalSales') + '</th><th>' + t('debtCustomer') + '</th><th>' + t('date') + '</th><th></th></tr></thead><tbody>' + (s.length === 0 ? '<tr class="empty-row"><td colspan="8">' + t('noSales') + '</td></tr>' : s.map(function(x, i) { var p = getProduct(x.productId); var up = (x.unitPrice != null) ? x.unitPrice : (x.totalPrice / x.quantity); return '<tr><td>' + (i+1) + '</td><td>' + (p ? escapeHtml(p.name) : '--') + '</td><td>' + x.quantity + '</td><td>' + fmtMoney(up) + '</td><td><strong>' + fmtMoney(x.totalPrice) + '</strong></td><td>' + (x.customer || '--') + '</td><td>' + fmtDate(x.date) + '</td><td style="display:flex;gap:4px;"><button class="btn btn-danger btn-xs" onclick="deleteSale(\'' + x.id + '\')"><i class="fas fa-trash"></i></button><button class="btn btn-primary btn-xs" onclick="shareReceipt(\'' + x.id + '\')"><i class="fas fa-receipt"></i></button></td></tr>'; }).join('')) + '</tbody></table></div></div></div>';
+    var headerActions = canRecordSales() ? '<button class="btn btn-primary btn-icon" onclick="openModal(\'sale\')"><i class="fas fa-plus"></i> ' + t('newSale') + '</button>' : '';
+    return '<div class="section-header"><h2><i class="fas fa-cart-plus"></i> ' + t('sales') + '</h2>' + headerActions + '</div>'
+        + '<div class="card"><div class="card-header"><h3>' + t('sales') + '</h3></div>'
+        + '<div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>' + t('product') + '</th><th>' + t('quantity') + '</th><th>' + t('amount') + '</th><th>' + t('totalSales') + '</th><th>' + t('debtCustomer') + '</th><th>' + t('date') + '</th><th></th></tr></thead><tbody>'
+        + (s.length === 0 ? '<tr class="empty-row"><td colspan="8">' + t('noSales') + '</td></tr>'
+            : s.map(function(x, i) {
+                var p = getProduct(x.productId);
+                var up = (x.unitPrice != null) ? x.unitPrice : (x.totalPrice / x.quantity);
+                return '<tr><td>' + (i+1) + '</td><td>' + (p ? escapeHtml(p.name) : '--') + '</td><td>' + x.quantity + '</td><td>' + fmtMoney(up) + '</td><td><strong>' + fmtMoney(x.totalPrice) + '</strong></td><td>' + (x.customer || '--') + '</td><td>' + fmtDate(x.date) + '</td><td style="display:flex;gap:4px;"><button class="btn btn-danger btn-xs" onclick="deleteSale(\'' + x.id + '\')"><i class="fas fa-trash"></i></button><button class="btn btn-primary btn-xs" onclick="shareReceipt(\'' + x.id + '\')"><i class="fas fa-receipt"></i></button></td></tr>';
+            }).join(''))
+        + '</tbody></table></div></div></div>';
 };
 
 views.debts = function() {
@@ -2356,56 +3270,39 @@ views.debts = function() {
                 '<button class="btn btn-danger btn-xs" onclick="deleteDebt(\'' + x.id + '\')"><i class="fas fa-trash"></i></button>' +
             '</td></tr>';
     }).join('');
-    var headerActions = '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
-        (d.length > 0 ? '<button class="btn btn-whatsapp btn-icon" onclick="openSendReportModal(\'debts\')"><i class="fab fa-whatsapp"></i> <span>' + t('sendDebtsReport') + '</span></button>' : '') +
-        '</div>';
+    var headerActions = '<div style="display:flex;gap:8px;flex-wrap:wrap;">' + (d.length > 0 ? '<button class="btn btn-whatsapp btn-icon" onclick="openSendReportModal(\'debts\')"><i class="fab fa-whatsapp"></i> <span>' + t('sendDebtsReport') + '</span></button>' : '') + '</div>';
     return '<div class="section-header"><h2><i class="fas fa-hand-holding-usd" style="color:var(--accent-danger);"></i> ' + t('debts') + '</h2>' + headerActions + '</div>' +
-        '<div class="stats-grid">' +
-            '<div class="stat-card"><div class="stat-label">' + t('totalDebts') + '</div><div class="stat-value red">' + fmtMoney(totalDebt) + '</div><div class="stat-icon"><i class="fas fa-hand-holding-usd"></i></div></div>' +
-            '<div class="stat-card"><div class="stat-label">' + t('debtsCount') + '</div><div class="stat-value primary">' + d.length + '</div><div class="stat-icon"><i class="fas fa-users"></i></div></div>' +
-        '</div>' +
-        '<div class="card"><div class="card-header"><h3><i class="fas fa-list"></i> ' + t('debts') + '</h3>' + (d.length > 0 ? '<button class="btn btn-whatsapp btn-sm btn-icon" onclick="openSendReportModal(\'debts\')"><i class="fab fa-whatsapp"></i> ' + t('send') + '</button>' : '') + '</div>' +
-        '<div class="card-body"><div class="table-wrap"><table><thead><tr>' +
-            '<th>#</th><th>' + t('debtCustomer') + '</th><th>' + t('product') + '</th><th>' + t('quantity') + '</th><th>' + t('debtAmount') + '</th><th>' + t('date') + '</th><th></th>' +
-        '</tr></thead><tbody>' + rows + '</tbody></table></div></div></div>';
+        '<div class="stats-grid"><div class="stat-card"><div class="stat-label">' + t('totalDebts') + '</div><div class="stat-value red">' + fmtMoney(totalDebt) + '</div><div class="stat-icon"><i class="fas fa-hand-holding-usd"></i></div></div><div class="stat-card"><div class="stat-label">' + t('debtsCount') + '</div><div class="stat-value primary">' + d.length + '</div><div class="stat-icon"><i class="fas fa-users"></i></div></div></div>' +
+        '<div class="card"><div class="card-header"><h3><i class="fas fa-list"></i> ' + t('debts') + '</h3>' + (d.length > 0 ? '<button class="btn btn-whatsapp btn-sm btn-icon" onclick="openSendReportModal(\'debts\')"><i class="fab fa-whatsapp"></i> ' + t('send') + '</button>' : '') + '</div><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>' + t('debtCustomer') + '</th><th>' + t('product') + '</th><th>' + t('quantity') + '</th><th>' + t('debtAmount') + '</th><th>' + t('date') + '</th><th></th></tr></thead><tbody>' + rows + '</tbody></table></div></div></div>';
 };
 
-function markDebtPaid(id) {
-    if (!hasPerm('sales_create')) return;
-    var sales = getTenantData('sales', []);
-    var sale = sales.find(function(s) { return s.id === Number(id); });
-    if (!sale) return;
-    sale.paid = true;
-    sale.paidAt = Date.now();
-    var cu = getCurrentUser();
-    sale.paidBy = cu ? cu.id : null;
-    persistSales(sales);
-    showToast('✅ ' + t('paidSuccess'), 'success');
-    updateDebtsBadge();
-    navigate('debts');
-}
-
-function deleteDebt(id) {
-    if (!confirm(t('deleteConfirm'))) return;
-    var sales = getTenantData('sales', []);
-    var sale = sales.find(function(s) { return s.id === Number(id); });
-    if (!sale) return;
-    var ps = getTenantData('products', []);
-    var p = ps.find(function(x) { return Number(x.id) === Number(sale.productId); });
-    if (p) { p.quantity += sale.quantity; persistProducts(ps); }
-    persistSales(sales.filter(function(s) { return s.id !== Number(id); }));
-    updateDebtsBadge();
-    navigate('debts');
-}
+function markDebtPaid(id) { if (!hasPerm('sales_create')) return; var sales = getTenantData('sales', []); var sale = sales.find(function(s) { return s.id === Number(id); }); if (!sale) return; sale.paid = true; sale.paidAt = Date.now(); var cu = getCurrentUser(); sale.paidBy = cu ? cu.id : null; persistSales(sales); showToast('✅ ' + t('paidSuccess'), 'success'); updateDebtsBadge(); navigate('debts'); }
+function deleteDebt(id) { if (!confirm(t('deleteConfirm'))) return; var sales = getTenantData('sales', []); var sale = sales.find(function(s) { return s.id === Number(id); }); if (!sale) return; var ps = getTenantData('products', []); var p = ps.find(function(x) { return Number(x.id) === Number(sale.productId); }); if (p) { p.quantity += sale.quantity; persistProducts(ps); } persistSales(sales.filter(function(s) { return s.id !== Number(id); })); updateDebtsBadge(); navigate('debts'); }
 
 views.inventory = function() {
     if (isSuperAdmin || isMexEmployee) return '';
     var p = getFilteredProducts().slice().sort(function(a, b) { return (a.name || '').localeCompare(b.name || ''); });
     var ce = hasPerm('inventory_manage');
+    var u = getCurrentUser();
+    var branchNames = getBranchNames();
+    var canTransfer = u && u.role === 'owner' && branchNames.length > 1;
     var cats = ensureCategories();
     var cb = '<div class="inv-cat-bar">' + cats.map(function(c) { return '<span class="inv-cat-chip">' + c.name + (ce ? '<button type="button" onclick="deleteInventoryCategory(\'' + c.id + '\')">×</button>' : '') + '</span>'; }).join('') + (ce ? '<button class="btn btn-secondary btn-xs" onclick="promptAddCategory()">+ Add</button>' : '') + '</div>';
-    var rows = p.map(function(x) { var st = x.quantity <= 0 ? 'red' : x.quantity <= 5 ? 'yellow' : 'green'; return '<tr><td>' + productImageHtml(x) + '</td><td><strong>' + escapeHtml(x.name) + '</strong></td><td>' + (x.category || 'General') + '</td><td>' + fmtMoney(x.price) + '</td><td>' + fmtMoney(x.cost) + '</td><td><strong>' + x.quantity + '</strong></td><td><span class="stock-dot ' + st + '"></span></td><td>' + (ce ? '<button class="btn btn-success btn-xs" onclick="adjustStock(\'' + x.id + '\')">+</button> <button class="btn btn-danger btn-xs" onclick="deleteProduct(\'' + x.id + '\')">×</button>' : '—') + '</td></tr>'; }).join('');
-    return '<div class="section-header"><h2><i class="fas fa-boxes"></i> ' + t('inventory') + '</h2>' + (ce ? '<button class="btn btn-primary btn-icon" onclick="openModal(\'product\')"><i class="fas fa-plus"></i> ' + t('addProduct') + '</button>' : '') + '</div>' + cb + '<div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th></th><th>' + t('product') + '</th><th>' + t('category') + '</th><th>' + t('amount') + '</th><th>' + t('cogs') + '</th><th>' + t('quantity') + '</th><th></th><th></th></tr></thead><tbody>' + (rows || '<tr class="empty-row"><td colspan="8">' + t('noProducts') + '</td></tr>') + '</tbody></table></div></div></div>';
+    var branchTotals = {};
+    getTenantData('products', []).forEach(function(x) { var sn = normStore(x.store); if (!sn) return; if (!branchTotals[sn]) branchTotals[sn] = { items:0, value:0 }; branchTotals[sn].items += Number(x.quantity) || 0; branchTotals[sn].value += (Number(x.cost) || 0) * (Number(x.quantity) || 0); });
+    var branchSummaryHtml = '';
+    if (branchNames.length > 1) {
+        branchSummaryHtml = '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">' + branchNames.map(function(bn) {
+            var bt = branchTotals[normStore(bn)] || { items:0, value:0 };
+            return '<div style="background:var(--input-bg);border:1px solid var(--border-color);border-radius:12px;padding:10px 14px;flex:1;min-width:140px;"><div style="font-size:.62rem;text-transform:uppercase;color:var(--text-muted);font-weight:700;letter-spacing:.05em;"><i class="fas fa-store"></i> ' + escapeHtml(bn) + '</div><div style="font-size:.95rem;font-weight:800;color:var(--accent-1);margin-top:4px;">' + bt.items + ' items</div><div style="font-size:.7rem;color:var(--text-muted);font-weight:600;margin-top:2px;">' + fmtMoney(bt.value) + '</div></div>';
+        }).join('') + '</div>';
+    }
+    var rows = p.map(function(x) {
+        var dot = '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:' + (x.quantity <= 0 ? 'var(--accent-danger)' : x.quantity <= 5 ? 'var(--accent-3)' : 'var(--accent-4)') + ';"></span>';
+        return '<tr><td>' + productImageHtml(x) + '</td><td><strong>' + escapeHtml(x.name) + '</strong></td><td><span class="badge badge-info" style="font-size:.68rem;"><i class="fas fa-store"></i> ' + escapeHtml(x.store || '--') + '</span></td><td>' + (x.category || 'General') + '</td><td>' + fmtMoney(x.price) + '</td><td>' + fmtMoney(x.cost) + '</td><td><strong>' + x.quantity + '</strong></td><td>' + dot + '</td><td>' + (ce ? '<button class="btn btn-success btn-xs" onclick="adjustStock(\'' + x.id + '\')" title="Adjust">+</button> <button class="btn btn-danger btn-xs" onclick="deleteProduct(\'' + x.id + '\')" title="Delete">×</button>' : '—') + '</td></tr>';
+    }).join('');
+    var headerActions = '<div style="display:flex;gap:8px;flex-wrap:wrap;">' + (canTransfer ? '<button class="btn btn-primary btn-icon" onclick="openTransferModal()" style="background:#8b5cf6 !important;"><i class="fas fa-exchange-alt"></i> ' + t('transferStock') + '</button>' : '') + (canTransfer ? '<button class="btn btn-secondary btn-icon" onclick="viewTransferHistory()"><i class="fas fa-history"></i> ' + (currentLang === 'sw' ? 'Historia' : 'History') + '</button>' : '') + (ce ? '<button class="btn btn-primary btn-icon" onclick="openModal(\'product\')"><i class="fas fa-plus"></i> ' + t('addProduct') + '</button>' : '') + '</div>';
+    return '<div class="section-header"><h2><i class="fas fa-boxes"></i> ' + t('inventory') + '</h2>' + headerActions + '</div>' + branchSummaryHtml + cb + '<div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th></th><th>' + t('product') + '</th><th>' + t('branch') + '</th><th>' + t('category') + '</th><th>' + t('amount') + '</th><th>' + t('cogs') + '</th><th>' + t('quantity') + '</th><th></th><th></th></tr></thead><tbody>' + (rows || '<tr class="empty-row"><td colspan="9">' + t('noProducts') + '</td></tr>') + '</tbody></table></div></div></div>';
 };
 
 views.pnl = function() {
@@ -2491,7 +3388,7 @@ views.reports = function() {
     var periods = ['today', 'week', 'month', 'last30', 'custom'];
     var tabs = '<div class="report-period-tabs">' + periods.map(function(p) { return '<button class="report-period-tab ' + (REPORT_PERIOD === p ? 'active' : '') + '" onclick="setReportPeriod(\'' + p + '\')">' + t(p) + '</button>'; }).join('') + '</div>';
     var customRange = '<div class="report-custom-range ' + (REPORT_PERIOD === 'custom' ? 'show' : '') + '"><div class="form-group"><label>' + t('dateFrom') + '</label><input type="date" id="reportFromDate" value="' + (REPORT_CUSTOM_FROM ? fmtDateInput(REPORT_CUSTOM_FROM) : '') + '"/></div><div class="form-group"><label>' + t('dateTo') + '</label><input type="date" id="reportToDate" value="' + (REPORT_CUSTOM_TO ? fmtDateInput(REPORT_CUSTOM_TO) : '') + '"/></div><div style="grid-column:1/-1;text-align:right;"><button class="btn btn-primary btn-sm" onclick="applyCustomRange()">' + t('apply') + '</button></div></div>';
-    var send = '<div class="card mt-16"><div class="card-body"><div style="display:flex;gap:12px;flex-wrap:wrap;"><button class="btn btn-whatsapp btn-icon" onclick="openSendReportModal(\'sales\')" style="flex:1;min-width:160px;"><i class="fab fa-whatsapp"></i> ' + t('sendSalesReport') + '</button><button class="btn btn-email btn-icon" onclick="openSendReportModal(\'sales\')" style="flex:1;min-width:160px;"><i class="fas fa-envelope"></i> ' + t('emailBtn') + '</button></div></div></div>';
+    var send = '<div class="card mt-16"><div class="card-header"><h3><i class="fas fa-paper-plane"></i> ' + t('sendReport') + '</h3></div><div class="card-body"><div style="display:flex;gap:12px;flex-wrap:wrap;"><button class="btn btn-whatsapp btn-icon" onclick="openSendReportModal(\'sales\')" style="flex:1;min-width:160px;justify-content:center;"><i class="fab fa-whatsapp"></i> ' + t('sendSalesReport') + '</button><button class="btn btn-email btn-icon" onclick="openSendReportModal(\'sales\')" style="flex:1;min-width:160px;justify-content:center;"><i class="fas fa-envelope"></i> ' + t('emailBtn') + '</button></div></div></div>';
     return '<div class="section-header"><h2>' + t('reports') + '</h2></div>' + tabs + customRange + '<div class="report-period-info"><i class="fas fa-calendar-check"></i> ' + data.range.label + '</div>' + sum + send;
 };
 
@@ -2541,16 +3438,7 @@ function openModal(type, data) {
     if (type === 'sale') {
         var store = getCatalogStore(), p = getTenantData('products', []), avail = p.filter(function(x) { return x.quantity > 0; });
         var opts = avail.map(function(x) { return '<option value="' + x.id + '" data-price="' + x.price + '" data-qty="' + x.quantity + '">' + escapeHtml(x.name) + ' (' + x.quantity + ')</option>'; }).join('');
-        h = '<h3>' + t('newSale') + '</h3><form onsubmit="submitSale(event)">' +
-            '<div class="form-group"><label>' + t('product') + '</label><select name="productId" id="saleProductSelect" required onchange="onSaleProductChange()"><option value="">--</option>' + opts + '</select></div>' +
-            '<div class="form-row"><div class="form-group"><label>' + t('quantity') + '</label><input type="number" name="quantity" id="saleQtyInput" min="1" value="1" required/></div><div class="form-group"><label>' + t('amount') + '</label><input type="number" name="unitPrice" id="saleUnitPriceInput" min="0" required/></div></div>' +
-            '<div class="form-group"><label>' + t('debtCustomer') + '</label><input type="text" name="customer" placeholder="' + t('debtCustomer') + '"/></div>' +
-            '<div class="form-group" style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--input-bg);border-radius:var(--radius-sm);border:1px solid var(--input-border);">' +
-              '<input type="checkbox" name="paid" id="salePaidCheck" checked style="width:22px;height:22px;margin:0;accent-color:var(--accent-1);cursor:pointer;flex-shrink:0;"/>' +
-              '<label for="salePaidCheck" style="margin:0;text-transform:none;font-size:.9rem;cursor:pointer;display:flex;align-items:center;gap:8px;flex:1;"><i class="fas fa-money-bill-wave" style="color:var(--accent-4);"></i> <span>' + t('paid') + '</span></label>' +
-            '</div>' +
-            '<input type="hidden" name="store" value="' + store + '"/>' +
-            '<div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">' + t('cancel') + '</button><button type="submit" class="btn btn-primary">' + t('save') + '</button></div></form>';
+        h = '<h3>' + t('newSale') + '</h3><form onsubmit="submitSale(event)"><div class="form-group"><label>' + t('product') + '</label><select name="productId" id="saleProductSelect" required onchange="onSaleProductChange()"><option value="">--</option>' + opts + '</select></div><div class="form-row"><div class="form-group"><label>' + t('quantity') + '</label><input type="number" name="quantity" id="saleQtyInput" min="1" value="1" required/></div><div class="form-group"><label>' + t('amount') + '</label><input type="number" name="unitPrice" id="saleUnitPriceInput" min="0" required/></div></div><div class="form-group"><label>' + t('debtCustomer') + '</label><input type="text" name="customer" placeholder="' + t('debtCustomer') + '"/></div><div class="form-group" style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--input-bg);border-radius:var(--radius-sm);border:1px solid var(--input-border);"><input type="checkbox" name="paid" id="salePaidCheck" checked style="width:22px;height:22px;margin:0;accent-color:var(--accent-1);cursor:pointer;flex-shrink:0;"/><label for="salePaidCheck" style="margin:0;text-transform:none;font-size:.9rem;cursor:pointer;display:flex;align-items:center;gap:8px;flex:1;"><i class="fas fa-money-bill-wave" style="color:var(--accent-4);"></i> <span>' + t('paid') + '</span></label></div><input type="hidden" name="store" value="' + store + '"/><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">' + t('cancel') + '</button><button type="submit" class="btn btn-primary">' + t('save') + '</button></div></form>';
     } else if (type === 'product') {
         var cats = ensureCategories();
         h = '<h3>' + t('addProduct') + '</h3><form onsubmit="submitProduct(event)"><div class="form-group"><label>' + t('name') + ' *</label><input type="text" name="name" required/></div><div class="form-row"><div class="form-group"><label>' + t('amount') + ' *</label><input type="number" name="price" min="1" required/></div><div class="form-group"><label>' + t('cogs') + ' *</label><input type="number" name="cost" min="1" required/></div></div><div class="form-row"><div class="form-group"><label>' + t('category') + '</label><select name="category">' + cats.map(function(c) { return '<option value="' + c.name + '">' + c.name + '</option>'; }).join('') + '</select></div><div class="form-group"><label>' + t('quantity') + '</label><input type="number" name="quantity" min="0" value="0"/></div></div><input type="hidden" name="store" value="' + getCatalogStore() + '"/><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">' + t('cancel') + '</button><button type="submit" class="btn btn-primary">' + t('save') + '</button></div></form>';
@@ -2600,55 +3488,10 @@ function submitSale(e) {
     updateDebtsBadge();
 }
 
-function submitProduct(e) {
-    e.preventDefault(); if (!hasPerm('inventory_manage')) return;
-    var fd = new FormData(e.target);
-    var n = (fd.get('name') || '').trim(), pr = parseFloat(fd.get('price')), co = parseFloat(fd.get('cost'));
-    var q = parseInt(fd.get('quantity')) || 0, cat = (fd.get('category') || '').trim() || 'General', st = (fd.get('store') || '').trim() || getCatalogStore();
-    if (!n || !pr || !co) return;
-    var ps = getTenantData('products', []);
-    ps.push({ id:uid(), name:n, price:pr, cost:co, category:cat, quantity:q, store:st, image:'' });
-    persistProducts(ps);
-    closeModal(); navigate('inventory');
-}
-
-function submitExpense(e) {
-    e.preventDefault(); if (!hasPerm('expenses_manage')) return;
-    var fd = new FormData(e.target);
-    var d = (fd.get('description') || '').trim(), a = parseFloat(fd.get('amount')), c = fd.get('category') || 'Other';
-    var st = (fd.get('store') || '').trim() || getCatalogStore();
-    if (!d || !a || a < 1) return;
-    var u = getCurrentUser(); var ex = getTenantData('expenses', []);
-    ex.push({ id:uid(), description:d, amount:a, category:c, date:Date.now(), store:st, createdBy:u.id });
-    persistExpenses(ex);
-    closeModal(); navigate('expenses');
-}
-
-function submitUser(e) {
-    e.preventDefault(); if (!canManageUsers()) return;
-    var fd = new FormData(e.target);
-    var un = (fd.get('username') || '').trim(), pw = fd.get('password'), role = fd.get('role');
-    var fn = (fd.get('fullName') || '').trim() || un, st = (fd.get('store') || '').trim() || getStoreName();
-    if (!un || !pw || !role) return;
-    var us = getTenantData('users', []);
-    if (us.find(function(x) { return x.username === un; })) { showToast(t('userTaken'), 'error'); return; }
-    var u = getCurrentUser();
-    us.push({ id:uid(), username:un, password:pw, role:role, store:st, fullName:fn, createdBy:u.id, photoKey:'', tenantId:currentTenantId, theme:'light' });
-    setTenantData('users', us);
-    closeModal(); navigate('users');
-}
-
-function submitStockAdjust(e, pid) {
-    e.preventDefault(); if (!hasPerm('inventory_manage')) return;
-    var fd = new FormData(e.target); var adj = parseInt(fd.get('adjust'));
-    if (isNaN(adj) || adj === 0) return;
-    var ps = getTenantData('products', []); var p = ps.find(function(x) { return x.id === parseInt(pid); });
-    if (!p) return;
-    p.quantity = Math.max(0, p.quantity + adj);
-    persistProducts(ps);
-    closeModal(); navigate('inventory');
-}
-
+function submitProduct(e) { e.preventDefault(); if (!hasPerm('inventory_manage')) return; var fd = new FormData(e.target); var n = (fd.get('name') || '').trim(), pr = parseFloat(fd.get('price')), co = parseFloat(fd.get('cost')); var q = parseInt(fd.get('quantity')) || 0, cat = (fd.get('category') || '').trim() || 'General', st = (fd.get('store') || '').trim() || getCatalogStore(); if (!n || !pr || !co) return; var ps = getTenantData('products', []); ps.push({ id:uid(), name:n, price:pr, cost:co, category:cat, quantity:q, store:st, image:'' }); persistProducts(ps); closeModal(); navigate('inventory'); }
+function submitExpense(e) { e.preventDefault(); if (!hasPerm('expenses_manage')) return; var fd = new FormData(e.target); var d = (fd.get('description') || '').trim(), a = parseFloat(fd.get('amount')), c = fd.get('category') || 'Other'; var st = (fd.get('store') || '').trim() || getCatalogStore(); if (!d || !a || a < 1) return; var u = getCurrentUser(); var ex = getTenantData('expenses', []); ex.push({ id:uid(), description:d, amount:a, category:c, date:Date.now(), store:st, createdBy:u.id }); persistExpenses(ex); closeModal(); navigate('expenses'); }
+function submitUser(e) { e.preventDefault(); if (!canManageUsers()) return; var fd = new FormData(e.target); var un = (fd.get('username') || '').trim(), pw = fd.get('password'), role = fd.get('role'); var fn = (fd.get('fullName') || '').trim() || un, st = (fd.get('store') || '').trim() || getStoreName(); if (!un || !pw || !role) return; var us = getTenantData('users', []); if (us.find(function(x) { return x.username === un; })) { showToast(t('userTaken'), 'error'); return; } var u = getCurrentUser(); us.push({ id:uid(), username:un, password:pw, role:role, store:st, fullName:fn, createdBy:u.id, photoKey:'', tenantId:currentTenantId, theme:'light' }); setTenantData('users', us); closeModal(); navigate('users'); }
+function submitStockAdjust(e, pid) { e.preventDefault(); if (!hasPerm('inventory_manage')) return; var fd = new FormData(e.target); var adj = parseInt(fd.get('adjust')); if (isNaN(adj) || adj === 0) return; var ps = getTenantData('products', []); var p = ps.find(function(x) { return x.id === parseInt(pid); }); if (!p) return; p.quantity = Math.max(0, p.quantity + adj); persistProducts(ps); closeModal(); navigate('inventory'); }
 function deleteSale(id) { if (!hasPerm('sales_delete')) return; if (!confirm(t('deleteConfirm'))) return; var sales = getTenantData('sales', []); var sale = sales.find(function(s) { return s.id === Number(id); }); if (sale) { var ps = getTenantData('products', []); var p = ps.find(function(x) { return Number(x.id) === Number(sale.productId); }); if (p) { p.quantity += sale.quantity; persistProducts(ps); } } persistSales(sales.filter(function(s) { return s.id !== Number(id); })); navigate('sales'); }
 function deleteExpense(id) { if (!confirm(t('deleteConfirm'))) return; persistExpenses(getTenantData('expenses', []).filter(function(e) { return e.id !== Number(id); })); navigate('expenses'); }
 function deleteProduct(id) { if (!confirm(t('deleteConfirm'))) return; persistProducts(getTenantData('products', []).filter(function(p) { return p.id !== Number(id); })); navigate('inventory'); }
@@ -2680,15 +3523,8 @@ function toggleTheme() {
     var nt = (u.theme === 'dark') ? 'light' : 'dark';
     u.theme = nt;
     if (isSuperAdmin) setCurrentUser(u);
-    else if (isMexEmployee) {
-        updateMexEmployee(currentMexEmployeeId, { theme: nt });
-        setMexSession(Object.assign({}, getMexSession() || {}, { theme: nt }));
-    } else {
-        var us = getTenantData('users', []);
-        var tg = us.find(function(x) { return Number(x.id) === Number(u.id); });
-        if (tg) { tg.theme = nt; setTenantData('users', us); }
-        setCurrentUser(u);
-    }
+    else if (isMexEmployee) { updateMexEmployee(currentMexEmployeeId, { theme: nt }); setMexSession(Object.assign({}, getMexSession() || {}, { theme: nt })); }
+    else { var us = getTenantData('users', []); var tg = us.find(function(x) { return Number(x.id) === Number(u.id); }); if (tg) { tg.theme = nt; setTenantData('users', us); } setCurrentUser(u); }
     applyTheme();
     updateChartsTheme();
 }
@@ -2724,13 +3560,7 @@ function bindProfileUploadListener() {
             var u = getCurrentUser(); if (!u) return;
             if (isMexEmployee) updateMexEmployee(currentMexEmployeeId, { photoKey: k });
             else if (isSuperAdmin) { u.photoKey = k; setCurrentUser(u); dbSet(STORES.json, SUPER_ADMIN_PHOTO_KEY, k); _superAdminPhotoKey = k; }
-            else {
-                var us = getTenantData('users', []);
-                var tg = us.find(function(x) { return Number(x.id) === Number(u.id); });
-                if (tg) { tg.photoKey = k; setTenantData('users', us); }
-                u.photoKey = k; setCurrentUser(u);
-                if (u.role === 'owner') { var ts = getAllTenants(); var tn = ts.find(function(x) { return x.id === currentTenantId; }); if (tn) { tn.ownerPublic = tn.ownerPublic || {}; tn.ownerPublic.photoKey = k; saveTenants(ts); } }
-            }
+            else { var us = getTenantData('users', []); var tg = us.find(function(x) { return Number(x.id) === Number(u.id); }); if (tg) { tg.photoKey = k; setTenantData('users', us); } u.photoKey = k; setCurrentUser(u); if (u.role === 'owner') { var ts = getAllTenants(); var tn = ts.find(function(x) { return x.id === currentTenantId; }); if (tn) { tn.ownerPublic = tn.ownerPublic || {}; tn.ownerPublic.photoKey = k; saveTenants(ts); } } }
             getMediaUrl(k).then(function(url) { var prev = document.getElementById('modalProfilePreview'); prev.src = url || ''; prev.dataset.photoKey = k; updateAllUI(getCurrentUser()); showToast('📸 Photo updated', 'success'); });
         });
         e.target.value = '';
@@ -2806,7 +3636,7 @@ function updateSidebarForLock() {
     document.querySelectorAll('.sidebar-nav .nav-item').forEach(function(el) {
         var v = el.dataset.view;
         if (v && v.indexOf('mex') === 0) { el.style.display = 'none'; return; }
-        if (v === 'superadmin') el.style.display = 'none';
+        if (v === 'superadmin' || v === 'superStays') el.style.display = 'none';
         else if (v === 'users' && !canManageUsers()) el.style.display = 'none';
         else if (v === 'roles' && !canManageRoles()) el.style.display = 'none';
         else if (v === 'branches' && user.role !== 'owner') el.style.display = 'none';
@@ -2835,16 +3665,7 @@ function addMexEmployee(name, phone, password) {
 }
 function updateMexEmployee(id, u) { var a = getMexEmployees(); var i = a.findIndex(function(e) { return Number(e.id) === Number(id); }); if (i === -1) return false; a[i] = Object.assign({}, a[i], u); saveMexEmployees(a); return a[i]; }
 function deleteMexEmployee(id) { saveMexEmployees(getMexEmployees().filter(function(e) { return Number(e.id) !== Number(id); })); }
-function creditPromoCommission(pc, cid, cn, ou) {
-    var c = String(pc || '').trim().toUpperCase();
-    if (!c) return null;
-    var a = getMexEmployees(); var e = a.find(function(x) { return x.promoCode === c; });
-    if (!e) return null;
-    if (!Array.isArray(e.registeredCompanyIds)) e.registeredCompanyIds = [];
-    e.totalRegistrations = (Number(e.totalRegistrations) || 0) + 1;
-    e.registeredCompanyIds.push({ companyId:cid, companyName:cn, ownerUsername:ou || '', date:Date.now() });
-    saveMexEmployees(a); return { employee:e };
-}
+function creditPromoCommission(pc, cid, cn, ou) { var c = String(pc || '').trim().toUpperCase(); if (!c) return null; var a = getMexEmployees(); var e = a.find(function(x) { return x.promoCode === c; }); if (!e) return null; if (!Array.isArray(e.registeredCompanyIds)) e.registeredCompanyIds = []; e.totalRegistrations = (Number(e.totalRegistrations) || 0) + 1; e.registeredCompanyIds.push({ companyId:cid, companyName:cn, ownerUsername:ou || '', date:Date.now() }); saveMexEmployees(a); return { employee:e }; }
 function checkPromoCode(v) { var el = document.getElementById('regPromoStatus'); if (!el) return; var c = String(v || '').trim().toUpperCase(); if (!c) { el.textContent = ''; return; } var e = findMexEmployeeByPromo(c); if (e) { el.textContent = '✓ ' + e.name; el.className = 'promo-status ok'; } else { el.textContent = '✗ Invalid'; el.className = 'promo-status bad'; } }
 function copyPromoCode(code) { if (!code) return; copyToClipboardText(code); }
 
@@ -2913,6 +3734,7 @@ function createTenant(companyName, username, password, phone, promoCode, pending
         setTenantData('sessions', {});
         setTenantData('punchHistory', []);
         setTenantData(FOLLOWS_KEY_SUFFIX, []);
+        setTenantData(TRANSFERS_KEY_SUFFIX, []);
     } finally { currentTenantId = old; }
     if (pc) { try { creditPromoCommission(pc, id, companyName, username); } catch(e) {} }
     return { success:true, tenant:tenant, ownerUser:ownerUser };
@@ -2929,74 +3751,9 @@ function openBranchModal() {
     ov.classList.add('show'); document.body.classList.add('modal-open');
 }
 function closeSubscriptionModal() { document.getElementById('subModal').classList.remove('show'); var stillOpen = document.querySelector('.modal-overlay.show'); if (!stillOpen) document.body.classList.remove('modal-open'); }
-function handleSubscriptionPayment() {
-    var bn = document.getElementById('newBranchName').value.trim();
-    var ba = document.getElementById('newBranchAddress').value.trim();
-    var bt = document.getElementById('newBranchTin').value.trim();
-    var un = document.getElementById('newBranchUsername').value.trim();
-    var pw = document.getElementById('newBranchPassword').value.trim();
-    if (!bn || !un || !pw) return;
-    var ts = getAllTenants(), tn = ts.find(function(x) { return x.id === currentTenantId; });
-    if (!tn) return;
-    var users = getTenantData('users', []);
-    if (users.find(function(u) { return u.username === un; })) { showToast(t('userTaken'), 'error'); return; }
-    tn.branches.push({ name:bn, address:ba || 'N/A', tin:bt || 'N/A', permissions:Object.assign({}, DEFAULT_BRANCH_PERMS) });
-    persistTenantBranches(tn.branches);
-    var cu = getCurrentUser();
-    users.push({ id:uid(), username:un, password:pw, role:'employee', store:bn, fullName:'Branch Manager - ' + bn, createdBy:cu ? cu.id : 1, tenantId:currentTenantId });
-    setTenantData('users', users);
-    closeSubscriptionModal(); navigate('branches');
-}
+function handleSubscriptionPayment() { var bn = document.getElementById('newBranchName').value.trim(); var ba = document.getElementById('newBranchAddress').value.trim(); var bt = document.getElementById('newBranchTin').value.trim(); var un = document.getElementById('newBranchUsername').value.trim(); var pw = document.getElementById('newBranchPassword').value.trim(); if (!bn || !un || !pw) return; var ts = getAllTenants(), tn = ts.find(function(x) { return x.id === currentTenantId; }); if (!tn) return; var users = getTenantData('users', []); if (users.find(function(u) { return u.username === un; })) { showToast(t('userTaken'), 'error'); return; } tn.branches.push({ name:bn, address:ba || 'N/A', tin:bt || 'N/A', permissions:Object.assign({}, DEFAULT_BRANCH_PERMS) }); persistTenantBranches(tn.branches); var cu = getCurrentUser(); users.push({ id:uid(), username:un, password:pw, role:'employee', store:bn, fullName:'Branch Manager - ' + bn, createdBy:cu ? cu.id : 1, tenantId:currentTenantId }); setTenantData('users', users); closeSubscriptionModal(); navigate('branches'); }
 function deleteBranch(bn) { var u = getCurrentUser(); if (!u || u.role !== 'owner') return; if (bn === u.store) { showToast('Cannot delete main', 'error'); return; } if (!confirm(t('deleteConfirm'))) return; var ts = getAllTenants(), tn = ts.find(function(x) { return x.id === currentTenantId; }); if (!tn) return; tn.branches = tn.branches.filter(function(x) { return x.name !== bn; }); persistTenantBranches(tn.branches); setTenantData('users', getTenantData('users', []).filter(function(u) { return u.store !== bn; })); navigate('branches'); }
 function resetBranchPassword(userId) { var pw = prompt('New password:'); if (pw && pw.length >= 4) { var users = getTenantData('users', []); var u = users.find(function(x) { return x.id === Number(userId); }); if (u) { u.password = pw; setTenantData('users', users); navigate('branches'); } } }
-
-function openTransferModal() {
-    var user = getCurrentUser();
-    if (!user || user.role !== 'owner') return;
-    var m = document.getElementById('transferModal'), fs = document.getElementById('transferFrom'), ps = document.getElementById('transferProduct'), tS = document.getElementById('transferBranch');
-    var bn = getBranchNames(); if (!bn.length) return;
-    fs.innerHTML = '<option value="">--</option>';
-    bn.forEach(function(n) { var o = document.createElement('option'); o.value = n; o.textContent = n; fs.appendChild(o); });
-    ps.innerHTML = '<option value="">--</option>'; tS.innerHTML = '<option value="">--</option>';
-    if (user.store && bn.indexOf(user.store) !== -1) fs.value = user.store; else fs.value = bn[0];
-    onTransferFromChange();
-    m.classList.add('show'); document.body.classList.add('modal-open');
-}
-function onTransferFromChange() {
-    var from = document.getElementById('transferFrom').value;
-    var ps = document.getElementById('transferProduct'), tS = document.getElementById('transferBranch');
-    ps.innerHTML = ''; tS.innerHTML = '';
-    if (!from) { ps.innerHTML = '<option value="">--</option>'; tS.innerHTML = '<option value="">--</option>'; return; }
-    var all = getTenantData('products', []);
-    var op = all.filter(function(p) { return normStore(p.store) === normStore(from) && (Number(p.quantity) || 0) > 0; });
-    var oh = '<option value="">--</option>';
-    op.forEach(function(p) { oh += '<option value="' + p.id + '">' + escapeHtml(p.name) + ' (' + (Number(p.quantity) || 0) + ')</option>'; });
-    ps.innerHTML = oh;
-    var bn = getBranchNames().filter(function(n) { return n !== from; }), th = '<option value="">--</option>';
-    bn.forEach(function(n) { th += '<option value="' + n + '">' + n + '</option>'; });
-    tS.innerHTML = th;
-}
-function closeTransferModal() { document.getElementById('transferModal').classList.remove('show'); var stillOpen = document.querySelector('.modal-overlay.show'); if (!stillOpen) document.body.classList.remove('modal-open'); }
-function submitTransfer(e) {
-    e.preventDefault();
-    var user = getCurrentUser(); if (!user || user.role !== 'owner') return;
-    var fb = normStore(document.getElementById('transferFrom').value);
-    var pid = parseInt(document.getElementById('transferProduct').value);
-    var tb = normStore(document.getElementById('transferBranch').value);
-    var qty = parseInt(document.getElementById('transferQty').value);
-    if (!fb || !pid || !tb || !qty || qty < 1) return;
-    if (fb === tb) return;
-    var ps = getTenantData('products', []);
-    var si = -1; for (var i = 0; i < ps.length; i++) if (Number(ps[i].id) === pid && normStore(ps[i].store) === fb) { si = i; break; }
-    if (si === -1) return;
-    var sp = ps[si], sq = Number(sp.quantity) || 0; if (sq < qty) return;
-    var di = -1; for (var j = 0; j < ps.length; j++) if (normName(ps[j].name) === normName(sp.name) && normStore(ps[j].store) === tb) { di = j; break; }
-    var db = 0;
-    if (di === -1) { var np = { id:uid(), name:sp.name, price:sp.price, cost:sp.cost, category:sp.category || 'General', quantity:0, store:tb, image:sp.image || '' }; ps.push(np); di = ps.length - 1; } else db = Number(ps[di].quantity) || 0;
-    ps[si].quantity = sq - qty; ps[di].quantity = db + qty;
-    persistProducts(ps);
-    closeTransferModal(); navigate('inventory');
-}
 
 function setLanguage(lang) {
     if (!lang || !LANG_FLAGS[lang]) lang = 'en';
@@ -3023,29 +3780,11 @@ function initLanguageMenu() {
     var newTg = tg.cloneNode(true);
     tg.parentNode.replaceChild(newTg, tg);
     newTg.onclick = function(e) { e.preventDefault(); e.stopPropagation(); m.classList.toggle('show'); };
-    m.onclick = function(e) {
-        var btn = e.target.closest('button[data-lang]');
-        if (btn) {
-            e.preventDefault(); e.stopPropagation();
-            var lang = btn.getAttribute('data-lang');
-            setLanguage(lang);
-            return;
-        }
-        e.stopPropagation();
-    };
-    m.querySelectorAll('button[data-lang]').forEach(function(b) {
-        b.onclick = function(e) {
-            e.preventDefault(); e.stopPropagation();
-            var lang = b.getAttribute('data-lang');
-            setLanguage(lang);
-        };
-    });
+    m.onclick = function(e) { var btn = e.target.closest('button[data-lang]'); if (btn) { e.preventDefault(); e.stopPropagation(); setLanguage(btn.getAttribute('data-lang')); return; } e.stopPropagation(); };
+    m.querySelectorAll('button[data-lang]').forEach(function(b) { b.onclick = function(e) { e.preventDefault(); e.stopPropagation(); setLanguage(b.getAttribute('data-lang')); }; });
     if (!window._langDocListenerAdded) {
         window._langDocListenerAdded = true;
-        document.addEventListener('click', function(e) {
-            var lm = document.getElementById('langMenu');
-            if (lm && !e.target.closest('.lang-wrapper')) lm.classList.remove('show');
-        });
+        document.addEventListener('click', function(e) { var lm = document.getElementById('langMenu'); if (lm && !e.target.closest('.lang-wrapper')) lm.classList.remove('show'); });
     }
 }
 
@@ -3056,6 +3795,9 @@ function shareReceipt(id) {
     var up = Number(s.unitPrice) || (s.totalPrice / s.quantity);
     var disc = Number(s.discount) || 0;
     var cn = co.name || 'Company', tin = co.tin || '', addr = co.address || '';
+    var seller = getUser(s.createdBy);
+    var sellerName = seller ? (seller.fullName || seller.username) : '--';
+    var isSw = currentLang === 'sw';
     var c = document.getElementById('receiptContent');
     var html = '<div class="receipt-header"><div class="receipt-brand">' + escapeHtml(cn) + '</div>';
     if (addr) html += '<div class="receipt-address">' + escapeHtml(addr) + '</div>';
@@ -3069,7 +3811,9 @@ function shareReceipt(id) {
     html += '<div class="receipt-row"><span class="label">' + t('amount') + ':</span><span class="value">' + fmtMoney(up) + '</span></div>';
     if (disc > 0) html += '<div class="receipt-row"><span class="label">Discount:</span><span class="value" style="color:var(--accent-3);">- ' + fmtMoney(disc) + '</span></div>';
     html += '<div class="receipt-total"><span>' + t('totalSales') + '</span><span class="value">' + fmtMoney(s.totalPrice) + '</span></div>';
-    if (s.customer) html += '<div class="receipt-row" style="margin-top:10px;"><span class="label">' + t('debtCustomer') + ':</span><span class="value">' + escapeHtml(s.customer) + '</span></div>';
+    html += '<div style="border-top:1px dashed var(--border-color);margin:12px 0;"></div>';
+    html += '<div class="receipt-row"><span class="label">' + (isSw ? 'Aliyeuza' : 'Sold by') + ':</span><span class="value">' + escapeHtml(sellerName) + '</span></div>';
+    html += '<div class="receipt-row"><span class="label">' + (isSw ? 'Aliyeuziwa' : 'Buyer') + ':</span><span class="value">' + escapeHtml(s.customer || (isSw ? 'Mteja wa Fedha' : 'Cash Customer')) + '</span></div>';
     html += '<div class="receipt-footer">Thank you!<br>Please come again.</div>';
     c.innerHTML = html;
     document.getElementById('receiptModal').classList.add('show');
@@ -3080,8 +3824,9 @@ function closeReceiptModal() { document.getElementById('receiptModal').classList
 
 function navigate(view) {
     if (view === 'ads') view = 'status';
-    if (isMexEmployee) { var al = ['mexEarnings', 'mexCompanies', 'mexStatus', 'status']; if (al.indexOf(view) === -1) view = 'mexEarnings'; }
+    if (isMexEmployee) { var al = ['mexEarnings', 'mexCompanies', 'mexStatus', 'mexStays', 'status']; if (al.indexOf(view) === -1) view = 'mexEarnings'; }
     if (view === 'superadmin' && !isSuperAdmin) return;
+    if (view === 'superStays' && !isSuperAdmin) return;
     Object.keys(_reportCharts).forEach(function(k) { destroyChart(k); });
     document.querySelectorAll('.sidebar-nav .nav-item').forEach(function(el) { el.classList.remove('active'); });
     var b = document.querySelector('.sidebar-nav .nav-item[data-view="' + view + '"]');
@@ -3244,7 +3989,7 @@ function initApp(user) {
     cleanupExpiredAds();
     startPromotedTicker();
     if (isMexEmployee) {
-        document.querySelectorAll('.sidebar-nav .nav-item').forEach(function(el) { var v = el.dataset.view; el.style.display = (v === 'mexEarnings' || v === 'mexCompanies' || v === 'mexStatus') ? 'flex' : 'none'; });
+        document.querySelectorAll('.sidebar-nav .nav-item').forEach(function(el) { var v = el.dataset.view; el.style.display = (v === 'mexEarnings' || v === 'mexCompanies' || v === 'mexStatus' || v === 'mexStays') ? 'flex' : 'none'; });
         document.getElementById('navMexEarnings').classList.add('active');
         document.getElementById('lowStockAlertBtn').style.display = 'none';
         document.getElementById('currentDate').textContent = getTzNowDate();
@@ -3255,13 +4000,13 @@ function initApp(user) {
     }
     startHeartbeat();
     if (isSuperAdmin) {
-        document.querySelectorAll('.sidebar-nav .nav-item').forEach(function(el) { var v = el.dataset.view; el.style.display = (v === 'superadmin' || v === 'status') ? 'flex' : 'none'; });
+        document.querySelectorAll('.sidebar-nav .nav-item').forEach(function(el) { var v = el.dataset.view; el.style.display = (v === 'superadmin' || v === 'superStays' || v === 'status' || v === 'mexStays') ? 'flex' : 'none'; });
         document.getElementById('navSuperAdmin').classList.add('active');
         document.getElementById('lowStockAlertBtn').style.display = 'none';
         currentStatusTab = 'ads';
         navigate('superadmin');
     } else {
-        document.querySelectorAll('.sidebar-nav .nav-item').forEach(function(el) { var v = el.dataset.view; if (v && v.indexOf('mex') === 0) { el.style.display = 'none'; return; } if (v === 'superadmin') el.style.display = 'none'; else el.style.display = 'flex'; });
+        document.querySelectorAll('.sidebar-nav .nav-item').forEach(function(el) { var v = el.dataset.view; if (v && v.indexOf('mex') === 0) { el.style.display = 'none'; return; } if (v === 'superadmin' || v === 'superStays') el.style.display = 'none'; else el.style.display = 'flex'; });
         document.getElementById('lowStockAlertBtn').style.display = 'inline-flex';
         navigate('dashboard');
     }
