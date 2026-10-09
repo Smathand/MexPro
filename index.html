@@ -8,8 +8,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="format-detection" content="telephone=no"/>
+<meta name="referrer" content="strict-origin-when-cross-origin"/>
 <title>MeX PRO — Multi-Tenant Business System</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Sans+Arabic:wght@400;500;700;900&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
@@ -2851,7 +2852,7 @@ html[dir="rtl"] .ad-profile-modal .ad-profile-close {
   height: 100%;
   width: 0;
   background: linear-gradient(90deg,#f59e0b,#10b981,#14b8a6);
-  animation: bootBar 4.4s cubic-bezier(.4,0,.2,1) forwards;
+  animation: bootBar 1.5s cubic-bezier(.4,0,.2,1) forwards;
 }
 @keyframes bootBar {
   0% {
@@ -3662,6 +3663,60 @@ html[dir="rtl"] .stay-search-bar input {
   color: #8b5cf6;
   font-weight: 800;
 }
+
+/* ===== ADDED: missing classes & polish ===== */
+.pnl-breakdown-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
+  gap: 16px;
+}
+.comment-item .comment-body {
+  flex: 1;
+  min-width: 0;
+}
+.comment-item .comment-delete {
+  background: transparent !important;
+  color: var(--accent-danger) !important;
+  width: 22px;
+  height: 22px;
+  border-radius: 50% !important;
+  padding: 0 !important;
+  margin-left: 6px;
+  font-size: .7rem;
+}
+.comment-item .comment-delete:hover {
+  background: rgba(239,68,68,.12) !important;
+}
+button:focus-visible,
+.nav-item:focus-visible,
+.btn:focus-visible {
+  outline: 2px solid var(--accent-3) !important;
+  outline-offset: 2px;
+}
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #receiptModal,
+  #receiptModal * {
+    visibility: visible;
+  }
+  #receiptModal {
+    position: absolute;
+    inset: 0;
+    background: #fff;
+    display: block;
+  }
+  .receipt-actions {
+    display: none !important;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
 </style>
 </head>
 <body>
@@ -3897,14 +3952,14 @@ html[dir="rtl"] .stay-search-bar input {
                 <div class="name" id="sideUserName">Owner</div>
                 <div class="role" id="sideUserRole">Owner</div>
             </div>
-            <button class="logout-btn" id="sideLogoutBtn" title="Logout">
+            <button class="logout-btn" id="sideLogoutBtn" title="Logout" aria-label="Logout">
                 <i class="fas fa-sign-out-alt"></i>
             </button>
         </div>
     </aside>
     <div class="main-content">
         <header class="topbar">
-            <button class="mobile-menu-btn" id="mobileMenuBtn">
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu">
                 <i class="fas fa-bars"></i>
             </button>
             <div class="page-title" id="pageTitle">Dashboard</div>
@@ -3940,10 +3995,10 @@ html[dir="rtl"] .stay-search-bar input {
                         </button>
                     </div>
                 </div>
-                <button class="theme-toggle" id="themeToggle" title="Theme">
+                <button class="theme-toggle" id="themeToggle" title="Theme" aria-label="Theme">
                     <i class="fas fa-moon"></i>
                 </button>
-                <button class="chat-topbar-btn" id="chatTopbarBtn" title="Chat">
+                <button class="chat-topbar-btn" id="chatTopbarBtn" title="Chat" aria-label="Chat">
                     <i class="fas fa-comments"></i><span class="chat-badge" id="chatBadge">0</span>
                 </button>
                 <div class="profile-trigger" id="profileTrigger">
@@ -4207,9 +4262,6 @@ html[dir="rtl"] .stay-search-bar input {
             <span data-i18n="credentialsNote">Super Admin access only. Handle with care.</span>
         </div>
         <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
-            <button class="btn btn-secondary btn-sm btn-icon" onclick="toggleAllPasswords()">
-                <i class="fas fa-eye" id="togglePwIcon"></i> <span id="togglePwLabel">Show All</span>
-            </button>
             <button class="btn btn-primary btn-sm btn-icon" onclick="copyAllCredentials()">
                 <i class="fas fa-copy"></i> <span data-i18n="copyAll">Copy All</span>
             </button>
@@ -4225,8 +4277,7 @@ html[dir="rtl"] .stay-search-bar input {
 
 <script>
 var SUPER_ADMIN_USERNAME = 'Mex';
-var SUPER_ADMIN_PASSWORD = 'Mex2024@';
-var DEFAULT_MEX_PASSWORD = 'mex123';
+var SUPER_ADMIN_HASH = 'h1$cc098c531ea5366c7735d08df65954c8bfefe8b5ae99ee1bd13e3c994c4b7cbf';
 var SUPER_EMERGENCY_NUMBER = '+255670601120';
 var LOW_STOCK_THRESHOLD = 30;
 var GLOBAL_ADS_KEY = 'sb_global_ads';
@@ -4239,8 +4290,235 @@ var CHAT_KEY = 'sb_chat_messages';
 var TRANSFERS_KEY_SUFFIX = 'transfers';
 var LANG_KEY = 'sb_lang';
 var MAX_VIDEO_MB = 200;
-var BOOT_DURATION = 4500;
+var BOOT_DURATION = 1600;
 var _superAdminPhotoKey = null;
+
+/* ============================================================
+   SECURITY & UTILITY HELPERS (added in improved version)
+   NOTE: This app stores data in the browser (localStorage).
+   Hashing below improves safety against casual snooping, but a
+   real backend is still required for true security.
+   ============================================================ */
+var _sha = { K: null, H: null };
+
+function _shaFrac(x) {
+    return ((x - Math.floor(x)) * 4294967296) | 0;
+}
+
+function _shaInit() {
+    if (_sha.K) {
+        return;
+    }
+    var K = [];
+    var H = [];
+    var n = 2;
+    while (K.length < 64) {
+        var isPrime = true;
+        for (var i = 2; i * i <= n; i++) {
+            if (n % i === 0) {
+                isPrime = false;
+                break;
+            }
+        }
+        if (isPrime) {
+            if (H.length < 8) {
+                H.push(_shaFrac(Math.sqrt(n)));
+            }
+            K.push(_shaFrac(Math.cbrt(n)));
+        }
+        n++;
+    }
+    _sha.K = K;
+    _sha.H = H;
+}
+
+function sha256(msg) {
+    _shaInit();
+    var K = _sha.K;
+    var H = _sha.H.slice();
+    var s = unescape(encodeURIComponent(String(msg)));
+    var bytes = [];
+    var i;
+    for (i = 0; i < s.length; i++) {
+        bytes.push(s.charCodeAt(i));
+    }
+    var bitLen = bytes.length * 8;
+    bytes.push(0x80);
+    while (bytes.length % 64 !== 56) {
+        bytes.push(0);
+    }
+    for (i = 7; i >= 0; i--) {
+        bytes.push(i >= 4 ? 0 : (bitLen >>> (i * 8)) & 255);
+    }
+    function rotr(x, n) {
+        return (x >>> n) | (x << (32 - n));
+    }
+    for (var off = 0; off < bytes.length; off += 64) {
+        var w = new Array(64);
+        for (i = 0; i < 16; i++) {
+            w[i] = (bytes[off + i * 4] << 24) | (bytes[off + i * 4 + 1] << 16) | (bytes[off + i * 4 + 2] << 8) | bytes[off + i * 4 + 3];
+        }
+        for (i = 16; i < 64; i++) {
+            var s0 = rotr(w[i - 15], 7) ^ rotr(w[i - 15], 18) ^ (w[i - 15] >>> 3);
+            var s1 = rotr(w[i - 2], 17) ^ rotr(w[i - 2], 19) ^ (w[i - 2] >>> 10);
+            w[i] = (w[i - 16] + s0 + w[i - 7] + s1) | 0;
+        }
+        var a = H[0], b = H[1], c = H[2], d = H[3], e = H[4], f = H[5], g = H[6], h = H[7];
+        for (i = 0; i < 64; i++) {
+            var S1 = rotr(e, 6) ^ rotr(e, 11) ^ rotr(e, 25);
+            var ch = (e & f) ^ (~e & g);
+            var t1 = (h + S1 + ch + K[i] + w[i]) | 0;
+            var S0 = rotr(a, 2) ^ rotr(a, 13) ^ rotr(a, 22);
+            var maj = (a & b) ^ (a & c) ^ (b & c);
+            var t2 = (S0 + maj) | 0;
+            h = g;
+            g = f;
+            f = e;
+            e = (d + t1) | 0;
+            d = c;
+            c = b;
+            b = a;
+            a = (t1 + t2) | 0;
+        }
+        H[0] = (H[0] + a) | 0;
+        H[1] = (H[1] + b) | 0;
+        H[2] = (H[2] + c) | 0;
+        H[3] = (H[3] + d) | 0;
+        H[4] = (H[4] + e) | 0;
+        H[5] = (H[5] + f) | 0;
+        H[6] = (H[6] + g) | 0;
+        H[7] = (H[7] + h) | 0;
+    }
+    var out = '';
+    for (i = 0; i < 8; i++) {
+        out += ('00000000' + (H[i] >>> 0).toString(16)).slice(-8);
+    }
+    return out;
+}
+
+function hashPw(username, pw) {
+    return 'h1$' + sha256('mexpro|' + String(username || '').toLowerCase() + '|' + String(pw || ''));
+}
+
+function isHashed(p) {
+    return typeof p === 'string' && p.indexOf('h1$') === 0;
+}
+
+function verifyPw(user, pw) {
+    if (!user || user.password == null) {
+        return false;
+    }
+    if (isHashed(user.password)) {
+        return user.password === hashPw(user.username, pw);
+    }
+    return String(user.password) === String(pw);
+}
+
+function genTempPassword() {
+    var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
+    var out = '';
+    var arr = new Uint32Array(8);
+    if (window.crypto && window.crypto.getRandomValues) {
+        window.crypto.getRandomValues(arr);
+    } else {
+        for (var j = 0; j < 8; j++) {
+            arr[j] = Math.floor(Math.random() * 4294967295);
+        }
+    }
+    for (var i = 0; i < 8; i++) {
+        out += chars.charAt(arr[i] % chars.length);
+    }
+    return out;
+}
+
+function getSuperHash() {
+    var custom = null;
+    try {
+        custom = JSON.parse(localStorage.getItem('sb_super_hash') || 'null');
+    } catch (e) {
+        custom = null;
+    }
+    return custom || SUPER_ADMIN_HASH;
+}
+
+function superSessionToken() {
+    return getSuperHash().slice(-24);
+}
+
+/* Safe encoding of values placed inside inline onclick='...' handlers */
+function encArg(s) {
+    return encodeURIComponent(String(s == null ? '' : s)).replace(/'/g, '%27');
+}
+
+function safeDecode(s) {
+    try {
+        return decodeURIComponent(String(s));
+    } catch (e) {
+        return String(s);
+    }
+}
+
+/* Login throttling: 5 failed attempts => 60s lock */
+var _loginFails = 0;
+var _loginLockUntil = 0;
+
+function loginLockedSeconds() {
+    var left = Math.ceil((_loginLockUntil - Date.now()) / 1000);
+    return left > 0 ? left : 0;
+}
+
+function registerLoginFail() {
+    _loginFails++;
+    if (_loginFails >= 5) {
+        _loginLockUntil = Date.now() + 60000;
+        _loginFails = 0;
+    }
+}
+
+/* Username must be unique across ALL companies, members and super admin */
+function isUsernameTaken(un) {
+    var u = String(un || '').trim().toLowerCase();
+    if (!u) {
+        return false;
+    }
+    if (u === SUPER_ADMIN_USERNAME.toLowerCase()) {
+        return true;
+    }
+    var mex = lsGet(MEX_EMPLOYEES_KEY, []);
+    if (Array.isArray(mex) && mex.some(function(e) {
+        return String(e.username || '').trim().toLowerCase() === u;
+    })) {
+        return true;
+    }
+    var tenants = lsGet('sb_tenants', []);
+    if (!Array.isArray(tenants)) {
+        return false;
+    }
+    for (var i = 0; i < tenants.length; i++) {
+        if (String(tenants[i].ownerUsername || '').trim().toLowerCase() === u) {
+            return true;
+        }
+        var us = lsGet('sb_tenant_' + tenants[i].id + '_users', []);
+        if (Array.isArray(us) && us.some(function(x) {
+            return String(x.username || '').trim().toLowerCase() === u;
+        })) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/* Identity key used for likes (user ids repeat between companies) */
+function likeKey(u) {
+    if (isSuperAdmin) {
+        return 'super';
+    }
+    if (isMexEmployee) {
+        return 'mex_' + currentMexEmployeeId;
+    }
+    return 't_' + currentTenantId + '_' + (u ? u.id : 0);
+}
+
 
 var TRANSLATIONS = {
   en: {
@@ -6273,6 +6551,9 @@ function lsSet(key, val) {
             ok: true
         };
     } catch(e) {
+        try {
+            showToast('⚠ Storage full / imejaa. Futa data au picha kubwa.', 'error');
+        } catch(e2) {}
         return {
             ok: false
         };
@@ -6399,14 +6680,15 @@ function getTzNowDate() {
 }
 
 function getDayStartUTC(o) {
-    var d = new Date(Date.now() + o * 86400000);
-    d.setUTCHours(0, 0, 0, 0);
+    var d = new Date();
+    d.setDate(d.getDate() + o);
+    d.setHours(0, 0, 0, 0);
     return d;
 }
 
 function getDayEndUTC(o) {
     var d = getDayStartUTC(o);
-    d.setUTCHours(23, 59, 59, 999);
+    d.setHours(23, 59, 59, 999);
     return d;
 }
 
@@ -6509,7 +6791,13 @@ function setCurrentUser(u) {
         }
         return;
     }
-    setTenantData('_currentUser', u);
+    if (u) {
+        var safe = Object.assign({}, u);
+        delete safe.password;
+        setTenantData('_currentUser', safe);
+    } else {
+        setTenantData('_currentUser', null);
+    }
 }
 
 function getUser(id) {
@@ -7449,7 +7737,7 @@ function renderSingleStatusCard(s, user) {
             var cm = getUser(c.userId);
             var cn = cm ? (cm.fullName || cm.username) : 'Unknown';
             var db = c.userId === user.id ? '<button class="comment-delete" onclick="deleteComment(\'' + s.id + '\',' + oi + ')"><i class="fas fa-times"></i></button>' : '';
-            clh += '<div class="comment-item"><div class="comment-avatar">' + getUserPhotoHtml(cm) + '</div><div class="comment-body"><span class="comment-author">' + cn + '</span><span class="comment-text">' + escapeHtml(c.text) + '</span><span class="comment-time">' + fmtTime(c.timestamp) + '</span>' + db + '</div></div>';
+            clh += '<div class="comment-item"><div class="comment-avatar">' + getUserPhotoHtml(cm) + '</div><div class="comment-body"><span class="comment-author">' + escapeHtml(cn) + '</span><span class="comment-text">' + escapeHtml(c.text) + '</span><span class="comment-time">' + fmtTime(c.timestamp) + '</span>' + db + '</div></div>';
         });
     }
     return '<div class="card" style="margin-bottom:16px;padding:16px;"><div class="status-card"><div class="status-header">' + getUserPhotoHtml(author, 'status-avatar') + '<div class="status-meta"><div class="status-name">' + escapeHtml(authorName) + renderVerifiedBadge() + '</div><div class="status-time">' + fmtDateTime(s.timestamp) + '</div></div>' + (isOwn ? '<button class="btn btn-danger btn-xs" onclick="deleteStatus(\'' + s.id + '\')" style="margin-left:auto;"><i class="fas fa-trash"></i></button>' : '') + '</div><div class="status-body"><div class="status-content"><p class="status-text">' + escapeHtml(s.text || '') + '</p><div style="display:flex;gap:10px;align-items:center;"><button class="btn ' + (isLiked ? 'btn-primary' : 'btn-secondary') + ' btn-sm" onclick="toggleLike(\'' + s.id + '\')"><i class="fas fa-heart"></i> ' + likeCount + '</button><button class="btn btn-secondary btn-sm" onclick="toggleCommentInput(\'' + s.id + '\')"><i class="fas fa-comment"></i> ' + comments.length + '</button></div><div style="margin-top:8px;"><div id="comment-input-' + s.id + '" style="display:none;margin-bottom:8px;"><div style="display:flex;gap:8px;align-items:center;">' + getUserPhotoHtml(user, '', 'width:34px;height:34px;border-radius:50%;object-fit:cover;') + '<input type="text" id="comment-text-' + s.id + '" placeholder="' + t('addComment') + '" style="flex:1;padding:9px 14px;border-radius:20px;font-size:16px;"/><button class="btn btn-sm btn-primary" onclick="addComment(\'' + s.id + '\')"><i class="fas fa-paper-plane"></i></button></div></div><div style="max-height:200px;overflow-y:auto;">' + clh + '</div></div></div></div></div></div>';
@@ -8008,9 +8296,18 @@ function startChatPolling() {
         if (!document.getElementById('chatModal').classList.contains('show')) {
             return;
         }
-        renderChatContacts(chatCurrentContact);
-        if (chatCurrentContact) {
-            renderChatMessages();
+        var all = getChatMessages();
+        var last = all.length ? all[all.length - 1].id : 0;
+        var unread = all.filter(function(m) {
+            return !m.read;
+        }).length;
+        var sig = all.length + '_' + last + '_' + unread;
+        if (sig !== window._chatSig) {
+            window._chatSig = sig;
+            renderChatContacts(chatCurrentContact);
+            if (chatCurrentContact) {
+                renderChatMessages();
+            }
         }
         updateChatBadge();
     }, 2500);
@@ -8316,15 +8613,37 @@ function renderCredentialRow(u) {
     h += '<code style="background:var(--input-bg);padding:5px 12px;border-radius:6px;font-family:\'Courier New\',monospace;font-weight:700;flex:1;word-break:break-all;font-size:.85rem;border:1px solid var(--border-color);min-width:0;">' + escapeHtml(u.username || '') + '</code>';
     h += '<button class="btn btn-secondary btn-xs" data-copy="' + escapeAttr(u.username || '') + '" onclick="copyCredential(this)" title="Copy" style="flex-shrink:0;"><i class="fas fa-copy"></i></button>';
     h += '</div>';
-    var pwReal = String(u.password || '');
-    var pwText = _passwordsVisible ? escapeHtml(pwReal) : '••••••••';
     h += '<div style="display:flex;align-items:center;gap:8px;font-size:.8rem;flex-wrap:wrap;">';
     h += '<span style="color:var(--text-muted);font-weight:700;font-size:.68rem;text-transform:uppercase;letter-spacing:0.05em;min-width:80px;">' + t('password') + '</span>';
-    h += '<code style="background:var(--input-bg);padding:5px 12px;border-radius:6px;font-family:\'Courier New\',monospace;font-weight:700;flex:1;word-break:break-all;color:#d97706;font-size:.85rem;border:1px solid var(--border-color);min-width:0;">' + pwText + '</code>';
-    h += '<button class="btn btn-secondary btn-xs" data-copy="' + escapeAttr(pwReal) + '" onclick="copyCredential(this)" title="Copy" style="flex-shrink:0;"><i class="fas fa-copy"></i></button>';
+    h += '<code style="background:var(--input-bg);padding:5px 12px;border-radius:6px;font-family:\'Courier New\',monospace;font-weight:700;flex:1;color:#d97706;font-size:.85rem;border:1px solid var(--border-color);min-width:0;">••••••••</code>';
+    h += '<button class="btn btn-primary btn-xs" onclick="superResetUserPassword(\'' + escapeAttr(_credentialsTenantId) + '\',' + Number(u.id) + ')" title="' + t('reset') + '" style="flex-shrink:0;"><i class="fas fa-key"></i> ' + t('reset') + '</button>';
     h += '</div>';
     h += '</div>';
     return h;
+}
+
+function superResetUserPassword(tenantId, userId) {
+    if (!isSuperAdmin) {
+        return;
+    }
+    if (!confirm(t('areYouSure'))) {
+        return;
+    }
+    var old = currentTenantId;
+    currentTenantId = tenantId;
+    var users = getTenantData('users', []);
+    var u = users.find(function(x) {
+        return Number(x.id) === Number(userId);
+    });
+    if (!u) {
+        currentTenantId = old;
+        return;
+    }
+    var temp = genTempPassword();
+    u.password = hashPw(u.username, temp);
+    setTenantData('users', users);
+    currentTenantId = old;
+    window.prompt(t('password') + ' (' + u.username + ') — copy now, shown once:', temp);
 }
 
 function copyCredential(btn) {
@@ -8390,7 +8709,6 @@ function copyAllCredentials() {
     users.forEach(function(u) {
         lines.push('[' + getRoleLabel(u.role) + '] ' + (u.fullName || u.username));
         lines.push('  ' + t('username') + ': ' + (u.username || ''));
-        lines.push('  ' + t('password') + ': ' + (u.password || ''));
         if (u.store) {
             lines.push('  ' + t('store') + ': ' + u.store);
         }
@@ -9195,7 +9513,7 @@ views.superadmin = function() {
         var empRows = members.length === 0 ? '<tr class="empty-row"><td colspan="6">—</td></tr>' : members.map(function(e, i) {
             var av = e.photoKey && _mediaUrlCache[e.photoKey] ? _mediaUrlCache[e.photoKey] : avatarUrl(e.name, 'f59e0b');
             var attrs = e.photoKey ? ' data-photo-key="' + escapeHtml(e.photoKey) + '"' : '';
-            return '<tr><td>' + (i + 1) + '</td><td><div style="display:flex;align-items:center;gap:12px;"><div class="mex-emp-avatar"><img src="' + av + '"' + attrs + ' style="width:100%;height:100%;object-fit:cover;"/></div><div style="font-weight:700;">' + escapeHtml(e.name) + '</div></div></td><td><span class="mex-emp-code" onclick="copyPromoCode(\'' + e.username + '\')">' + e.username + '</span></td><td><span class="mex-emp-code" onclick="copyPromoCode(\'' + e.promoCode + '\')">' + e.promoCode + '</span></td><td><span class="badge badge-info">' + (e.totalRegistrations || 0) + '</span></td><td><button class="btn btn-danger btn-xs" onclick="confirmDeleteMexEmployee(\'' + e.id + '\')"><i class="fas fa-trash"></i></button></td></tr>';
+            return '<tr><td>' + (i + 1) + '</td><td><div style="display:flex;align-items:center;gap:12px;"><div class="mex-emp-avatar"><img src="' + av + '"' + attrs + ' style="width:100%;height:100%;object-fit:cover;"/></div><div style="font-weight:700;">' + escapeHtml(e.name) + '</div></div></td><td><span class="mex-emp-code" onclick="copyPromoCode(\'' + encArg(e.username) + '\')">' + escapeHtml(e.username) + '</span></td><td><span class="mex-emp-code" onclick="copyPromoCode(\'' + encArg(e.promoCode) + '\')">' + escapeHtml(e.promoCode) + '</span></td><td><span class="badge badge-info">' + (e.totalRegistrations || 0) + '</span></td><td><button class="btn btn-danger btn-xs" onclick="confirmDeleteMexEmployee(\'' + e.id + '\')"><i class="fas fa-trash"></i></button></td></tr>';
         }).join('');
         return '<div class="section-header"><h2><i class="fas fa-crown" style="color:#f59e0b;"></i> ' + t('superAdmin') + '</h2><button class="btn btn-primary btn-icon" onclick="openAddMexEmployeeModal()" style="background:linear-gradient(135deg,#f59e0b,#d97706) !important;"><i class="fas fa-user-plus"></i> ' + t('addMember') + '</button></div>' + tabs + st + '<div class="card"><div class="card-header"><h3>' + t('members') + '</h3></div><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>' + t('name') + '</th><th>' + t('username') + '</th><th>Promo</th><th>Regs</th><th></th></tr></thead><tbody>' + empRows + '</tbody></table></div></div></div>';
     }
@@ -9558,7 +9876,7 @@ function openStayDetail(id) {
             safari: 'fa-binoculars',
             dinner: 'fa-utensils'
         }[a] || 'fa-check';
-        return '<span class="stay-amenity"><i class="fas ' + icon + '"></i> ' + a + '</span>';
+        return '<span class="stay-amenity"><i class="fas ' + icon + '"></i> ' + escapeHtml(a) + '</span>';
     }).join('');
     var etaHtml = dist != null ? '<div class="stay-eta-line"><i class="fas fa-car"></i> ' + etaMinutes(dist) + ' ' + t('minAway') + ' (' + fmtKm(dist) + ' ' + t('kmAway') + ') · ' + t('getDirectionsHint') + '</div>' : '';
     var images = (s.images || []);
@@ -9602,7 +9920,7 @@ function openStayDetail(id) {
         '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;">' +
         '<a class="btn btn-primary" href="' + dirUrl + '" target="_blank" rel="noopener" style="flex:1;min-width:140px;justify-content:center;display:inline-flex;align-items:center;gap:6px;"><i class="fas fa-route"></i> ' + t('getDirections') + '</a>' +
         (bookUrl ? '<a class="btn btn-whatsapp" href="' + bookUrl + '" target="_blank" rel="noopener" style="flex:1;min-width:140px;justify-content:center;display:inline-flex;align-items:center;gap:6px;"><i class="fab fa-whatsapp"></i> ' + t('bookNow') + '</a>' : '') +
-        (s.phone ? '<a class="btn btn-secondary" href="tel:' + s.phone + '" style="flex:1;min-width:140px;justify-content:center;display:inline-flex;align-items:center;gap:6px;"><i class="fas fa-phone"></i> ' + t('callNow') + '</a>' : '') +
+        (s.phone ? '<a class="btn btn-secondary" href="tel:' + escapeAttr(String(s.phone).replace(/[^\d+]/g, '')) + '" style="flex:1;min-width:140px;justify-content:center;display:inline-flex;align-items:center;gap:6px;"><i class="fas fa-phone"></i> ' + t('callNow') + '</a>' : '') +
         '</div>' +
         postsHtml +
         '</div>';
@@ -9798,7 +10116,12 @@ function removeStayPhoto(i) {
     if (i < 0 || i >= _pendingStayImages.length) {
         return;
     }
-    _pendingStayImages.splice(i, 1);
+    var rm = _pendingStayImages.splice(i, 1)[0];
+    if (rm && rm._previewUrl) {
+        try {
+            URL.revokeObjectURL(rm._previewUrl);
+        } catch(e) {}
+    }
     renderStayPhotosPreview();
 }
 
@@ -9998,14 +10321,14 @@ views.mexEarnings = function() {
         return b.date - a.date;
     }).slice(0, 5);
     var rows = recent.length === 0 ? '<tr class="empty-row"><td colspan="3">—</td></tr>' : recent.map(function(r, i) {
-        return '<tr><td>' + (i + 1) + '</td><td><strong>' + (r.companyName || '--') + '</strong></td><td>' + fmtDate(r.date) + '</td></tr>';
+        return '<tr><td>' + (i + 1) + '</td><td><strong>' + escapeHtml(r.companyName || '--') + '</strong></td><td>' + fmtDate(r.date) + '</td></tr>';
     }).join('');
     return '<div class="section-header"><h2><i class="fas fa-coins" style="color:#f59e0b;"></i> ' + t('myEarnings') + '</h2></div>' +
         '<div style="display:flex;align-items:center;gap:16px;margin-bottom:18px;padding:18px 20px;background:linear-gradient(135deg, rgba(245,158,11,.12), rgba(217,119,6,.06));border-radius:var(--radius-card);border:1px solid rgba(245,158,11,.25);flex-wrap:wrap;">' +
         getUserPhotoHtml(emp, '', 'width:64px;height:64px;border-radius:50%;object-fit:cover;border:3px solid #f59e0b;') +
-        '<div style="flex:1;min-width:0;"><div style="font-size:1.5rem;font-weight:800;color:#d97706;letter-spacing:-0.02em;">' + emp.name + '</div><div style="font-size:.85rem;color:var(--text-muted);margin-top:4px;font-weight:600;"><i class="fas fa-at"></i> ' + emp.username + '</div></div></div>' +
+        '<div style="flex:1;min-width:0;"><div style="font-size:1.5rem;font-weight:800;color:#d97706;letter-spacing:-0.02em;">' + escapeHtml(emp.name) + '</div><div style="font-size:.85rem;color:var(--text-muted);margin-top:4px;font-weight:600;"><i class="fas fa-at"></i> ' + escapeHtml(emp.username) + '</div></div></div>' +
         '<div class="stats-grid"><div class="stat-card"><div class="stat-label">' + t('totalRegistrations') + '</div><div class="stat-value primary">' + (emp.totalRegistrations || 0) + '</div></div></div>' +
-        '<div class="card mb-16" style="background:linear-gradient(135deg, rgba(245,158,11,.05), rgba(217,119,6,.02));border:2px dashed #f59e0b;"><div class="card-body" style="text-align:center;padding:24px 18px;"><div style="font-size:.75rem;text-transform:uppercase;font-weight:800;color:#d97706;margin-bottom:10px;letter-spacing:0.05em;"><i class="fas fa-tag"></i> ' + t('yourPromoCode') + '</div><div class="mex-emp-code" onclick="copyPromoCode(\'' + emp.promoCode + '\')" style="font-size:1.5rem;padding:10px 22px;display:inline-flex;letter-spacing:3px;">' + emp.promoCode + '</div></div></div>' +
+        '<div class="card mb-16" style="background:linear-gradient(135deg, rgba(245,158,11,.05), rgba(217,119,6,.02));border:2px dashed #f59e0b;"><div class="card-body" style="text-align:center;padding:24px 18px;"><div style="font-size:.75rem;text-transform:uppercase;font-weight:800;color:#d97706;margin-bottom:10px;letter-spacing:0.05em;"><i class="fas fa-tag"></i> ' + t('yourPromoCode') + '</div><div class="mex-emp-code" onclick="copyPromoCode(\'' + encArg(emp.promoCode) + '\')" style="font-size:1.5rem;padding:10px 22px;display:inline-flex;letter-spacing:3px;">' + escapeHtml(emp.promoCode) + '</div></div></div>' +
         '<div class="card"><div class="card-header"><h3>' + t('recentCompanies') + '</h3></div><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>' + t('companyName') + '</th><th>' + t('date') + '</th></tr></thead><tbody>' + rows + '</tbody></table></div></div></div>';
 };
 
@@ -10019,7 +10342,7 @@ views.mexCompanies = function() {
     }
     var regs = Array.isArray(emp.registeredCompanyIds) ? emp.registeredCompanyIds : [];
     var rows = regs.length === 0 ? '<tr class="empty-row"><td colspan="4">—</td></tr>' : regs.map(function(r, i) {
-        return '<tr><td>' + (i + 1) + '</td><td><strong>' + (r.companyName || '--') + '</strong></td><td>' + (r.ownerUsername || '--') + '</td><td>' + fmtDate(r.date) + '</td></tr>';
+        return '<tr><td>' + (i + 1) + '</td><td><strong>' + escapeHtml(r.companyName || '--') + '</strong></td><td>' + escapeHtml(r.ownerUsername || '--') + '</td><td>' + fmtDate(r.date) + '</td></tr>';
     }).join('');
     return '<div class="section-header"><h2>' + t('myCompanies') + '</h2></div><div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>' + t('companyName') + '</th><th>' + t('username') + '</th><th>' + t('date') + '</th></tr></thead><tbody>' + rows + '</tbody></table></div></div></div>';
 };
@@ -10128,7 +10451,7 @@ function renderAdCard(ad, user, canPost) {
     var viewsCount = getAdViews(ad);
     var isPromoted = isAdPromoted(ad);
     var isVideo = ad.mediaType === 'video' && ad.mediaKey;
-    var isLiked = user && ad.likes.indexOf(Number(user.id)) !== -1;
+    var isLiked = user && ad.likes.indexOf(likeKey(user)) !== -1;
     var likeCount = ad.likes.length;
     var media = '';
     if (isVideo) {
@@ -10278,7 +10601,7 @@ function renderCommentsModal() {
 }
 
 function renderCommentItemHtml(ad, c, isReply, u) {
-    var isOwn = isSuperAdmin ? c.isSuperAdmin : (!c.isSuperAdmin && c.tenantId === currentTenantId && c.userId === (u ? u.id : -1));
+    var isOwn = isSuperAdmin ? !!c.isSuperAdmin : (isMexEmployee ? (!!c.isMexEmployee && c.userId === currentMexEmployeeId) : (!c.isSuperAdmin && !c.isMexEmployee && c.tenantId === currentTenantId && c.userId === (u ? u.id : -1)));
     var replyBtn = !isReply ? '<button class="com-act-btn" onclick="setReplyTo(\'' + c.id + '\')">' + t('reply') + '</button>' : '';
     var delBtn = isOwn ? '<button class="com-act-btn del" onclick="deleteAdComment(\'' + ad.id + '\',\'' + c.id + '\', ' + (isReply ? '\'' + (c.parentId || '') + '\'' : 'null') + ')">' + t('delete') + '</button>' : '';
     var repliesHtml = '';
@@ -10460,7 +10783,7 @@ function toggleAdLike(adId) {
     if (!Array.isArray(ad.likes)) {
         ad.likes = [];
     }
-    var myId = Number(u.id);
+    var myId = likeKey(u);
     var i = ad.likes.indexOf(myId);
     var wasLiked = i !== -1;
     if (wasLiked) {
@@ -10817,7 +11140,7 @@ views.sales = function() {
         (s.length === 0 ? '<tr class="empty-row"><td colspan="8">' + t('noSales') + '</td></tr>' : s.map(function(x, i) {
             var p = getProduct(x.productId);
             var up = (x.unitPrice != null) ? x.unitPrice : (x.totalPrice / x.quantity);
-            return '<tr><td>' + (i + 1) + '</td><td>' + (p ? escapeHtml(p.name) : '--') + '</td><td>' + x.quantity + '</td><td>' + fmtMoney(up) + '</td><td><strong>' + fmtMoney(x.totalPrice) + '</strong></td><td>' + (x.customer || '--') + '</td><td>' + fmtDate(x.date) + '</td><td style="display:flex;gap:4px;"><button class="btn btn-danger btn-xs" onclick="deleteSale(\'' + x.id + '\')"><i class="fas fa-trash"></i></button><button class="btn btn-primary btn-xs" onclick="shareReceipt(\'' + x.id + '\')"><i class="fas fa-receipt"></i></button></td></tr>';
+            return '<tr><td>' + (i + 1) + '</td><td>' + (p ? escapeHtml(p.name) : '--') + '</td><td>' + x.quantity + '</td><td>' + fmtMoney(up) + '</td><td><strong>' + fmtMoney(x.totalPrice) + '</strong></td><td>' + escapeHtml(x.customer || '--') + '</td><td>' + fmtDate(x.date) + '</td><td style="display:flex;gap:4px;"><button class="btn btn-danger btn-xs" onclick="deleteSale(\'' + x.id + '\')"><i class="fas fa-trash"></i></button><button class="btn btn-primary btn-xs" onclick="shareReceipt(\'' + x.id + '\')"><i class="fas fa-receipt"></i></button></td></tr>';
         }).join('')) +
         '</tbody></table></div></div></div>';
 };
@@ -10912,7 +11235,7 @@ views.inventory = function() {
     var canTransfer = u && u.role === 'owner' && branchNames.length > 1;
     var cats = ensureCategories();
     var cb = '<div class="inv-cat-bar">' + cats.map(function(c) {
-        return '<span class="inv-cat-chip">' + c.name + (ce ? '<button type="button" onclick="deleteInventoryCategory(\'' + c.id + '\')">×</button>' : '') + '</span>';
+        return '<span class="inv-cat-chip">' + escapeHtml(c.name) + (ce ? '<button type="button" onclick="deleteInventoryCategory(\'' + c.id + '\')">×</button>' : '') + '</span>';
     }).join('') + (ce ? '<button class="btn btn-secondary btn-xs" onclick="promptAddCategory()">+ Add</button>' : '') + '</div>';
     var branchTotals = {};
     getTenantData('products', []).forEach(function(x) {
@@ -10941,7 +11264,7 @@ views.inventory = function() {
     }
     var rows = p.map(function(x) {
         var dot = '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:' + (x.quantity <= 0 ? 'var(--accent-danger)' : x.quantity <= 5 ? 'var(--accent-3)' : 'var(--accent-4)') + ';"></span>';
-        return '<tr><td>' + productImageHtml(x) + '</td><td><strong>' + escapeHtml(x.name) + '</strong></td><td><span class="badge badge-info" style="font-size:.68rem;"><i class="fas fa-store"></i> ' + escapeHtml(x.store || '--') + '</span></td><td>' + (x.category || 'General') + '</td><td>' + fmtMoney(x.price) + '</td><td>' + fmtMoney(x.cost) + '</td><td><strong>' + x.quantity + '</strong></td><td>' + dot + '</td><td>' + (ce ? '<button class="btn btn-success btn-xs" onclick="adjustStock(\'' + x.id + '\')" title="Adjust">+</button> <button class="btn btn-danger btn-xs" onclick="deleteProduct(\'' + x.id + '\')" title="Delete">×</button>' : '—') + '</td></tr>';
+        return '<tr><td>' + productImageHtml(x) + '</td><td><strong>' + escapeHtml(x.name) + '</strong></td><td><span class="badge badge-info" style="font-size:.68rem;"><i class="fas fa-store"></i> ' + escapeHtml(x.store || '--') + '</span></td><td>' + escapeHtml(x.category || 'General') + '</td><td>' + fmtMoney(x.price) + '</td><td>' + fmtMoney(x.cost) + '</td><td><strong>' + x.quantity + '</strong></td><td>' + dot + '</td><td>' + (ce ? '<button class="btn btn-success btn-xs" onclick="adjustStock(\'' + x.id + '\')" title="Adjust">+</button> <button class="btn btn-danger btn-xs" onclick="deleteProduct(\'' + x.id + '\')" title="Delete">×</button>' : '—') + '</td></tr>';
     }).join('');
     var headerActions = '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
         (canTransfer ? '<button class="btn btn-primary btn-icon" onclick="openTransferModal()" style="background:#8b5cf6 !important;"><i class="fas fa-exchange-alt"></i> ' + t('transferStock') + '</button>' : '') +
@@ -11135,10 +11458,10 @@ views.expenses = function() {
     var e = getFilteredExpenses().slice().reverse();
     var cats = ensureExpenseCategories();
     var cb = '<div class="inv-cat-bar">' + cats.map(function(c) {
-        return '<span class="inv-cat-chip">' + c.name + '<button type="button" onclick="deleteExpenseCategory(\'' + c.id + '\')">×</button></span>';
+        return '<span class="inv-cat-chip">' + escapeHtml(c.name) + '<button type="button" onclick="deleteExpenseCategory(\'' + c.id + '\')">×</button></span>';
     }).join('') + '<button class="btn btn-secondary btn-xs" onclick="promptAddExpenseCategory()">+ Add</button></div>';
     return '<div class="section-header"><h2><i class="fas fa-receipt"></i> ' + t('expenses') + '</h2><button class="btn btn-primary btn-icon" onclick="openModal(\'expense\')"><i class="fas fa-plus"></i> ' + t('addExpense') + '</button></div>' + cb + '<div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>' + t('description') + '</th><th>' + t('amount') + '</th><th>' + t('category') + '</th><th>' + t('date') + '</th><th></th></tr></thead><tbody>' + (e.length === 0 ? '<tr class="empty-row"><td colspan="6">' + t('noExpenses') + '</td></tr>' : e.map(function(x, i) {
-        return '<tr><td>' + (i + 1) + '</td><td>' + escapeHtml(x.description) + '</td><td>' + fmtMoney(x.amount) + '</td><td><span class="badge badge-info">' + x.category + '</span></td><td>' + fmtDate(x.date) + '</td><td><button class="btn btn-danger btn-xs" onclick="deleteExpense(\'' + x.id + '\')">×</button></td></tr>';
+        return '<tr><td>' + (i + 1) + '</td><td>' + escapeHtml(x.description) + '</td><td>' + fmtMoney(x.amount) + '</td><td><span class="badge badge-info">' + escapeHtml(x.category) + '</span></td><td>' + fmtDate(x.date) + '</td><td><button class="btn btn-danger btn-xs" onclick="deleteExpense(\'' + x.id + '\')">×</button></td></tr>';
     }).join('')) + '</tbody></table></div></div></div>';
 };
 
@@ -11163,7 +11486,7 @@ views.branches = function() {
         var isO = bu ? isUserOnline(bu.id) : false;
         var sc = isO ? 'online' : 'offline';
         var main = b.name === u.store;
-        return '<tr><td><div style="display:flex;align-items:center;gap:10px;">' + (bu ? getUserPhotoHtml(bu, '', 'width:34px;height:34px;border-radius:50%;object-fit:cover;') : getCompanyPhotoHtml(currentTenantId, '', 'width:34px;height:34px;border-radius:50%;object-fit:cover;')) + '<strong>' + escapeHtml(b.name) + '</strong>' + (main ? ' 🏠' : '') + '</div></td><td>' + (b.address || '—') + '</td><td>' + (bu ? bu.username : '—') + '</td><td><span class="online-status ' + sc + '"><span class="dot ' + sc + '"></span>' + (isO ? 'Online' : 'Offline') + '</span></td><td>' + (bu ? '<button class="btn btn-xs btn-secondary" onclick="resetBranchPassword(\'' + bu.id + '\')">' + t('reset') + '</button>' : '') + (!main ? ' <button class="btn btn-danger btn-xs" onclick="deleteBranch(\'' + b.name + '\')"><i class="fas fa-trash"></i></button>' : '') + '</td></tr>';
+        return '<tr><td><div style="display:flex;align-items:center;gap:10px;">' + (bu ? getUserPhotoHtml(bu, '', 'width:34px;height:34px;border-radius:50%;object-fit:cover;') : getCompanyPhotoHtml(currentTenantId, '', 'width:34px;height:34px;border-radius:50%;object-fit:cover;')) + '<strong>' + escapeHtml(b.name) + '</strong>' + (main ? ' 🏠' : '') + '</div></td><td>' + escapeHtml(b.address || '—') + '</td><td>' + (bu ? escapeHtml(bu.username) : '—') + '</td><td><span class="online-status ' + sc + '"><span class="dot ' + sc + '"></span>' + (isO ? 'Online' : 'Offline') + '</span></td><td>' + (bu ? '<button class="btn btn-xs btn-secondary" onclick="resetBranchPassword(\'' + bu.id + '\')">' + t('reset') + '</button>' : '') + (!main ? ' <button class="btn btn-danger btn-xs" onclick="deleteBranch(\'' + encArg(b.name) + '\')"><i class="fas fa-trash"></i></button>' : '') + '</td></tr>';
     }).join('');
     return '<div class="section-header"><h2>' + t('branches') + '</h2><button class="btn btn-primary btn-icon" onclick="openBranchModal()"><i class="fas fa-plus"></i> ' + t('addBranch') + '</button></div><div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th>' + t('branch') + '</th><th>' + t('address') + '</th><th>' + t('username') + '</th><th>' + t('status') + '</th><th></th></tr></thead><tbody>' + (bh || '<tr class="empty-row"><td colspan="5">—</td></tr>') + '</tbody></table></div></div></div>';
 };
@@ -11182,7 +11505,7 @@ views.users = function() {
         var isS = x.id === u.id;
         var isOwn = x.role === 'owner';
         var sc = isO ? 'online' : 'offline';
-        return '<tr><td>' + (i + 1) + '</td><td><div style="display:flex;align-items:center;gap:10px;">' + getUserPhotoHtml(x, '', 'width:34px;height:34px;border-radius:50%;object-fit:cover;') + '<strong>' + (x.fullName || x.username) + '</strong></div></td><td>' + x.username + '</td><td><span class="badge ' + getRoleBadgeClass(x.role) + '">' + getRoleLabel(x.role) + '</span></td><td>' + (x.store || '--') + '</td><td><span class="online-status ' + sc + '"><span class="dot ' + sc + '"></span>' + (isO ? 'Online' : 'Offline') + '</span></td><td>' + (!isOwn && !isS ? '<button class="btn btn-danger btn-xs" onclick="deleteUser(\'' + x.id + '\')">×</button>' : '—') + '</td></tr>';
+        return '<tr><td>' + (i + 1) + '</td><td><div style="display:flex;align-items:center;gap:10px;">' + getUserPhotoHtml(x, '', 'width:34px;height:34px;border-radius:50%;object-fit:cover;') + '<strong>' + escapeHtml(x.fullName || x.username) + '</strong></div></td><td>' + escapeHtml(x.username) + '</td><td><span class="badge ' + getRoleBadgeClass(x.role) + '">' + getRoleLabel(x.role) + '</span></td><td>' + escapeHtml(x.store || '--') + '</td><td><span class="online-status ' + sc + '"><span class="dot ' + sc + '"></span>' + (isO ? 'Online' : 'Offline') + '</span></td><td>' + (!isOwn && !isS ? '<button class="btn btn-danger btn-xs" onclick="deleteUser(\'' + x.id + '\')">×</button>' : '—') + '</td></tr>';
     }).join('');
     return '<div class="section-header"><h2>' + t('users') + '</h2><button class="btn btn-primary btn-icon" onclick="openModal(\'user\')"><i class="fas fa-user-plus"></i> ' + t('addUser') + '</button></div><div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>' + t('name') + '</th><th>' + t('username') + '</th><th>' + t('role') + '</th><th>' + t('store') + '</th><th>' + t('status') + '</th><th></th></tr></thead><tbody>' + (uh || '<tr class="empty-row"><td colspan="7">—</td></tr>') + '</tbody></table></div></div></div>';
 };
@@ -11198,9 +11521,9 @@ views.roles = function() {
     var roles = ['admin', 'accountant', 'employee'];
     return '<div class="section-header"><h2>' + t('roles') + '</h2></div><div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>' + t('name') + '</th><th>' + t('role') + '</th><th>' + t('action') + '</th></tr></thead><tbody>' + us.map(function(x, i) {
         if (x.role === 'owner') {
-            return '<tr><td>' + (i + 1) + '</td><td><div style="display:flex;align-items:center;gap:10px;">' + getUserPhotoHtml(x, '', 'width:34px;height:34px;border-radius:50%;object-fit:cover;') + '<strong>' + (x.fullName || x.username) + '</strong></div></td><td><span class="badge badge-success">' + t('owner') + '</span></td><td>—</td></tr>';
+            return '<tr><td>' + (i + 1) + '</td><td><div style="display:flex;align-items:center;gap:10px;">' + getUserPhotoHtml(x, '', 'width:34px;height:34px;border-radius:50%;object-fit:cover;') + '<strong>' + escapeHtml(x.fullName || x.username) + '</strong></div></td><td><span class="badge badge-success">' + t('owner') + '</span></td><td>—</td></tr>';
         }
-        return '<tr><td>' + (i + 1) + '</td><td><div style="display:flex;align-items:center;gap:10px;">' + getUserPhotoHtml(x, '', 'width:34px;height:34px;border-radius:50%;object-fit:cover;') + '<strong>' + (x.fullName || x.username) + '</strong></div></td><td><span class="badge ' + getRoleBadgeClass(x.role) + '">' + getRoleLabel(x.role) + '</span></td><td><select id="role-sel-' + x.id + '">' + roles.map(function(r) {
+        return '<tr><td>' + (i + 1) + '</td><td><div style="display:flex;align-items:center;gap:10px;">' + getUserPhotoHtml(x, '', 'width:34px;height:34px;border-radius:50%;object-fit:cover;') + '<strong>' + escapeHtml(x.fullName || x.username) + '</strong></div></td><td><span class="badge ' + getRoleBadgeClass(x.role) + '">' + getRoleLabel(x.role) + '</span></td><td><select id="role-sel-' + x.id + '">' + roles.map(function(r) {
             return '<option value="' + r + '"' + (r === x.role ? ' selected' : '') + '>' + getRoleLabel(r) + '</option>';
         }).join('') + '</select> <button class="btn btn-primary btn-xs" onclick="changeUserRole(\'' + x.id + '\', document.getElementById(\'role-sel-' + x.id + '\').value)">' + t('save') + '</button></td></tr>';
     }).join('') + '</tbody></table></div></div></div>';
@@ -11219,7 +11542,7 @@ views.attendance = function() {
     var hh = h.length === 0 ? '<div class="empty-state"><i class="fas fa-clock"></i></div>' : '<div class="table-wrap"><table><thead><tr><th>#</th><th>' + t('employee') + '</th><th>' + t('branch') + '</th><th>' + t('today') + '</th><th></th></tr></thead><tbody>' + h.slice(-50).reverse().map(function(p, i) {
         var lo = p.logoutTime ? fmtDateTime(p.logoutTime) : '🟢';
         var emp = getUser(p.userId);
-        return '<tr><td>' + (i + 1) + '</td><td><div style="display:flex;align-items:center;gap:10px;">' + (emp ? getUserPhotoHtml(emp, '', 'width:32px;height:32px;border-radius:50%;object-fit:cover;') : '<img src="' + avatarUrl(p.userName || 'User', '128C7E') + '" style="width:32px;height:32px;border-radius:50%;"/>') + '<strong>' + p.userName + '</strong></div></td><td>' + p.branchName + '</td><td>' + fmtDateTime(p.loginTime) + '</td><td>' + lo + '</td></tr>';
+        return '<tr><td>' + (i + 1) + '</td><td><div style="display:flex;align-items:center;gap:10px;">' + (emp ? getUserPhotoHtml(emp, '', 'width:32px;height:32px;border-radius:50%;object-fit:cover;') : '<img src="' + avatarUrl(p.userName || 'User', '128C7E') + '" style="width:32px;height:32px;border-radius:50%;"/>') + '<strong>' + escapeHtml(p.userName) + '</strong></div></td><td>' + escapeHtml(p.branchName) + '</td><td>' + fmtDateTime(p.loginTime) + '</td><td>' + lo + '</td></tr>';
     }).join('') + '</tbody></table></div>';
     return '<div class="section-header"><h2>' + t('attendance') + '</h2><button class="btn btn-danger btn-sm" onclick="clearAttendanceHistory()">Clear</button></div><div class="stats-grid"><div class="stat-card"><div class="stat-label">Online</div><div class="stat-value primary">' + onu.length + '</div></div><div class="stat-card"><div class="stat-label">' + t('today') + '</div><div class="stat-value primary-light">' + tp.length + '</div></div><div class="stat-card"><div class="stat-label">Total</div><div class="stat-value primary">' + h.length + '</div></div></div><div class="card"><div class="card-body">' + hh + '</div></div>';
 };
@@ -11391,18 +11714,18 @@ function openModal(type, data) {
             '<input type="checkbox" name="paid" id="salePaidCheck" checked style="width:22px;height:22px;margin:0;accent-color:var(--accent-1);cursor:pointer;flex-shrink:0;"/>' +
             '<label for="salePaidCheck" style="margin:0;text-transform:none;font-size:.9rem;cursor:pointer;display:flex;align-items:center;gap:8px;flex:1;"><i class="fas fa-money-bill-wave" style="color:var(--accent-4);"></i> <span>' + t('paid') + '</span></label>' +
             '</div>' +
-            '<input type="hidden" name="store" value="' + store + '"/>' +
+            '<input type="hidden" name="store" value="' + escapeAttr(store) + '"/>' +
             '<div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">' + t('cancel') + '</button><button type="submit" class="btn btn-primary">' + t('save') + '</button></div></form>';
     } else if (type === 'product') {
         var cats = ensureCategories();
         h = '<h3>' + t('addProduct') + '</h3><form onsubmit="submitProduct(event)"><div class="form-group"><label>' + t('name') + ' *</label><input type="text" name="name" required/></div><div class="form-row"><div class="form-group"><label>' + t('amount') + ' *</label><input type="number" name="price" min="1" required/></div><div class="form-group"><label>' + t('cogs') + ' *</label><input type="number" name="cost" min="1" required/></div></div><div class="form-row"><div class="form-group"><label>' + t('category') + '</label><select name="category">' + cats.map(function(c) {
-            return '<option value="' + c.name + '">' + c.name + '</option>';
-        }).join('') + '</select></div><div class="form-group"><label>' + t('quantity') + '</label><input type="number" name="quantity" min="0" value="0"/></div></div><input type="hidden" name="store" value="' + getCatalogStore() + '"/><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">' + t('cancel') + '</button><button type="submit" class="btn btn-primary">' + t('save') + '</button></div></form>';
+            return '<option value="' + escapeAttr(c.name) + '">' + escapeHtml(c.name) + '</option>';
+        }).join('') + '</select></div><div class="form-group"><label>' + t('quantity') + '</label><input type="number" name="quantity" min="0" value="0"/></div></div><input type="hidden" name="store" value="' + escapeAttr(getCatalogStore()) + '"/><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">' + t('cancel') + '</button><button type="submit" class="btn btn-primary">' + t('save') + '</button></div></form>';
     } else if (type === 'expense') {
         var cats2 = ensureExpenseCategories();
         h = '<h3>' + t('addExpense') + '</h3><form onsubmit="submitExpense(event)"><div class="form-group"><label>' + t('description') + ' *</label><input type="text" name="description" required/></div><div class="form-row"><div class="form-group"><label>' + t('amount') + ' *</label><input type="number" name="amount" min="1" required/></div><div class="form-group"><label>' + t('category') + '</label><select name="category">' + cats2.map(function(c) {
-            return '<option value="' + c.name + '">' + c.name + '</option>';
-        }).join('') + '</select></div></div><input type="hidden" name="store" value="' + getCatalogStore() + '"/><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">' + t('cancel') + '</button><button type="submit" class="btn btn-primary">' + t('save') + '</button></div></form>';
+            return '<option value="' + escapeAttr(c.name) + '">' + escapeHtml(c.name) + '</option>';
+        }).join('') + '</select></div></div><input type="hidden" name="store" value="' + escapeAttr(getCatalogStore()) + '"/><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">' + t('cancel') + '</button><button type="submit" class="btn btn-primary">' + t('save') + '</button></div></form>';
     } else if (type === 'user') {
         if (!canManageUsers()) {
             return;
@@ -11415,7 +11738,7 @@ function openModal(type, data) {
         h = '<h3>' + t('addUser') + '</h3><form onsubmit="submitUser(event)"><div class="form-group"><label>' + t('fullName') + '</label><input type="text" name="fullName"/></div><div class="form-row"><div class="form-group"><label>' + t('username') + ' *</label><input type="text" name="username" required/></div><div class="form-group"><label>' + t('password') + ' *</label><input type="password" name="password" required/></div></div><div class="form-row"><div class="form-group"><label>' + t('role') + '</label><select name="role" required>' + roles.map(function(r) {
             return '<option value="' + r + '">' + getRoleLabel(r) + '</option>';
         }).join('') + '</select></div><div class="form-group"><label>' + t('store') + '</label><select name="store">' + stores.map(function(s) {
-            return '<option value="' + s + '">' + s + '</option>';
+            return '<option value="' + escapeAttr(s) + '">' + escapeHtml(s) + '</option>';
         }).join('') + '</select></div></div><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">' + t('cancel') + '</button><button type="submit" class="btn btn-primary">' + t('save') + '</button></div></form>';
     } else if (type === 'adjustStock' && data) {
         var p2 = getProduct(parseInt(data));
@@ -11592,9 +11915,7 @@ function submitUser(e) {
         return;
     }
     var us = getTenantData('users', []);
-    if (us.find(function(x) {
-        return x.username === un;
-    })) {
+    if (isUsernameTaken(un)) {
         showToast(t('userTaken'), 'error');
         return;
     }
@@ -11602,7 +11923,7 @@ function submitUser(e) {
     us.push({
         id: uid(),
         username: un,
-        password: pw,
+        password: hashPw(un, pw),
         role: role,
         store: st,
         fullName: fn,
@@ -11932,7 +12253,7 @@ function saveProfile() {
         up.bio = bio;
         Object.assign(up, sd);
         if (np) {
-            up.password = np;
+            up.password = hashPw(emp.username, np);
         }
         updateMexEmployee(emp.id, up);
         var nu = {
@@ -11961,7 +12282,7 @@ function saveProfile() {
         u.bio = bio;
         Object.assign(u, sd);
         if (np) {
-            u.password = np;
+            lsSet('sb_super_hash', hashPw(SUPER_ADMIN_USERNAME, np));
         }
         setCurrentUser(u);
         updateAllUI(u);
@@ -11984,7 +12305,7 @@ function saveProfile() {
     tg.bio = bio;
     Object.assign(tg, sd);
     if (np) {
-        tg.password = np;
+        tg.password = hashPw(tg.username, np);
     }
     setTenantData('users', us);
     setCurrentUser(tg);
@@ -12162,11 +12483,12 @@ function findMexEmployeeById(id) {
 function addMexEmployee(name, phone, password) {
     var cn = String(name || '').trim();
     var un = generateUniqueMexUsername(cn);
+    var plainPw = password || genTempPassword();
     var emp = {
         id: uid(),
         name: cn,
         username: un,
-        password: password || DEFAULT_MEX_PASSWORD,
+        password: hashPw(un, plainPw),
         phone: String(phone || '').trim(),
         email: '',
         photoKey: '',
@@ -12180,7 +12502,9 @@ function addMexEmployee(name, phone, password) {
     var arr = getMexEmployees();
     arr.push(emp);
     saveMexEmployees(arr);
-    return emp;
+    return Object.assign({}, emp, {
+        plainPassword: plainPw
+    });
 }
 
 function updateMexEmployee(id, u) {
@@ -12254,7 +12578,7 @@ function copyPromoCode(code) {
     if (!code) {
         return;
     }
-    copyToClipboardText(code);
+    copyToClipboardText(safeDecode(code));
 }
 
 function openAddMexEmployeeModal() {
@@ -12266,7 +12590,7 @@ function openAddMexEmployeeModal() {
     bx.style.padding = '';
     bx.style.overflow = '';
     bx.style.borderRadius = '';
-    bx.innerHTML = '<h3>' + t('addMember') + '</h3><form onsubmit="submitAddMexEmployee(event)"><div class="form-group"><label>' + t('fullName') + ' *</label><input type="text" name="name" required/></div><div class="form-group"><label>' + t('phoneNumber') + '</label><input type="text" name="phone"/></div><div class="form-group"><label>' + t('password') + '</label><input type="text" name="password" placeholder="mex123"/></div><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">' + t('cancel') + '</button><button type="submit" class="btn btn-primary">' + t('save') + '</button></div></form>';
+    bx.innerHTML = '<h3>' + t('addMember') + '</h3><form onsubmit="submitAddMexEmployee(event)"><div class="form-group"><label>' + t('fullName') + ' *</label><input type="text" name="name" required/></div><div class="form-group"><label>' + t('phoneNumber') + '</label><input type="text" name="phone"/></div><div class="form-group"><label>' + t('password') + '</label><input type="text" name="password" placeholder="(auto)"/></div><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">' + t('cancel') + '</button><button type="submit" class="btn btn-primary">' + t('save') + '</button></div></form>';
     ov.classList.add('show');
     document.body.classList.add('modal-open');
 }
@@ -12279,7 +12603,7 @@ function submitAddMexEmployee(e) {
     var fd = new FormData(e.target);
     var n = (fd.get('name') || '').trim();
     var p = (fd.get('phone') || '').trim();
-    var pw = (fd.get('password') || '').trim() || DEFAULT_MEX_PASSWORD;
+    var pw = (fd.get('password') || '').trim() || genTempPassword();
     if (!n) {
         return;
     }
@@ -12291,7 +12615,7 @@ function submitAddMexEmployee(e) {
 function showMexEmployeeCredentials(emp) {
     var ov = document.getElementById('modalOverlay');
     var bx = document.getElementById('modalBox');
-    bx.innerHTML = '<h3 style="color:var(--accent-4);"><i class="fas fa-check-circle"></i> ' + t('member') + '</h3><div style="background:linear-gradient(135deg, rgba(245,158,11,.08), rgba(217,119,6,.05));border:2px dashed #f59e0b;border-radius:var(--radius-sm);padding:16px 18px;margin:16px 0;"><div style="padding:10px 0;border-bottom:1px dashed rgba(245,158,11,.3);"><div style="font-size:.7rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;margin-bottom:4px;">' + t('username') + '</div><div class="mex-emp-code" onclick="copyPromoCode(\'' + emp.username + '\')">' + emp.username + '</div></div><div style="padding:10px 0;border-bottom:1px dashed rgba(245,158,11,.3);"><div style="font-size:.7rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;margin-bottom:4px;">' + t('password') + '</div><div class="mex-emp-code" onclick="copyPromoCode(\'' + emp.password + '\')">' + emp.password + '</div></div><div style="padding:10px 0;"><div style="font-size:.7rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;margin-bottom:4px;">' + t('promoCode') + '</div><div class="mex-emp-code" onclick="copyPromoCode(\'' + emp.promoCode + '\')">' + emp.promoCode + '</div></div></div><div class="form-actions" style="justify-content:center;"><button class="btn btn-primary" onclick="closeModal();navigate(\'superadmin\')">✓ ' + t('close') + '</button></div>';
+    bx.innerHTML = '<h3 style="color:var(--accent-4);"><i class="fas fa-check-circle"></i> ' + t('member') + '</h3><div style="background:linear-gradient(135deg, rgba(245,158,11,.08), rgba(217,119,6,.05));border:2px dashed #f59e0b;border-radius:var(--radius-sm);padding:16px 18px;margin:16px 0;"><div style="padding:10px 0;border-bottom:1px dashed rgba(245,158,11,.3);"><div style="font-size:.7rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;margin-bottom:4px;">' + t('username') + '</div><div class="mex-emp-code" onclick="copyPromoCode(\'' + encArg(emp.username) + '\')">' + escapeHtml(emp.username) + '</div></div><div style="padding:10px 0;border-bottom:1px dashed rgba(245,158,11,.3);"><div style="font-size:.7rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;margin-bottom:4px;">' + t('password') + '</div><div class="mex-emp-code" onclick="copyPromoCode(\'' + encArg(emp.plainPassword) + '\')">' + escapeHtml(emp.plainPassword) + '</div></div><div style="padding:10px 0;"><div style="font-size:.7rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;margin-bottom:4px;">' + t('promoCode') + '</div><div class="mex-emp-code" onclick="copyPromoCode(\'' + encArg(emp.promoCode) + '\')">' + escapeHtml(emp.promoCode) + '</div></div></div><div class="form-actions" style="justify-content:center;"><button class="btn btn-primary" onclick="closeModal();navigate(\'superadmin\')">✓ ' + t('close') + '</button></div>';
     ov.classList.add('show');
     document.body.classList.add('modal-open');
 }
@@ -12335,12 +12659,9 @@ function submitSuperAddCompany(e) {
     if (!c || !u || !pw) {
         return;
     }
-    var ts = getAllTenants();
-    for (var i = 0; i < ts.length; i++) {
-        if (ts[i].ownerUsername === u) {
-            showToast(t('userTaken'), 'error');
-            return;
-        }
+    if (isUsernameTaken(u)) {
+        showToast(t('userTaken'), 'error');
+        return;
     }
     var vp = '';
     if (pr) {
@@ -12362,13 +12683,11 @@ function submitSuperAddCompany(e) {
 
 function createTenant(companyName, username, password, phone, promoCode, pendingApproval) {
     var ts = getAllTenants();
-    for (var i = 0; i < ts.length; i++) {
-        if (ts[i].ownerUsername === username) {
-            return {
-                success: false,
-                msg: 'Username taken.'
-            };
-        }
+    if (isUsernameTaken(username)) {
+        return {
+            success: false,
+            msg: 'Username taken.'
+        };
     }
     var id = 't' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
     var now = Date.now();
@@ -12403,7 +12722,7 @@ function createTenant(companyName, username, password, phone, promoCode, pending
     var ownerUser = {
         id: 1,
         username: username,
-        password: password,
+        password: hashPw(username, password),
         role: 'owner',
         store: companyName,
         fullName: companyName,
@@ -12415,39 +12734,7 @@ function createTenant(companyName, username, password, phone, promoCode, pending
     var old = currentTenantId;
     currentTenantId = id;
     try {
-        setTenantData('users', [
-            ownerUser,
-            {
-                id: 2,
-                username: 'admin',
-                password: 'admin123',
-                role: 'admin',
-                store: companyName,
-                fullName: 'Admin',
-                createdBy: 1,
-                tenantId: id
-            },
-            {
-                id: 3,
-                username: 'employee',
-                password: 'emp123',
-                role: 'employee',
-                store: companyName,
-                fullName: 'Employee',
-                createdBy: 1,
-                tenantId: id
-            },
-            {
-                id: 4,
-                username: 'accountant',
-                password: 'acc123',
-                role: 'accountant',
-                store: companyName,
-                fullName: 'Accountant',
-                createdBy: 1,
-                tenantId: id
-            }
-        ]);
+        setTenantData('users', [ownerUser]);
         persistProducts([]);
         persistCategories([{
             id: 1,
@@ -12610,9 +12897,7 @@ function handleSubscriptionPayment() {
         return;
     }
     var users = getTenantData('users', []);
-    if (users.find(function(u) {
-        return u.username === un;
-    })) {
+    if (isUsernameTaken(un)) {
         showToast(t('userTaken'), 'error');
         return;
     }
@@ -12627,7 +12912,7 @@ function handleSubscriptionPayment() {
     users.push({
         id: uid(),
         username: un,
-        password: pw,
+        password: hashPw(un, pw),
         role: 'employee',
         store: bn,
         fullName: 'Branch Manager - ' + bn,
@@ -12640,6 +12925,7 @@ function handleSubscriptionPayment() {
 }
 
 function deleteBranch(bn) {
+    bn = safeDecode(bn);
     var u = getCurrentUser();
     if (!u || u.role !== 'owner') {
         return;
@@ -12676,8 +12962,9 @@ function resetBranchPassword(userId) {
             return x.id === Number(userId);
         });
         if (u) {
-            u.password = pw;
+            u.password = hashPw(u.username, pw);
             setTenantData('users', users);
+            showToast('✓ ' + t('save'), 'success');
             navigate('branches');
         }
     }
@@ -12838,7 +13125,16 @@ function navigate(view) {
     }
     var pt = document.getElementById('pageTitle');
     if (pt) {
-        pt.textContent = t(view);
+        var titleMap = {
+            status: 'adsStatus',
+            superadmin: 'superAdmin',
+            superStays: 'manageStays',
+            mexEarnings: 'myEarnings',
+            mexCompanies: 'myCompanies',
+            mexStatus: 'ads',
+            mexStays: 'findStays'
+        };
+        pt.textContent = t(titleMap[view] || view);
     }
     var area = document.getElementById('contentArea');
     muteAllVideos();
@@ -12867,7 +13163,8 @@ function showToast(msg, type) {
     var c = document.getElementById('toastContainer');
     var d = document.createElement('div');
     d.className = 'toast ' + type;
-    d.innerHTML = msg;
+    d.textContent = String(msg == null ? '' : msg);
+    d.setAttribute('role', 'status');
     c.appendChild(d);
     setTimeout(function() {
         d.remove();
@@ -12882,7 +13179,13 @@ document.getElementById('loginBtn').addEventListener('click', function() {
     if (!un || !pw) {
         return;
     }
-    if (un === SUPER_ADMIN_USERNAME && pw === SUPER_ADMIN_PASSWORD) {
+    var lockLeft = loginLockedSeconds();
+    if (lockLeft > 0) {
+        er.textContent = '⏳ Subiri sekunde ' + lockLeft + ' / Wait ' + lockLeft + 's';
+        return;
+    }
+    if (un === SUPER_ADMIN_USERNAME && hashPw(un, pw) === getSuperHash()) {
+        _loginFails = 0;
         isSuperAdmin = true;
         isMexEmployee = false;
         currentMexEmployeeId = null;
@@ -12897,7 +13200,7 @@ document.getElementById('loginBtn').addEventListener('click', function() {
         };
         setCurrentUser(su);
         try {
-            localStorage.setItem(SUPER_ADMIN_SESSION_KEY, 'true');
+            localStorage.setItem(SUPER_ADMIN_SESSION_KEY, superSessionToken());
         } catch(e) {}
         document.getElementById('loginPage').classList.add('hidden');
         document.getElementById('appContainer').classList.add('active');
@@ -12909,7 +13212,13 @@ document.getElementById('loginBtn').addEventListener('click', function() {
     for (var j = 0; j < mex.length; j++) {
         var emp = mex[j];
         var eu = normalizeUsername(emp.username);
-        if (eu && eu === uL && emp.password === pw) {
+        if (eu && eu === uL && verifyPw(emp, pw)) {
+            _loginFails = 0;
+            if (!isHashed(emp.password)) {
+                updateMexEmployee(emp.id, {
+                    password: hashPw(emp.username, pw)
+                });
+            }
             isSuperAdmin = false;
             isMexEmployee = true;
             currentMexEmployeeId = emp.id;
@@ -12940,7 +13249,7 @@ document.getElementById('loginBtn').addEventListener('click', function() {
         var users = getTenantData('users', []);
         currentTenantId = old;
         var u = users.find(function(x) {
-            return x.username === un && x.password === pw;
+            return x.username === un && verifyPw(x, pw);
         });
         if (u) {
             if (tn.pendingApproval) {
@@ -12951,11 +13260,27 @@ document.getElementById('loginBtn').addEventListener('click', function() {
                 er.textContent = t('accountBlocked');
                 return;
             }
+            _loginFails = 0;
             isSuperAdmin = false;
             isMexEmployee = false;
             currentMexEmployeeId = null;
             currentTenantId = tn.id;
+            if (!isHashed(u.password)) {
+                var allU = getTenantData('users', []);
+                var mu = allU.find(function(x) {
+                    return Number(x.id) === Number(u.id);
+                });
+                if (mu) {
+                    mu.password = hashPw(mu.username, pw);
+                    setTenantData('users', allU);
+                    u = mu;
+                }
+            }
             setCurrentUser(u);
+            lsSet('sb_session', {
+                tid: tn.id,
+                uid: u.id
+            });
             recordUserLogin(u.id, u.store);
             document.getElementById('loginPage').classList.add('hidden');
             document.getElementById('appContainer').classList.add('active');
@@ -12963,6 +13288,7 @@ document.getElementById('loginBtn').addEventListener('click', function() {
             return;
         }
     }
+    registerLoginFail();
     er.textContent = t('validCred');
 });
 
@@ -13013,7 +13339,7 @@ document.getElementById('memberRegisterBtn').addEventListener('click', function(
         return;
     }
     var emp = addMexEmployee(n, p, pw);
-    sE.innerHTML = '✅ ' + t('promoCode') + ': <strong>' + emp.promoCode + '</strong> · ' + t('username') + ': <strong>' + emp.username + '</strong>';
+    sE.innerHTML = '✅ ' + t('promoCode') + ': <strong>' + escapeHtml(emp.promoCode) + '</strong> · ' + t('username') + ': <strong>' + escapeHtml(emp.username) + '</strong>';
     setTimeout(function() {
         document.getElementById('memberRegisterPage').classList.add('hidden');
         document.getElementById('loginPage').classList.remove('hidden');
@@ -13050,12 +13376,9 @@ document.getElementById('registerBtn').addEventListener('click', function() {
             return;
         }
     }
-    var ts = getAllTenants();
-    for (var i = 0; i < ts.length; i++) {
-        if (ts[i].ownerUsername === un) {
-            er.textContent = t('userTaken');
-            return;
-        }
+    if (isUsernameTaken(un)) {
+        er.textContent = t('userTaken');
+        return;
     }
     pendingRegistrationData = {
         company: company,
@@ -13312,6 +13635,7 @@ function logout() {
     stopChatPolling();
     setCurrentUser(null);
     setMexSession(null);
+    lsRemove('sb_session');
     currentTenantId = null;
     isSuperAdmin = false;
     isMexEmployee = false;
@@ -13381,7 +13705,7 @@ function toggleMobileSidebar() {
     initVideoObserver();
     setTimeout(preloadAllMedia, 300);
     try {
-        if (localStorage.getItem(SUPER_ADMIN_SESSION_KEY) === 'true') {
+        if (localStorage.getItem(SUPER_ADMIN_SESSION_KEY) === superSessionToken()) {
             isSuperAdmin = true;
             currentTenantId = null;
             var su = lsGet('sb_superadmin_user', null) || {
@@ -13426,16 +13750,26 @@ function toggleMobileSidebar() {
             setMexSession(null);
         }
     }
-    var user = getCurrentUser();
-    if (!user) {
+    var sess = lsGet('sb_session', null);
+    if (!sess || !sess.tid) {
         scheduleHide();
         return;
     }
     var tenant = getAllTenants().find(function(tn) {
-        return tn.id === user.tenantId;
+        return tn.id === sess.tid;
     });
-    if (tenant && !tenant.pendingApproval && !tenant.blocked) {
+    var user = null;
+    if (tenant) {
         currentTenantId = tenant.id;
+        user = getTenantData('users', []).find(function(x) {
+            return Number(x.id) === Number(sess.uid);
+        });
+        if (!user) {
+            currentTenantId = null;
+        }
+    }
+    if (tenant && user && !tenant.pendingApproval && !tenant.blocked) {
+        setCurrentUser(user);
         document.getElementById('loginPage').classList.add('hidden');
         document.getElementById('appContainer').classList.add('active');
         recordUserLogin(user.id, user.store);
