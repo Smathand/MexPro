@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
 <meta name="theme-color" content="#128C7E"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
@@ -2503,8 +2503,6 @@ html[dir="rtl"] .chat-msg .msg-time {
     flex-direction: column;
   }
 }
-
-/* ===== AD PROFILE MODAL — FIXED SCROLLING ===== */
 .ad-profile-modal .modal-box {
   max-width: 680px;
   padding: 0;
@@ -2603,7 +2601,6 @@ html[dir="rtl"] .ad-profile-modal .ad-profile-header {
   white-space: pre-wrap;
   font-weight: 500;
 }
-/* FIX: feed scrolls internally, modal itself stays fixed */
 .ad-profile-modal .ad-profile-feed {
   padding: 2px;
   overflow-y: auto;
@@ -3163,8 +3160,6 @@ html[dir="rtl"] .ad-profile-modal .ad-profile-close {
     gap: 4px;
   }
 }
-
-/* ===== FIND STAYS ===== */
 .stay-search-bar {
   display: flex;
   gap: 8px;
@@ -3624,8 +3619,6 @@ html[dir="rtl"] .stay-search-bar input {
     height: 180px;
   }
 }
-
-/* ===== INVENTORY TRANSFER ===== */
 .transfer-badge {
   display: inline-flex;
   align-items: center;
@@ -3663,8 +3656,6 @@ html[dir="rtl"] .stay-search-bar input {
   color: #8b5cf6;
   font-weight: 800;
 }
-
-/* ===== ADDED: missing classes & polish ===== */
 .pnl-breakdown-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
@@ -4292,13 +4283,12 @@ var LANG_KEY = 'sb_lang';
 var MAX_VIDEO_MB = 200;
 var BOOT_DURATION = 1600;
 var _superAdminPhotoKey = null;
+var MEMBER_EARNINGS_KEY = 'sb_member_earnings';
+var MEMBER_PAYMENTS_KEY = 'sb_member_payments';
+var COMMISSION_RATE = 0.20;
+var AD_LIFETIME_MS = 48 * 60 * 60 * 1000;
+var AD_MAX_PER_ENTITY = 6;
 
-/* ============================================================
-   SECURITY & UTILITY HELPERS (added in improved version)
-   NOTE: This app stores data in the browser (localStorage).
-   Hashing below improves safety against casual snooping, but a
-   real backend is still required for true security.
-   ============================================================ */
 var _sha = { K: null, H: null };
 
 function _shaFrac(x) {
@@ -4336,12 +4326,8 @@ function sha256(msg) {
     _shaInit();
     var K = _sha.K;
     var H = _sha.H.slice();
-    var s = unescape(encodeURIComponent(String(msg)));
-    var bytes = [];
+    var bytes = Array.from(new TextEncoder().encode(String(msg)));
     var i;
-    for (i = 0; i < s.length; i++) {
-        bytes.push(s.charCodeAt(i));
-    }
     var bitLen = bytes.length * 8;
     bytes.push(0x80);
     while (bytes.length % 64 !== 56) {
@@ -4445,7 +4431,6 @@ function superSessionToken() {
     return getSuperHash().slice(-24);
 }
 
-/* Safe encoding of values placed inside inline onclick='...' handlers */
 function encArg(s) {
     return encodeURIComponent(String(s == null ? '' : s)).replace(/'/g, '%27');
 }
@@ -4458,9 +4443,8 @@ function safeDecode(s) {
     }
 }
 
-/* Login throttling: 5 failed attempts => 60s lock */
 var _loginFails = 0;
-var _loginLockUntil = 0;
+var _loginLockUntil = Number(lsGet('sb_login_lock', 0)) || 0;
 
 function loginLockedSeconds() {
     var left = Math.ceil((_loginLockUntil - Date.now()) / 1000);
@@ -4472,10 +4456,10 @@ function registerLoginFail() {
     if (_loginFails >= 5) {
         _loginLockUntil = Date.now() + 60000;
         _loginFails = 0;
+        lsSet('sb_login_lock', _loginLockUntil);
     }
 }
 
-/* Username must be unique across ALL companies, members and super admin */
 function isUsernameTaken(un) {
     var u = String(un || '').trim().toLowerCase();
     if (!u) {
@@ -4508,7 +4492,6 @@ function isUsernameTaken(un) {
     return false;
 }
 
-/* Identity key used for likes (user ids repeat between companies) */
 function likeKey(u) {
     if (isSuperAdmin) {
         return 'super';
@@ -4519,6 +4502,30 @@ function likeKey(u) {
     return 't_' + currentTenantId + '_' + (u ? u.id : 0);
 }
 
+function countMyActiveAds() {
+    var count = 0;
+    getGlobalAds().forEach(function(ad) {
+        if (isAdExpired(ad)) {
+            return;
+        }
+        if (isSuperAdmin) {
+            if (ad.postedBy === 'super') {
+                count++;
+            }
+            return;
+        }
+        if (isMexEmployee) {
+            if (ad.postedBy === 'mex' && String(ad.posterId) === String(currentMexEmployeeId)) {
+                count++;
+            }
+            return;
+        }
+        if (ad.tenantId === currentTenantId) {
+            count++;
+        }
+    });
+    return count;
+}
 
 var TRANSLATIONS = {
   en: {
@@ -4700,7 +4707,6 @@ var TRANSLATIONS = {
     accountBlocked: '🚫 Account blocked',
     debtCustomer: 'Customer',
     debtAmount: 'Amount Due',
-    markPaid: 'Paid',
     paid: 'Paid',
     unpaid: 'Unpaid',
     totalDebts: 'Total Debts',
@@ -4810,7 +4816,27 @@ var TRANSLATIONS = {
     from: 'From',
     to: 'To',
     qty: 'Qty',
-    noTransfers: 'No transfers yet'
+    noTransfers: 'No transfers yet',
+    paymentApproved: 'Payment approved',
+    paymentRejected: 'Payment rejected',
+    requestPayout: 'Request Payout',
+    availableBalance: 'Available Balance',
+    earnings: 'Earnings',
+    commission: 'Commission',
+    planPrice: 'Plan Price',
+    paymentMethod: 'Payment Method',
+    submitRequest: 'Submit Request',
+    markPaid: 'Mark Paid',
+    online: 'Online',
+    offline: 'Offline',
+    clear: 'Clear',
+    add: '+ Add',
+    payments: 'Payments',
+    adLimitReached: 'You already have 6 active ads. Wait for one to expire (48 hours) before posting again.',
+    adExpiresIn: 'Expires in',
+    activeAds: 'Active Ads',
+    myActiveAds: 'My Active Ads',
+    adsRemaining: 'Ads Remaining'
   },
   sw: {
     dashboard: 'Dashibodi',
@@ -4991,7 +5017,6 @@ var TRANSLATIONS = {
     accountBlocked: '🚫 Akaunti imezuiwa',
     debtCustomer: 'Mteja',
     debtAmount: 'Kiasi Kinachodaiwa',
-    markPaid: 'Lipa',
     paid: 'Imelipwa',
     unpaid: 'Haijalipwa',
     totalDebts: 'Jumla ya Madeni',
@@ -5101,7 +5126,27 @@ var TRANSLATIONS = {
     from: 'Kutoka',
     to: 'Kwenda',
     qty: 'Idadi',
-    noTransfers: 'Hakuna uhamisho bado'
+    noTransfers: 'Hakuna uhamisho bado',
+    paymentApproved: 'Malipo yameidhinishwa',
+    paymentRejected: 'Malipo yamekataliwa',
+    requestPayout: 'Omba Malipo',
+    availableBalance: 'Salio Linalopatikana',
+    earnings: 'Mapato',
+    commission: 'Kamisheni',
+    planPrice: 'Bei ya Mpango',
+    paymentMethod: 'Njia ya Malipo',
+    submitRequest: 'Tuma Ombi',
+    markPaid: 'Weka Kama Imelipwa',
+    online: 'Mtandaoni',
+    offline: 'Nje ya mtandao',
+    clear: 'Futa',
+    add: '+ Ongeza',
+    payments: 'Malipo',
+    adLimitReached: 'Una matangazo 6 tayari. Subiri moja liishe (masaa 48) kabla ya kuchapisha tena.',
+    adExpiresIn: 'Linaisha baada ya',
+    activeAds: 'Matangazo Hai',
+    myActiveAds: 'Matangazo Yangu Hai',
+    adsRemaining: 'Matangazo Yaliyobaki'
   },
   zh: {
     dashboard: '仪表盘',
@@ -5282,7 +5327,6 @@ var TRANSLATIONS = {
     accountBlocked: '🚫 账户已被阻止',
     debtCustomer: '客户',
     debtAmount: '应付金额',
-    markPaid: '已付',
     paid: '已付',
     unpaid: '未付',
     totalDebts: '总债务',
@@ -5392,7 +5436,27 @@ var TRANSLATIONS = {
     from: '从',
     to: '到',
     qty: '数量',
-    noTransfers: '尚无转移'
+    noTransfers: '尚无转移',
+    paymentApproved: '付款已批准',
+    paymentRejected: '付款已拒绝',
+    requestPayout: '申请付款',
+    availableBalance: '可用余额',
+    earnings: '收入',
+    commission: '佣金',
+    planPrice: '套餐价格',
+    paymentMethod: '付款方式',
+    submitRequest: '提交申请',
+    markPaid: '标记为已付',
+    online: '在线',
+    offline: '离线',
+    clear: '清除',
+    add: '+ 添加',
+    payments: '付款',
+    adLimitReached: '您已经有6个有效广告。等待一个过期（48小时）后再发布。',
+    adExpiresIn: '过期于',
+    activeAds: '有效广告',
+    myActiveAds: '我的有效广告',
+    adsRemaining: '剩余广告'
   },
   fr: {
     dashboard: 'Tableau de bord',
@@ -5573,7 +5637,6 @@ var TRANSLATIONS = {
     accountBlocked: '🚫 Compte bloqué',
     debtCustomer: 'Client',
     debtAmount: 'Montant dû',
-    markPaid: 'Payé',
     paid: 'Payé',
     unpaid: 'Impayé',
     totalDebts: 'Dettes totales',
@@ -5683,7 +5746,27 @@ var TRANSLATIONS = {
     from: 'De',
     to: 'À',
     qty: 'Qté',
-    noTransfers: 'Aucun transfert'
+    noTransfers: 'Aucun transfert',
+    paymentApproved: 'Paiement approuvé',
+    paymentRejected: 'Paiement rejeté',
+    requestPayout: 'Demander un paiement',
+    availableBalance: 'Solde disponible',
+    earnings: 'Gains',
+    commission: 'Commission',
+    planPrice: 'Prix du forfait',
+    paymentMethod: 'Mode de paiement',
+    submitRequest: 'Soumettre la demande',
+    markPaid: 'Marquer payé',
+    online: 'En ligne',
+    offline: 'Hors ligne',
+    clear: 'Effacer',
+    add: '+ Ajouter',
+    payments: 'Paiements',
+    adLimitReached: 'Vous avez déjà 6 annonces actives. Attendez qu\'une expire (48 heures) avant de publier à nouveau.',
+    adExpiresIn: 'Expire dans',
+    activeAds: 'Annonces actives',
+    myActiveAds: 'Mes annonces actives',
+    adsRemaining: 'Annonces restantes'
   },
   ar: {
     dashboard: 'لوحة التحكم',
@@ -5864,7 +5947,6 @@ var TRANSLATIONS = {
     accountBlocked: '🚫 الحساب محظور',
     debtCustomer: 'العميل',
     debtAmount: 'المبلغ المستحق',
-    markPaid: 'مدفوع',
     paid: 'مدفوع',
     unpaid: 'غير مدفوع',
     totalDebts: 'إجمالي الديون',
@@ -5974,7 +6056,27 @@ var TRANSLATIONS = {
     from: 'من',
     to: 'إلى',
     qty: 'الكمية',
-    noTransfers: 'لا توجد عمليات نقل بعد'
+    noTransfers: 'لا توجد عمليات نقل بعد',
+    paymentApproved: 'تمت الموافقة على الدفع',
+    paymentRejected: 'تم رفض الدفع',
+    requestPayout: 'طلب الدفع',
+    availableBalance: 'الرصيد المتاح',
+    earnings: 'الأرباح',
+    commission: 'العمولة',
+    planPrice: 'سعر الخطة',
+    paymentMethod: 'طريقة الدفع',
+    submitRequest: 'إرسال الطلب',
+    markPaid: 'وضع علامة مدفوع',
+    online: 'متصل',
+    offline: 'غير متصل',
+    clear: 'مسح',
+    add: '+ إضافة',
+    payments: 'المدفوعات',
+    adLimitReached: 'لديك بالفعل 6 إعلانات نشطة. انتظر انتهاء أحدها (48 ساعة) قبل النشر مرة أخرى.',
+    adExpiresIn: 'ينتهي في',
+    activeAds: 'الإعلانات النشطة',
+    myActiveAds: 'إعلاناتي النشطة',
+    adsRemaining: 'الإعلانات المتبقية'
   }
 };
 
@@ -6532,6 +6634,14 @@ function hydrateMedia() {
             }
         });
     });
+    document.querySelectorAll('[data-img-key]:not([data-img-bound])').forEach(function(el) {
+        el.setAttribute('data-img-bound', '1');
+        getMediaUrl(el.dataset.imgKey).then(function(url) {
+            if (url) {
+                el.style.backgroundImage = 'url("' + url + '")';
+            }
+        });
+    });
     hydratePhotos();
 }
 
@@ -6602,7 +6712,7 @@ var _credentialsTenantId = null;
 var _passwordsVisible = false;
 
 function uid() {
-    return Date.now() + Math.floor(Math.random() * 100000);
+    return Date.now() * 1000 + Math.floor(Math.random() * 1000);
 }
 
 function fmtMoney(n) {
@@ -6611,6 +6721,7 @@ function fmtMoney(n) {
 
 function fmtDate(ts) {
     return new Date(ts).toLocaleDateString('en-TZ', {
+        timeZone: 'Africa/Dar_es_Salaam',
         day: '2-digit',
         month: 'short',
         year: 'numeric'
@@ -6619,6 +6730,7 @@ function fmtDate(ts) {
 
 function fmtDateTime(ts) {
     return new Date(ts).toLocaleString('en-TZ', {
+        timeZone: 'Africa/Dar_es_Salaam',
         day: '2-digit',
         month: 'short',
         year: 'numeric',
@@ -6629,6 +6741,7 @@ function fmtDateTime(ts) {
 
 function fmtTime(ts) {
     return new Date(ts).toLocaleTimeString('en-TZ', {
+        timeZone: 'Africa/Dar_es_Salaam',
         hour: '2-digit',
         minute: '2-digit'
     });
@@ -6654,6 +6767,18 @@ function fmtRelative(ts) {
     return fmtDate(ts);
 }
 
+function fmtHoursLeft(ms) {
+    if (ms <= 0) {
+        return '0h';
+    }
+    var hours = Math.floor(ms / 3600000);
+    var mins = Math.floor((ms % 3600000) / 60000);
+    if (hours >= 1) {
+        return hours + 'h ' + mins + 'm';
+    }
+    return mins + 'm';
+}
+
 function fmtViews(n) {
     n = Number(n) || 0;
     if (n >= 1000000) {
@@ -6672,6 +6797,7 @@ function fmtDateInput(ts) {
 
 function getTzNowDate() {
     return new Date().toLocaleDateString('en-TZ', {
+        timeZone: 'Africa/Dar_es_Salaam',
         weekday: 'long',
         day: 'numeric',
         month: 'long',
@@ -6679,27 +6805,30 @@ function getTzNowDate() {
     });
 }
 
-function getDayStartUTC(o) {
+function getDayStart(o) {
     var d = new Date();
     d.setDate(d.getDate() + o);
     d.setHours(0, 0, 0, 0);
     return d;
 }
 
-function getDayEndUTC(o) {
-    var d = getDayStartUTC(o);
+function getDayEnd(o) {
+    var d = getDayStart(o);
     d.setHours(23, 59, 59, 999);
     return d;
 }
 
 function escapeHtml(s) {
-    var div = document.createElement('div');
-    div.textContent = String(s == null ? '' : s);
-    return div.innerHTML;
+    return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
 }
 
 function escapeAttr(s) {
-    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return escapeHtml(s);
 }
 
 function cssUrl(d) {
@@ -7286,6 +7415,13 @@ function getAdAuthorPhotoKey(ad) {
     if (ad.postedBy === 'super') {
         return _superAdminPhotoKey || '';
     }
+    if (ad.postedBy === 'mex' && ad.posterId) {
+        var emp = findMexEmployeeById(ad.posterId);
+        if (emp && emp.photoKey) {
+            return emp.photoKey;
+        }
+        return '';
+    }
     if (ad.tenantId) {
         var t2 = getTenant(ad.tenantId);
         if (t2 && t2.ownerPublic && t2.ownerPublic.photoKey) {
@@ -7301,6 +7437,13 @@ function getAdAuthorPhoto(ad) {
     }
     if (ad.postedBy === 'super') {
         return _mediaUrlCache[SUPER_ADMIN_PHOTO_KEY] || avatarUrl(ad.companyName || 'MeX Admin', 'f59e0b');
+    }
+    if (ad.postedBy === 'mex' && ad.posterId) {
+        var emp = findMexEmployeeById(ad.posterId);
+        if (emp && emp.photoKey && _mediaUrlCache[emp.photoKey]) {
+            return _mediaUrlCache[emp.photoKey];
+        }
+        return avatarUrl(ad.companyName || 'Member', 'f59e0b');
     }
     var key = getAdAuthorPhotoKey(ad);
     if (key && _mediaUrlCache[key]) {
@@ -7334,7 +7477,11 @@ function resolveCommentPhotoKey(c) {
         return _superAdminPhotoKey || '';
     }
     if (c.isMexEmployee) {
-        var emp = getMexEmployees().find(function(e) {
+        var emp = findMexEmployeeById(c.mexEmployeeId);
+        if (emp && emp.photoKey) {
+            return emp.photoKey;
+        }
+        emp = getMexEmployees().find(function(e) {
             return e.name === c.userName;
         });
         if (emp && emp.photoKey) {
@@ -7372,19 +7519,6 @@ function getCommenterAvatarHtml(c) {
     return '<img src="' + src + '"' + attrs + ' alt=""/>';
 }
 
-function getCommenterAvatar(c) {
-    if (!c) {
-        return avatarUrl('User', '128C7E');
-    }
-    var key = resolveCommentPhotoKey(c);
-    if (key && _mediaUrlCache[key]) {
-        return _mediaUrlCache[key];
-    }
-    var name = c.userName || 'User';
-    var bg = c.isSuperAdmin ? 'f59e0b' : (c.isMexEmployee ? 'f59e0b' : '128C7E');
-    return avatarUrl(name, bg);
-}
-
 function preloadAllMedia() {
     var promises = [];
     promises.push(dbGet(STORES.json, SUPER_ADMIN_PHOTO_KEY).then(function(k) {
@@ -7420,6 +7554,18 @@ function preloadAllMedia() {
         if (ad.posterKey && !_mediaUrlCache[ad.posterKey]) {
             promises.push(getMediaUrl(ad.posterKey));
         }
+    });
+    getGlobalStays().forEach(function(st) {
+        (st.images || []).forEach(function(im) {
+            if (im.key && !_mediaUrlCache[im.key]) {
+                promises.push(getMediaUrl(im.key));
+            }
+        });
+        (st.posts || []).forEach(function(p) {
+            if (p.imageKey && !_mediaUrlCache[p.imageKey]) {
+                promises.push(getMediaUrl(p.imageKey));
+            }
+        });
     });
     return Promise.all(promises);
 }
@@ -7692,6 +7838,7 @@ function openPostStatus() {
     bx.style.padding = '';
     bx.style.overflow = '';
     bx.style.borderRadius = '';
+    bx.style.maxWidth = '';
     bx.innerHTML = '<h3><i class="fas fa-pen"></i> ' + t('postStatus') + '</h3><form onsubmit="submitStatus(event)"><div class="form-group"><label>' + t('content') + ' *</label><textarea id="statusText" rows="4" required maxlength="800"></textarea></div><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">' + t('cancel') + '</button><button type="submit" class="btn btn-primary">' + t('post') + '</button></div></form>';
     ov.classList.add('show');
     document.body.classList.add('modal-open');
@@ -8076,7 +8223,7 @@ function getChatContacts() {
         getAllTenants().forEach(function(t2) {
             push({
                 type: 'tenant',
-                id: 'tenant_' + t2.id,
+                id: 'tenant_' + t2.id + '_1',
                 tenantId: t2.id,
                 name: t2.companyName + ' (Owner)',
                 photoKey: (t2.ownerPublic || {}).photoKey || null,
@@ -8105,7 +8252,7 @@ function getChatContacts() {
         getAllTenants().forEach(function(t2) {
             push({
                 type: 'tenant',
-                id: 'tenant_' + t2.id,
+                id: 'tenant_' + t2.id + '_1',
                 tenantId: t2.id,
                 name: t2.companyName + ' (Owner)',
                 photoKey: (t2.ownerPublic || {}).photoKey || null,
@@ -8141,7 +8288,7 @@ function getChatContacts() {
             }
             push({
                 type: 'tenant',
-                id: 'tenant_' + t2.id,
+                id: 'tenant_' + t2.id + '_1',
                 tenantId: t2.id,
                 name: t2.companyName + ' (Owner)',
                 photoKey: (t2.ownerPublic || {}).photoKey || null,
@@ -8391,7 +8538,7 @@ function isAdExpired(ad) {
     if (!ad || !ad.timestamp) {
         return true;
     }
-    return (Date.now() - ad.timestamp) >= (24 * 60 * 60 * 1000);
+    return (Date.now() - ad.timestamp) >= AD_LIFETIME_MS;
 }
 
 function cleanupExpiredAds() {
@@ -8520,7 +8667,6 @@ function superViewCredentials(tenantId) {
         return;
     }
     document.getElementById('credentialsTitle').textContent = tn.companyName + ' — ' + t('companyCredentials');
-    updateTogglePwBtn();
     renderCredentialsList();
     document.getElementById('credentialsModal').classList.add('show');
     document.body.classList.add('modal-open');
@@ -8533,23 +8679,6 @@ function closeCredentialsModal() {
     var stillOpen = document.querySelector('.modal-overlay.show');
     if (!stillOpen) {
         document.body.classList.remove('modal-open');
-    }
-}
-
-function toggleAllPasswords() {
-    _passwordsVisible = !_passwordsVisible;
-    updateTogglePwBtn();
-    renderCredentialsList();
-}
-
-function updateTogglePwBtn() {
-    var icon = document.getElementById('togglePwIcon');
-    var lbl = document.getElementById('togglePwLabel');
-    if (icon) {
-        icon.className = _passwordsVisible ? 'fas fa-eye-slash' : 'fas fa-eye';
-    }
-    if (lbl) {
-        lbl.textContent = _passwordsVisible ? t('hideAll') : t('showAll');
     }
 }
 
@@ -8649,7 +8778,7 @@ function superResetUserPassword(tenantId, userId) {
 function copyCredential(btn) {
     var text = btn.getAttribute('data-copy') || '';
     if (!text) {
-        showToast('⚠', 'error');
+        showToast('⚠ ' + t('noData'), 'error');
         return;
     }
     copyToClipboardText(text);
@@ -8681,7 +8810,7 @@ function copyToClipboardText(text) {
         }
         showToast('📋 ' + t('copied'), 'success');
     } catch(e) {
-        showToast('⚠', 'error');
+        showToast('⚠ ' + t('noData'), 'error');
     }
 }
 
@@ -8906,7 +9035,7 @@ function buildReportMessage(type) {
     var lines = [];
     var isSw = currentLang === 'sw';
     if (type === 'sales') {
-        var sales = getFilteredSales().slice().sort(function(a, b) {
+        var sales = buildReportData().sales.slice().sort(function(a, b) {
             return b.date - a.date;
         });
         if (sales.length === 0) {
@@ -8934,6 +9063,7 @@ function buildReportMessage(type) {
         }
         lines.push('📅 ' + fmtDateTime(Date.now()));
         lines.push('');
+        lines.push('🗓 ' + buildReportData().range.label);
         lines.push('💰 *' + t('totalSales') + ':* ' + fmtMoney(totalRevenue));
         lines.push('📊 *' + t('cogs') + ':* ' + fmtMoney(totalCogs));
         lines.push('📈 *' + t('netProfit') + ':* ' + fmtMoney(totalProfit));
@@ -9063,9 +9193,6 @@ function buildReportMessage(type) {
     return lines.join('\n');
 }
 
-/* ============================================================
-   STOCK TRANSFER — Owner only
-   ============================================================ */
 function openTransferModal() {
     var user = getCurrentUser();
     if (!user || user.role !== 'owner') {
@@ -9277,6 +9404,7 @@ function viewTransferHistory() {
     bx.style.padding = '';
     bx.style.overflow = '';
     bx.style.borderRadius = '';
+    bx.style.maxWidth = '';
     var rows = hist.length === 0 ? '<tr class="empty-row"><td colspan="7">' + t('noTransfers') + '</td></tr>' : hist.map(function(x, i) {
         return '<tr><td>' + (i + 1) + '</td><td><strong>' + escapeHtml(x.productName || '--') + '</strong></td><td>' + escapeHtml(x.fromBranch || '--') + '</td><td><i class="fas fa-arrow-right" style="color:#8b5cf6;"></i> ' + escapeHtml(x.toBranch || '--') + '</td><td><strong style="color:#8b5cf6;">' + x.quantity + '</strong></td><td><span style="font-size:.72rem;color:var(--text-muted);font-weight:600;">' + escapeHtml(x.transferredByName || '--') + '</span></td><td>' + fmtDateTime(x.timestamp) + '</td></tr>';
     }).join('');
@@ -9285,9 +9413,176 @@ function viewTransferHistory() {
     document.body.classList.add('modal-open');
 }
 
-/* ============================================================
-   VIEWS
-   ============================================================ */
+function getMemberEarnings() {
+    var a = lsGet(MEMBER_EARNINGS_KEY, []);
+    return Array.isArray(a) ? a : [];
+}
+
+function saveMemberEarnings(a) {
+    lsSet(MEMBER_EARNINGS_KEY, a || []);
+}
+
+function getMemberPayments() {
+    var a = lsGet(MEMBER_PAYMENTS_KEY, []);
+    return Array.isArray(a) ? a : [];
+}
+
+function saveMemberPayments(a) {
+    lsSet(MEMBER_PAYMENTS_KEY, a || []);
+}
+
+function getMemberEarningsByEmployee(employeeId) {
+    return getMemberEarnings().filter(function(e) {
+        return Number(e.employeeId) === Number(employeeId);
+    });
+}
+
+function getMemberTotalEarnings(employeeId) {
+    var list = getMemberEarningsByEmployee(employeeId);
+    return list.reduce(function(s, e) {
+        return s + (Number(e.commissionAmount) || 0);
+    }, 0);
+}
+
+function getMemberPaidEarnings(employeeId) {
+    var list = getMemberEarningsByEmployee(employeeId).filter(function(e) {
+        return e.paid === true;
+    });
+    return list.reduce(function(s, e) {
+        return s + (Number(e.commissionAmount) || 0);
+    }, 0);
+}
+
+function getMemberPendingEarnings(employeeId) {
+    var list = getMemberEarningsByEmployee(employeeId).filter(function(e) {
+        return e.paid !== true;
+    });
+    return list.reduce(function(s, e) {
+        return s + (Number(e.commissionAmount) || 0);
+    }, 0);
+}
+
+function getMemberAvailableBalance(employeeId) {
+    var reserved = getMemberPayments().filter(function(p) {
+        return Number(p.employeeId) === Number(employeeId) && p.status === 'pending';
+    }).reduce(function(sum, p) {
+        return sum + (Number(p.amount) || 0);
+    }, 0);
+    return Math.max(0, getMemberPendingEarnings(employeeId) - reserved);
+}
+
+function creditMemberEarning(employeeId, employeeName, companyId, companyName, planKey, planPrice, ownerUsername) {
+    var rate = COMMISSION_RATE;
+    var commission = Math.round(Number(planPrice) * rate);
+    var earnings = getMemberEarnings();
+    earnings.push({
+        id: uid(),
+        employeeId: employeeId,
+        employeeName: employeeName,
+        companyId: companyId,
+        companyName: companyName,
+        ownerUsername: ownerUsername || '',
+        planKey: planKey || 'monthly',
+        planPrice: Number(planPrice) || 0,
+        commissionRate: rate,
+        commissionAmount: commission,
+        date: Date.now(),
+        paid: false,
+        paidAt: null,
+        approvedBy: null
+    });
+    saveMemberEarnings(earnings);
+    return commission;
+}
+
+function markMemberEarningPaid(earningId, adminName) {
+    var earnings = getMemberEarnings();
+    var e = earnings.find(function(x) {
+        return Number(x.id) === Number(earningId);
+    });
+    if (!e) {
+        return false;
+    }
+    e.paid = true;
+    e.paidAt = Date.now();
+    e.approvedBy = adminName || 'Super Admin';
+    saveMemberEarnings(earnings);
+    return true;
+}
+
+function submitMemberPaymentRequest(employeeId, employeeName, amount, method, note) {
+    var payments = getMemberPayments();
+    var req = {
+        id: uid(),
+        employeeId: employeeId,
+        employeeName: employeeName,
+        amount: Number(amount) || 0,
+        method: method || 'mobile_money',
+        note: note || '',
+        status: 'pending',
+        requestedAt: Date.now(),
+        approvedAt: null,
+        approvedBy: null,
+        rejectedAt: null,
+        rejectedBy: null,
+        rejectionReason: ''
+    };
+    payments.push(req);
+    saveMemberPayments(payments);
+    return req;
+}
+
+function approveMemberPayment(paymentId, adminName) {
+    var payments = getMemberPayments();
+    var p = payments.find(function(x) {
+        return Number(x.id) === Number(paymentId);
+    });
+    if (!p) {
+        return false;
+    }
+    p.status = 'approved';
+    p.approvedAt = Date.now();
+    p.approvedBy = adminName || 'Super Admin';
+    saveMemberPayments(payments);
+    var earnings = getMemberEarnings();
+    var remaining = Number(p.amount);
+    earnings.filter(function(e) {
+        return Number(e.employeeId) === Number(p.employeeId) && e.paid !== true;
+    }).sort(function(a, b) {
+        return a.date - b.date;
+    }).forEach(function(e) {
+        if (remaining <= 0) {
+            return;
+        }
+        var amt = Number(e.commissionAmount) || 0;
+        if (amt <= remaining) {
+            e.paid = true;
+            e.paidAt = Date.now();
+            e.approvedBy = adminName || 'Super Admin';
+            e.paymentId = p.id;
+            remaining -= amt;
+        }
+    });
+    saveMemberEarnings(earnings);
+    return true;
+}
+
+function rejectMemberPayment(paymentId, adminName, reason) {
+    var payments = getMemberPayments();
+    var p = payments.find(function(x) {
+        return Number(x.id) === Number(paymentId);
+    });
+    if (!p) {
+        return false;
+    }
+    p.status = 'rejected';
+    p.rejectedAt = Date.now();
+    p.rejectedBy = adminName || 'Super Admin';
+    p.rejectionReason = reason || '';
+    saveMemberPayments(payments);
+    return true;
+}
+
 var views = {};
 
 views.dashboard = function() {
@@ -9319,10 +9614,11 @@ views.dashboard = function() {
     for (var i = 6; i >= 0; i--) {
         var d = new Date(Date.now() - i * 86400000);
         dayLabels.push(d.toLocaleDateString('en-TZ', {
+            timeZone: 'Africa/Dar_es_Salaam',
             weekday: 'short'
         }));
-        var s0 = getDayStartUTC(-i).getTime();
-        var e0 = getDayEndUTC(-i).getTime();
+        var s0 = getDayStart(-i).getTime();
+        var e0 = getDayEnd(-i).getTime();
         daySales.push(sales.filter(function(s) {
             return s.date >= s0 && s.date <= e0;
         }).reduce(function(sum, s) {
@@ -9491,17 +9787,24 @@ views.superadmin = function() {
     var blocked = tenants.filter(function(t2) {
         return t2.blocked;
     });
+    var payments = getMemberPayments();
+    var pendingPayments = payments.filter(function(p) {
+        return p.status === 'pending';
+    });
     var st = '<div class="super-dash-stats">' +
         '<div class="super-stat-card"><div class="number">' + tenants.length + '</div><div class="label">' + t('allCompanies') + '</div></div>' +
         '<div class="super-stat-card"><div class="number">' + active.length + '</div><div class="label">' + t('active') + '</div></div>' +
         '<div class="super-stat-card"><div class="number" style="color:var(--accent-3);">' + pending.length + '</div><div class="label">' + t('pending') + '</div></div>' +
         '<div class="super-stat-card"><div class="number">' + blocked.length + '</div><div class="label">' + t('blocked') + '</div></div>' +
         '<div class="super-stat-card"><div class="number">' + members.length + '</div><div class="label">' + t('members') + '</div></div>' +
+        '<div class="super-stat-card"><div class="number" style="color:#10b981;">' + pendingPayments.length + '</div><div class="label">' + t('payments') + '</div></div>' +
         '</div>';
     var tabs = '<div class="super-tabs">' +
         '<button class="super-tab ' + (currentSuperAdminTab === 'pending' ? 'active' : '') + '" onclick="switchSuperAdminTab(\'pending\')"><i class="fas fa-hourglass-half"></i> ' + t('pending') + '<span class="tab-count">' + pending.length + '</span></button>' +
         '<button class="super-tab ' + (currentSuperAdminTab === 'companies' ? 'active' : '') + '" onclick="switchSuperAdminTab(\'companies\')"><i class="fas fa-building"></i> ' + t('allCompanies') + '<span class="tab-count">' + (active.length + blocked.length) + '</span></button>' +
         '<button class="super-tab ' + (currentSuperAdminTab === 'members' ? 'active' : '') + '" onclick="switchSuperAdminTab(\'members\')"><i class="fas fa-user-tie"></i> ' + t('members') + '<span class="tab-count">' + members.length + '</span></button>' +
+        '<button class="super-tab ' + (currentSuperAdminTab === 'payments' ? 'active' : '') + '" onclick="switchSuperAdminTab(\'payments\')"><i class="fas fa-money-check-alt"></i> ' + t('payments') + '<span class="tab-count">' + pendingPayments.length + '</span></button>' +
+        '<button class="super-tab ' + (currentSuperAdminTab === 'earnings' ? 'active' : '') + '" onclick="switchSuperAdminTab(\'earnings\')"><i class="fas fa-coins"></i> ' + t('earnings') + '<span class="tab-count">' + getMemberEarnings().length + '</span></button>' +
         '</div>';
     if (currentSuperAdminTab === 'pending') {
         var rows = pending.length === 0 ? '<tr class="empty-row"><td colspan="7">🎉 ' + t('noData') + '</td></tr>' : pending.map(function(t2, i) {
@@ -9516,6 +9819,40 @@ views.superadmin = function() {
             return '<tr><td>' + (i + 1) + '</td><td><div style="display:flex;align-items:center;gap:12px;"><div class="mex-emp-avatar"><img src="' + av + '"' + attrs + ' style="width:100%;height:100%;object-fit:cover;"/></div><div style="font-weight:700;">' + escapeHtml(e.name) + '</div></div></td><td><span class="mex-emp-code" onclick="copyPromoCode(\'' + encArg(e.username) + '\')">' + escapeHtml(e.username) + '</span></td><td><span class="mex-emp-code" onclick="copyPromoCode(\'' + encArg(e.promoCode) + '\')">' + escapeHtml(e.promoCode) + '</span></td><td><span class="badge badge-info">' + (e.totalRegistrations || 0) + '</span></td><td><button class="btn btn-danger btn-xs" onclick="confirmDeleteMexEmployee(\'' + e.id + '\')"><i class="fas fa-trash"></i></button></td></tr>';
         }).join('');
         return '<div class="section-header"><h2><i class="fas fa-crown" style="color:#f59e0b;"></i> ' + t('superAdmin') + '</h2><button class="btn btn-primary btn-icon" onclick="openAddMexEmployeeModal()" style="background:linear-gradient(135deg,#f59e0b,#d97706) !important;"><i class="fas fa-user-plus"></i> ' + t('addMember') + '</button></div>' + tabs + st + '<div class="card"><div class="card-header"><h3>' + t('members') + '</h3></div><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>' + t('name') + '</th><th>' + t('username') + '</th><th>Promo</th><th>Regs</th><th></th></tr></thead><tbody>' + empRows + '</tbody></table></div></div></div>';
+    }
+    if (currentSuperAdminTab === 'payments') {
+        var allPayments = getMemberPayments().sort(function(a, b) {
+            return b.requestedAt - a.requestedAt;
+        });
+        var payRows = allPayments.length === 0 ? '<tr class="empty-row"><td colspan="7">—</td></tr>' : allPayments.map(function(p, i) {
+            var statusBadge = '';
+            if (p.status === 'pending') {
+                statusBadge = '<span class="badge badge-warning">' + t('pending') + '</span>';
+            } else if (p.status === 'approved') {
+                statusBadge = '<span class="badge badge-success">' + t('approve') + 'd</span>';
+            } else if (p.status === 'rejected') {
+                statusBadge = '<span class="badge badge-danger">' + t('reject') + 'ed</span>';
+            }
+            var actions = '';
+            if (p.status === 'pending') {
+                actions = '<button class="btn-super-approve" onclick="approvePaymentConfirm(\'' + p.id + '\')"><i class="fas fa-check"></i> ' + t('approve') + '</button> <button class="btn-super-delete" onclick="rejectPaymentConfirm(\'' + p.id + '\')"><i class="fas fa-times"></i> ' + t('reject') + '</button>';
+            } else {
+                actions = '<span style="font-size:.7rem;color:var(--text-muted);">' + escapeHtml(p.approvedBy || p.rejectedBy || '—') + '</span>';
+            }
+            return '<tr><td>' + (i + 1) + '</td><td><strong>' + escapeHtml(p.employeeName || '—') + '</strong></td><td><strong style="color:var(--accent-4);">' + fmtMoney(p.amount) + '</strong></td><td><span class="badge badge-info">' + escapeHtml(p.method || '—') + '</span></td><td>' + statusBadge + '</td><td>' + fmtDateTime(p.requestedAt) + '</td><td>' + actions + '</td></tr>';
+        }).join('');
+        return '<div class="section-header"><h2><i class="fas fa-money-check-alt" style="color:#10b981;"></i> ' + t('payments') + '</h2></div>' + tabs + st + '<div class="card"><div class="card-header"><h3>' + t('payments') + ' (' + allPayments.length + ')</h3></div><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>Member</th><th>Amount</th><th>Method</th><th>Status</th><th>Date</th><th>Action</th></tr></thead><tbody>' + payRows + '</tbody></table></div></div></div>';
+    }
+    if (currentSuperAdminTab === 'earnings') {
+        var allEarnings = getMemberEarnings().sort(function(a, b) {
+            return b.date - a.date;
+        });
+        var earnRows = allEarnings.length === 0 ? '<tr class="empty-row"><td colspan="8">—</td></tr>' : allEarnings.map(function(e, i) {
+            var statusBadge = e.paid ? '<span class="badge badge-success">' + t('paid') + '</span>' : '<span class="badge badge-warning">' + t('unpaid') + '</span>';
+            var act = e.paid ? '<span style="font-size:.7rem;color:var(--text-muted);">' + escapeHtml(e.approvedBy || '—') + '</span>' : '<button class="btn-super-approve" onclick="markEarningPaidConfirm(\'' + e.id + '\')"><i class="fas fa-check"></i> ' + t('markPaid') + '</button>';
+            return '<tr><td>' + (i + 1) + '</td><td><strong>' + escapeHtml(e.employeeName || '—') + '</strong></td><td>' + escapeHtml(e.companyName || '—') + '</td><td>' + fmtMoney(e.planPrice) + '</td><td><strong style="color:var(--accent-4);">' + fmtMoney(e.commissionAmount) + '</strong></td><td>' + statusBadge + '</td><td>' + fmtDate(e.date) + '</td><td>' + act + '</td></tr>';
+        }).join('');
+        return '<div class="section-header"><h2><i class="fas fa-coins" style="color:#f59e0b;"></i> ' + t('earnings') + '</h2></div>' + tabs + st + '<div class="card"><div class="card-header"><h3>' + t('earnings') + ' (' + allEarnings.length + ')</h3></div><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>Member</th><th>Company</th><th>' + t('planPrice') + '</th><th>' + t('commission') + '</th><th>Status</th><th>Date</th><th>Action</th></tr></thead><tbody>' + earnRows + '</tbody></table></div></div></div>';
     }
     var all = tenants.slice().sort(function(a, b) {
         return (b.createdAt || 0) - (a.createdAt || 0);
@@ -9720,9 +10057,24 @@ function setStayFilter(key, val) {
     navigate('mexStays');
 }
 
+function onAdSearch(v) {
+    adSearchTerm = v;
+    navigate('status');
+    var el = document.getElementById('adSearchInput');
+    if (el) {
+        el.focus();
+        el.setSelectionRange(v.length, v.length);
+    }
+}
+
 function setStaySearch(v) {
     _stayFilters.search = v;
     navigate('mexStays');
+    var el = document.getElementById('staySearchInput');
+    if (el) {
+        el.focus();
+        el.setSelectionRange(v.length, v.length);
+    }
 }
 
 views.mexStays = function() {
@@ -9788,7 +10140,7 @@ views.mexStays = function() {
     var header = '<div class="section-header"><h2><i class="fas fa-hotel" style="color:var(--accent-1);"></i> ' + t('findStays') + '</h2></div>';
     var searchBar = '<div class="stay-search-bar">' +
         '<div class="stay-search-input-wrap"><i class="fas fa-search"></i>' +
-        '<input type="text" placeholder="' + t('searchStays') + '" value="' + escapeHtml(_stayFilters.search) + '" oninput="var v=this.value;clearTimeout(window._staySearchT);window._staySearchT=setTimeout(function(){setStaySearch(v)},400);"/></div>' +
+        '<input type="text" placeholder="' + t('searchStays') + '" value="' + escapeHtml(_stayFilters.search) + '" id="staySearchInput" oninput="var v=this.value;clearTimeout(window._staySearchT);window._staySearchT=setTimeout(function(){setStaySearch(v)},400);"/></div>' +
         '<button class="stay-loc-btn" id="stayLocBtn" onclick="getMyLocation()"><i class="fas fa-location-arrow"></i> ' + t('getMyLocation') + '</button>' +
         '</div>';
     var summary = '<div class="stay-summary-bar"><span><i class="fas fa-hotel"></i> ' + enriched.length + ' ' + t('staysFound') + '</span>' + locLabel + '</div>';
@@ -9901,7 +10253,7 @@ function openStayDetail(id) {
     bx.innerHTML = '<div style="position:relative;">' +
         '<button class="btn btn-secondary" onclick="closeModal()" style="position:absolute;top:12px;right:12px;z-index:10;width:38px;height:38px;border-radius:50% !important;padding:0 !important;background:rgba(0,0,0,.55) !important;color:#fff !important;"><i class="fas fa-times"></i></button>' +
         '<span class="stay-type-badge" style="position:absolute;top:12px;left:12px;z-index:10;"><i class="fas ' + typeIcon + '"></i> ' + (s.type === 'hotel' ? t('hotels') : t('apartments')) + '</span>' +
-        '<div class="stay-detail-hero" id="stayDetailHero"' + heroStyle + '></div>' +
+        '<div class="stay-detail-hero" id="stayDetailHero"' + heroStyle + (images.length > 0 && images[0].key ? ' data-img-key="' + escapeAttr(images[0].key) + '"' : '') + '></div>' +
         '</div>' +
         '<div style="padding:20px 22px;max-height:65vh;overflow-y:auto;">' +
         galleryHtml +
@@ -9969,6 +10321,7 @@ function openAddStayModal(id) {
     bx.style.padding = '';
     bx.style.overflow = '';
     bx.style.borderRadius = '';
+    bx.style.maxWidth = '';
     bx.style.maxWidth = '720px';
     var s = existing || {};
     var title = id ? t('editStay') : t('addStay');
@@ -10148,7 +10501,9 @@ function submitStayForm(e) {
             return saveMediaBlob(img.blob, 'stay_').then(function(k) {
                 img.key = k;
                 img.blob = null;
-                return img;
+                return getMediaUrl(k).then(function() {
+                    return img;
+                });
             });
         }
         return Promise.resolve(img);
@@ -10233,6 +10588,7 @@ function openAddStayPostModal(stayId) {
     bx.style.padding = '';
     bx.style.overflow = '';
     bx.style.borderRadius = '';
+    bx.style.maxWidth = '';
     bx.style.maxWidth = '560px';
     bx.innerHTML = '<h3><i class="fas fa-bullhorn" style="color:var(--accent-3);"></i> ' + t('addPost') + ' — ' + escapeHtml(s.name) + '</h3>' +
         '<form onsubmit="submitStayPost(event, \'' + stayId + '\')">' +
@@ -10298,8 +10654,9 @@ function submitStayPost(e, stayId) {
     };
     if (blob) {
         saveMediaBlob(blob, 'staypost_').then(function(k) {
-            getMediaUrl(k);
-            finish(k);
+            return getMediaUrl(k).then(function() {
+                finish(k);
+            });
         }).catch(function() {
             finish(null);
         });
@@ -10320,17 +10677,143 @@ views.mexEarnings = function() {
     var recent = regs.slice().sort(function(a, b) {
         return b.date - a.date;
     }).slice(0, 5);
-    var rows = recent.length === 0 ? '<tr class="empty-row"><td colspan="3">—</td></tr>' : recent.map(function(r, i) {
-        return '<tr><td>' + (i + 1) + '</td><td><strong>' + escapeHtml(r.companyName || '--') + '</strong></td><td>' + fmtDate(r.date) + '</td></tr>';
+    var totalEarnings = getMemberTotalEarnings(emp.id);
+    var paidEarnings = getMemberPaidEarnings(emp.id);
+    var pendingEarnings = getMemberPendingEarnings(emp.id);
+    var earningsList = getMemberEarningsByEmployee(emp.id).sort(function(a, b) {
+        return b.date - a.date;
+    });
+    var rows = recent.length === 0 ? '<tr class="empty-row"><td colspan="4">—</td></tr>' : recent.map(function(r, i) {
+        return '<tr><td>' + (i + 1) + '</td><td><strong>' + escapeHtml(r.companyName || '--') + '</strong></td><td>' + fmtDate(r.date) + '</td><td><span class="badge badge-success">+ ' + fmtMoney((earningsList.find(function(e) { return e.companyId === r.companyId; }) || {}).commissionAmount || 0) + '</span></td></tr>';
     }).join('');
+    var earningsRows = earningsList.length === 0 ? '<tr class="empty-row"><td colspan="5">—</td></tr>' : earningsList.map(function(e, i) {
+        var statusBadge = e.paid ? '<span class="badge badge-success">' + t('paid') + '</span>' : '<span class="badge badge-warning">' + t('pending') + '</span>';
+        return '<tr><td>' + (i + 1) + '</td><td><strong>' + escapeHtml(e.companyName || '--') + '</strong></td><td>' + fmtMoney(e.planPrice) + '</td><td><strong style="color:var(--accent-4);">+ ' + fmtMoney(e.commissionAmount) + '</strong></td><td>' + statusBadge + '</td></tr>';
+    }).join('');
+    var requestBtn = '<div class="card mb-16" style="border:2px solid var(--accent-4);"><div class="card-body" style="text-align:center;padding:20px;"><div style="font-size:.85rem;font-weight:700;color:var(--accent-4);margin-bottom:10px;"><i class="fas fa-hand-holding-usd"></i> ' + t('requestPayout') + '</div><button class="btn btn-success btn-icon" onclick="openRequestPaymentModal()" style="min-width:200px;justify-content:center;"><i class="fas fa-paper-plane"></i> ' + t('requestPayout') + '</button></div></div>';
     return '<div class="section-header"><h2><i class="fas fa-coins" style="color:#f59e0b;"></i> ' + t('myEarnings') + '</h2></div>' +
         '<div style="display:flex;align-items:center;gap:16px;margin-bottom:18px;padding:18px 20px;background:linear-gradient(135deg, rgba(245,158,11,.12), rgba(217,119,6,.06));border-radius:var(--radius-card);border:1px solid rgba(245,158,11,.25);flex-wrap:wrap;">' +
         getUserPhotoHtml(emp, '', 'width:64px;height:64px;border-radius:50%;object-fit:cover;border:3px solid #f59e0b;') +
         '<div style="flex:1;min-width:0;"><div style="font-size:1.5rem;font-weight:800;color:#d97706;letter-spacing:-0.02em;">' + escapeHtml(emp.name) + '</div><div style="font-size:.85rem;color:var(--text-muted);margin-top:4px;font-weight:600;"><i class="fas fa-at"></i> ' + escapeHtml(emp.username) + '</div></div></div>' +
-        '<div class="stats-grid"><div class="stat-card"><div class="stat-label">' + t('totalRegistrations') + '</div><div class="stat-value primary">' + (emp.totalRegistrations || 0) + '</div></div></div>' +
-        '<div class="card mb-16" style="background:linear-gradient(135deg, rgba(245,158,11,.05), rgba(217,119,6,.02));border:2px dashed #f59e0b;"><div class="card-body" style="text-align:center;padding:24px 18px;"><div style="font-size:.75rem;text-transform:uppercase;font-weight:800;color:#d97706;margin-bottom:10px;letter-spacing:0.05em;"><i class="fas fa-tag"></i> ' + t('yourPromoCode') + '</div><div class="mex-emp-code" onclick="copyPromoCode(\'' + encArg(emp.promoCode) + '\')" style="font-size:1.5rem;padding:10px 22px;display:inline-flex;letter-spacing:3px;">' + escapeHtml(emp.promoCode) + '</div></div></div>' +
-        '<div class="card"><div class="card-header"><h3>' + t('recentCompanies') + '</h3></div><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>' + t('companyName') + '</th><th>' + t('date') + '</th></tr></thead><tbody>' + rows + '</tbody></table></div></div></div>';
+        '<div class="stats-grid">' +
+        '<div class="stat-card"><div class="stat-label">' + t('totalRegistrations') + '</div><div class="stat-value primary">' + (emp.totalRegistrations || 0) + '</div></div>' +
+        '<div class="stat-card"><div class="stat-label">' + t('earnings') + '</div><div class="stat-value primary">' + fmtMoney(totalEarnings) + '</div><div class="stat-icon"><i class="fas fa-coins"></i></div></div>' +
+        '<div class="stat-card"><div class="stat-label">' + t('paid') + '</div><div class="stat-value primary-light">' + fmtMoney(paidEarnings) + '</div></div>' +
+        '<div class="stat-card"><div class="stat-label">' + t('pending') + '</div><div class="stat-value gold">' + fmtMoney(pendingEarnings) + '</div></div>' +
+        '<div class="stat-card"><div class="stat-label">' + t('myActiveAds') + '</div><div class="stat-value primary-light">' + countMyActiveAds() + '</div></div>' +
+        '<div class="stat-card"><div class="stat-label">' + t('adsRemaining') + '</div><div class="stat-value gold">' + Math.max(0, AD_MAX_PER_ENTITY - countMyActiveAds()) + '</div></div>' +
+        '</div>' +
+        '<div class="card mb-16" style="background:linear-gradient(135deg, rgba(245,158,11,.05), rgba(217,119,6,.02));border:2px dashed #f59e0b;"><div class="card-body" style="text-align:center;padding:24px 18px;"><div style="font-size:.75rem;text-transform:uppercase;font-weight:800;color:#d97706;margin-bottom:10px;letter-spacing:0.05em;"><i class="fas fa-tag"></i> ' + t('yourPromoCode') + '</div><div class="mex-emp-code" onclick="copyPromoCode(\'' + encArg(emp.promoCode) + '\')" style="font-size:1.5rem;padding:10px 22px;display:inline-flex;letter-spacing:3px;">' + escapeHtml(emp.promoCode) + '</div><div style="font-size:.7rem;color:var(--text-muted);font-weight:600;margin-top:10px;">' + t('commission') + ': ' + Math.round(COMMISSION_RATE * 100) + '%</div></div></div>' +
+        requestBtn +
+        '<div class="card mb-16"><div class="card-header"><h3><i class="fas fa-money-bill-wave" style="color:var(--accent-4);"></i> ' + t('earnings') + '</h3></div><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>' + t('companyName') + '</th><th>' + t('planPrice') + '</th><th>' + t('commission') + '</th><th>' + t('status') + '</th></tr></thead><tbody>' + earningsRows + '</tbody></table></div></div></div>' +
+        '<div class="card"><div class="card-header"><h3>' + t('recentCompanies') + '</h3></div><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>' + t('companyName') + '</th><th>' + t('date') + '</th><th>' + t('commission') + '</th></tr></thead><tbody>' + rows + '</tbody></table></div></div></div>';
 };
+
+function openRequestPaymentModal() {
+    if (!isMexEmployee) {
+        return;
+    }
+    var emp = findMexEmployeeById(currentMexEmployeeId);
+    if (!emp) {
+        return;
+    }
+    var pending = getMemberAvailableBalance(emp.id);
+    if (pending <= 0) {
+        showToast('⚠ No pending earnings to request', 'warning');
+        return;
+    }
+    var ov = document.getElementById('modalOverlay');
+    var bx = document.getElementById('modalBox');
+    bx.style.padding = '';
+    bx.style.overflow = '';
+    bx.style.borderRadius = '';
+    bx.style.maxWidth = '';
+    bx.innerHTML = '<h3><i class="fas fa-hand-holding-usd" style="color:var(--accent-4);"></i> ' + t('requestPayout') + '</h3>' +
+        '<div style="background:linear-gradient(135deg, rgba(16,185,129,.08), rgba(16,185,129,.02));border:2px dashed var(--accent-4);border-radius:var(--radius-sm);padding:16px;margin-bottom:16px;text-align:center;">' +
+        '<div style="font-size:.7rem;text-transform:uppercase;font-weight:800;color:var(--accent-4);margin-bottom:6px;">' + t('availableBalance') + '</div>' +
+        '<div style="font-size:1.8rem;font-weight:900;color:var(--accent-4);letter-spacing:-0.02em;">' + fmtMoney(pending) + '</div>' +
+        '</div>' +
+        '<form onsubmit="submitPaymentRequest(event)">' +
+        '<div class="form-group"><label>Amount (TSh) *</label><input type="number" name="amount" min="1" max="' + pending + '" value="' + pending + '" required/></div>' +
+        '<div class="form-group"><label>' + t('paymentMethod') + '</label><select name="method">' +
+        '<option value="mobile_money">Mobile Money (M-Pesa / Tigo Pesa / Airtel Money)</option>' +
+        '<option value="bank_transfer">Bank Transfer</option>' +
+        '<option value="cash">Cash</option>' +
+        '</select></div>' +
+        '<div class="form-group"><label>Note (optional)</label><textarea name="note" rows="2" maxlength="200"></textarea></div>' +
+        '<div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">' + t('cancel') + '</button><button type="submit" class="btn btn-success"><i class="fas fa-paper-plane"></i> ' + t('submitRequest') + '</button></div>' +
+        '</form>';
+    ov.classList.add('show');
+    document.body.classList.add('modal-open');
+}
+
+function submitPaymentRequest(e) {
+    e.preventDefault();
+    if (!isMexEmployee) {
+        return;
+    }
+    var emp = findMexEmployeeById(currentMexEmployeeId);
+    if (!emp) {
+        return;
+    }
+    var fd = new FormData(e.target);
+    var amount = parseFloat(fd.get('amount'));
+    var method = fd.get('method') || 'mobile_money';
+    var note = (fd.get('note') || '').trim();
+    var pending = getMemberAvailableBalance(emp.id);
+    if (!amount || amount < 1) {
+        showToast('⚠ Invalid amount', 'error');
+        return;
+    }
+    if (amount > pending) {
+        showToast('⚠ Amount exceeds available balance', 'error');
+        return;
+    }
+    submitMemberPaymentRequest(emp.id, emp.name, amount, method, note);
+    closeModal();
+    showToast('✅ Payment request submitted. Waiting for approval.', 'success');
+    navigate('mexEarnings');
+}
+
+function approvePaymentConfirm(paymentId) {
+    if (!isSuperAdmin) {
+        return;
+    }
+    if (!confirm('Approve this payment?')) {
+        return;
+    }
+    var adminName = (getCurrentUser() || {}).fullName || 'Super Admin';
+    approveMemberPayment(paymentId, adminName);
+    showToast('✅ ' + t('paymentApproved'), 'success');
+    navigate('superadmin');
+}
+
+function rejectPaymentConfirm(paymentId) {
+    if (!isSuperAdmin) {
+        return;
+    }
+    var reason = prompt('Rejection reason (optional):') || '';
+    if (!confirm('Reject this payment?')) {
+        return;
+    }
+    var adminName = (getCurrentUser() || {}).fullName || 'Super Admin';
+    rejectMemberPayment(paymentId, adminName, reason);
+    showToast('❌ ' + t('paymentRejected'), 'warning');
+    navigate('superadmin');
+}
+
+function markEarningPaidConfirm(earningId) {
+    if (!isSuperAdmin) {
+        return;
+    }
+    if (!confirm('Mark this earning as paid?')) {
+        return;
+    }
+    var adminName = (getCurrentUser() || {}).fullName || 'Super Admin';
+    markMemberEarningPaid(earningId, adminName);
+    showToast('✅ ' + t('markPaid'), 'success');
+    navigate('superadmin');
+}
 
 views.mexCompanies = function() {
     if (!isMexEmployee) {
@@ -10393,11 +10876,29 @@ function renderAdsTab() {
             return (ad.title || '').toLowerCase().indexOf(q) !== -1 || (ad.content || '').toLowerCase().indexOf(q) !== -1;
         });
     }
-    var canPost = isSuperAdmin || (!isMexEmployee && user && user.role === 'owner');
+    var canPost = isSuperAdmin || isMexEmployee || (!isMexEmployee && user && user.role === 'owner');
+    var myActive = countMyActiveAds();
+    var limitReached = myActive >= AD_MAX_PER_ENTITY;
+    var limitBanner = '';
+    if (canPost) {
+        limitBanner = '<div style="background:' + (limitReached ? 'rgba(239,68,68,.08)' : 'rgba(18,140,126,.06)') + ';border:1px solid ' + (limitReached ? 'rgba(239,68,68,.3)' : 'rgba(18,140,126,.2)') + ';border-radius:12px;padding:12px 16px;margin-bottom:12px;font-size:.82rem;font-weight:600;display:flex;align-items:center;gap:10px;flex-wrap:wrap;color:' + (limitReached ? 'var(--accent-danger)' : 'var(--accent-1)') + ';">' +
+            '<i class="fas fa-bullhorn"></i>' +
+            '<span>' + t('myActiveAds') + ': <strong>' + myActive + ' / ' + AD_MAX_PER_ENTITY + '</strong> · ' + t('adsRemaining') + ': <strong>' + Math.max(0, AD_MAX_PER_ENTITY - myActive) + '</strong> · ' + t('adExpiresIn') + ' 48h</span>' +
+            (limitReached ? '<span style="margin-left:auto;font-weight:800;">⚠ ' + t('adLimitReached') + '</span>' : '') +
+        '</div>';
+    }
     var adsHtml = ads.map(function(ad) {
         return renderAdCard(ad, user, canPost);
     }).join('');
-    return '<div class="section-header" style="flex-direction:column;align-items:stretch;gap:12px;"><h2 style="margin:0;"><i class="fas fa-bullhorn" style="color:var(--accent-3);"></i> ' + t('ads') + '</h2>' + (canPost ? '<button class="btn btn-primary" style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 24px;font-size:1rem;font-weight:700;border-radius:14px;" onclick="openAdModal()"><i class="fas fa-bullhorn"></i> ' + t('postAd') + '</button>' : '') + '</div><div class="inventory-search-wrap" style="margin-bottom:12px;"><i class="fas fa-search inventory-search-icon"></i><input type="text" class="inventory-search-input" placeholder="' + t('searchPlaceholder') + '" value="' + escapeHtml(adSearchTerm) + '" oninput="adSearchTerm=this.value;navigate(\'status\')"/></div><div>' + (adsHtml || '<div class="card"><div class="card-body"><div class="empty-state"><i class="fas fa-bullhorn"></i><h3>' + t('noAdsYet') + '</h3></div></div></div>') + '</div>';
+    var postBtn = '';
+    if (canPost) {
+        if (limitReached) {
+            postBtn = '<button class="btn btn-secondary" style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 24px;font-size:1rem;font-weight:700;border-radius:14px;opacity:.6;cursor:not-allowed;" disabled onclick="showToast(\'⚠ ' + t('adLimitReached').replace(/'/g, '') + '\',\'warning\')"><i class="fas fa-ban"></i> ' + t('adLimitReached').substring(0, 40) + '...</button>';
+        } else {
+            postBtn = '<button class="btn btn-primary" style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 24px;font-size:1rem;font-weight:700;border-radius:14px;" onclick="openAdModal()"><i class="fas fa-bullhorn"></i> ' + t('postAd') + '</button>';
+        }
+    }
+    return '<div class="section-header" style="flex-direction:column;align-items:stretch;gap:12px;"><h2 style="margin:0;"><i class="fas fa-bullhorn" style="color:var(--accent-3);"></i> ' + t('ads') + '</h2>' + postBtn + '</div>' + limitBanner + '<div class="inventory-search-wrap" style="margin-bottom:12px;"><i class="fas fa-search inventory-search-icon"></i><input type="text" class="inventory-search-input" placeholder="' + t('searchPlaceholder') + '" value="' + escapeHtml(adSearchTerm) + '" id="adSearchInput" oninput="onAdSearch(this.value)"/></div><div>' + (adsHtml || '<div class="card"><div class="card-body"><div class="empty-state"><i class="fas fa-bullhorn"></i><h3>' + t('noAdsYet') + '</h3></div></div></div>') + '</div>';
 }
 
 function renderCompaniesTab() {
@@ -10445,14 +10946,16 @@ function renderAdCard(ad, user, canPost) {
         ad.likes = [];
     }
     var isSuper = ad.postedBy === 'super';
+    var isMex = ad.postedBy === 'mex';
     var cn = ad.companyName || 'Company';
-    var canDelete = isSuperAdmin || (!isSuperAdmin && ad.tenantId === currentTenantId);
+    var canDelete = isSuperAdmin || (isMexEmployee && isMex && String(ad.posterId) === String(currentMexEmployeeId)) || (!isSuperAdmin && !isMexEmployee && ad.tenantId === currentTenantId);
     var commentsCount = countAdComments(ad);
     var viewsCount = getAdViews(ad);
     var isPromoted = isAdPromoted(ad);
     var isVideo = ad.mediaType === 'video' && ad.mediaKey;
     var isLiked = user && ad.likes.indexOf(likeKey(user)) !== -1;
     var likeCount = ad.likes.length;
+    var expiresIn = AD_LIFETIME_MS - (Date.now() - (ad.timestamp || 0));
     var media = '';
     if (isVideo) {
         media = '<video data-media-key="' + ad.mediaKey + '" data-sound-default="1" playsinline webkit-playsinline preload="auto" loop autoplay></video>' +
@@ -10466,7 +10969,10 @@ function renderAdCard(ad, user, canPost) {
         media = '<div style="width:100%;height:100%;min-height:220px;display:flex;align-items:center;justify-content:center;color:#666;background:var(--media-bg);"><i class="fas fa-image" style="font-size:3rem;opacity:.4;"></i></div>';
     }
     var promotedBadge = isPromoted ? '<span class="insta-promoted"><i class="fas fa-rocket"></i> ' + t('sponsored') + '</span>' : '';
-    var headerHtml = '<div class="insta-ad-header">' + getAdAuthorPhotoHtml(ad, 'insta-avatar', '', 'openAdAuthorProfile(\'' + ad.id + '\')') + '<div class="insta-meta" onclick="openAdAuthorProfile(\'' + ad.id + '\')"><div class="insta-name">' + promotedBadge + '<i class="fas fa-' + (isSuper ? 'crown' : 'building') + '" style="color:' + (isSuper ? '#f59e0b' : 'var(--accent-1)') + ';margin-right:3px;"></i>' + escapeHtml(cn) + (!isSuper ? renderVerifiedBadge() : '') + '</div><div class="insta-sub">' + (isSuper ? t('superAdminRole') : t('verifiedCompany')) + ' · ' + fmtRelative(ad.timestamp) + '</div></div>' + (canDelete ? '<button class="insta-delete" onclick="deleteGlobalAdConfirm(\'' + ad.id + '\')" title="' + t('delete') + '"><i class="fas fa-trash"></i></button>' : '') + '</div>';
+    var roleIcon = isSuper ? 'crown' : (isMex ? 'user-tie' : 'building');
+    var roleColor = isSuper ? '#f59e0b' : (isMex ? '#f59e0b' : 'var(--accent-1)');
+    var roleLabel = isSuper ? t('superAdminRole') : (isMex ? t('member') : t('verifiedCompany'));
+    var headerHtml = '<div class="insta-ad-header">' + getAdAuthorPhotoHtml(ad, 'insta-avatar', '', 'openAdAuthorProfile(\'' + ad.id + '\')') + '<div class="insta-meta" onclick="openAdAuthorProfile(\'' + ad.id + '\')"><div class="insta-name">' + promotedBadge + '<i class="fas fa-' + roleIcon + '" style="color:' + roleColor + ';margin-right:3px;"></i>' + escapeHtml(cn) + (!isSuper ? renderVerifiedBadge() : '') + '</div><div class="insta-sub">' + roleLabel + ' · ' + fmtRelative(ad.timestamp) + ' · ⏳ ' + t('adExpiresIn') + ' ' + fmtHoursLeft(expiresIn) + '</div></div>' + (canDelete ? '<button class="insta-delete" onclick="deleteGlobalAdConfirm(\'' + ad.id + '\')" title="' + t('delete') + '"><i class="fas fa-trash"></i></button>' : '') + '</div>';
     var likeCountHtml = likeCount > 0 ? '<span class="cnt" id="like-count-' + ad.id + '">' + likeCount + '</span>' : '<span class="cnt" id="like-count-' + ad.id + '"></span>';
     var commentCountHtml = '<span class="cnt" id="comment-count-' + ad.id + '">' + (commentsCount > 0 ? commentsCount : '') + '</span>';
     var actionsHtml = '<div class="insta-ad-actions">' +
@@ -10521,6 +11027,7 @@ function quickAddComment(adId) {
         photoKey: getCurrentCommenterPhotoKey(u),
         isSuperAdmin: isSuperAdmin,
         isMexEmployee: isMexEmployee,
+        mexEmployeeId: isMexEmployee ? currentMexEmployeeId : null,
         tenantId: (isSuperAdmin || isMexEmployee) ? null : currentTenantId,
         text: tx,
         timestamp: Date.now(),
@@ -10690,6 +11197,7 @@ function postCommentFromModal() {
         photoKey: getCurrentCommenterPhotoKey(u),
         isSuperAdmin: isSuperAdmin,
         isMexEmployee: isMexEmployee,
+        mexEmployeeId: isMexEmployee ? currentMexEmployeeId : null,
         tenantId: (isSuperAdmin || isMexEmployee) ? null : currentTenantId,
         text: tx,
         timestamp: Date.now()
@@ -10857,6 +11365,7 @@ function closeAdDetail() {
     bx.style.padding = '';
     bx.style.overflow = '';
     bx.style.borderRadius = '';
+    bx.style.maxWidth = '';
     muteAllVideos();
     var stillOpen = document.querySelector('.modal-overlay.show');
     if (!stillOpen) {
@@ -10864,9 +11373,6 @@ function closeAdDetail() {
     }
 }
 
-/* ============================================================
-   AD PROFILE MODAL — FIXED: internal scroll only
-   ============================================================ */
 function openAdAuthorProfile(adId) {
     var clicked = getGlobalAds().find(function(a) {
         return a.id === Number(adId);
@@ -10875,9 +11381,13 @@ function openAdAuthorProfile(adId) {
         return;
     }
     var isSuper = clicked.postedBy === 'super';
+    var isMex = clicked.postedBy === 'mex';
     var allAds = getGlobalAds().filter(function(a) {
         if (isSuper) {
             return a.postedBy === 'super';
+        }
+        if (isMex) {
+            return a.postedBy === 'mex' && String(a.posterId) === String(clicked.posterId);
         }
         return a.tenantId === clicked.tenantId;
     }).sort(function(a, b) {
@@ -10885,17 +11395,25 @@ function openAdAuthorProfile(adId) {
     });
     var name = clicked.companyName || 'Company';
     var followers = clicked.tenantId ? getFollowerCount(clicked.tenantId) : 0;
-    var socialSource = isSuper ? (lsGet('sb_superadmin_user', null) || {}) : (clicked.tenantId ? getTenant(clicked.tenantId) || {} : {});
+    var socialSource;
+    if (isSuper) {
+        socialSource = lsGet('sb_superadmin_user', null) || {};
+    } else if (isMex) {
+        socialSource = findMexEmployeeById(clicked.posterId) || {};
+    } else {
+        socialSource = clicked.tenantId ? (getTenant(clicked.tenantId) || {}) : {};
+    }
     var bioAndSocial = renderProfileBioAndSocial(socialSource);
     var feedHtml = allAds.length === 0 ? '<div class="empty-state" style="grid-column:1/-1;"><i class="fas fa-bullhorn"></i></div>' : allAds.map(function(ad) {
         return renderAdGridTile(ad);
     }).join('');
+    var roleLabel = isSuper ? '👑 ' + t('superAdminRole') : (isMex ? '👤 ' + t('member') : '<i class="fas fa-check-circle"></i> ' + t('verifiedCompany'));
     document.getElementById('adProfileBox').innerHTML = '<div class="ad-profile-header">' +
         '<button class="ad-profile-close" onclick="closeAdProfileModal()"><i class="fas fa-times"></i></button>' +
         getAdAuthorPhotoHtml(clicked, 'ad-profile-avatar') +
         '<div class="ad-profile-info">' +
             '<div class="ad-profile-name">' + escapeHtml(name) + renderVerifiedBadge() + '</div>' +
-            '<div class="ad-profile-sub">' + (isSuper ? '👑 ' + t('superAdminRole') : '<i class="fas fa-check-circle"></i> ' + t('verifiedCompany')) + '</div>' +
+            '<div class="ad-profile-sub">' + roleLabel + '</div>' +
         '</div>' +
     '</div>' +
     '<div class="ad-profile-stats">' +
@@ -10948,12 +11466,17 @@ function openCompanyProfile(tid) {
 }
 
 function openAdModal() {
-    if (isMexEmployee) {
+    var u = getCurrentUser();
+    if (!u) {
         return;
     }
-    var u = getCurrentUser();
-    if (!isSuperAdmin && (!u || u.role !== 'owner')) {
+    if (!isSuperAdmin && !isMexEmployee && u.role !== 'owner') {
         showToast('Owner only.', 'error');
+        return;
+    }
+    var myActive = countMyActiveAds();
+    if (myActive >= AD_MAX_PER_ENTITY) {
+        showToast('⚠ ' + t('adLimitReached'), 'warning');
         return;
     }
     adMediaState = {
@@ -10966,16 +11489,35 @@ function openAdModal() {
     var ov = document.getElementById('modalOverlay');
     var bx = document.getElementById('modalBox');
     var tn = getTenant(currentTenantId);
-    var cn = isSuperAdmin ? 'MeX Admin' : (tn ? tn.companyName : 'Company');
+    var cn;
+    if (isSuperAdmin) {
+        cn = 'MeX Admin';
+    } else if (isMexEmployee) {
+        var emp = findMexEmployeeById(currentMexEmployeeId);
+        cn = emp ? emp.name : 'Member';
+    } else {
+        cn = tn ? tn.companyName : 'Company';
+    }
+    var postingAs;
+    if (isSuperAdmin) {
+        postingAs = t('superAdminRole');
+    } else if (isMexEmployee) {
+        postingAs = t('member');
+    } else {
+        postingAs = t('owner');
+    }
     bx.style.padding = '';
     bx.style.overflow = '';
     bx.style.borderRadius = '';
+    bx.style.maxWidth = '';
     bx.innerHTML = '<h3><i class="fas fa-bullhorn" style="color:var(--accent-3);"></i> ' + t('postAd') + '</h3>' +
-        '<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:12px;background:var(--input-bg);border-radius:var(--radius-sm);">' + getUserPhotoHtml(u, '', 'width:46px;height:46px;border-radius:50%;object-fit:cover;border:2px solid var(--accent-1);') + '<div><div style="font-weight:700;font-size:.9rem;">' + escapeHtml(cn) + '</div><div style="font-size:.72rem;color:var(--text-muted);font-weight:600;">' + t('postingAs') + ' ' + (isSuperAdmin ? t('superAdminRole') : t('owner')) + '</div></div></div>' +
+        '<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:12px;background:var(--input-bg);border-radius:var(--radius-sm);">' + getUserPhotoHtml(u, '', 'width:46px;height:46px;border-radius:50%;object-fit:cover;border:2px solid var(--accent-1);') + '<div><div style="font-weight:700;font-size:.9rem;">' + escapeHtml(cn) + '</div><div style="font-size:.72rem;color:var(--text-muted);font-weight:600;">' + t('postingAs') + ' ' + postingAs + '</div></div></div>' +
+        '<div style="background:rgba(18,140,126,.06);border:1px solid rgba(18,140,126,.2);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:.75rem;color:var(--accent-1);font-weight:600;">' +
+            '<i class="fas fa-clock"></i> ' + t('adExpiresIn') + ' 48h · ' + t('adsRemaining') + ': <strong>' + (AD_MAX_PER_ENTITY - myActive) + ' / ' + AD_MAX_PER_ENTITY + '</strong>' +
+        '</div>' +
         '<form onsubmit="submitAd(event)">' +
         '<div class="form-group"><label>' + t('title') + ' *</label><input type="text" name="title" required maxlength="100"/></div>' +
         '<div class="form-group"><label>' + t('content') + ' *</label><textarea name="content" rows="4" required maxlength="1500"></textarea></div>' +
-        '<div class="form-group"><label>' + t('displayName') + '</label><input type="text" name="displayName" value="' + escapeHtml(cn) + '" maxlength="80"/></div>' +
         '<div class="form-group"><label><i class="fas fa-photo-video" style="color:#8b5cf6;"></i> ' + t('media') + '</label><input type="file" id="adMediaInput" accept="image/*,video/*" onchange="onAdMediaSelected(this)"/><div class="media-upload-hint"><i class="fas fa-info-circle"></i> Video: max 200MB.</div><div class="media-preview" id="adMediaPreview"></div><div class="promo-status" id="adMediaStatus"></div></div>' +
         '<div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">' + t('cancel') + '</button><button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> ' + t('post') + '</button></div></form>';
     ov.classList.add('show');
@@ -11052,10 +11594,17 @@ function submitAd(e) {
     var fd = new FormData(e.target);
     var title = (fd.get('title') || '').trim();
     var content = (fd.get('content') || '').trim();
-    var dn = (fd.get('displayName') || '').trim() || 'Company';
+    var tnReal = getTenant(currentTenantId);
+    var dn = isSuperAdmin ? 'MeX Admin' :
+        (isMexEmployee ? ((findMexEmployeeById(currentMexEmployeeId) || {}).name || 'Member') :
+        (tnReal ? tnReal.companyName : 'Company'));
     var u = getCurrentUser();
     if (!title || !content) {
         showToast('Fill fields', 'error');
+        return;
+    }
+    if (countMyActiveAds() >= AD_MAX_PER_ENTITY) {
+        showToast('⚠ ' + t('adLimitReached'), 'warning');
         return;
     }
     var btn = e.target.querySelector('button[type="submit"]');
@@ -11068,8 +11617,9 @@ function submitAd(e) {
             id: uid(),
             title: title,
             content: content,
-            postedBy: isSuperAdmin ? 'super' : 'company',
-            tenantId: isSuperAdmin ? null : currentTenantId,
+            postedBy: isSuperAdmin ? 'super' : (isMexEmployee ? 'mex' : 'company'),
+            posterId: isMexEmployee ? currentMexEmployeeId : null,
+            tenantId: (isSuperAdmin || isMexEmployee) ? null : currentTenantId,
             authorName: u ? (u.fullName || u.username) : 'User',
             companyName: dn,
             timestamp: Date.now(),
@@ -11197,6 +11747,9 @@ function markDebtPaid(id) {
 }
 
 function deleteDebt(id) {
+    if (!hasPerm('sales_create')) {
+        return;
+    }
     if (!confirm(t('deleteConfirm'))) {
         return;
     }
@@ -11236,7 +11789,7 @@ views.inventory = function() {
     var cats = ensureCategories();
     var cb = '<div class="inv-cat-bar">' + cats.map(function(c) {
         return '<span class="inv-cat-chip">' + escapeHtml(c.name) + (ce ? '<button type="button" onclick="deleteInventoryCategory(\'' + c.id + '\')">×</button>' : '') + '</span>';
-    }).join('') + (ce ? '<button class="btn btn-secondary btn-xs" onclick="promptAddCategory()">+ Add</button>' : '') + '</div>';
+    }).join('') + (ce ? '<button class="btn btn-secondary btn-xs" onclick="promptAddCategory()">' + t('add') + '</button>' : '') + '</div>';
     var branchTotals = {};
     getTenantData('products', []).forEach(function(x) {
         var sn = normStore(x.store);
@@ -11263,7 +11816,7 @@ views.inventory = function() {
         }).join('') + '</div>';
     }
     var rows = p.map(function(x) {
-        var dot = '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:' + (x.quantity <= 0 ? 'var(--accent-danger)' : x.quantity <= 5 ? 'var(--accent-3)' : 'var(--accent-4)') + ';"></span>';
+        var dot = '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:' + (x.quantity <= 0 ? 'var(--accent-danger)' : x.quantity <= LOW_STOCK_THRESHOLD ? 'var(--accent-3)' : 'var(--accent-4)') + ';"></span>';
         return '<tr><td>' + productImageHtml(x) + '</td><td><strong>' + escapeHtml(x.name) + '</strong></td><td><span class="badge badge-info" style="font-size:.68rem;"><i class="fas fa-store"></i> ' + escapeHtml(x.store || '--') + '</span></td><td>' + escapeHtml(x.category || 'General') + '</td><td>' + fmtMoney(x.price) + '</td><td>' + fmtMoney(x.cost) + '</td><td><strong>' + x.quantity + '</strong></td><td>' + dot + '</td><td>' + (ce ? '<button class="btn btn-success btn-xs" onclick="adjustStock(\'' + x.id + '\')" title="Adjust">+</button> <button class="btn btn-danger btn-xs" onclick="deleteProduct(\'' + x.id + '\')" title="Delete">×</button>' : '—') + '</td></tr>';
     }).join('');
     var headerActions = '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
@@ -11289,6 +11842,7 @@ views.pnl = function() {
     sales.forEach(function(s) {
         var d = new Date(s.date);
         var m = d.toLocaleDateString('en-TZ', {
+            timeZone: 'Africa/Dar_es_Salaam',
             month: 'short',
             year: 'numeric'
         });
@@ -11300,6 +11854,7 @@ views.pnl = function() {
     expenses.forEach(function(e) {
         var d = new Date(e.date);
         var m = d.toLocaleDateString('en-TZ', {
+            timeZone: 'Africa/Dar_es_Salaam',
             month: 'short',
             year: 'numeric'
         });
@@ -11459,7 +12014,7 @@ views.expenses = function() {
     var cats = ensureExpenseCategories();
     var cb = '<div class="inv-cat-bar">' + cats.map(function(c) {
         return '<span class="inv-cat-chip">' + escapeHtml(c.name) + '<button type="button" onclick="deleteExpenseCategory(\'' + c.id + '\')">×</button></span>';
-    }).join('') + '<button class="btn btn-secondary btn-xs" onclick="promptAddExpenseCategory()">+ Add</button></div>';
+    }).join('') + '<button class="btn btn-secondary btn-xs" onclick="promptAddExpenseCategory()">' + t('add') + '</button></div>';
     return '<div class="section-header"><h2><i class="fas fa-receipt"></i> ' + t('expenses') + '</h2><button class="btn btn-primary btn-icon" onclick="openModal(\'expense\')"><i class="fas fa-plus"></i> ' + t('addExpense') + '</button></div>' + cb + '<div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>' + t('description') + '</th><th>' + t('amount') + '</th><th>' + t('category') + '</th><th>' + t('date') + '</th><th></th></tr></thead><tbody>' + (e.length === 0 ? '<tr class="empty-row"><td colspan="6">' + t('noExpenses') + '</td></tr>' : e.map(function(x, i) {
         return '<tr><td>' + (i + 1) + '</td><td>' + escapeHtml(x.description) + '</td><td>' + fmtMoney(x.amount) + '</td><td><span class="badge badge-info">' + escapeHtml(x.category) + '</span></td><td>' + fmtDate(x.date) + '</td><td><button class="btn btn-danger btn-xs" onclick="deleteExpense(\'' + x.id + '\')">×</button></td></tr>';
     }).join('')) + '</tbody></table></div></div></div>';
@@ -11486,7 +12041,7 @@ views.branches = function() {
         var isO = bu ? isUserOnline(bu.id) : false;
         var sc = isO ? 'online' : 'offline';
         var main = b.name === u.store;
-        return '<tr><td><div style="display:flex;align-items:center;gap:10px;">' + (bu ? getUserPhotoHtml(bu, '', 'width:34px;height:34px;border-radius:50%;object-fit:cover;') : getCompanyPhotoHtml(currentTenantId, '', 'width:34px;height:34px;border-radius:50%;object-fit:cover;')) + '<strong>' + escapeHtml(b.name) + '</strong>' + (main ? ' 🏠' : '') + '</div></td><td>' + escapeHtml(b.address || '—') + '</td><td>' + (bu ? escapeHtml(bu.username) : '—') + '</td><td><span class="online-status ' + sc + '"><span class="dot ' + sc + '"></span>' + (isO ? 'Online' : 'Offline') + '</span></td><td>' + (bu ? '<button class="btn btn-xs btn-secondary" onclick="resetBranchPassword(\'' + bu.id + '\')">' + t('reset') + '</button>' : '') + (!main ? ' <button class="btn btn-danger btn-xs" onclick="deleteBranch(\'' + encArg(b.name) + '\')"><i class="fas fa-trash"></i></button>' : '') + '</td></tr>';
+        return '<tr><td><div style="display:flex;align-items:center;gap:10px;">' + (bu ? getUserPhotoHtml(bu, '', 'width:34px;height:34px;border-radius:50%;object-fit:cover;') : getCompanyPhotoHtml(currentTenantId, '', 'width:34px;height:34px;border-radius:50%;object-fit:cover;')) + '<strong>' + escapeHtml(b.name) + '</strong>' + (main ? ' 🏠' : '') + '</div></td><td>' + escapeHtml(b.address || '—') + '</td><td>' + (bu ? escapeHtml(bu.username) : '—') + '</td><td><span class="online-status ' + sc + '"><span class="dot ' + sc + '"></span>' + (isO ? t('online') : t('offline')) + '</span></td><td>' + (bu ? '<button class="btn btn-xs btn-secondary" onclick="resetBranchPassword(\'' + bu.id + '\')">' + t('reset') + '</button>' : '') + (!main ? ' <button class="btn btn-danger btn-xs" onclick="deleteBranch(\'' + encArg(b.name) + '\')"><i class="fas fa-trash"></i></button>' : '') + '</td></tr>';
     }).join('');
     return '<div class="section-header"><h2>' + t('branches') + '</h2><button class="btn btn-primary btn-icon" onclick="openBranchModal()"><i class="fas fa-plus"></i> ' + t('addBranch') + '</button></div><div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th>' + t('branch') + '</th><th>' + t('address') + '</th><th>' + t('username') + '</th><th>' + t('status') + '</th><th></th></tr></thead><tbody>' + (bh || '<tr class="empty-row"><td colspan="5">—</td></tr>') + '</tbody></table></div></div></div>';
 };
@@ -11505,7 +12060,7 @@ views.users = function() {
         var isS = x.id === u.id;
         var isOwn = x.role === 'owner';
         var sc = isO ? 'online' : 'offline';
-        return '<tr><td>' + (i + 1) + '</td><td><div style="display:flex;align-items:center;gap:10px;">' + getUserPhotoHtml(x, '', 'width:34px;height:34px;border-radius:50%;object-fit:cover;') + '<strong>' + escapeHtml(x.fullName || x.username) + '</strong></div></td><td>' + escapeHtml(x.username) + '</td><td><span class="badge ' + getRoleBadgeClass(x.role) + '">' + getRoleLabel(x.role) + '</span></td><td>' + escapeHtml(x.store || '--') + '</td><td><span class="online-status ' + sc + '"><span class="dot ' + sc + '"></span>' + (isO ? 'Online' : 'Offline') + '</span></td><td>' + (!isOwn && !isS ? '<button class="btn btn-danger btn-xs" onclick="deleteUser(\'' + x.id + '\')">×</button>' : '—') + '</td></tr>';
+        return '<tr><td>' + (i + 1) + '</td><td><div style="display:flex;align-items:center;gap:10px;">' + getUserPhotoHtml(x, '', 'width:34px;height:34px;border-radius:50%;object-fit:cover;') + '<strong>' + escapeHtml(x.fullName || x.username) + '</strong></div></td><td>' + escapeHtml(x.username) + '</td><td><span class="badge ' + getRoleBadgeClass(x.role) + '">' + getRoleLabel(x.role) + '</span></td><td>' + escapeHtml(x.store || '--') + '</td><td><span class="online-status ' + sc + '"><span class="dot ' + sc + '"></span>' + (isO ? t('online') : t('offline')) + '</span></td><td>' + (!isOwn && !isS ? '<button class="btn btn-danger btn-xs" onclick="deleteUser(\'' + x.id + '\')">×</button>' : '—') + '</td></tr>';
     }).join('');
     return '<div class="section-header"><h2>' + t('users') + '</h2><button class="btn btn-primary btn-icon" onclick="openModal(\'user\')"><i class="fas fa-user-plus"></i> ' + t('addUser') + '</button></div><div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>' + t('name') + '</th><th>' + t('username') + '</th><th>' + t('role') + '</th><th>' + t('store') + '</th><th>' + t('status') + '</th><th></th></tr></thead><tbody>' + (uh || '<tr class="empty-row"><td colspan="7">—</td></tr>') + '</tbody></table></div></div></div>';
 };
@@ -11544,7 +12099,7 @@ views.attendance = function() {
         var emp = getUser(p.userId);
         return '<tr><td>' + (i + 1) + '</td><td><div style="display:flex;align-items:center;gap:10px;">' + (emp ? getUserPhotoHtml(emp, '', 'width:32px;height:32px;border-radius:50%;object-fit:cover;') : '<img src="' + avatarUrl(p.userName || 'User', '128C7E') + '" style="width:32px;height:32px;border-radius:50%;"/>') + '<strong>' + escapeHtml(p.userName) + '</strong></div></td><td>' + escapeHtml(p.branchName) + '</td><td>' + fmtDateTime(p.loginTime) + '</td><td>' + lo + '</td></tr>';
     }).join('') + '</tbody></table></div>';
-    return '<div class="section-header"><h2>' + t('attendance') + '</h2><button class="btn btn-danger btn-sm" onclick="clearAttendanceHistory()">Clear</button></div><div class="stats-grid"><div class="stat-card"><div class="stat-label">Online</div><div class="stat-value primary">' + onu.length + '</div></div><div class="stat-card"><div class="stat-label">' + t('today') + '</div><div class="stat-value primary-light">' + tp.length + '</div></div><div class="stat-card"><div class="stat-label">Total</div><div class="stat-value primary">' + h.length + '</div></div></div><div class="card"><div class="card-body">' + hh + '</div></div>';
+    return '<div class="section-header"><h2>' + t('attendance') + '</h2><button class="btn btn-danger btn-sm" onclick="clearAttendanceHistory()">' + t('clear') + '</button></div><div class="stats-grid"><div class="stat-card"><div class="stat-label">' + t('online') + '</div><div class="stat-value primary">' + onu.length + '</div></div><div class="stat-card"><div class="stat-label">' + t('today') + '</div><div class="stat-value primary-light">' + tp.length + '</div></div><div class="stat-card"><div class="stat-label">Total</div><div class="stat-value primary">' + h.length + '</div></div></div><div class="card"><div class="card-body">' + hh + '</div></div>';
 };
 
 views.reports = function() {
@@ -11666,18 +12221,6 @@ function applyCustomRange() {
     navigate('reports');
 }
 
-function sendWhatsAppReport() {
-    openSendReportModal('sales');
-}
-
-function sendEmailReport() {
-    openSendReportModal('sales');
-}
-
-function sendWhatsAppDebtReport() {
-    openSendReportModal('debts');
-}
-
 function renderEmergencyContact() {
     var u = getCurrentUser();
     if (!u) {
@@ -11697,9 +12240,10 @@ function openModal(type, data) {
     bx.style.padding = '';
     bx.style.overflow = '';
     bx.style.borderRadius = '';
+    bx.style.maxWidth = '';
     if (type === 'sale') {
         var store = getCatalogStore();
-        var p = getTenantData('products', []);
+        var p = getFilteredProducts();
         var avail = p.filter(function(x) {
             return x.quantity > 0;
         });
@@ -11761,6 +12305,7 @@ function closeModal() {
     bx.style.padding = '';
     bx.style.overflow = '';
     bx.style.borderRadius = '';
+    bx.style.maxWidth = '';
     muteAllVideos();
     var stillOpen = document.querySelector('.modal-overlay.show');
     if (!stillOpen) {
@@ -11802,7 +12347,7 @@ function submitSale(e) {
     }
     var ps = getTenantData('products', []);
     var p = ps.find(function(x) {
-        return x.id === pid;
+        return x.id === pid && (!x.store || normStore(x.store) === normStore(st));
     });
     if (!p || p.quantity < q) {
         return;
@@ -11988,6 +12533,9 @@ function deleteSale(id) {
 }
 
 function deleteExpense(id) {
+    if (!hasPerm('expenses_manage')) {
+        return;
+    }
     if (!confirm(t('deleteConfirm'))) {
         return;
     }
@@ -11998,6 +12546,9 @@ function deleteExpense(id) {
 }
 
 function deleteProduct(id) {
+    if (!hasPerm('inventory_manage')) {
+        return;
+    }
     if (!confirm(t('deleteConfirm'))) {
         return;
     }
@@ -12025,6 +12576,12 @@ function deleteUser(id) {
 }
 
 function changeUserRole(userId, newRole) {
+    if (!canManageRoles()) {
+        return;
+    }
+    if (['admin', 'accountant', 'employee'].indexOf(newRole) === -1) {
+        return;
+    }
     var us = getTenantData('users', []);
     var u = us.find(function(x) {
         return x.id === Number(userId);
@@ -12351,6 +12908,19 @@ function updateAllUI(user) {
         ti.src = photo;
         ti.dataset.photoKey = key;
     }
+    if (key) {
+        getMediaUrl(key).then(function(url) {
+            if (!url) {
+                return;
+            }
+            if (ti) {
+                ti.src = url;
+            }
+            if (av) {
+                av.style.backgroundImage = cssUrl(url);
+            }
+        });
+    }
     var dn = user.fullName || user.username || 'User';
     document.getElementById('sideUserName').textContent = dn;
     document.getElementById('topProfileName').textContent = dn;
@@ -12398,6 +12968,10 @@ function updateSidebarForLock() {
         } else if (v === 'inventory' && !hasPerm('inventory_view')) {
             el.style.display = 'none';
         } else if (v === 'debts' && !hasPerm('sales_create')) {
+            el.style.display = 'none';
+        } else if (v === 'pnl' && !canSeeNetProfit()) {
+            el.style.display = 'none';
+        } else if (v === 'expenses' && !canSeeExpenses()) {
             el.style.display = 'none';
         } else {
             el.style.display = 'flex';
@@ -12590,6 +13164,7 @@ function openAddMexEmployeeModal() {
     bx.style.padding = '';
     bx.style.overflow = '';
     bx.style.borderRadius = '';
+    bx.style.maxWidth = '';
     bx.innerHTML = '<h3>' + t('addMember') + '</h3><form onsubmit="submitAddMexEmployee(event)"><div class="form-group"><label>' + t('fullName') + ' *</label><input type="text" name="name" required/></div><div class="form-group"><label>' + t('phoneNumber') + '</label><input type="text" name="phone"/></div><div class="form-group"><label>' + t('password') + '</label><input type="text" name="password" placeholder="(auto)"/></div><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">' + t('cancel') + '</button><button type="submit" class="btn btn-primary">' + t('save') + '</button></div></form>';
     ov.classList.add('show');
     document.body.classList.add('modal-open');
@@ -12640,6 +13215,7 @@ function openSuperAddCompanyModal() {
     bx.style.padding = '';
     bx.style.overflow = '';
     bx.style.borderRadius = '';
+    bx.style.maxWidth = '';
     bx.innerHTML = '<h3>' + t('addCompany') + '</h3><form onsubmit="submitSuperAddCompany(event)"><div class="form-group"><label>' + t('companyName') + ' *</label><input type="text" name="company" required/></div><div class="form-row"><div class="form-group"><label>' + t('username') + ' *</label><input type="text" name="username" required/></div><div class="form-group"><label>' + t('password') + ' *</label><input type="password" name="password" required/></div></div><div class="form-group"><label>' + t('phoneNumber') + '</label><input type="text" name="phone"/></div><div class="form-group"><label>' + t('promoCode') + '</label><input type="text" name="promo" class="promo-code-input"/></div><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">' + t('cancel') + '</button><button type="submit" class="btn btn-primary">' + t('addCompany') + '</button></div></form>';
     ov.classList.add('show');
     document.body.classList.add('modal-open');
@@ -12681,7 +13257,7 @@ function submitSuperAddCompany(e) {
     navigate('superadmin');
 }
 
-function createTenant(companyName, username, password, phone, promoCode, pendingApproval) {
+function createTenant(companyName, username, password, phone, promoCode, pendingApproval, planKey) {
     var ts = getAllTenants();
     if (isUsernameTaken(username)) {
         return {
@@ -12701,10 +13277,12 @@ function createTenant(companyName, username, password, phone, promoCode, pending
         pendingApproval: !!pendingApproval,
         createdAt: now,
         promoCode: pc || null,
+        planKey: SUBSCRIPTION_PLANS[planKey] ? planKey : 'monthly',
+        commissionCredited: false,
         branches: [{
             name: companyName,
             address: 'Main Office',
-            tin: 'TIN-123456789',
+            tin: '',
             permissions: Object.assign({}, DEFAULT_BRANCH_PERMS)
         }],
         ownerPublic: {
@@ -12757,7 +13335,7 @@ function createTenant(companyName, username, password, phone, promoCode, pending
         });
         setTenantData('company', {
             name: companyName,
-            tin: 'TIN-123456789',
+            tin: '',
             address: ''
         });
         setTenantData('sessions', {});
@@ -12767,16 +13345,35 @@ function createTenant(companyName, username, password, phone, promoCode, pending
     } finally {
         currentTenantId = old;
     }
-    if (pc) {
-        try {
-            creditPromoCommission(pc, id, companyName, username);
-        } catch(e) {}
+    if (!pendingApproval) {
+        var freshList = getAllTenants();
+        var created = freshList.find(function(x) {
+            return x.id === id;
+        });
+        if (created) {
+            creditTenantCommission(created);
+            saveTenants(freshList);
+        }
     }
     return {
         success: true,
         tenant: tenant,
         ownerUser: ownerUser
     };
+}
+
+function creditTenantCommission(tn) {
+    if (!tn || !tn.promoCode || tn.commissionCredited) {
+        return;
+    }
+    var res = creditPromoCommission(tn.promoCode, tn.id, tn.companyName, tn.ownerUsername);
+    if (!res || !res.employee) {
+        return;
+    }
+    var key = SUBSCRIPTION_PLANS[tn.planKey] ? tn.planKey : 'monthly';
+    creditMemberEarning(res.employee.id, res.employee.name, tn.id, tn.companyName,
+        key, SUBSCRIPTION_PLANS[key].price, tn.ownerUsername);
+    tn.commissionCredited = true;
 }
 
 function superApproveTenant(id) {
@@ -12791,6 +13388,7 @@ function superApproveTenant(id) {
         return;
     }
     tn.pendingApproval = false;
+    creditTenantCommission(tn);
     saveTenants(ts);
     navigate('superadmin');
 }
@@ -12844,6 +13442,11 @@ function superDeleteTenant(id) {
     if (!confirm(t('deleteConfirm') + ' "' + tn.companyName + '"?')) {
         return;
     }
+    getGlobalAds().filter(function(a) {
+        return a.tenantId === id;
+    }).forEach(function(a) {
+        deleteGlobalAd(a.id);
+    });
     Object.keys(localStorage).forEach(function(k) {
         if (k.indexOf('sb_tenant_' + id + '_') === 0) {
             localStorage.removeItem(k);
@@ -12889,6 +13492,12 @@ function handleSubscriptionPayment() {
     if (!bn || !un || !pw) {
         return;
     }
+    if (getBranchNames().some(function(n) {
+        return normStore(n).toLowerCase() === bn.toLowerCase();
+    })) {
+        showToast('⚠ ' + t('branch') + ': ' + bn, 'error');
+        return;
+    }
     var ts = getAllTenants();
     var tn = ts.find(function(x) {
         return x.id === currentTenantId;
@@ -12917,7 +13526,9 @@ function handleSubscriptionPayment() {
         store: bn,
         fullName: 'Branch Manager - ' + bn,
         createdBy: cu ? cu.id : 1,
-        tenantId: currentTenantId
+        photoKey: '',
+        tenantId: currentTenantId,
+        theme: 'light'
     });
     setTenantData('users', users);
     closeSubscriptionModal();
@@ -12955,6 +13566,10 @@ function deleteBranch(bn) {
 }
 
 function resetBranchPassword(userId) {
+    var cuGuard = getCurrentUser();
+    if (!cuGuard || isSuperAdmin || isMexEmployee || cuGuard.role !== 'owner') {
+        return;
+    }
     var pw = prompt('New password:');
     if (pw && pw.length >= 4) {
         var users = getTenantData('users', []);
@@ -13440,7 +14055,7 @@ function confirmPaymentAndRegister() {
     }
     closePaymentPlanModal();
     var d = pendingRegistrationData;
-    var r = createTenant(d.company, d.username, d.password, d.phone, d.promo, true);
+    var r = createTenant(d.company, d.username, d.password, d.phone, d.promo, true, selectedPaymentPlan);
     if (!r || !r.success) {
         er.textContent = r ? r.msg : 'Failed';
         return;
