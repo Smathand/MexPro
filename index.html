@@ -9,10 +9,18 @@
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="format-detection" content="telephone=no"/>
 <title>MeX PRO — Multi-Tenant Business System</title>
+
+<!-- ============================================================ -->
+<!-- EXTERNAL LIBRARIES                                            -->
+<!-- ============================================================ -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Sans+Arabic:wght@400;500;700;900&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
 <style>
+/* ============================================================ */
+/* CSS — ROOT VARIABLES (LIGHT THEME)                            */
+/* ============================================================ */
 :root{
 --bg-body:#f0f4f8;
 --bg-card:#fff;
@@ -47,6 +55,10 @@
 --report-period-text:#1b5e20;
 --media-bg:linear-gradient(135deg,#e2e8f0,#cbd5e1)
 }
+
+/* ============================================================ */
+/* CSS — ROOT VARIABLES (DARK THEME)                             */
+/* ============================================================ */
 body.dark{
 --bg-body:#0a0a0a;
 --bg-card:#1a1a1a;
@@ -69,25 +81,33 @@ body.dark{
 --report-period-text:#a5d6a7;
 --media-bg:linear-gradient(135deg,#1e293b,#334155)
 }
+
+/* ============================================================ */
+/* CSS — GLOBAL RESET & BASE                                     */
+/* ============================================================ */
 *{
 margin:0;
 padding:0;
 box-sizing:border-box
 }
+
 html,body{
 scrollbar-width:none;
 -ms-overflow-style:none
 }
+
 html::-webkit-scrollbar,body::-webkit-scrollbar{
 width:0;
 height:0;
 display:none
 }
+
 *::-webkit-scrollbar{
 width:0!important;
 height:0!important;
 display:none!important
 }
+
 html{
 background:#f0f4f8;
 overscroll-behavior:none;
@@ -95,9 +115,11 @@ height:100%;
 width:100%;
 scroll-behavior:smooth
 }
+
 html.dark-bg{
 background:#0a0a0a
 }
+
 body{
 font-family:var(--font);
 background:var(--bg-body);
@@ -117,20 +139,28 @@ position:relative;
 font-feature-settings:'cv02','cv03','cv04','cv11';
 letter-spacing:-.005em
 }
+
 html[lang="ar"] body{
 font-family:'Noto Sans Arabic','Inter',sans-serif;
 letter-spacing:0
 }
+
 html[lang="zh"] body{
 font-family:'Noto Sans SC','Inter',sans-serif
 }
+
 input,textarea,select{
 user-select:text;
 -webkit-user-select:text
 }
+
 body.modal-open{
 overflow:hidden
 }
+
+/* ============================================================ */
+/* CSS — BUTTONS                                                 */
+/* ============================================================ */
 button,.btn{
 outline:none!important;
 box-shadow:none!important;
@@ -141,12 +171,14 @@ font-family:var(--font);
 transition:background .15s ease,color .15s ease,border-color .15s ease;
 font-weight:600
 }
+
 .btn-primary{
 background:var(--accent-1)!important;
 color:#fff!important;
 padding:10px 20px;
 font-weight:600
 }
+
 .btn-secondary{
 background:var(--input-bg)!important;
 color:var(--text-secondary)!important;
@@ -154,50 +186,62 @@ border:1px solid var(--border-color)!important;
 padding:10px 20px;
 font-weight:600
 }
+
 .btn-success{
 background:var(--accent-4)!important;
 color:#fff!important;
 padding:10px 20px;
 font-weight:600
 }
+
 .btn-danger{
 background:var(--accent-danger)!important;
 color:#fff!important;
 padding:10px 20px;
 font-weight:600
 }
+
 .btn-sm{
 padding:6px 14px!important;
 font-size:.8rem!important;
 border-radius:8px!important
 }
+
 .btn-xs{
 padding:3px 10px!important;
 font-size:.7rem!important;
 border-radius:6px!important
 }
+
 .btn-icon{
 display:inline-flex;
 align-items:center;
 gap:8px
 }
+
 .btn-block{
 width:100%;
 display:block;
 text-align:center
 }
+
 .btn-whatsapp{
 background:var(--whatsapp-color)!important;
 color:#fff!important;
 padding:10px 20px;
 font-weight:600
 }
+
 .btn-email{
 background:var(--email-color)!important;
 color:#fff!important;
 padding:10px 20px;
 font-weight:600
 }
+
+/* ============================================================ */
+/* CSS — CARDS                                                   */
+/* ============================================================ */
 .card{
 background:var(--bg-card);
 border-radius:var(--radius-card);
@@ -205,6 +249,7 @@ border:1px solid var(--border-color);
 box-shadow:var(--shadow-card);
 overflow:hidden
 }
+
 .card-header{
 padding:16px 24px;
 border-bottom:1px solid var(--border-color);
@@ -214,6 +259,7 @@ justify-content:space-between;
 flex-wrap:wrap;
 gap:12px
 }
+
 .card-header h3{
 font-size:1.05rem;
 font-weight:700;
@@ -221,9 +267,14 @@ display:flex;
 align-items:center;
 gap:10px
 }
+
 .card-body{
 padding:20px 24px
 }
+
+/* ============================================================ */
+/* CSS — FORM ELEMENTS                                           */
+/* ============================================================ */
 input,select,textarea{
 width:100%;
 padding:12px 16px;
@@ -237,11 +288,13 @@ outline:none;
 transition:.2s;
 font-weight:500
 }
+
 input:focus,select:focus,textarea:focus{
 border-color:var(--accent-1);
 box-shadow:0 0 0 3px rgba(18,140,126,.15);
 background:var(--bg-card)
 }
+
 label{
 display:block;
 font-size:.78rem;
@@ -251,14 +304,20 @@ margin-bottom:6px;
 letter-spacing:.01em;
 text-transform:uppercase
 }
+
 .form-group{
 margin-bottom:14px
 }
+
 .form-row{
 display:grid;
 grid-template-columns:1fr 1fr;
 gap:12px
 }
+
+/* ============================================================ */
+/* CSS — BADGES                                                  */
+/* ============================================================ */
 .badge{
 display:inline-block;
 padding:3px 12px;
@@ -266,46 +325,57 @@ border-radius:20px;
 font-size:.7rem;
 font-weight:700
 }
+
 .badge-success{
 background:rgba(16,185,129,.12);
 color:var(--accent-4)
 }
+
 .badge-danger{
 background:rgba(239,68,68,.12);
 color:var(--accent-danger)
 }
+
 .badge-warning{
 background:rgba(245,158,11,.12);
 color:var(--accent-3)
 }
+
 .badge-primary{
 background:rgba(18,140,126,.12);
 color:var(--accent-1)
 }
+
 .badge-info{
 background:rgba(18,140,126,.08);
 color:var(--accent-1)
 }
+
 .badge-role-admin{
 background:rgba(59,130,246,.15);
 color:#3b82f6
 }
+
 .badge-role-employee{
 background:rgba(16,185,129,.15);
 color:#10b981
 }
+
 .badge-role-accountant{
 background:rgba(245,158,11,.15);
 color:#f59e0b
 }
+
 .badge-role-owner{
 background:rgba(139,92,246,.15);
 color:#8b5cf6
 }
+
 .badge-branch{
 background:linear-gradient(135deg,#8b5cf6,#6d28d9);
 color:#fff
 }
+
 .verified-badge{
 display:inline-flex;
 align-items:center;
@@ -319,23 +389,31 @@ font-size:8px;
 margin-left:5px;
 vertical-align:middle
 }
+
 html[dir="rtl"] .verified-badge{
 margin-left:0;
 margin-right:5px
 }
+
 .verified-badge i{
 color:#fff;
 font-size:8px;
 font-weight:900
 }
+
+/* ============================================================ */
+/* CSS — TABLES                                                  */
+/* ============================================================ */
 .table-wrap{
 overflow-x:auto
 }
+
 table{
 width:100%;
 border-collapse:collapse;
 font-size:.88rem
 }
+
 th{
 text-align:left;
 padding:12px 12px 12px 0;
@@ -347,10 +425,12 @@ letter-spacing:.6px;
 border-bottom:1px solid var(--border-color);
 white-space:nowrap
 }
+
 html[dir="rtl"] th{
 text-align:right;
 padding:12px 0 12px 12px
 }
+
 td{
 padding:14px 12px 14px 0;
 border-bottom:1px solid var(--border-color);
@@ -358,21 +438,29 @@ color:var(--text-secondary);
 vertical-align:middle;
 font-weight:500
 }
+
 html[dir="rtl"] td{
 padding:14px 0 14px 12px
 }
+
 tr:last-child td{
 border-bottom:none
 }
+
 tbody tr:hover{
 background:rgba(18,140,126,.03)
 }
+
 .empty-row td{
 text-align:center;
 padding:40px;
 color:var(--text-muted);
 font-weight:500
 }
+
+/* ============================================================ */
+/* CSS — LOGIN / REGISTER PAGES                                  */
+/* ============================================================ */
 .page-overlay{
 position:fixed;
 inset:0;
@@ -385,9 +473,11 @@ padding:20px;
 overflow-y:auto;
 background-size:cover
 }
+
 .page-overlay.hidden{
 display:none
 }
+
 .page-card{
 margin:20px auto;
 max-height:92vh;
@@ -401,57 +491,72 @@ box-shadow:var(--shadow-dropdown);
 border:1px solid var(--border-color);
 text-align:center
 }
+
 .page-card .logo-icon{
 font-size:44px;
 color:var(--accent-1);
 margin-bottom:4px
 }
+
 .page-card h2{
 font-size:1.5rem;
 font-weight:800;
 color:var(--accent-1);
 letter-spacing:-.02em
 }
+
 .page-card .subtitle{
 color:var(--text-muted);
 margin-bottom:16px;
 font-size:.85rem;
 font-weight:500
 }
+
 .page-card .input-group{
 text-align:left;
 margin-bottom:12px
 }
+
 html[dir="rtl"] .page-card .input-group{
 text-align:right
 }
+
 .page-card .input-group label{
 font-size:.72rem
 }
+
 .page-card input{
 padding:11px 14px
 }
+
 .error-msg{
 color:var(--accent-danger);
 font-size:.85rem;
 margin-top:8px;
 font-weight:600
 }
+
 .success-msg{
 color:var(--accent-4);
 font-size:.85rem;
 margin-top:8px;
 font-weight:600
 }
+
 .link-text{
 color:var(--accent-1);
 font-weight:700;
 cursor:pointer
 }
+
 .divider{
 margin:14px 0 10px;
 border-top:1px solid var(--border-color)
 }
+
+/* ============================================================ */
+/* CSS — APP LAYOUT (SIDEBAR + MAIN)                             */
+/* ============================================================ */
 .app-container{
 display:none;
 height:100vh;
@@ -461,9 +566,11 @@ padding:12px;
 gap:12px;
 background:var(--bg-body)
 }
+
 .app-container.active{
 display:flex
 }
+
 .sidebar{
 width:240px;
 min-width:240px;
@@ -476,6 +583,7 @@ overflow-y:auto;
 border-radius:16px;
 box-shadow:var(--shadow-card)
 }
+
 .sidebar-brand{
 display:flex;
 align-items:center;
@@ -485,6 +593,7 @@ border-bottom:1px solid rgba(255,255,255,.15);
 margin-bottom:12px;
 flex-wrap:wrap
 }
+
 .sidebar-brand .brand-icon{
 width:40px;
 height:40px;
@@ -497,11 +606,13 @@ font-size:1.2rem;
 font-weight:800;
 color:#fff
 }
+
 .sidebar-brand .brand-text{
 font-size:1.05rem;
 font-weight:800;
 color:#fff
 }
+
 .sidebar-brand .brand-ver{
 font-size:.55rem;
 font-weight:800;
@@ -512,16 +623,19 @@ border-radius:20px;
 margin-left:auto;
 letter-spacing:.6px
 }
+
 html[dir="rtl"] .sidebar-brand .brand-ver{
 margin-left:0;
 margin-right:auto
 }
+
 .sidebar-nav{
 flex:1;
 display:flex;
 flex-direction:column;
 gap:2px
 }
+
 .sidebar-nav .nav-item{
 display:flex;
 align-items:center;
@@ -537,26 +651,32 @@ width:100%;
 text-align:left;
 min-height:44px
 }
+
 html[dir="rtl"] .sidebar-nav .nav-item{
 text-align:right
 }
+
 .sidebar-nav .nav-item i{
 width:20px;
 font-size:1rem;
 color:var(--text-sidebar)
 }
+
 .sidebar-nav .nav-item:hover{
 background:var(--bg-sidebar-hover);
 color:#fff
 }
+
 .sidebar-nav .nav-item.active{
 background:var(--bg-sidebar-active);
 color:#fff;
 box-shadow:inset 3px 0 0 rgba(255,255,255,.55)
 }
+
 html[dir="rtl"] .sidebar-nav .nav-item.active{
 box-shadow:inset -3px 0 0 rgba(255,255,255,.55)
 }
+
 .sidebar-nav .nav-item .badge{
 margin-left:auto;
 background:rgba(255,255,255,.2);
@@ -566,10 +686,12 @@ font-weight:700;
 padding:2px 10px;
 border-radius:20px
 }
+
 html[dir="rtl"] .sidebar-nav .nav-item .badge{
 margin-left:0;
 margin-right:auto
 }
+
 .sidebar-footer{
 margin-top:auto;
 padding-top:14px;
@@ -579,6 +701,7 @@ align-items:center;
 gap:12px;
 flex-wrap:wrap
 }
+
 .sidebar-footer .user-avatar{
 width:38px;
 height:38px;
@@ -595,11 +718,13 @@ overflow:hidden;
 background-size:cover!important;
 background-position:center!important
 }
+
 .sidebar-footer .user-info{
 flex:1;
 line-height:1.25;
 min-width:0
 }
+
 .sidebar-footer .user-info .name{
 font-weight:700;
 font-size:.8rem;
@@ -608,6 +733,7 @@ white-space:nowrap;
 overflow:hidden;
 text-overflow:ellipsis
 }
+
 .sidebar-footer .user-info .role{
 font-size:.6rem;
 color:rgba(255,255,255,.7);
@@ -615,6 +741,7 @@ text-transform:uppercase;
 letter-spacing:.05em;
 font-weight:600
 }
+
 .sidebar-footer .logout-btn{
 background:rgba(255,255,255,.08);
 color:rgba(255,255,255,.6);
@@ -627,6 +754,7 @@ align-items:center;
 justify-content:center;
 font-size:.9rem
 }
+
 .main-content{
 flex:1;
 display:flex;
@@ -637,6 +765,10 @@ border-radius:16px;
 box-shadow:var(--shadow-card);
 min-width:0
 }
+
+/* ============================================================ */
+/* CSS — TOPBAR                                                  */
+/* ============================================================ */
 .topbar{
 padding:16px 28px;
 background:var(--bg-card);
@@ -650,17 +782,20 @@ gap:14px;
 position:relative;
 z-index:100
 }
+
 .topbar .page-title{
 font-size:1.15rem;
 font-weight:800;
 letter-spacing:-.02em
 }
+
 .topbar .topbar-actions{
 display:flex;
 align-items:center;
 gap:14px;
 flex-wrap:wrap
 }
+
 .topbar .topbar-actions .date-display{
 font-size:.82rem;
 color:var(--text-muted);
@@ -673,6 +808,7 @@ display:inline-flex;
 align-items:center;
 gap:8px
 }
+
 .topbar .topbar-actions .theme-toggle,.topbar .topbar-actions .chat-topbar-btn{
 background:var(--input-bg);
 border:1px solid var(--border-color)!important;
@@ -689,10 +825,12 @@ flex-shrink:0;
 position:relative;
 transition:background .15s ease,color .15s ease,transform .15s ease
 }
+
 .topbar .topbar-actions .theme-toggle:hover,.topbar .topbar-actions .chat-topbar-btn:hover{
 background:var(--accent-1);
 color:#fff
 }
+
 .chat-topbar-btn .chat-badge{
 position:absolute;
 top:-5px;
@@ -708,9 +846,11 @@ text-align:center;
 display:none;
 border:2px solid var(--bg-card)
 }
+
 .chat-topbar-btn .chat-badge.show{
 display:block
 }
+
 .topbar .topbar-actions .profile-trigger{
 display:flex;
 align-items:center;
@@ -723,15 +863,18 @@ border:1px solid var(--border-color)!important;
 max-width:200px;
 flex-shrink:0
 }
+
 html[dir="rtl"] .topbar .topbar-actions .profile-trigger{
 padding:6px 6px 6px 16px
 }
+
 .topbar .topbar-actions .profile-trigger img{
 width:34px;
 height:34px;
 border-radius:50%;
 object-fit:cover
 }
+
 .topbar .topbar-actions .profile-trigger .profile-name{
 font-size:.85rem;
 font-weight:600;
@@ -739,10 +882,15 @@ white-space:nowrap;
 overflow:hidden;
 text-overflow:ellipsis
 }
+
+/* ============================================================ */
+/* CSS — LANGUAGE SWITCHER                                       */
+/* ============================================================ */
 .lang-wrapper{
 position:relative;
 z-index:1000
 }
+
 .lang-toggle{
 background:var(--input-bg);
 border:1.5px solid var(--border-color)!important;
@@ -760,10 +908,12 @@ justify-content:center;
 min-height:48px;
 letter-spacing:.02em
 }
+
 .lang-toggle:hover{
 border-color:var(--accent-1)!important;
 color:var(--accent-1)
 }
+
 .lang-menu{
 position:absolute;
 top:calc(100% + 10px);
@@ -779,13 +929,16 @@ z-index:100001;
 max-height:400px;
 overflow-y:auto
 }
+
 html[dir="rtl"] .lang-menu{
 right:auto;
 left:0
 }
+
 .lang-menu.show{
 display:block
 }
+
 .lang-menu button{
 display:flex;
 align-items:center;
@@ -801,28 +954,37 @@ text-align:left;
 min-height:44px;
 cursor:pointer
 }
+
 html[dir="rtl"] .lang-menu button{
 text-align:right
 }
+
 .lang-menu button:hover{
 background:var(--input-bg)!important;
 color:var(--accent-1)!important
 }
+
 .lang-menu button .lang-flag{
 font-size:1.1rem
 }
+
+/* ============================================================ */
+/* CSS — CONTENT AREA & STATS                                    */
+/* ============================================================ */
 .content-area{
 flex:1;
 overflow-y:auto;
 padding:24px 28px 32px;
 overscroll-behavior:contain
 }
+
 .stats-grid{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
 gap:12px;
 margin-bottom:18px
 }
+
 .stat-card{
 background:var(--bg-card);
 border-radius:16px;
@@ -836,6 +998,7 @@ display:flex;
 flex-direction:column;
 justify-content:center
 }
+
 .stat-card::after{
 content:'';
 position:absolute;
@@ -846,10 +1009,12 @@ width:3px;
 background:linear-gradient(180deg,var(--accent-1),var(--accent-3));
 opacity:.85
 }
+
 html[dir="rtl"] .stat-card::after{
 left:auto;
 right:0
 }
+
 .stat-card .stat-label{
 font-size:.62rem;
 text-transform:uppercase;
@@ -861,10 +1026,12 @@ text-overflow:ellipsis;
 padding-right:26px;
 letter-spacing:.05em
 }
+
 html[dir="rtl"] .stat-card .stat-label{
 padding-right:0;
 padding-left:26px
 }
+
 .stat-card .stat-value{
 font-size:clamp(.92rem,1vw + .68rem,1.3rem);
 font-weight:800;
@@ -873,21 +1040,27 @@ font-variant-numeric:tabular-nums;
 letter-spacing:-.02em;
 margin-top:2px
 }
+
 .stat-card .stat-value.primary{
 color:var(--accent-1)
 }
+
 .stat-card .stat-value.primary-light{
 color:#1a9b8c
 }
+
 .stat-card .stat-value.primary-dark{
 color:#0e6b5f
 }
+
 .stat-card .stat-value.red{
 color:var(--accent-danger)
 }
+
 .stat-card .stat-value.gold{
 color:var(--accent-3)
 }
+
 .stat-card .stat-icon{
 position:absolute;
 right:12px;
@@ -895,10 +1068,12 @@ top:12px;
 font-size:1.35rem;
 opacity:.08
 }
+
 html[dir="rtl"] .stat-card .stat-icon{
 right:auto;
 left:12px
 }
+
 .section-header{
 display:flex;
 align-items:center;
@@ -907,14 +1082,20 @@ margin-bottom:16px;
 flex-wrap:wrap;
 gap:12px
 }
+
 .section-header h2{
 font-size:1.05rem;
 font-weight:800;
 letter-spacing:-.01em
 }
+
 .section-header h2 i{
 color:var(--accent-1)
 }
+
+/* ============================================================ */
+/* CSS — MODALS                                                  */
+/* ============================================================ */
 .modal-overlay{
 position:fixed;
 inset:0;
@@ -926,9 +1107,11 @@ align-items:center;
 justify-content:center;
 padding:20px
 }
+
 .modal-overlay.show{
 display:flex
 }
+
 .modal-box{
 background:var(--bg-card);
 border-radius:var(--radius-card);
@@ -940,6 +1123,7 @@ overflow-y:auto;
 border:1px solid var(--border-color);
 box-shadow:var(--shadow-dropdown)
 }
+
 .modal-box h3{
 font-size:1.15rem;
 font-weight:800;
@@ -949,6 +1133,7 @@ align-items:center;
 gap:10px;
 letter-spacing:-.02em
 }
+
 .modal-box .form-actions{
 display:flex;
 gap:12px;
@@ -956,19 +1141,29 @@ margin-top:20px;
 justify-content:flex-end;
 flex-wrap:wrap
 }
+
 html[dir="rtl"] .modal-box .form-actions{
 justify-content:flex-start
 }
+
+/* ============================================================ */
+/* CSS — CHARTS                                                  */
+/* ============================================================ */
 .chart-container{
 position:relative;
 height:240px
 }
+
 .chart-grid{
 display:grid;
 grid-template-columns:2fr 1fr;
 gap:20px;
 margin-bottom:24px
 }
+
+/* ============================================================ */
+/* CSS — MEXFACE / ADS FEED                                      */
+/* ============================================================ */
 .insta-ad{
 background:var(--bg-card);
 border-radius:14px;
@@ -981,12 +1176,14 @@ margin-left:auto;
 margin-right:auto;
 width:100%
 }
+
 .insta-ad-header{
 display:flex;
 align-items:center;
 gap:10px;
 padding:10px 12px
 }
+
 .insta-ad-header .insta-avatar{
 width:38px;
 height:38px;
@@ -998,12 +1195,14 @@ border:2px solid transparent;
 background:linear-gradient(var(--bg-card),var(--bg-card)) padding-box,linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888) border-box;
 padding:1px
 }
+
 .insta-ad-header .insta-meta{
 flex:1;
 min-width:0;
 cursor:pointer;
 line-height:1.2
 }
+
 .insta-ad-header .insta-name{
 font-weight:700;
 font-size:.85rem;
@@ -1014,6 +1213,7 @@ white-space:nowrap;
 overflow:hidden;
 text-overflow:ellipsis
 }
+
 .insta-ad-header .insta-sub{
 font-size:.7rem;
 color:var(--text-muted);
@@ -1023,6 +1223,7 @@ white-space:nowrap;
 overflow:hidden;
 text-overflow:ellipsis
 }
+
 .insta-ad-header .insta-promoted{
 display:inline-flex;
 align-items:center;
@@ -1036,6 +1237,7 @@ border-radius:20px;
 margin-right:6px;
 letter-spacing:.05em
 }
+
 .insta-ad-header .insta-delete{
 background:transparent!important;
 color:var(--accent-danger)!important;
@@ -1050,10 +1252,12 @@ font-size:.9rem;
 padding:0!important;
 flex-shrink:0
 }
+
 .insta-ad-header .insta-delete:hover{
 color:var(--accent-danger)!important;
 background:rgba(239,68,68,.12)!important
 }
+
 .insta-ad-media{
 position:relative;
 width:100%;
@@ -1062,6 +1266,7 @@ line-height:0;
 overflow:hidden;
 aspect-ratio:4/5
 }
+
 .insta-ad-media video,.insta-ad-media img{
 width:100%;
 height:100%;
@@ -1069,6 +1274,7 @@ object-fit:cover;
 display:block;
 background:#000
 }
+
 .insta-ad-media .video-mute-btn{
 position:absolute;
 top:12px;
@@ -1088,6 +1294,7 @@ font-size:.9rem;
 border:1px solid rgba(255,255,255,.25)!important;
 padding:0!important
 }
+
 .insta-ad-media .video-tap-sound{
 position:absolute;
 bottom:14px;
@@ -1107,6 +1314,7 @@ padding:8px 16px;
 border-radius:24px;
 border:1px solid rgba(255,255,255,.2)
 }
+
 @media(min-width:769px){
 .insta-ad-media{
 aspect-ratio:auto;
@@ -1114,6 +1322,7 @@ height:675px;
 max-height:none
 }
 }
+
 .insta-ad-actions{
 display:flex;
 align-items:center;
@@ -1121,6 +1330,7 @@ gap:18px;
 padding:8px 14px 4px;
 flex-wrap:nowrap
 }
+
 .insta-ad-actions .action-btn{
 background:transparent!important;
 border:none!important;
@@ -1135,18 +1345,22 @@ font-weight:700;
 border-radius:0!important;
 line-height:1
 }
+
 .insta-ad-actions .action-btn:active{
 transform:scale(.88)
 }
+
 .insta-ad-actions .action-btn .cnt{
 font-size:.82rem;
 font-weight:700;
 color:#128C7E;
 letter-spacing:-.01em
 }
+
 .insta-ad-actions .action-btn.liked i{
 color:#128C7E!important
 }
+
 .insta-ad-actions .views-count{
 display:inline-flex;
 align-items:center;
@@ -1156,10 +1370,12 @@ font-weight:700;
 color:#128C7E;
 letter-spacing:-.01em
 }
+
 .insta-ad-actions .views-count i{
 font-size:1.1rem;
 color:#128C7E
 }
+
 .insta-ad-actions .promote-btn{
 margin-left:auto;
 background:transparent!important;
@@ -1177,13 +1393,16 @@ align-items:center;
 gap:5px;
 transition:background .15s ease,color .15s ease
 }
+
 .insta-ad-actions .promote-btn:hover{
 background:rgba(0,149,246,.1)!important
 }
+
 .insta-ad-actions .promote-btn.promoted{
 background:var(--verified-blue)!important;
 color:#fff!important
 }
+
 .insta-ad-caption{
 padding:2px 14px 8px;
 font-size:.85rem;
@@ -1195,18 +1414,22 @@ display:-webkit-box;
 -webkit-box-orient:vertical;
 overflow:hidden
 }
+
 .insta-ad-caption .cap-author{
 font-weight:700;
 margin-right:5px
 }
+
 html[dir="rtl"] .insta-ad-caption .cap-author{
 margin-right:0;
 margin-left:5px
 }
+
 .insta-ad-caption .cap-text{
 color:var(--text-secondary);
 font-weight:400
 }
+
 .insta-ad-comment-input{
 display:flex;
 align-items:center;
@@ -1215,6 +1438,7 @@ padding:8px 14px 10px;
 border-top:1px solid var(--border-color);
 background:var(--bg-card)
 }
+
 .insta-ad-comment-input input{
 flex:1;
 border:none!important;
@@ -1224,9 +1448,11 @@ font-size:.88rem!important;
 box-shadow:none!important;
 border-radius:0!important
 }
+
 .insta-ad-comment-input input:focus{
 box-shadow:none!important
 }
+
 .insta-ad-avatar-sm{
 width:28px;
 height:28px;
@@ -1234,6 +1460,10 @@ border-radius:50%;
 object-fit:cover;
 flex-shrink:0
 }
+
+/* ============================================================ */
+/* CSS — COMMENTS MODAL                                          */
+/* ============================================================ */
 .comments-modal .modal-box{
 max-width:600px;
 padding:0;
@@ -1242,6 +1472,7 @@ display:flex;
 flex-direction:column;
 max-height:85vh
 }
+
 .comments-modal .comments-header{
 padding:14px 18px;
 border-bottom:1px solid var(--border-color);
@@ -1251,6 +1482,7 @@ justify-content:space-between;
 background:var(--bg-card);
 flex-shrink:0
 }
+
 .comments-modal .comments-header h3{
 margin:0;
 font-size:1rem;
@@ -1259,6 +1491,7 @@ display:flex;
 align-items:center;
 gap:8px
 }
+
 .comments-modal .comments-header .cm-close{
 background:transparent!important;
 color:var(--text-muted)!important;
@@ -1272,6 +1505,7 @@ cursor:pointer;
 font-size:1rem;
 padding:0!important
 }
+
 .comments-modal .comments-body{
 flex:1;
 overflow-y:auto;
@@ -1279,6 +1513,7 @@ padding:14px 18px;
 background:var(--bg-card);
 min-height:200px
 }
+
 .comments-modal .comments-empty{
 text-align:center;
 color:var(--text-muted);
@@ -1286,6 +1521,7 @@ font-size:.85rem;
 padding:40px 20px;
 font-weight:500
 }
+
 .comments-item{
 display:flex;
 align-items:flex-start;
@@ -1294,6 +1530,7 @@ padding:8px 0;
 font-size:.85rem;
 line-height:1.4
 }
+
 .comments-item .com-avatar{
 width:34px;
 height:34px;
@@ -1308,32 +1545,39 @@ font-size:.72rem;
 overflow:hidden;
 flex-shrink:0
 }
+
 .comments-item .com-avatar img{
 width:100%;
 height:100%;
 object-fit:cover;
 border-radius:50%
 }
+
 .comments-item .com-body{
 flex:1;
 min-width:0
 }
+
 .comments-item .com-line{
 word-break:break-word
 }
+
 .comments-item .com-author{
 font-weight:700;
 margin-right:6px;
 color:var(--text-primary)
 }
+
 html[dir="rtl"] .comments-item .com-author{
 margin-right:0;
 margin-left:6px
 }
+
 .comments-item .com-text{
 color:var(--text-secondary);
 font-weight:400
 }
+
 .comments-item .com-meta{
 margin-top:4px;
 display:flex;
@@ -1343,6 +1587,7 @@ font-size:.72rem;
 color:var(--text-muted);
 font-weight:600
 }
+
 .comments-item .com-meta .com-act-btn{
 background:transparent!important;
 color:var(--text-muted)!important;
@@ -1352,31 +1597,38 @@ padding:0!important;
 border-radius:0!important;
 cursor:pointer
 }
+
 .comments-item .com-meta .com-act-btn:hover{
 color:var(--text-secondary)!important
 }
+
 .comments-item .com-meta .com-act-btn.del:hover{
 color:var(--accent-danger)!important
 }
+
 .comments-item .com-replies{
 margin-top:8px;
 padding-left:12px;
 border-left:2px solid var(--border-color)
 }
+
 html[dir="rtl"] .comments-item .com-replies{
 padding-left:0;
 padding-right:12px;
 border-left:none;
 border-right:2px solid var(--border-color)
 }
+
 .comments-item.reply{
 padding:4px 0
 }
+
 .comments-item.reply .com-avatar{
 width:28px;
 height:28px;
 font-size:.65rem
 }
+
 .comments-modal .reply-indicator{
 padding:8px 18px;
 background:var(--input-bg);
@@ -1386,6 +1638,7 @@ font-weight:600;
 border-top:1px solid var(--border-color);
 display:none
 }
+
 .comments-modal .comments-input-area{
 display:flex;
 align-items:center;
@@ -1395,6 +1648,7 @@ border-top:1px solid var(--border-color);
 background:var(--bg-card);
 flex-shrink:0
 }
+
 .comments-modal .comments-input-area input{
 flex:1;
 border:none!important;
@@ -1404,9 +1658,11 @@ font-size:.9rem!important;
 box-shadow:none!important;
 border-radius:0!important
 }
+
 .comments-modal .comments-input-area input:focus{
 box-shadow:none!important
 }
+
 .comments-modal .comments-input-area .post-btn{
 background:transparent!important;
 color:var(--accent-1)!important;
@@ -1416,10 +1672,15 @@ padding:4px 10px!important;
 border-radius:6px!important;
 cursor:pointer
 }
+
 .comments-modal .comments-input-area .post-btn:disabled{
 opacity:.4;
 cursor:not-allowed
 }
+
+/* ============================================================ */
+/* CSS — DESKTOP MEDIA QUERIES                                   */
+/* ============================================================ */
 @media(min-width:1024px){
 .content-area{
 padding:22px 26px 32px
@@ -1444,6 +1705,7 @@ min-width:248px;
 padding:22px 14px
 }
 }
+
 @media(min-width:1440px){
 .content-area{
 padding:24px 32px 36px
@@ -1460,6 +1722,10 @@ min-width:260px
 padding:20px 34px
 }
 }
+
+/* ============================================================ */
+/* CSS — UTILITY CLASSES                                         */
+/* ============================================================ */
 .mt-16{
 margin-top:16px
 }
@@ -1475,6 +1741,10 @@ font-size:.8rem
 .hidden{
 display:none!important
 }
+
+/* ============================================================ */
+/* CSS — TOASTS                                                  */
+/* ============================================================ */
 .toast-container{
 position:fixed;
 bottom:24px;
@@ -1486,6 +1756,7 @@ flex-direction:column;
 gap:8px;
 pointer-events:none
 }
+
 .toast{
 background:var(--bg-card);
 color:var(--text-primary);
@@ -1500,12 +1771,14 @@ border:1px solid var(--border-color);
 pointer-events:auto;
 margin-left:auto
 }
+
 html[dir="rtl"] .toast{
 border-left:none;
 border-right:4px solid var(--accent-1);
 margin-left:0;
 margin-right:auto
 }
+
 .toast.success{
 border-left-color:var(--accent-4)
 }
@@ -1524,6 +1797,10 @@ border-left-color:var(--accent-3)
 html[dir="rtl"] .toast.warning{
 border-right-color:var(--accent-3)
 }
+
+/* ============================================================ */
+/* CSS — EMPTY STATES & STATUS                                   */
+/* ============================================================ */
 .empty-state{
 text-align:center;
 padding:40px 20px;
@@ -1541,6 +1818,7 @@ color:var(--text-primary);
 margin-bottom:8px;
 font-weight:800
 }
+
 .online-status{
 display:inline-flex;
 align-items:center;
@@ -1569,6 +1847,10 @@ color:var(--online-dot)
 background:rgba(148,163,184,.12);
 color:var(--offline-dot)
 }
+
+/* ============================================================ */
+/* CSS — TENANT STATUS PILLS                                     */
+/* ============================================================ */
 .tenant-blocked{
 background:rgba(239,68,68,.08);
 border-left:3px solid var(--accent-danger);
@@ -1605,6 +1887,10 @@ font-size:.7rem;
 color:#8b5cf6;
 font-weight:700
 }
+
+/* ============================================================ */
+/* CSS — SUPER ADMIN BUTTONS                                     */
+/* ============================================================ */
 .btn-super-delete{
 background:var(--accent-danger)!important;
 color:#fff!important;
@@ -1643,6 +1929,7 @@ font-weight:700
 .btn-super-view:hover{
 background:#7c3aed!important
 }
+
 .super-dash-stats{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
@@ -1674,6 +1961,7 @@ margin-top:4px;
 font-weight:700;
 letter-spacing:.05em
 }
+
 .super-tabs{
 display:flex;
 gap:8px;
@@ -1705,6 +1993,10 @@ border-radius:20px;
 font-size:.7rem;
 font-weight:700
 }
+
+/* ============================================================ */
+/* CSS — MEMBER / PROMO STYLES                                   */
+/* ============================================================ */
 .mex-emp-code{
 font-family:'Courier New',monospace;
 font-weight:700;
@@ -1765,6 +2057,10 @@ color:var(--accent-4)
 .promo-status.bad{
 color:var(--accent-danger)
 }
+
+/* ============================================================ */
+/* CSS — EMERGENCY CONTACT                                       */
+/* ============================================================ */
 .emergency-contact{
 background:var(--bg-card);
 border:2px solid #128C7E;
@@ -1818,6 +2114,10 @@ background:#128C7E!important
 .emergency-contact .emergency-actions .btn-emergency-wa{
 background:var(--whatsapp-color)!important
 }
+
+/* ============================================================ */
+/* CSS — LOW STOCK ALERT BUTTON                                  */
+/* ============================================================ */
 .low-stock-alert-btn{
 display:inline-flex;
 align-items:center;
@@ -1858,6 +2158,7 @@ color:#fff;
 min-width:24px;
 text-align:center
 }
+
 @keyframes pulseSoft{
 0%,100%{
 opacity:1
@@ -1866,6 +2167,10 @@ opacity:1
 opacity:.82
 }
 }
+
+/* ============================================================ */
+/* CSS — STATUS TABS                                             */
+/* ============================================================ */
 .status-tabs{
 display:flex;
 gap:8px;
@@ -1901,6 +2206,7 @@ font-weight:700
 background:var(--border-color);
 color:var(--text-secondary)
 }
+
 .status-card .status-header{
 display:flex;
 align-items:center;
@@ -1953,6 +2259,10 @@ line-height:1.6;
 margin:0;
 color:var(--text-primary)
 }
+
+/* ============================================================ */
+/* CSS — COMMENT ITEM (LEGACY)                                   */
+/* ============================================================ */
 .comment-item{
 display:flex;
 align-items:flex-start;
@@ -1999,6 +2309,10 @@ color:var(--text-muted);
 margin-left:6px;
 font-weight:600
 }
+
+/* ============================================================ */
+/* CSS — INVENTORY SEARCH                                        */
+/* ============================================================ */
 .inventory-search-wrap{
 position:relative;
 margin-bottom:16px;
@@ -2025,6 +2339,7 @@ font-size:16px!important;
 height:48px;
 width:100%
 }
+
 .inv-thumb{
 width:40px;
 height:40px;
@@ -2072,6 +2387,10 @@ width:16px;
 height:16px;
 border-radius:50%!important
 }
+
+/* ============================================================ */
+/* CSS — MOBILE MENU BUTTON                                      */
+/* ============================================================ */
 .mobile-menu-btn{
 display:none;
 align-items:center;
@@ -2096,6 +2415,10 @@ z-index:9998
 .sidebar-backdrop.show{
 display:block
 }
+
+/* ============================================================ */
+/* CSS — PLAN CARDS                                              */
+/* ============================================================ */
 .plan-card{
 background:var(--input-bg);
 border:2px solid var(--border-color);
@@ -2164,6 +2487,10 @@ font-size:.7rem
 .plan-card.selected .plan-check{
 display:flex
 }
+
+/* ============================================================ */
+/* CSS — SOCIAL FIELDS / BIO                                     */
+/* ============================================================ */
 .social-fields-container{
 margin-bottom:16px
 }
@@ -2222,6 +2549,10 @@ background:linear-gradient(135deg,#000,#25F4EE)
 .social-link-btn.wb{
 background:#128C7E
 }
+
+/* ============================================================ */
+/* CSS — REPORTS                                                 */
+/* ============================================================ */
 .report-period-info{
 background:var(--report-period-bg);
 border:1px solid var(--report-period-border);
@@ -2311,6 +2642,10 @@ border-radius:var(--radius-sm)
 .report-custom-range.show{
 display:grid
 }
+
+/* ============================================================ */
+/* CSS — CHAT MODAL                                              */
+/* ============================================================ */
 .chat-modal .modal-box{
 max-width:760px;
 height:82vh;
@@ -2513,20 +2848,10 @@ margin-bottom:3px;
 opacity:.85;
 display:block
 }
-@media(max-width:768px){
-.chat-modal .modal-box{
-max-width:100%;
-height:90vh;
-border-radius:22px 22px 0 0
-}
-.chat-modal .modal-box .chat-contacts{
-width:100%;
-max-height:180px
-}
-.chat-modal .modal-box .chat-body{
-flex-direction:column
-}
-}
+
+/* ============================================================ */
+/* CSS — AD PROFILE MODAL                                        */
+/* ============================================================ */
 .ad-profile-modal .modal-box{
 max-width:680px;
 padding:0;
@@ -2680,6 +3005,10 @@ object-fit:cover;
 display:block;
 background:transparent
 }
+
+/* ============================================================ */
+/* CSS — MEDIA PREVIEW                                           */
+/* ============================================================ */
 .media-preview{
 margin-top:10px;
 text-align:center
@@ -2698,6 +3027,10 @@ margin-top:6px;
 line-height:1.5;
 font-weight:500
 }
+
+/* ============================================================ */
+/* CSS — RECEIPT MODAL                                           */
+/* ============================================================ */
 .receipt-modal .modal-box{
 max-width:560px;
 padding:0;
@@ -2792,6 +3125,10 @@ flex:1;
 min-width:120px;
 justify-content:center
 }
+
+/* ============================================================ */
+/* CSS — BOOT SPLASH                                             */
+/* ============================================================ */
 .boot-splash{
 position:fixed;
 inset:0;
@@ -2887,6 +3224,10 @@ width:88%
 width:100%
 }
 }
+
+/* ============================================================ */
+/* CSS — MOBILE MEDIA QUERIES                                    */
+/* ============================================================ */
 @media(max-width:768px){
 .app-container{
 padding:0;
@@ -3119,7 +3460,20 @@ margin-right:-12px;
 width:calc(100% + 24px);
 max-width:calc(100% + 24px)
 }
+.chat-modal .modal-box{
+max-width:100%;
+height:90vh;
+border-radius:22px 22px 0 0
 }
+.chat-modal .modal-box .chat-contacts{
+width:100%;
+max-height:180px
+}
+.chat-modal .modal-box .chat-body{
+flex-direction:column
+}
+}
+
 @media(max-width:420px){
 .topbar{
 padding:6px 8px;
@@ -3167,6 +3521,7 @@ width:30px;
 height:30px
 }
 }
+
 @media(max-width:360px){
 .topbar .page-title{
 font-size:.8rem
@@ -3177,6 +3532,10 @@ font-size:.68rem;
 gap:4px
 }
 }
+
+/* ============================================================ */
+/* CSS — TRANSFER / PNL / MISC                                   */
+/* ============================================================ */
 .transfer-badge{
 display:inline-flex;
 align-items:center;
@@ -3215,6 +3574,10 @@ button:focus-visible,.nav-item:focus-visible,.btn:focus-visible{
 outline:2px solid var(--accent-3)!important;
 outline-offset:2px
 }
+
+/* ============================================================ */
+/* CSS — PRINT / REDUCED MOTION                                  */
+/* ============================================================ */
 @media print{
 body *{
 visibility:hidden
@@ -3232,6 +3595,7 @@ display:block
 display:none!important
 }
 }
+
 @media (prefers-reduced-motion: reduce){
 *{
 animation-duration:.01ms!important;
@@ -3242,6 +3606,9 @@ transition-duration:.01ms!important
 </head>
 <body>
 
+<!-- ============================================================ -->
+<!-- BOOT SPLASH                                                   -->
+<!-- ============================================================ -->
 <div class="boot-splash" id="bootSplash">
 <div class="boot-icon"><i class="fas fa-bolt"></i></div>
 <div class="boot-name">MeX PRO</div>
@@ -3250,13 +3617,22 @@ transition-duration:.01ms!important
 <div class="boot-progress"><div class="bar"></div></div>
 </div>
 
+<!-- ============================================================ -->
+<!-- LOGIN PAGE                                                    -->
+<!-- ============================================================ -->
 <div id="loginPage" class="page-overlay">
 <div class="page-card">
 <div class="logo-icon"><i class="fas fa-store-alt"></i></div>
-<h2>MeX <span style="font-size:.75rem;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;padding:2px 10px;border-radius:12px;">PRO</span></h2>
+<h2>MeX <span style="font-size:.75rem;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;padding:2px 10px;border-radius:12px;">Face</span></h2>
 <p class="subtitle" data-i18n="loginSubtitle">Login to your account</p>
-<div class="input-group"><label data-i18n="username">Username</label><input type="text" id="loginUsername" placeholder="username" autocomplete="username"/></div>
-<div class="input-group"><label data-i18n="password">Password</label><input type="password" id="loginPassword" placeholder="••••••" autocomplete="current-password"/></div>
+<div class="input-group">
+<label data-i18n="username">Username</label>
+<input type="text" id="loginUsername" placeholder="username" autocomplete="username"/>
+</div>
+<div class="input-group">
+<label data-i18n="password">Password</label>
+<input type="password" id="loginPassword" placeholder="••••••" autocomplete="current-password"/>
+</div>
 <button id="loginBtn" class="btn btn-primary btn-block"><i class="fas fa-sign-in-alt"></i> <span data-i18n="login">Login</span></button>
 <div id="loginError" class="error-msg"></div>
 <div class="divider"></div>
@@ -3268,18 +3644,36 @@ transition-duration:.01ms!important
 </div>
 </div>
 
+<!-- ============================================================ -->
+<!-- REGISTER COMPANY PAGE                                         -->
+<!-- ============================================================ -->
 <div id="registerPage" class="page-overlay hidden">
 <div class="page-card" style="max-width:440px;padding:22px 20px;">
 <div class="logo-icon" style="font-size:38px;"><i class="fas fa-user-plus"></i></div>
 <h2 style="font-size:1.3rem;" data-i18n="registerCompany">Register Company</h2>
 <div style="background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(16,185,129,.03));border:2px solid var(--accent-4);border-radius:12px;padding:12px 16px;margin-bottom:14px;font-size:.82rem;font-weight:700;color:var(--accent-4);text-align:center;">🎁 <strong>FREE 7-DAY TRIAL</strong><br><span style="font-size:.72rem;font-weight:600;color:var(--text-muted);">Jisajili bure, anza kutumia mara moja. Baada ya siku 7, lipa TSh 25,000/mwezi.</span></div>
 <p class="subtitle" style="margin-bottom:12px;" data-i18n="createAccount">Create your company account</p>
-<div class="input-group"><label data-i18n="companyName">Company Name</label><input type="text" id="regCompany" placeholder="e.g. ABC Chemicals"/></div>
-<div class="input-group"><label data-i18n="username">Username</label><input type="text" id="regUsername" placeholder="Choose a username"/></div>
-<div class="input-group"><label data-i18n="phoneNumber">Phone Number</label><input type="tel" id="regPhone" placeholder="+255 xxx xxx xxx"/></div>
+<div class="input-group">
+<label data-i18n="companyName">Company Name</label>
+<input type="text" id="regCompany" placeholder="e.g. ABC Chemicals"/>
+</div>
+<div class="input-group">
+<label data-i18n="username">Username</label>
+<input type="text" id="regUsername" placeholder="Choose a username"/>
+</div>
+<div class="input-group">
+<label data-i18n="phoneNumber">Phone Number</label>
+<input type="tel" id="regPhone" placeholder="+255 xxx xxx xxx"/>
+</div>
 <div class="form-row">
-<div class="input-group" style="margin-bottom:0;"><label data-i18n="password">Password</label><input type="password" id="regPassword" placeholder="••••••"/></div>
-<div class="input-group" style="margin-bottom:0;"><label data-i18n="confirmPassword">Confirm Password</label><input type="password" id="regConfirm" placeholder="••••••"/></div>
+<div class="input-group" style="margin-bottom:0;">
+<label data-i18n="password">Password</label>
+<input type="password" id="regPassword" placeholder="••••••"/>
+</div>
+<div class="input-group" style="margin-bottom:0;">
+<label data-i18n="confirmPassword">Confirm Password</label>
+<input type="password" id="regConfirm" placeholder="••••••"/>
+</div>
 </div>
 <div class="input-group" style="margin-top:10px;">
 <label><i class="fas fa-tag" style="color:#f59e0b;"></i> <span data-i18n="promoCode">Promo Code (Optional)</span></label>
@@ -3295,14 +3689,26 @@ transition-duration:.01ms!important
 </div>
 </div>
 
+<!-- ============================================================ -->
+<!-- REGISTER MEMBER PAGE                                          -->
+<!-- ============================================================ -->
 <div id="memberRegisterPage" class="page-overlay hidden">
 <div class="page-card" style="max-width:400px;">
 <div class="logo-icon" style="color:#f59e0b;"><i class="fas fa-user-tie"></i></div>
 <h2 style="color:#d97706;font-size:1.4rem;" data-i18n="registerAsMember">Register as Member</h2>
 <p class="subtitle" data-i18n="freeRegistration">Free registration — Get your unique promo code</p>
-<div class="input-group"><label data-i18n="fullName">Full Name</label><input type="text" id="memberName" placeholder="e.g. John Doe"/></div>
-<div class="input-group"><label data-i18n="phoneNumber">Phone Number</label><input type="tel" id="memberPhone" placeholder="+255 xxx xxx xxx"/></div>
-<div class="input-group"><label data-i18n="password">Password</label><input type="password" id="memberPassword" placeholder="Min 4 characters"/></div>
+<div class="input-group">
+<label data-i18n="fullName">Full Name</label>
+<input type="text" id="memberName" placeholder="e.g. John Doe"/>
+</div>
+<div class="input-group">
+<label data-i18n="phoneNumber">Phone Number</label>
+<input type="tel" id="memberPhone" placeholder="+255 xxx xxx xxx"/>
+</div>
+<div class="input-group">
+<label data-i18n="password">Password</label>
+<input type="password" id="memberPassword" placeholder="Min 4 characters"/>
+</div>
 <button id="memberRegisterBtn" class="btn btn-block" style="padding:12px 20px;font-weight:700;background:linear-gradient(135deg,#f59e0b,#d97706) !important;color:#fff !important;"><i class="fas fa-user-plus"></i> <span data-i18n="createMemberAccount">Create Member Account</span></button>
 <div id="memberRegError" class="error-msg"></div>
 <div id="memberRegSuccess" class="success-msg"></div>
@@ -3311,6 +3717,9 @@ transition-duration:.01ms!important
 </div>
 </div>
 
+<!-- ============================================================ -->
+<!-- PAYMENT PLAN MODAL                                            -->
+<!-- ============================================================ -->
 <div id="paymentPlanModal" class="modal-overlay">
 <div class="modal-box" style="max-width:600px;">
 <h3 style="text-align:center;justify-content:center;"><i class="fas fa-credit-card" style="color:var(--accent-3);"></i> <span data-i18n="choosePlan">Choose Your Plan</span></h3>
@@ -3329,20 +3738,26 @@ transition-duration:.01ms!important
 </div>
 </div>
 
+<!-- ============================================================ -->
+<!-- MAIN APP CONTAINER                                            -->
+<!-- ============================================================ -->
 <div id="appContainer" class="app-container">
 <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeMobileSidebar()"></div>
+
+<!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
 <div class="sidebar-brand">
 <div class="brand-icon"><i class="fas fa-bolt"></i></div>
 <span class="brand-text" id="companyNameDisplay">MeX</span>
 <span class="brand-ver">PRO</span>
 </div>
+
 <nav class="sidebar-nav" id="sidebarNav">
 <button class="nav-item active" data-view="dashboard"><i class="fas fa-chart-pie"></i><span data-i18n="dashboard">Dashboard</span></button>
 <button class="nav-item" data-view="sales"><i class="fas fa-cart-plus"></i><span data-i18n="sales">Sales</span></button>
 <button class="nav-item" data-view="debts" id="navDebts"><i class="fas fa-hand-holding-usd"></i><span data-i18n="debts">Debts</span><span class="badge" id="debtsNavBadge" style="display:none;">0</span></button>
 <button class="nav-item" data-view="inventory" id="navInventory"><i class="fas fa-boxes"></i><span data-i18n="inventory">Inventory</span><span class="badge" id="lowStockNavBadge" style="display:none;">0</span></button>
-<button class="nav-item" data-view="status"><i class="fas fa-bullhorn"></i><span data-i18n="adsStatus">Ads & Status</span></button>
+<button class="nav-item" data-view="status"><i class="fas fa-bullhorn"></i><span data-i18n="adsStatus">MexFace & Status</span></button>
 <button class="nav-item" data-view="pnl" id="navPnl"><i class="fas fa-scale-balanced"></i><span data-i18n="pnl">Profit & Loss</span></button>
 <button class="nav-item" data-view="expenses" id="navExpenses"><i class="fas fa-receipt"></i><span data-i18n="expenses">Expenses</span></button>
 <button class="nav-item" data-view="branches" id="navBranches"><i class="fas fa-store"></i><span data-i18n="branches">Branches</span></button>
@@ -3353,14 +3768,20 @@ transition-duration:.01ms!important
 <button class="nav-item" data-view="superadmin" id="navSuperAdmin" style="display:none;"><i class="fas fa-crown"></i><span data-i18n="superAdmin">Super Admin</span></button>
 <button class="nav-item" data-view="mexEarnings" id="navMexEarnings" style="display:none;"><i class="fas fa-coins"></i><span data-i18n="myEarnings">My Earnings</span></button>
 <button class="nav-item" data-view="mexCompanies" id="navMexCompanies" style="display:none;"><i class="fas fa-building"></i><span data-i18n="myCompanies">My Companies</span></button>
-<button class="nav-item" data-view="mexStatus" id="navMexStatus" style="display:none;"><i class="fas fa-bullhorn"></i><span data-i18n="ads">Ads</span></button>
+<button class="nav-item" data-view="mexStatus" id="navMexStatus" style="display:none;"><i class="fas fa-bullhorn"></i><span data-i18n="ads">MexFace</span></button>
 </nav>
+
 <div class="sidebar-footer">
 <div class="user-avatar" id="sideUserAvatar" data-photo-key=""></div>
-<div class="user-info"><div class="name" id="sideUserName">Owner</div><div class="role" id="sideUserRole">Owner</div></div>
+<div class="user-info">
+<div class="name" id="sideUserName">Owner</div>
+<div class="role" id="sideUserRole">Owner</div>
+</div>
 <button class="logout-btn" id="sideLogoutBtn" title="Logout" aria-label="Logout"><i class="fas fa-sign-out-alt"></i></button>
 </div>
 </aside>
+
+<!-- MAIN CONTENT -->
 <div class="main-content">
 <header class="topbar">
 <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu"><i class="fas fa-bars"></i></button>
@@ -3390,6 +3811,9 @@ transition-duration:.01ms!important
 </div>
 </div>
 
+<!-- ============================================================ -->
+<!-- PROFILE MODAL                                                 -->
+<!-- ============================================================ -->
 <div id="profileModal" class="modal-overlay">
 <div class="modal-box">
 <h3><i class="fas fa-user-cog"></i> <span data-i18n="myProfile">My Profile</span></h3>
@@ -3397,12 +3821,31 @@ transition-duration:.01ms!important
 <img id="modalProfilePreview" data-photo-key="" style="width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid var(--accent-1);" src="https://ui-avatars.com/api/?background=128C7E&color=fff&name=User"/>
 <label style="cursor:pointer;padding:8px 18px;border-radius:var(--radius-sm);background:var(--input-bg);border:1px solid var(--border-color);color:var(--text-secondary);font-size:.85rem;font-weight:600;text-transform:none;letter-spacing:0;"><i class="fas fa-camera"></i> <span data-i18n="changePhoto">Change Photo</span><input type="file" id="profileUpload" accept="image/*" style="display:none;"/></label>
 </div>
-<div class="form-group"><label data-i18n="fullName">Full Name</label><input type="text" id="profileFullName"/></div>
-<div class="form-group"><label data-i18n="email">Email</label><input type="email" id="profileEmail"/></div>
-<div class="form-group"><label data-i18n="phoneNumber">Phone Number</label><input type="text" id="profilePhone"/></div>
-<div class="form-group"><label><i class="fas fa-quote-left" style="color:var(--accent-1);"></i> <span data-i18n="bio">Bio / Description</span></label><textarea id="profileBio" rows="3" maxlength="300" style="resize:vertical;line-height:1.5;"></textarea><div class="bio-counter" id="profileBioCounter">0 / 300</div></div>
-<div class="form-group"><label data-i18n="newPassword">New Password</label><input type="password" id="newPassword"/></div>
-<div class="form-group"><label data-i18n="confirmPassword">Confirm Password</label><input type="password" id="confirmPassword"/></div>
+<div class="form-group">
+<label data-i18n="fullName">Full Name</label>
+<input type="text" id="profileFullName"/>
+</div>
+<div class="form-group">
+<label data-i18n="email">Email</label>
+<input type="email" id="profileEmail"/>
+</div>
+<div class="form-group">
+<label data-i18n="phoneNumber">Phone Number</label>
+<input type="text" id="profilePhone"/>
+</div>
+<div class="form-group">
+<label><i class="fas fa-quote-left" style="color:var(--accent-1);"></i> <span data-i18n="bio">Bio / Description</span></label>
+<textarea id="profileBio" rows="3" maxlength="300" style="resize:vertical;line-height:1.5;"></textarea>
+<div class="bio-counter" id="profileBioCounter">0 / 300</div>
+</div>
+<div class="form-group">
+<label data-i18n="newPassword">New Password</label>
+<input type="password" id="newPassword"/>
+</div>
+<div class="form-group">
+<label data-i18n="confirmPassword">Confirm Password</label>
+<input type="password" id="confirmPassword"/>
+</div>
 <div class="social-fields-container" id="socialFieldsContainer"></div>
 <div style="display:flex;gap:12px;justify-content:center;margin-top:20px;flex-wrap:wrap;">
 <button id="saveProfileBtn" class="btn-sm btn-primary" data-i18n="save">Save</button>
@@ -3411,11 +3854,20 @@ transition-duration:.01ms!important
 </div>
 </div>
 
+<!-- ============================================================ -->
+<!-- AD PROFILE MODAL                                              -->
+<!-- ============================================================ -->
 <div id="adProfileModal" class="modal-overlay ad-profile-modal"><div class="modal-box" id="adProfileBox"></div></div>
 
+<!-- ============================================================ -->
+<!-- COMMENTS MODAL                                                -->
+<!-- ============================================================ -->
 <div id="commentsModal" class="modal-overlay comments-modal">
 <div class="modal-box">
-<div class="comments-header"><h3><i class="fas fa-comments"></i> <span data-i18n="comments">Comments</span></h3><button class="cm-close" onclick="closeCommentsModal()"><i class="fas fa-times"></i></button></div>
+<div class="comments-header">
+<h3><i class="fas fa-comments"></i> <span data-i18n="comments">Comments</span></h3>
+<button class="cm-close" onclick="closeCommentsModal()"><i class="fas fa-times"></i></button>
+</div>
 <div class="comments-body" id="commentsBody"></div>
 <div class="reply-indicator" id="replyIndicator"></div>
 <div class="comments-input-area">
@@ -3425,6 +3877,9 @@ transition-duration:.01ms!important
 </div>
 </div>
 
+<!-- ============================================================ -->
+<!-- ADD BRANCH MODAL                                              -->
+<!-- ============================================================ -->
 <div id="subModal" class="modal-overlay">
 <div class="modal-box" style="max-width:680px;">
 <h3 style="justify-content:center;"><i class="fas fa-store" style="color:var(--accent-3);"></i> <span data-i18n="addBranch">Add Branch</span></h3>
@@ -3433,11 +3888,26 @@ transition-duration:.01ms!important
 <div style="font-size:2rem;font-weight:900;color:#d97706;margin:6px 0;">TSh 10,000</div>
 <div style="font-size:.75rem;color:var(--text-muted);font-weight:600;">20% (TSh 2,000) inaenda kwa member wa promo code</div>
 </div>
-<div class="form-group"><label data-i18n="branchName">Branch Name *</label><input type="text" id="newBranchName"/></div>
-<div class="form-group"><label data-i18n="branchAddress">Branch Address *</label><input type="text" id="newBranchAddress"/></div>
-<div class="form-group"><label data-i18n="branchTin">Branch TIN *</label><input type="text" id="newBranchTin"/></div>
-<div class="form-group"><label data-i18n="usernameForLogin">Username (for login) *</label><input type="text" id="newBranchUsername"/></div>
-<div class="form-group"><label data-i18n="password">Password *</label><input type="password" id="newBranchPassword"/></div>
+<div class="form-group">
+<label data-i18n="branchName">Branch Name *</label>
+<input type="text" id="newBranchName"/>
+</div>
+<div class="form-group">
+<label data-i18n="branchAddress">Branch Address *</label>
+<input type="text" id="newBranchAddress"/>
+</div>
+<div class="form-group">
+<label data-i18n="branchTin">Branch TIN *</label>
+<input type="text" id="newBranchTin"/>
+</div>
+<div class="form-group">
+<label data-i18n="usernameForLogin">Username (for login) *</label>
+<input type="text" id="newBranchUsername"/>
+</div>
+<div class="form-group">
+<label data-i18n="password">Password *</label>
+<input type="password" id="newBranchPassword"/>
+</div>
 <div style="display:flex;gap:12px;margin-top:16px;justify-content:center;flex-wrap:wrap;">
 <button class="btn btn-primary btn-icon" onclick="handleSubscriptionPayment()"><i class="fas fa-check-circle"></i> <span>Pay TSh 10,000 & Create</span></button>
 <button class="btn btn-secondary" onclick="closeSubscriptionModal()" data-i18n="cancel">Cancel</button>
@@ -3445,21 +3915,34 @@ transition-duration:.01ms!important
 </div>
 </div>
 
+<!-- ============================================================ -->
+<!-- LOW STOCK MODAL                                               -->
+<!-- ============================================================ -->
 <div class="modal-overlay" id="lowStockModal">
 <div class="modal-box">
 <h3><i class="fas fa-exclamation-triangle" style="color:var(--accent-danger);"></i> <span data-i18n="lowStock">Low Stock</span></h3>
 <div id="lowStockList"></div>
-<div class="form-actions" style="margin-top:16px;"><button class="btn btn-secondary btn-sm" onclick="closeLowStockModal()" data-i18n="close">Close</button></div>
+<div class="form-actions" style="margin-top:16px;">
+<button class="btn btn-secondary btn-sm" onclick="closeLowStockModal()" data-i18n="close">Close</button>
+</div>
 </div>
 </div>
 
+<!-- ============================================================ -->
+<!-- CHAT MODAL                                                    -->
+<!-- ============================================================ -->
 <div class="modal-overlay chat-modal" id="chatModal">
 <div class="modal-box">
-<div class="chat-header"><h3><i class="fas fa-comments"></i> <span data-i18n="chat">Chat</span></h3><button class="chat-close" onclick="closeChatModal()"><i class="fas fa-times"></i></button></div>
+<div class="chat-header">
+<h3><i class="fas fa-comments"></i> <span data-i18n="chat">Chat</span></h3>
+<button class="chat-close" onclick="closeChatModal()"><i class="fas fa-times"></i></button>
+</div>
 <div class="chat-body">
 <div class="chat-contacts" id="chatContactsList"></div>
 <div class="chat-messages-area">
-<div class="chat-messages" id="chatMessagesArea"><div class="no-chat"><i class="fas fa-comment-dots"></i><span data-i18n="selectContact">Select a contact to start chatting</span></div></div>
+<div class="chat-messages" id="chatMessagesArea">
+<div class="no-chat"><i class="fas fa-comment-dots"></i><span data-i18n="selectContact">Select a contact to start chatting</span></div>
+</div>
 <div class="chat-input-area" id="chatInputArea" style="display:none;">
 <input type="text" id="chatInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter'){event.preventDefault();sendChatMessage();}"/>
 <button class="btn btn-primary btn-icon" onclick="sendChatMessage()"><i class="fas fa-paper-plane"></i> <span data-i18n="send">Send</span></button>
@@ -3469,8 +3952,14 @@ transition-duration:.01ms!important
 </div>
 </div>
 
+<!-- ============================================================ -->
+<!-- GENERIC MODAL                                                 -->
+<!-- ============================================================ -->
 <div class="modal-overlay" id="modalOverlay"><div class="modal-box" id="modalBox"></div></div>
 
+<!-- ============================================================ -->
+<!-- RECEIPT MODAL                                                 -->
+<!-- ============================================================ -->
 <div class="modal-overlay receipt-modal" id="receiptModal">
 <div class="modal-box">
 <div class="receipt-content" id="receiptContent"></div>
@@ -3482,49 +3971,89 @@ transition-duration:.01ms!important
 </div>
 </div>
 
+<!-- ============================================================ -->
+<!-- TRANSFER STOCK MODAL                                          -->
+<!-- ============================================================ -->
 <div class="modal-overlay" id="transferModal">
 <div class="modal-box" style="max-width:520px;">
 <h3><i class="fas fa-exchange-alt" style="color:#8b5cf6;"></i> <span data-i18n="transferStock">Transfer Stock</span></h3>
 <p style="font-size:.82rem;color:var(--text-muted);font-weight:500;margin-bottom:16px;"><i class="fas fa-info-circle" style="color:#8b5cf6;"></i> <span data-i18n="transferHint">Stock will be deducted from source branch and added to target branch.</span></p>
 <form onsubmit="submitTransfer(event)">
-<div class="form-group"><label data-i18n="fromBranch">From Branch *</label><select id="transferFrom" required onchange="onTransferFromChange()"><option value="">--</option></select></div>
-<div class="form-group"><label data-i18n="product">Product *</label><select id="transferProduct" required onchange="onTransferProductChange()"><option value="">--</option></select></div>
-<div class="form-group"><label data-i18n="targetBranch">Target Branch *</label><select id="transferBranch" required><option value="">--</option></select></div>
-<div class="form-group"><label data-i18n="quantity">Quantity *</label><input type="number" id="transferQty" min="1" value="1" required/></div>
+<div class="form-group">
+<label data-i18n="fromBranch">From Branch *</label>
+<select id="transferFrom" required onchange="onTransferFromChange()"><option value="">--</option></select>
+</div>
+<div class="form-group">
+<label data-i18n="product">Product *</label>
+<select id="transferProduct" required onchange="onTransferProductChange()"><option value="">--</option></select>
+</div>
+<div class="form-group">
+<label data-i18n="targetBranch">Target Branch *</label>
+<select id="transferBranch" required><option value="">--</option></select>
+</div>
+<div class="form-group">
+<label data-i18n="quantity">Quantity *</label>
+<input type="number" id="transferQty" min="1" value="1" required/>
+</div>
 <div style="background:rgba(139,92,246,.08);border:1px dashed rgba(139,92,246,.35);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:14px;font-size:.75rem;color:#7c3aed;font-weight:600;"><i class="fas fa-shield-alt"></i> <span data-i18n="transferNote">Only the OWNER can perform stock transfers.</span></div>
-<div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeTransferModal()" data-i18n="cancel">Cancel</button><button type="submit" class="btn btn-primary" style="background:#8b5cf6 !important;"><i class="fas fa-exchange-alt"></i> <span data-i18n="transfer">Transfer</span></button></div>
+<div class="form-actions">
+<button type="button" class="btn btn-secondary" onclick="closeTransferModal()" data-i18n="cancel">Cancel</button>
+<button type="submit" class="btn btn-primary" style="background:#8b5cf6 !important;"><i class="fas fa-exchange-alt"></i> <span data-i18n="transfer">Transfer</span></button>
+</div>
 </form>
 </div>
 </div>
 
+<!-- ============================================================ -->
+<!-- SEND REPORT MODAL                                             -->
+<!-- ============================================================ -->
 <div class="modal-overlay" id="sendReportModal">
 <div class="modal-box" style="max-width:520px;">
 <h3><i class="fas fa-paper-plane" style="color:var(--accent-1);"></i> <span id="sendReportTitle">Send Report</span></h3>
 <p style="font-size:.85rem;color:var(--text-muted);font-weight:500;margin-bottom:16px;" id="sendReportSubtitle">Enter destination to send report.</p>
-<div class="form-group"><label><i class="fab fa-whatsapp" style="color:#25D366;"></i> <span data-i18n="whatsappNumber">WhatsApp Number</span></label><input type="tel" id="reportWhatsappNumber" placeholder="+255 xxx xxx xxx"/></div>
-<div class="form-group"><label><i class="fas fa-envelope" style="color:#3b82f6;"></i> <span data-i18n="emailAddress">Email Address</span></label><input type="email" id="reportEmailAddress" placeholder="example@email.com"/></div>
+<div class="form-group">
+<label><i class="fab fa-whatsapp" style="color:#25D366;"></i> <span data-i18n="whatsappNumber">WhatsApp Number</span></label>
+<input type="tel" id="reportWhatsappNumber" placeholder="+255 xxx xxx xxx"/>
+</div>
+<div class="form-group">
+<label><i class="fas fa-envelope" style="color:#3b82f6;"></i> <span data-i18n="emailAddress">Email Address</span></label>
+<input type="email" id="reportEmailAddress" placeholder="example@email.com"/>
+</div>
 <div style="background:var(--input-bg);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:14px;font-size:.75rem;color:var(--text-muted);font-weight:600;"><i class="fas fa-info-circle" style="color:var(--accent-1);"></i> <span data-i18n="enterNumberOrEmail">Enter phone number or email (or both).</span></div>
 <div style="display:flex;gap:10px;flex-wrap:wrap;">
 <button class="btn btn-whatsapp btn-icon" onclick="executeSendReport('whatsapp')" style="flex:1;min-width:140px;justify-content:center;"><i class="fab fa-whatsapp"></i> <span data-i18n="sendViaWhatsApp">Send WhatsApp</span></button>
 <button class="btn btn-email btn-icon" onclick="executeSendReport('email')" style="flex:1;min-width:140px;justify-content:center;"><i class="fas fa-envelope"></i> <span data-i18n="sendViaEmail">Send Email</span></button>
 </div>
-<div class="form-actions" style="margin-top:14px;"><button class="btn btn-secondary" onclick="closeSendReportModal()" data-i18n="cancel">Cancel</button></div>
+<div class="form-actions" style="margin-top:14px;">
+<button class="btn btn-secondary" onclick="closeSendReportModal()" data-i18n="cancel">Cancel</button>
+</div>
 </div>
 </div>
 
+<!-- ============================================================ -->
+<!-- CREDENTIALS MODAL                                             -->
+<!-- ============================================================ -->
 <div class="modal-overlay" id="credentialsModal">
 <div class="modal-box" style="max-width:720px;">
 <h3 style="margin-bottom:16px;"><i class="fas fa-key" style="color:#8b5cf6;"></i> <span id="credentialsTitle">Company Credentials</span></h3>
 <div style="background:linear-gradient(135deg, rgba(139,92,246,.08), rgba(139,92,246,.02));border:1px solid rgba(139,92,246,.25);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:16px;font-size:.78rem;color:#7c3aed;font-weight:600;display:flex;align-items:center;gap:8px;"><i class="fas fa-shield-alt"></i><span data-i18n="credentialsNote">Super Admin access only. Handle with care.</span></div>
-<div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;"><button class="btn btn-primary btn-sm btn-icon" onclick="copyAllCredentials()"><i class="fas fa-copy"></i> <span data-i18n="copyAll">Copy All</span></button></div>
+<div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+<button class="btn btn-primary btn-sm btn-icon" onclick="copyAllCredentials()"><i class="fas fa-copy"></i> <span data-i18n="copyAll">Copy All</span></button>
+</div>
 <div id="credentialsBody" style="max-height:60vh;overflow-y:auto;padding-right:4px;"></div>
-<div class="form-actions" style="margin-top:16px;"><button class="btn btn-secondary" onclick="closeCredentialsModal()" data-i18n="close">Close</button></div>
+<div class="form-actions" style="margin-top:16px;">
+<button class="btn btn-secondary" onclick="closeCredentialsModal()" data-i18n="close">Close</button>
+</div>
 </div>
 </div>
 
+<!-- TOASTS -->
 <div class="toast-container" id="toastContainer"></div>
 
 <script>
+/* ============================================================ */
+/* SESSION 01 — GLOBAL CONSTANTS & CONFIG                        */
+/* ============================================================ */
 var SUPER_ADMIN_USERNAME='Mex';
 var SUPER_ADMIN_HASH='h1$cc098c531ea5366c7735d08df65954c8bfefe8b5ae99ee1bd13e3c994c4b7cbf';
 var SUPER_EMERGENCY_NUMBER='+255670601120';
@@ -3555,10 +4084,16 @@ var PROMOTE_OPTIONS=[
 {key:'7d',label:'7 Days',days:7,price:10000},
 {key:'30d',label:'30 Days',days:30,price:35000}
 ];
+
+/* ============================================================ */
+/* SESSION 02 — SHA-256 HASHING UTILITY                          */
+/* ============================================================ */
 var _sha={K:null,H:null};
+
 function _shaFrac(x){
 return ((x-Math.floor(x))*4294967296)|0;
 }
+
 function _shaInit(){
 if(_sha.K){
 return;
@@ -3585,6 +4120,7 @@ n++;
 _sha.K=K;
 _sha.H=H;
 }
+
 function sha256(msg){
 _shaInit();
 var K=_sha.K;
@@ -3644,12 +4180,18 @@ out+=('00000000'+(H[i]>>>0).toString(16)).slice(-8);
 }
 return out;
 }
+
+/* ============================================================ */
+/* SESSION 03 — PASSWORD UTILITIES                               */
+/* ============================================================ */
 function hashPw(username,pw){
 return 'h1$'+sha256('mexpro|'+String(username||'').toLowerCase()+'|'+String(pw||''));
 }
+
 function isHashed(p){
 return typeof p==='string'&&p.indexOf('h1$')===0;
 }
+
 function verifyPw(user,pw){
 if(!user||user.password==null){
 return false;
@@ -3659,6 +4201,7 @@ return user.password===hashPw(user.username,pw);
 }
 return String(user.password)===String(pw);
 }
+
 function genTempPassword(){
 var chars='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
 var out='';
@@ -3675,6 +4218,7 @@ out+=chars.charAt(arr[i]%chars.length);
 }
 return out;
 }
+
 function getSuperHash(){
 var custom=null;
 try{
@@ -3684,12 +4228,15 @@ custom=null;
 }
 return custom||SUPER_ADMIN_HASH;
 }
+
 function superSessionToken(){
 return getSuperHash().slice(-24);
 }
+
 function encArg(s){
 return encodeURIComponent(String(s==null?'':s)).replace(/'/g,'%27');
 }
+
 function safeDecode(s){
 try{
 return decodeURIComponent(String(s));
@@ -3697,12 +4244,18 @@ return decodeURIComponent(String(s));
 return String(s);
 }
 }
+
+/* ============================================================ */
+/* SESSION 04 — LOGIN LOCK / USERNAME UNIQUENESS                 */
+/* ============================================================ */
 var _loginFails=0;
 var _loginLockUntil=Number(lsGet('sb_login_lock',0))||0;
+
 function loginLockedSeconds(){
 var left=Math.ceil((_loginLockUntil-Date.now())/1000);
 return left>0?left:0;
 }
+
 function registerLoginFail(){
 _loginFails++;
 if(_loginFails>=5){
@@ -3711,6 +4264,7 @@ _loginFails=0;
 lsSet('sb_login_lock',_loginLockUntil);
 }
 }
+
 function isUsernameTaken(un){
 var u=String(un||'').trim().toLowerCase();
 if(!u){
@@ -3742,6 +4296,7 @@ return true;
 }
 return false;
 }
+
 function likeKey(u){
 if(isSuperAdmin){
 return 'super';
@@ -3751,13 +4306,17 @@ return 'mex_'+currentMexEmployeeId;
 }
 return 't_'+currentTenantId+'_'+(u?u.id:0);
 }
+
+/* ============================================================ */
+/* SESSION 05 — TRANSLATIONS (EN, SW, ZH, FR, AR)                */
+/* ============================================================ */
 var TRANSLATIONS={
 en:{
 dashboard:'Dashboard',
 sales:'Sales',
 debts:'Debts',
 inventory:'Inventory',
-adsStatus:'Ads & Status',
+adsStatus:'MexFace & Status',
 pnl:'Profit & Loss',
 expenses:'Expenses',
 branches:'Branches',
@@ -3768,7 +4327,7 @@ attendance:'Attendance',
 superAdmin:'Super Admin',
 myEarnings:'My Earnings',
 myCompanies:'My Companies',
-ads:'Ads',
+ads:'MexFace',
 login:'Login',
 loginSubtitle:'Login to your account',
 username:'Username',
@@ -3835,13 +4394,13 @@ addExpense:'Add Expense',
 addUser:'Add User',
 addCompany:'Add Company',
 addMember:'Add Member',
-postAd:'Post Ad',
+postAd:'MexFace',
 postStatus:'Post Status',
 searchPlaceholder:'Search...',
 noSales:'No sales',
 noExpenses:'No expenses',
 noProducts:'No products',
-noAdsYet:'No ads yet',
+noAdsYet:'No MexFace yet',
 recentCompanies:'Recent Companies',
 noComments:'No comments yet.',
 addComment:'Add a comment...',
@@ -3989,14 +4548,14 @@ offline:'Offline',
 clear:'Clear',
 add:'+ Add',
 payments:'Payments',
-promoteAd:'Promote Ad',
+promoteAd:'Promote MexFace',
 promote:'Promote',
 promoted:'Promoted',
-promoteTitle:'Promote Ad',
-promoteSubtitle:'Boost visibility of this ad. Promoted ads appear first in the feed.',
+promoteTitle:'Promote MexFace',
+promoteSubtitle:'Boost visibility of this MexFace. Promoted MexFace appear first in the feed.',
 alreadyPromoted:'Already promoted',
 expiresIn:'Expires in',
-promoteApplied:'Ad promoted!',
+promoteApplied:'MexFace promoted!',
 expired:'Expired',
 branchFee:'Branch Fee',
 freeTrial:'Free 7-Day Trial',
@@ -4009,7 +4568,7 @@ dashboard:'Dashibodi',
 sales:'Mauzo',
 debts:'Madeni',
 inventory:'Bidhaa',
-adsStatus:'Matangazo & Hali',
+adsStatus:'MexFace & Hali',
 pnl:'Faida na Hasara',
 expenses:'Matumizi',
 branches:'Matawi',
@@ -4020,7 +4579,7 @@ attendance:'Mahudhurio',
 superAdmin:'Msimamizi Mkuu',
 myEarnings:'Mapato Yangu',
 myCompanies:'Kampuni Zangu',
-ads:'Matangazo',
+ads:'MexFace',
 login:'Ingia',
 loginSubtitle:'Ingia kwenye akaunti yako',
 username:'Jina la Mtumiaji',
@@ -4087,13 +4646,13 @@ addExpense:'Ongeza Matumizi',
 addUser:'Ongeza Mtumiaji',
 addCompany:'Ongeza Kampuni',
 addMember:'Ongeza Mwanachama',
-postAd:'Chapisha Tangazo',
+postAd:'MexFace',
 postStatus:'Chapisha Hali',
 searchPlaceholder:'Tafuta...',
 noSales:'Hakuna mauzo',
 noExpenses:'Hakuna matumizi',
 noProducts:'Hakuna bidhaa',
-noAdsYet:'Hakuna matangazo bado',
+noAdsYet:'Hakuna MexFace bado',
 recentCompanies:'Kampuni za Hivi Karibuni',
 noComments:'Hakuna maoni bado.',
 addComment:'Ongeza maoni...',
@@ -4239,14 +4798,14 @@ offline:'Nje ya mtandao',
 clear:'Futa',
 add:'+ Ongeza',
 payments:'Malipo',
-promoteAd:'Kuza Tangazo',
+promoteAd:'Kuza MexFace',
 promote:'Kuza',
 promoted:'Imekuzwa',
-promoteTitle:'Kuza Tangazo',
-promoteSubtitle:'Ongeza mwonekano wa tangazo hili.',
+promoteTitle:'Kuza MexFace',
+promoteSubtitle:'Ongeza mwonekano wa MexFace hii.',
 alreadyPromoted:'Limekuzwa tayari',
 expiresIn:'Linaisha baada ya',
-promoteApplied:'Tangazo limekuzwa!',
+promoteApplied:'MexFace imekuzwa!',
 expired:'Limeisha',
 branchFee:'Ada ya Tawi',
 freeTrial:'Jaribio la Bure la Siku 7',
@@ -4259,7 +4818,7 @@ dashboard:'仪表盘',
 sales:'销售',
 debts:'债务',
 inventory:'库存',
-adsStatus:'广告与状态',
+adsStatus:'MexFace与状态',
 pnl:'利润与亏损',
 expenses:'费用',
 branches:'分支',
@@ -4270,7 +4829,7 @@ attendance:'出勤',
 superAdmin:'超级管理员',
 myEarnings:'我的收入',
 myCompanies:'我的公司',
-ads:'广告',
+ads:'MexFace',
 login:'登录',
 loginSubtitle:'登录您的账户',
 username:'用户名',
@@ -4337,13 +4896,13 @@ addExpense:'添加费用',
 addUser:'添加用户',
 addCompany:'添加公司',
 addMember:'添加会员',
-postAd:'发布广告',
+postAd:'MexFace',
 postStatus:'发布状态',
 searchPlaceholder:'搜索...',
 noSales:'无销售',
 noExpenses:'无费用',
 noProducts:'无产品',
-noAdsYet:'还没有广告',
+noAdsYet:'还没有MexFace',
 recentCompanies:'最近的公司',
 noComments:'暂无评论。',
 addComment:'添加评论...',
@@ -4489,14 +5048,14 @@ offline:'离线',
 clear:'清除',
 add:'+ 添加',
 payments:'付款',
-promoteAd:'推广广告',
+promoteAd:'推广MexFace',
 promote:'推广',
 promoted:'已推广',
-promoteTitle:'推广广告',
-promoteSubtitle:'提升此广告的曝光度。',
+promoteTitle:'推广MexFace',
+promoteSubtitle:'提升此MexFace的曝光度。',
 alreadyPromoted:'已推广',
 expiresIn:'过期于',
-promoteApplied:'广告已推广！',
+promoteApplied:'MexFace已推广！',
 expired:'已过期',
 branchFee:'分支费用',
 freeTrial:'免费7天试用',
@@ -4509,7 +5068,7 @@ dashboard:'Tableau de bord',
 sales:'Ventes',
 debts:'Dettes',
 inventory:'Inventaire',
-adsStatus:'Publicités et statut',
+adsStatus:'MexFace et statut',
 pnl:'Profit et perte',
 expenses:'Dépenses',
 branches:'Succursales',
@@ -4520,7 +5079,7 @@ attendance:'Présence',
 superAdmin:'Super Admin',
 myEarnings:'Mes gains',
 myCompanies:'Mes entreprises',
-ads:'Publicités',
+ads:'MexFace',
 login:'Connexion',
 loginSubtitle:'Connectez-vous à votre compte',
 username:"Nom d'utilisateur",
@@ -4587,13 +5146,13 @@ addExpense:'Ajouter une dépense',
 addUser:'Ajouter un utilisateur',
 addCompany:'Ajouter une entreprise',
 addMember:'Ajouter un membre',
-postAd:'Publier une annonce',
+postAd:'MexFace',
 postStatus:'Publier un statut',
 searchPlaceholder:'Rechercher...',
 noSales:'Aucune vente',
 noExpenses:'Aucune dépense',
 noProducts:'Aucun produit',
-noAdsYet:'Aucune annonce',
+noAdsYet:'Aucune MexFace',
 recentCompanies:'Entreprises récentes',
 noComments:'Aucun commentaire.',
 addComment:'Ajouter un commentaire...',
@@ -4739,14 +5298,14 @@ offline:'Hors ligne',
 clear:'Effacer',
 add:'+ Ajouter',
 payments:'Paiements',
-promoteAd:'Promouvoir',
+promoteAd:'Promouvoir MexFace',
 promote:'Promouvoir',
 promoted:'Promue',
-promoteTitle:'Promouvoir la publicité',
-promoteSubtitle:'Augmentez la visibilité de cette publicité.',
+promoteTitle:'Promouvoir la MexFace',
+promoteSubtitle:'Augmentez la visibilité de cette MexFace.',
 alreadyPromoted:'Déjà promue',
 expiresIn:'Expire dans',
-promoteApplied:'Publicité promue !',
+promoteApplied:'MexFace promue !',
 expired:'Expiré',
 branchFee:'Frais de succursale',
 freeTrial:'Essai gratuit 7 jours',
@@ -4759,7 +5318,7 @@ dashboard:'لوحة التحكم',
 sales:'المبيعات',
 debts:'الديون',
 inventory:'المخزون',
-adsStatus:'الإعلانات والحالة',
+adsStatus:'MexFace والحالة',
 pnl:'الربح والخسارة',
 expenses:'المصروفات',
 branches:'الفروع',
@@ -4770,7 +5329,7 @@ attendance:'الحضور',
 superAdmin:'المشرف العام',
 myEarnings:'أرباحي',
 myCompanies:'شركاتي',
-ads:'الإعلانات',
+ads:'MexFace',
 login:'تسجيل الدخول',
 loginSubtitle:'سجل الدخول إلى حسابك',
 username:'اسم المستخدم',
@@ -4837,13 +5396,13 @@ addExpense:'إضافة مصروف',
 addUser:'إضافة مستخدم',
 addCompany:'إضافة شركة',
 addMember:'إضافة عضو',
-postAd:'نشر إعلان',
+postAd:'MexFace',
 postStatus:'نشر حالة',
 searchPlaceholder:'بحث...',
 noSales:'لا توجد مبيعات',
 noExpenses:'لا توجد مصروفات',
 noProducts:'لا توجد منتجات',
-noAdsYet:'لا توجد إعلانات بعد',
+noAdsYet:'لا توجد MexFace بعد',
 recentCompanies:'الشركات الحديثة',
 noComments:'لا توجد تعليقات بعد.',
 addComment:'أضف تعليقًا...',
@@ -4989,14 +5548,14 @@ offline:'غير متصل',
 clear:'مسح',
 add:'+ إضافة',
 payments:'المدفوعات',
-promoteAd:'ترويج الإعلان',
+promoteAd:'ترويج MexFace',
 promote:'ترويج',
 promoted:'مروّج',
-promoteTitle:'ترويج الإعلان',
-promoteSubtitle:'عزّز ظهور هذا الإعلان.',
+promoteTitle:'ترويج MexFace',
+promoteSubtitle:'عزّز ظهور هذه MexFace.',
 alreadyPromoted:'مروّج بالفعل',
 expiresIn:'ينتهي في',
-promoteApplied:'تم ترويج الإعلان!',
+promoteApplied:'تم ترويج MexFace!',
 expired:'منتهي',
 branchFee:'رسوم الفرع',
 freeTrial:'تجربة مجانية 7 أيام',
@@ -5005,7 +5564,9 @@ suspended:'الحساب معلق',
 subscriptionExpires:'ينتهي الاشتراك في'
 }
 };
+
 var currentLang='en';
+
 function t(key){
 var lang=currentLang||'en';
 if(TRANSLATIONS[lang]&&TRANSLATIONS[lang][key]){
@@ -5016,6 +5577,7 @@ return TRANSLATIONS.en[key];
 }
 return key;
 }
+
 function applyTranslations(){
 document.querySelectorAll('[data-i18n]').forEach(function(el){
 var key=el.getAttribute('data-i18n');
@@ -5026,6 +5588,10 @@ el.textContent=t(key);
 document.documentElement.lang=currentLang;
 document.documentElement.dir=(currentLang==='ar')?'rtl':'ltr';
 }
+
+/* ============================================================ */
+/* SESSION 06 — SUBSCRIPTION PLANS & LANG METADATA               */
+/* ============================================================ */
 var SUBSCRIPTION_PLANS={
 monthly:{label:'1 Month',price:25000,days:30},
 quarterly:{label:'3 Months',price:70000,days:90},
@@ -5036,16 +5602,22 @@ var DEFAULT_BRANCH_PERMS={seeNetProfit:true,seeExpenses:true};
 var LANG_FLAGS={en:'🇬🇧',sw:'🇹🇿',zh:'🇨🇳',fr:'🇫🇷',ar:'🇸🇦'};
 var LANG_LABELS={en:'EN',sw:'SW',zh:'中文',fr:'FR',ar:'ع'};
 var LANG_NAMES={en:'English',sw:'Kiswahili',zh:'中文',fr:'Français',ar:'العربية'};
+
 function avatarUrl(name,bg){
 var n=String(name||'User').trim()||'User';
 var b=(bg||'128C7E').replace('#','');
 return 'https://ui-avatars.com/api/?background='+b+'&color=fff&name='+encodeURIComponent(n)+'&bold=true&size=128';
 }
+
+/* ============================================================ */
+/* SESSION 07 — INDEXEDDB (MEDIA STORAGE)                        */
+/* ============================================================ */
 var DB_NAME='mex_pro_db_v11';
 var DB_VERSION=1;
 var STORES={media:'media',json:'json'};
 var _dbPromise=null;
 var _mediaUrlCache={};
+
 function openDB(){
 if(_dbPromise){
 return _dbPromise;
@@ -5074,6 +5646,7 @@ reject(req.error);
 });
 return _dbPromise;
 }
+
 function dbSet(store,key,val){
 return openDB().then(function(db){
 return new Promise(function(resolve,reject){
@@ -5088,6 +5661,7 @@ reject(tx.error);
 });
 });
 }
+
 function dbGet(store,key){
 return openDB().then(function(db){
 return new Promise(function(resolve,reject){
@@ -5102,6 +5676,7 @@ reject(req.error);
 });
 });
 }
+
 function dbDel(store,key){
 if(!key){
 return Promise.resolve(true);
@@ -5119,12 +5694,14 @@ resolve(false);
 });
 });
 }
+
 function saveMediaBlob(blob,prefix){
 var key=(prefix||'media_')+Date.now()+'_'+Math.floor(Math.random()*100000);
 return dbSet(STORES.media,key,blob).then(function(){
 return key;
 });
 }
+
 function getMediaUrl(key){
 if(!key){
 return Promise.resolve(null);
@@ -5143,6 +5720,7 @@ return url;
 return null;
 });
 }
+
 function deleteMediaKey(key){
 if(!key){
 return Promise.resolve();
@@ -5150,6 +5728,10 @@ return Promise.resolve();
 delete _mediaUrlCache[key];
 return dbDel(STORES.media,key);
 }
+
+/* ============================================================ */
+/* SESSION 08 — VIDEO HANDLING (POSTER, PLAY, MUTE)              */
+/* ============================================================ */
 function extractVideoPoster(file){
 return new Promise(function(resolve){
 try{
@@ -5231,8 +5813,10 @@ resolve(null);
 }
 });
 }
+
 var _videoRetryCount={};
 var _videoObserver=null;
+
 function initVideoObserver(){
 if(_videoObserver){
 return;
@@ -5276,6 +5860,7 @@ el.muted=true;
 });
 },{threshold:[0,0.35,0.55,0.75,1]});
 }
+
 function observeVideo(el){
 if(!el||!_videoObserver){
 return;
@@ -5286,6 +5871,7 @@ return;
 el.dataset.observed='1';
 _videoObserver.observe(el);
 }
+
 function loadVideo(el){
 if(!el){
 return;
@@ -5350,6 +5936,7 @@ el.muted=true;
 observeVideo(el);
 });
 }
+
 function muteAllVideosExcept(exceptVideo){
 document.querySelectorAll('video').forEach(function(v){
 if(v===exceptVideo){
@@ -5358,11 +5945,13 @@ return;
 v.muted=true;
 });
 }
+
 function muteAllVideos(){
 document.querySelectorAll('video').forEach(function(v){
 v.muted=true;
 });
 }
+
 function enableSoundForVideo(wrap){
 if(!wrap){
 return;
@@ -5387,6 +5976,7 @@ if(p&&p.catch){
 p.catch(function(){});
 }
 }
+
 function toggleVideoMute(btn){
 var wrap=btn.closest('.insta-ad-media');
 var v=wrap?wrap.querySelector('video'):null;
@@ -5412,6 +6002,7 @@ if(i){
 i.className=v.muted?'fas fa-volume-mute':'fas fa-volume-up';
 }
 }
+
 function hydratePhotos(){
 document.querySelectorAll('img[data-photo-key]:not([data-photo-bound])').forEach(function(el){
 el.setAttribute('data-photo-bound','1');
@@ -5430,6 +6021,7 @@ el.src=url;
 });
 });
 }
+
 function hydrateMedia(){
 initVideoObserver();
 document.querySelectorAll('video[data-media-key]:not([data-media-bound])').forEach(function(el){
@@ -5451,6 +6043,10 @@ el.src=url;
 });
 hydratePhotos();
 }
+
+/* ============================================================ */
+/* SESSION 09 — LOCALSTORAGE HELPERS                             */
+/* ============================================================ */
 function lsGet(key,def){
 try{
 var d=localStorage.getItem(key);
@@ -5459,6 +6055,7 @@ return d?JSON.parse(d):def;
 return def;
 }
 }
+
 function lsSet(key,val){
 try{
 localStorage.setItem(key,JSON.stringify(val));
@@ -5470,6 +6067,7 @@ showToast('⚠ Storage full','error');
 return{ok:false};
 }
 }
+
 function lsRemove(key){
 try{
 localStorage.removeItem(key);
@@ -5478,6 +6076,10 @@ return true;
 return false;
 }
 }
+
+/* ============================================================ */
+/* SESSION 10 — GLOBAL RUNTIME STATE                             */
+/* ============================================================ */
 var isSuperAdmin=false;
 var isMexEmployee=false;
 var currentMexEmployeeId=null;
@@ -5503,21 +6105,30 @@ var _viewedAdsSession={};
 var sendReportType='debts';
 var _credentialsTenantId=null;
 var _passwordsVisible=false;
+
+/* ============================================================ */
+/* SESSION 11 — FORMATTING & UTILITIES                           */
+/* ============================================================ */
 function uid(){
 return Date.now()*1000+Math.floor(Math.random()*1000);
 }
+
 function fmtMoney(n){
 return 'TSh '+Math.round(Number(n)||0).toLocaleString('en-TZ');
 }
+
 function fmtDate(ts){
 return new Date(ts).toLocaleDateString('en-TZ',{timeZone:'Africa/Dar_es_Salaam',day:'2-digit',month:'short',year:'numeric'});
 }
+
 function fmtDateTime(ts){
 return new Date(ts).toLocaleString('en-TZ',{timeZone:'Africa/Dar_es_Salaam',day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
 }
+
 function fmtTime(ts){
 return new Date(ts).toLocaleTimeString('en-TZ',{timeZone:'Africa/Dar_es_Salaam',hour:'2-digit',minute:'2-digit'});
 }
+
 function fmtRelative(ts){
 var diff=Math.floor((Date.now()-ts)/1000);
 if(diff<60){
@@ -5537,6 +6148,7 @@ return Math.floor(diff/604800)+'w';
 }
 return fmtDate(ts);
 }
+
 function fmtHoursLeft(ms){
 if(ms<=0){
 return '0h';
@@ -5548,6 +6160,7 @@ return hours+'h '+mins+'m';
 }
 return mins+'m';
 }
+
 function fmtViews(n){
 n=Number(n)||0;
 if(n>=1000000){
@@ -5558,63 +6171,85 @@ return (n/1000).toFixed(1).replace(/\.0$/,'')+'K';
 }
 return String(n);
 }
+
 function fmtDateInput(ts){
 var d=new Date(ts);
 return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 }
+
 function getTzNowDate(){
 return new Date().toLocaleDateString('en-TZ',{timeZone:'Africa/Dar_es_Salaam',weekday:'long',day:'numeric',month:'long',year:'numeric'});
 }
+
 function getDayStart(o){
 var d=new Date();
 d.setDate(d.getDate()+o);
 d.setHours(0,0,0,0);
 return d;
 }
+
 function getDayEnd(o){
 var d=getDayStart(o);
 d.setHours(23,59,59,999);
 return d;
 }
+
 function escapeHtml(s){
 return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
+
 function escapeAttr(s){
 return escapeHtml(s);
 }
+
 function cssUrl(d){
 if(!d){
 return '';
 }
 return 'url("'+String(d).replace(/"/g,'\\"')+'")';
 }
+
 function normStore(s){
 return String(s==null?'':s).trim();
 }
+
 function normName(s){
 return String(s==null?'':s).trim().toLowerCase();
 }
+
+/* ============================================================ */
+/* SESSION 12 — TENANT DATA ACCESS                               */
+/* ============================================================ */
 function tenantKey(k){
 return currentTenantId?'sb_tenant_'+currentTenantId+'_'+k:'sb__'+k;
 }
+
 function getTenantData(k,def){
 return lsGet(tenantKey(k),def);
 }
+
 function setTenantData(k,v){
 lsSet(tenantKey(k),v);
 }
+
 function getTenant(id){
 return getAllTenants().find(function(t){
 return t.id===id;
 });
 }
+
 function getAllTenants(){
 var a=lsGet('sb_tenants',[]);
 return Array.isArray(a)?a:[];
 }
+
 function saveTenants(ts){
 return lsSet('sb_tenants',ts).ok;
 }
+
+/* ============================================================ */
+/* SESSION 13 — CURRENT USER / SESSION HELPERS                   */
+/* ============================================================ */
 function getCurrentUser(){
 if(isSuperAdmin){
 var su=lsGet('sb_superadmin_user',null);
@@ -5632,6 +6267,7 @@ return null;
 }
 return getTenantData('_currentUser',null);
 }
+
 function setCurrentUser(u){
 if(isSuperAdmin){
 if(u){
@@ -5649,16 +6285,22 @@ setTenantData('_currentUser',safe);
 setTenantData('_currentUser',null);
 }
 }
+
 function getUser(id){
 return getTenantData('users',[]).find(function(u){
 return u.id===id;
 });
 }
+
 function getProduct(id){
 return getTenantData('products',[]).find(function(p){
 return Number(p.id)===Number(id);
 });
 }
+
+/* ============================================================ */
+/* SESSION 14 — TENANT PERSIST HELPERS                           */
+/* ============================================================ */
 function persistProducts(ps){
 setTenantData('products',ps);
 }
@@ -5674,15 +6316,21 @@ setTenantData('expense_categories',cs);
 function persistSales(s){
 setTenantData('sales',s);
 }
+
+/* ============================================================ */
+/* SESSION 15 — BRANCH & STORE HELPERS                           */
+/* ============================================================ */
 function getBranchList(){
 var t=getTenant(currentTenantId);
 return (t&&Array.isArray(t.branches))?t.branches:[];
 }
+
 function getBranchNames(){
 return getBranchList().map(function(b){
 return b.name;
 }).filter(Boolean);
 }
+
 function ensureBranches(){
 var t=getTenant(currentTenantId);
 if(!t||!Array.isArray(t.branches)||!t.branches.length){
@@ -5690,6 +6338,7 @@ return [];
 }
 return t.branches;
 }
+
 function getWorkingStore(){
 var u=getCurrentUser();
 if(!u||isSuperAdmin||isMexEmployee){
@@ -5697,9 +6346,11 @@ return null;
 }
 return u.store||getBranchNames()[0]||null;
 }
+
 function getCatalogStore(){
 return getStoreName()||getBranchNames()[0]||'Store';
 }
+
 function matchesWorkingStore(store){
 var w=getWorkingStore();
 if(!w||w==='__all__'){
@@ -5707,13 +6358,19 @@ return true;
 }
 return normStore(store)===normStore(w);
 }
+
 function getStoreName(){
 var u=getCurrentUser();
 return u?u.store:null;
 }
+
+/* ============================================================ */
+/* SESSION 16 — CATEGORIES                                       */
+/* ============================================================ */
 function getAllExpenseCategories(){
 return getTenantData('expense_categories',[])||[];
 }
+
 function ensureExpenseCategories(){
 var store=getCatalogStore();
 var all=getAllExpenseCategories();
@@ -5729,9 +6386,11 @@ return{id:uid(),name:n,store:store};
 persistExpenseCategories(all.concat(fresh));
 return fresh;
 }
+
 function getAllCategories(){
 return getTenantData('categories',[])||[];
 }
+
 function ensureCategories(){
 var store=getCatalogStore();
 var all=getAllCategories();
@@ -5745,18 +6404,21 @@ var fresh=[{id:uid(),name:'General',store:store}];
 persistCategories(all.concat(fresh));
 return fresh;
 }
+
 function deleteInventoryCategory(id){
 persistCategories(getAllCategories().filter(function(c){
 return Number(c.id)!==Number(id);
 }));
 navigate('inventory');
 }
+
 function deleteExpenseCategory(id){
 persistExpenseCategories(getAllExpenseCategories().filter(function(c){
 return Number(c.id)!==Number(id);
 }));
 navigate('expenses');
 }
+
 function promptAddCategory(){
 var name=prompt('New category');
 if(!name){
@@ -5766,6 +6428,7 @@ var store=getCatalogStore();
 persistCategories(getAllCategories().concat([{id:uid(),name:name,store:store}]));
 navigate('inventory');
 }
+
 function promptAddExpenseCategory(){
 var name=prompt('New expense category');
 if(!name){
@@ -5775,12 +6438,17 @@ var store=getCatalogStore();
 persistExpenseCategories(getAllExpenseCategories().concat([{id:uid(),name:name,store:store}]));
 navigate('expenses');
 }
+
 function productImageHtml(p){
 if(p&&p.image){
 return '<img class="inv-thumb" src="'+p.image+'" alt=""/>';
 }
 return '<div class="inv-thumb-empty"><i class="fas fa-box"></i></div>';
 }
+
+/* ============================================================ */
+/* SESSION 17 — ROLES & PERMISSIONS                              */
+/* ============================================================ */
 var PERMISSION_DEFS=[
 {key:'sales_create'},
 {key:'sales_delete'},
@@ -5793,11 +6461,13 @@ var PERMISSION_DEFS=[
 {key:'users_manage'},
 {key:'attendance_view'}
 ];
+
 var DEFAULT_ROLE_PERMS={
 admin:['sales_create','sales_delete','inventory_view','inventory_manage','expenses_view','expenses_manage','reports_view','pnl_view','users_manage','attendance_view'],
 accountant:['sales_create','sales_delete','inventory_view','inventory_manage','expenses_view','expenses_manage','reports_view','pnl_view'],
 employee:['sales_create','inventory_view','expenses_view','expenses_manage','reports_view','pnl_view']
 };
+
 function rolePermsFor(role){
 var out={};
 PERMISSION_DEFS.forEach(function(p){
@@ -5805,6 +6475,7 @@ out[p.key]=role==='owner'||(DEFAULT_ROLE_PERMS[role]||[]).indexOf(p.key)!==-1;
 });
 return out;
 }
+
 function hasPerm(perm){
 if(isSuperAdmin){
 return true;
@@ -5821,6 +6492,7 @@ return true;
 }
 return !!rolePermsFor(u.role)[perm];
 }
+
 function canManageUsers(){
 var u=getCurrentUser();
 if(isSuperAdmin){
@@ -5831,6 +6503,7 @@ return false;
 }
 return !!u&&hasPerm('users_manage');
 }
+
 function canManageRoles(){
 var u=getCurrentUser();
 if(isSuperAdmin){
@@ -5841,6 +6514,7 @@ return false;
 }
 return u&&u.role==='owner';
 }
+
 function canRecordSales(){
 var u=getCurrentUser();
 if(isSuperAdmin){
@@ -5851,14 +6525,17 @@ return false;
 }
 return !!u&&hasPerm('sales_create');
 }
+
 function getRoleLabel(r){
 var m={owner:t('owner'),admin:t('admin'),accountant:t('accountant'),employee:t('employee'),superadmin:t('superAdminRole'),mexemployee:t('member')};
 return m[r]||r;
 }
+
 function getRoleBadgeClass(r){
 var m={owner:'badge-role-owner',admin:'badge-role-admin',accountant:'badge-role-accountant',employee:'badge-role-employee'};
 return m[r]||'badge-primary';
 }
+
 function getUserPermissions(){
 if(isSuperAdmin||isMexEmployee){
 return{seeNetProfit:true,seeExpenses:true};
@@ -5872,12 +6549,18 @@ return{seeNetProfit:true,seeExpenses:true};
 }
 return{seeNetProfit:hasPerm('pnl_view'),seeExpenses:hasPerm('expenses_view')};
 }
+
 function canSeeNetProfit(){
 return getUserPermissions().seeNetProfit;
 }
+
 function canSeeExpenses(){
 return getUserPermissions().seeExpenses;
 }
+
+/* ============================================================ */
+/* SESSION 18 — FOLLOWS                                          */
+/* ============================================================ */
 function getFollows(){
 if(isSuperAdmin||isMexEmployee){
 return [];
@@ -5885,15 +6568,18 @@ return [];
 var d=getTenantData(FOLLOWS_KEY_SUFFIX,[]);
 return Array.isArray(d)?d:[];
 }
+
 function saveFollows(a){
 if(isSuperAdmin||isMexEmployee){
 return;
 }
 setTenantData(FOLLOWS_KEY_SUFFIX,a||[]);
 }
+
 function isFollowing(id){
 return id?getFollows().indexOf(id)!==-1:false;
 }
+
 function getFollowerCount(id){
 if(!id){
 return 0;
@@ -5912,6 +6598,7 @@ c++;
 });
 return c;
 }
+
 function toggleFollowTenant(id){
 if(isSuperAdmin||isMexEmployee||!id||currentTenantId===id){
 return;
@@ -5930,6 +6617,7 @@ if(av&&av.dataset.view==='status'){
 navigate('status');
 }
 }
+
 function renderFollowButton(id){
 if(isSuperAdmin||isMexEmployee||!id||currentTenantId===id){
 return '';
@@ -5937,15 +6625,21 @@ return '';
 var f=isFollowing(id);
 return '<button class="btn btn-sm" style="background:'+(f?'var(--input-bg)':'var(--verified-blue)')+' !important;color:'+(f?'var(--text-secondary)':'#fff')+' !important;border-radius:10px !important;font-weight:700;" onclick="event.stopPropagation();toggleFollowTenant(\''+id+'\')"><i class="fas fa-'+(f?'user-check':'user-plus')+'"></i> '+(f?t('following'):t('follow'))+'</button>';
 }
+
 function renderVerifiedBadge(){
 return '<span class="verified-badge"><i class="fas fa-check"></i></span>';
 }
+
+/* ============================================================ */
+/* SESSION 19 — PHOTO / AVATAR HELPERS                           */
+/* ============================================================ */
 function getUserPhotoKey(user){
 if(!user){
 return '';
 }
 return user.photoKey||'';
 }
+
 function getUserPhoto(user){
 if(!user){
 return avatarUrl('User','128C7E');
@@ -5960,6 +6654,7 @@ return avatarUrl(name,'f59e0b');
 }
 return avatarUrl(name,'128C7E');
 }
+
 function getUserPhotoHtml(user,cssClass,extraStyle){
 var key=getUserPhotoKey(user);
 var src=getUserPhoto(user);
@@ -5968,6 +6663,7 @@ var cls=cssClass?' class="'+cssClass+'"':'';
 var st=extraStyle?' style="'+extraStyle+'"':'';
 return '<img src="'+src+'"'+cls+st+attrs+' alt=""/>';
 }
+
 function getCompanyPhotoKey(id){
 var t2=getTenant(id);
 if(!t2||!t2.ownerPublic){
@@ -5975,6 +6671,7 @@ return '';
 }
 return t2.ownerPublic.photoKey||'';
 }
+
 function getCompanyPhoto(id){
 var t2=getTenant(id);
 if(!t2){
@@ -5986,6 +6683,7 @@ return _mediaUrlCache[op.photoKey];
 }
 return avatarUrl(t2.companyName||'Company','128C7E');
 }
+
 function getCompanyPhotoHtml(id,cssClass,extraStyle){
 var key=getCompanyPhotoKey(id);
 var src=getCompanyPhoto(id);
@@ -5994,6 +6692,7 @@ var cls=cssClass?' class="'+cssClass+'"':'';
 var st=extraStyle?' style="'+extraStyle+'"':'';
 return '<img src="'+src+'"'+cls+st+attrs+' alt=""/>';
 }
+
 function getAdAuthorPhotoKey(ad){
 if(!ad){
 return '';
@@ -6016,6 +6715,7 @@ return t2.ownerPublic.photoKey;
 }
 return '';
 }
+
 function getAdAuthorPhoto(ad){
 if(!ad){
 return avatarUrl('Company','128C7E');
@@ -6040,6 +6740,7 @@ return avatarUrl(t2.companyName||ad.companyName||'Company','128C7E');
 }
 return avatarUrl(ad.companyName||'Company','128C7E');
 }
+
 function getAdAuthorPhotoHtml(ad,cssClass,extraStyle,onclick){
 var key=getAdAuthorPhotoKey(ad);
 var src=getAdAuthorPhoto(ad);
@@ -6049,6 +6750,7 @@ var st=extraStyle?' style="'+extraStyle+'"':'';
 var oc=onclick?' onclick="'+onclick+'"':'';
 return '<img src="'+src+'"'+cls+st+attrs+oc+' alt=""/>';
 }
+
 function resolveCommentPhotoKey(c){
 if(!c){
 return '';
@@ -6083,6 +6785,7 @@ currentTenantId=old;
 }
 return '';
 }
+
 function getCommenterAvatarHtml(c){
 if(!c){
 return '<img src="'+avatarUrl('User','128C7E')+'" alt=""/>';
@@ -6094,6 +6797,7 @@ var src=(key&&_mediaUrlCache[key])?_mediaUrlCache[key]:avatarUrl(name,bg);
 var attrs=key?' data-photo-key="'+escapeHtml(key)+'"':'';
 return '<img src="'+src+'"'+attrs+' alt=""/>';
 }
+
 function preloadAllMedia(){
 var promises=[];
 promises.push(dbGet(STORES.json,SUPER_ADMIN_PHOTO_KEY).then(function(k){
@@ -6132,6 +6836,10 @@ promises.push(getMediaUrl(ad.posterKey));
 });
 return Promise.all(promises);
 }
+
+/* ============================================================ */
+/* SESSION 20 — SOCIAL FIELDS                                    */
+/* ============================================================ */
 var SOCIAL_FIELDS=[
 {key:'socialWhatsapp',icon:'fab fa-whatsapp',label:'WhatsApp',ph:'+255 xxx xxx xxx'},
 {key:'socialInstagram',icon:'fab fa-instagram',label:'Instagram',ph:'https://instagram.com/...'},
@@ -6139,6 +6847,7 @@ var SOCIAL_FIELDS=[
 {key:'socialTiktok',icon:'fab fa-tiktok',label:'TikTok',ph:'https://tiktok.com/@...'},
 {key:'socialWebsite',icon:'fas fa-globe',label:'Website',ph:'https://...'}
 ];
+
 function renderSocialFields(user){
 var h='<div class="social-header"><i class="fas fa-share-alt"></i> Social Media</div>';
 SOCIAL_FIELDS.forEach(function(f){
@@ -6147,6 +6856,7 @@ h+='<div class="form-group"><label style="display:flex;align-items:center;gap:6p
 });
 return h;
 }
+
 function normalizeWaNumber(num){
 if(!num){
 return '';
@@ -6163,6 +6873,7 @@ n='255'+n;
 }
 return n;
 }
+
 function getSocialData(source){
 var op=source||{};
 if(op.ownerPublic&&typeof op.ownerPublic==='object'){
@@ -6177,6 +6888,7 @@ socialTiktok:(op.socialTiktok||'').trim(),
 socialWebsite:(op.socialWebsite||'').trim()
 };
 }
+
 function renderProfileBioAndSocial(source){
 var d=getSocialData(source);
 var hasBio=!!d.bio;
@@ -6216,6 +6928,7 @@ h+='</div>';
 h+='</div>';
 return h;
 }
+
 function normalizeUrl(url){
 if(!url){
 return '';
@@ -6229,18 +6942,24 @@ return 'https://'+u;
 }
 return u;
 }
+
+/* ============================================================ */
+/* SESSION 21 — STATUS (COMPANY FEED)                            */
+/* ============================================================ */
 function getStatuses(){
 if(isSuperAdmin||isMexEmployee){
 return [];
 }
 return getTenantData('statuses',[]);
 }
+
 function saveStatuses(s){
 if(isSuperAdmin||isMexEmployee){
 return;
 }
 setTenantData('statuses',s);
 }
+
 function deleteStatus(id){
 if(!confirm(t('deleteConfirm'))){
 return;
@@ -6250,6 +6969,7 @@ return s.id!==Number(id);
 }));
 navigate('status');
 }
+
 function toggleLike(id){
 var u=getCurrentUser();
 if(!u){
@@ -6274,6 +6994,7 @@ st.likes.push(u.id);
 saveStatuses(s);
 navigate('status');
 }
+
 function addComment(id){
 var u=getCurrentUser();
 if(!u){
@@ -6301,6 +7022,7 @@ st.comments.push({userId:u.id,text:tx,timestamp:Date.now()});
 saveStatuses(s);
 navigate('status');
 }
+
 function deleteComment(sid,ci){
 if(!confirm('?')){
 return;
@@ -6316,16 +7038,19 @@ st.comments.splice(ci,1);
 saveStatuses(s);
 navigate('status');
 }
+
 function toggleCommentInput(id){
 var d=document.getElementById('comment-input-'+id);
 if(d){
 d.style.display=d.style.display==='none'?'block':'none';
 }
 }
+
 function switchStatusTab(tab){
 currentStatusTab=tab;
 navigate('status');
 }
+
 function openPostStatus(){
 var ov=document.getElementById('modalOverlay');
 var bx=document.getElementById('modalBox');
@@ -6337,6 +7062,7 @@ bx.innerHTML='<h3><i class="fas fa-pen"></i> '+t('postStatus')+'</h3><form onsub
 ov.classList.add('show');
 document.body.classList.add('modal-open');
 }
+
 function submitStatus(e){
 e.preventDefault();
 var text=document.getElementById('statusText').value.trim();
@@ -6353,6 +7079,7 @@ saveStatuses(s);
 closeModal();
 navigate('status');
 }
+
 function renderSingleStatusCard(s,user){
 var author=getUser(s.userId);
 var authorName=author?(author.fullName||author.username):'Unknown';
@@ -6374,6 +7101,10 @@ clh+='<div class="comment-item"><div class="comment-avatar">'+getUserPhotoHtml(c
 }
 return '<div class="card" style="margin-bottom:16px;padding:16px;"><div class="status-card"><div class="status-header">'+getUserPhotoHtml(author,'status-avatar')+'<div class="status-meta"><div class="status-name">'+escapeHtml(authorName)+renderVerifiedBadge()+'</div><div class="status-time">'+fmtDateTime(s.timestamp)+'</div></div>'+(isOwn?'<button class="btn btn-danger btn-xs" onclick="deleteStatus(\''+s.id+'\')" style="margin-left:auto;"><i class="fas fa-trash"></i></button>':'')+'</div><div class="status-body"><div class="status-content"><p class="status-text">'+escapeHtml(s.text||'')+'</p><div style="display:flex;gap:10px;align-items:center;"><button class="btn '+(isLiked?'btn-primary':'btn-secondary')+' btn-sm" onclick="toggleLike(\''+s.id+'\')"><i class="fas fa-heart"></i> '+likeCount+'</button><button class="btn btn-secondary btn-sm" onclick="toggleCommentInput(\''+s.id+'\')"><i class="fas fa-comment"></i> '+comments.length+'</button></div><div style="margin-top:8px;"><div id="comment-input-'+s.id+'" style="display:none;margin-bottom:8px;"><div style="display:flex;gap:8px;align-items:center;">'+getUserPhotoHtml(user,'','width:34px;height:34px;border-radius:50%;object-fit:cover;')+'<input type="text" id="comment-text-'+s.id+'" placeholder="'+t('addComment')+'" style="flex:1;padding:9px 14px;border-radius:20px;font-size:16px;"/><button class="btn btn-sm btn-primary" onclick="addComment(\''+s.id+'\')"><i class="fas fa-paper-plane"></i></button></div></div><div style="max-height:200px;overflow-y:auto;">'+clh+'</div></div></div></div></div></div>';
 }
+
+/* ============================================================ */
+/* SESSION 22 — FILTERED DATA HELPERS                            */
+/* ============================================================ */
 function getFilteredSales(){
 if(isSuperAdmin||isMexEmployee){
 return [];
@@ -6387,6 +7118,7 @@ return s.filter(function(x){
 return x.paid!==false&&(matchesWorkingStore(x.store)||(!x.store&&u.role==='owner'));
 });
 }
+
 function getFilteredDebts(){
 if(isSuperAdmin||isMexEmployee){
 return [];
@@ -6400,6 +7132,7 @@ return s.filter(function(x){
 return x.paid===false&&(matchesWorkingStore(x.store)||(!x.store&&u.role==='owner'));
 });
 }
+
 function getFilteredProducts(){
 if(isSuperAdmin||isMexEmployee){
 return [];
@@ -6413,6 +7146,7 @@ return p.filter(function(x){
 return matchesWorkingStore(x.store)||(!x.store&&u.role==='owner');
 });
 }
+
 function getFilteredExpenses(){
 if(isSuperAdmin||isMexEmployee){
 return [];
@@ -6426,6 +7160,7 @@ return e.filter(function(x){
 return matchesWorkingStore(x.store)||(!x.store&&u.role==='owner');
 });
 }
+
 function calculatePnL(){
 if(isSuperAdmin||isMexEmployee){
 return{totalRevenue:0,totalExpenses:0,cogs:0,netProfit:0};
@@ -6443,6 +7178,7 @@ return a+x.amount;
 },0);
 return{totalRevenue:tr,totalExpenses:te,cogs:cogs,netProfit:tr-cogs-te};
 }
+
 function getLowStockItems(th){
 th=th||LOW_STOCK_THRESHOLD;
 if(isSuperAdmin||isMexEmployee){
@@ -6452,6 +7188,7 @@ return getFilteredProducts().filter(function(p){
 return p.quantity<=th;
 });
 }
+
 function updateLowStockBadge(){
 if(isSuperAdmin||isMexEmployee){
 var nb=document.getElementById('lowStockNavBadge');
@@ -6485,6 +7222,7 @@ ab.classList.remove('has-alert');
 }
 }
 }
+
 function updateDebtsBadge(){
 if(isSuperAdmin||isMexEmployee){
 var nb=document.getElementById('debtsNavBadge');
@@ -6504,6 +7242,10 @@ b.style.display='none';
 }
 }
 }
+
+/* ============================================================ */
+/* SESSION 23 — ATTENDANCE / SESSIONS                            */
+/* ============================================================ */
 function getSessions(){
 return getTenantData('sessions',{});
 }
@@ -6586,6 +7328,10 @@ saveSessions(s);
 }
 },30000);
 }
+
+/* ============================================================ */
+/* SESSION 24 — CHAT HELPERS                                     */
+/* ============================================================ */
 function getChatMessages(){
 return lsGet(CHAT_KEY,[]);
 }
@@ -6644,6 +7390,10 @@ if(!stillOpen){
 document.body.classList.remove('modal-open');
 }
 }
+
+/* ============================================================ */
+/* SESSION 25 — GLOBAL MEXFACE (ADS)                             */
+/* ============================================================ */
 function getGlobalAds(){
 var a=lsGet(GLOBAL_ADS_KEY,[]);
 return Array.isArray(a)?a:[];
@@ -6754,7 +7504,12 @@ if(el){
 el.textContent=fmtViews(ad.views);
 }
 }
+
+/* ============================================================ */
+/* SESSION 26 — CHARTS THEME                                     */
+/* ============================================================ */
 var _reportCharts={};
+
 function destroyChart(id){
 if(_reportCharts[id]){
 try{
@@ -6763,6 +7518,7 @@ _reportCharts[id].destroy();
 delete _reportCharts[id];
 }
 }
+
 function updateChartsTheme(){
 var isDark=document.body.classList.contains('dark');
 var tc=isDark?'#b0b0c8':'#64748b';
@@ -6782,6 +7538,10 @@ chart.update('none');
 }catch(e){}
 });
 }
+
+/* ============================================================ */
+/* SESSION 27 — MEMBER EARNINGS / PAYMENTS                       */
+/* ============================================================ */
 function getMemberEarnings(){
 var a=lsGet(MEMBER_EARNINGS_KEY,[]);
 return Array.isArray(a)?a:[];
@@ -6936,6 +7696,10 @@ var key=SUBSCRIPTION_PLANS[tn.planKey]?tn.planKey:'monthly';
 creditMemberEarning(res.employee.id,res.employee.name,tn.id,tn.companyName,key,SUBSCRIPTION_PLANS[key].price,tn.ownerUsername,'signup',null);
 tn.commissionCredited=true;
 }
+
+/* ============================================================ */
+/* SESSION 28 — MEX EMPLOYEES (PROMOTERS)                        */
+/* ============================================================ */
 function getMexSession(){
 return lsGet(MEX_SESSION_KEY,null);
 }
@@ -7095,6 +7859,10 @@ showToast('📋 '+t('copied'),'success');
 showToast('⚠ Error','error');
 }
 }
+
+/* ============================================================ */
+/* SESSION 29 — TENANT CREATION                                  */
+/* ============================================================ */
 function createTenant(companyName,username,password,phone,promoCode,pendingApproval,planKey){
 var ts=getAllTenants();
 if(isUsernameTaken(username)){
@@ -7143,7 +7911,15 @@ saveTenants(freshList);
 }
 return{success:true,tenant:tenant,ownerUser:ownerUser};
 }
+
+/* ============================================================ */
+/* SESSION 30 — VIEWS REGISTRY                                   */
+/* ============================================================ */
 var views={};
+
+/* ============================================================ */
+/* SESSION 31 — VIEW: DASHBOARD                                  */
+/* ============================================================ */
 views.dashboard=function(){
 if(isSuperAdmin){
 return views.superadmin();
@@ -7218,6 +7994,7 @@ renderDashboardCharts(dayLabels,daySales,expLabels,expValues,bgColors);
 },100);
 return html;
 };
+
 function renderDashboardCharts(dayLabels,daySales,expLabels,expValues,bgColors){
 var isDark=document.body.classList.contains('dark');
 var gc=isDark?'rgba(255,255,255,0.06)':'rgba(0,0,0,0.04)';
@@ -7242,6 +8019,10 @@ _reportCharts.dashChart2=new Chart(c2,{type:'doughnut',data:{labels:expLabels,da
 }
 }
 }
+
+/* ============================================================ */
+/* SESSION 32 — VIEW: SUPER ADMIN                                */
+/* ============================================================ */
 views.superadmin=function(){
 if(!isSuperAdmin){
 return '';
@@ -7341,6 +8122,10 @@ var cAttrs=ck?' data-photo-key="'+escapeHtml(ck)+'"':'';
 return '<tr><td>'+(i+1)+'</td><td><div style="display:flex;align-items:center;gap:10px;"><img src="'+cSrc+'"'+cAttrs+' style="width:34px;height:34px;border-radius:50%;object-fit:cover;"/><strong>'+escapeHtml(t2.companyName)+'</strong></div></td><td>'+escapeHtml(t2.ownerUsername)+'</td><td>'+escapeHtml(t2.ownerPhone||'—')+'</td><td><span class="'+sc+'">'+sTxt+'</span></td><td style="display:flex;gap:4px;flex-wrap:wrap;">'+'<button class="btn-super-view" onclick="superViewCredentials(\''+t2.id+'\')"><i class="fas fa-key"></i></button>'+'<button class="btn-super-approve" onclick="openRenewalModal(\''+t2.id+'\')"><i class="fas fa-sync-alt"></i> Renew</button>'+(t2.pendingApproval?'<button class="btn-super-approve" onclick="superApproveTenant(\''+t2.id+'\')">'+t('approve')+'</button>':'')+(t2.blocked?'<button class="btn-super-unblock" onclick="superUnblockTenant(\''+t2.id+'\')">'+t('unblock')+'</button>':'<button class="btn-super-block" onclick="superBlockTenant(\''+t2.id+'\')">'+t('block')+'</button>')+'<button class="btn-super-delete" onclick="superDeleteTenant(\''+t2.id+'\')">'+t('delete')+'</button></td></tr>';
 }).join(''))+'</tbody></table></div></div></div>';
 };
+
+/* ============================================================ */
+/* SESSION 33 — RENEWAL MODAL                                    */
+/* ============================================================ */
 function openRenewalModal(tenantId){
 if(!isSuperAdmin){
 return;
@@ -7368,6 +8153,7 @@ bx.innerHTML='<h3><i class="fas fa-sync-alt" style="color:var(--accent-1);"></i>
 ov.classList.add('show');
 document.body.classList.add('modal-open');
 }
+
 function submitRenewal(e,tenantId){
 e.preventDefault();
 if(!isSuperAdmin){
@@ -7413,6 +8199,10 @@ showToast('✅ Renewed','success');
 closeModal();
 navigate('superadmin');
 }
+
+/* ============================================================ */
+/* SESSION 34 — VIEW: MEX EMPLOYEE EARNINGS                      */
+/* ============================================================ */
 views.mexEarnings=function(){
 if(!isMexEmployee){
 return '';
@@ -7444,6 +8234,7 @@ return '<tr><td>'+(i+1)+'</td><td><strong>'+escapeHtml(e.companyName||'--')+'</s
 var requestBtn='<div class="card mb-16" style="border:2px solid var(--accent-4);"><div class="card-body" style="text-align:center;padding:20px;"><button class="btn btn-success btn-icon" onclick="openRequestPaymentModal()" style="min-width:200px;justify-content:center;"><i class="fas fa-paper-plane"></i> '+t('requestPayout')+'</button></div></div>';
 return '<div class="section-header"><h2><i class="fas fa-coins" style="color:#f59e0b;"></i> '+t('myEarnings')+'</h2></div>'+'<div style="display:flex;align-items:center;gap:16px;margin-bottom:18px;padding:18px 20px;background:linear-gradient(135deg, rgba(245,158,11,.12), rgba(217,119,6,.06));border-radius:var(--radius-card);border:1px solid rgba(245,158,11,.25);flex-wrap:wrap;">'+getUserPhotoHtml(emp,'','width:64px;height:64px;border-radius:50%;object-fit:cover;border:3px solid #f59e0b;')+'<div style="flex:1;min-width:0;"><div style="font-size:1.5rem;font-weight:800;color:#d97706;">'+escapeHtml(emp.name)+'</div><div style="font-size:.85rem;color:var(--text-muted);margin-top:4px;font-weight:600;"><i class="fas fa-at"></i> '+escapeHtml(emp.username)+'</div></div></div>'+'<div class="stats-grid">'+'<div class="stat-card"><div class="stat-label">'+t('totalRegistrations')+'</div><div class="stat-value primary">'+(emp.totalRegistrations||0)+'</div></div>'+'<div class="stat-card"><div class="stat-label">'+t('earnings')+'</div><div class="stat-value primary">'+fmtMoney(totalEarnings)+'</div></div>'+'<div class="stat-card"><div class="stat-label">'+t('paid')+'</div><div class="stat-value primary-light">'+fmtMoney(paidEarnings)+'</div></div>'+'<div class="stat-card"><div class="stat-label">'+t('pending')+'</div><div class="stat-value gold">'+fmtMoney(pendingEarnings)+'</div></div>'+'</div>'+'<div class="card mb-16" style="background:linear-gradient(135deg, rgba(245,158,11,.05), rgba(217,119,6,.02));border:2px dashed #f59e0b;"><div class="card-body" style="text-align:center;padding:24px 18px;"><div style="font-size:.75rem;text-transform:uppercase;font-weight:800;color:#d97706;margin-bottom:10px;"><i class="fas fa-tag"></i> '+t('yourPromoCode')+'</div><div class="mex-emp-code" onclick="copyPromoCode(\''+encArg(emp.promoCode)+'\')" style="font-size:1.5rem;padding:10px 22px;display:inline-flex;letter-spacing:3px;">'+escapeHtml(emp.promoCode)+'</div><div style="font-size:.7rem;color:var(--text-muted);font-weight:600;margin-top:10px;">Signup: 20% · Branch: 20% (TSh 2,000/tawi)</div></div></div>'+requestBtn+'<div class="card mb-16"><div class="card-header"><h3><i class="fas fa-money-bill-wave" style="color:var(--accent-4);"></i> '+t('earnings')+'</h3></div><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>'+t('companyName')+'</th><th>Type</th><th>'+t('planPrice')+'</th><th>'+t('commission')+'</th><th>'+t('status')+'</th></tr></thead><tbody>'+earningsRows+'</tbody></table></div></div></div>'+'<div class="card"><div class="card-header"><h3>'+t('recentCompanies')+'</h3></div><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>'+t('companyName')+'</th><th>'+t('date')+'</th><th>'+t('commission')+'</th></tr></thead><tbody>'+rows+'</tbody></table></div></div></div>';
 };
+
 function openRequestPaymentModal(){
 if(!isMexEmployee){
 return;
@@ -7463,6 +8254,7 @@ bx.innerHTML='<h3><i class="fas fa-hand-holding-usd" style="color:var(--accent-4
 ov.classList.add('show');
 document.body.classList.add('modal-open');
 }
+
 function submitPaymentRequest(e){
 e.preventDefault();
 if(!isMexEmployee){
@@ -7492,6 +8284,7 @@ closeModal();
 showToast('✅ Submitted. Waiting for approval.','success');
 navigate('mexEarnings');
 }
+
 function approvePaymentConfirm(paymentId){
 if(!isSuperAdmin){
 return;
@@ -7532,6 +8325,7 @@ saveMemberEarnings(earnings);
 showToast('✅ '+t('paymentApproved'),'success');
 navigate('superadmin');
 }
+
 function rejectPaymentConfirm(paymentId){
 if(!isSuperAdmin){
 return;
@@ -7555,6 +8349,7 @@ saveMemberPayments(payments);
 showToast('❌ '+t('paymentRejected'),'warning');
 navigate('superadmin');
 }
+
 function markEarningPaidConfirm(earningId){
 if(!isSuperAdmin){
 return;
@@ -7566,6 +8361,10 @@ markMemberEarningPaid(earningId,(getCurrentUser()||{}).fullName||'Super Admin');
 showToast('✅ '+t('markPaid'),'success');
 navigate('superadmin');
 }
+
+/* ============================================================ */
+/* SESSION 35 — VIEW: MEX COMPANIES                              */
+/* ============================================================ */
 views.mexCompanies=function(){
 if(!isMexEmployee){
 return '';
@@ -7580,6 +8379,10 @@ return '<tr><td>'+(i+1)+'</td><td><strong>'+escapeHtml(r.companyName||'--')+'</s
 }).join('');
 return '<div class="section-header"><h2>'+t('myCompanies')+'</h2></div><div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>'+t('companyName')+'</th><th>'+t('username')+'</th><th>'+t('date')+'</th></tr></thead><tbody>'+rows+'</tbody></table></div></div></div>';
 };
+
+/* ============================================================ */
+/* SESSION 36 — VIEW: MEX STATUS                                 */
+/* ============================================================ */
 views.mexStatus=function(){
 if(!isMexEmployee){
 return '';
@@ -7587,6 +8390,10 @@ return '';
 cleanupExpiredAds();
 return renderAdsTab();
 };
+
+/* ============================================================ */
+/* SESSION 37 — VIEW: STATUS (MEXFACE TABS)                      */
+/* ============================================================ */
 views.status=function(){
 var user=getCurrentUser();
 if(isSuperAdmin){
@@ -7610,6 +8417,10 @@ content=renderCompanyStatusTab(user);
 }
 return tabs+content;
 };
+
+/* ============================================================ */
+/* SESSION 38 — MEXFACE TAB RENDER                               */
+/* ============================================================ */
 function renderAdsTab(){
 var user=getCurrentUser();
 cleanupExpiredAds();
@@ -7630,6 +8441,7 @@ postBtn='<button class="btn btn-primary" style="width:100%;display:flex;align-it
 }
 return '<div class="section-header" style="flex-direction:column;align-items:stretch;gap:12px;"><h2 style="margin:0;"><i class="fas fa-bullhorn" style="color:var(--accent-3);"></i> '+t('ads')+'</h2>'+postBtn+'</div>'+'<div class="inventory-search-wrap" style="margin-bottom:12px;"><i class="fas fa-search inventory-search-icon"></i><input type="text" class="inventory-search-input" placeholder="'+t('searchPlaceholder')+'" value="'+escapeHtml(adSearchTerm)+'" id="adSearchInput" oninput="onAdSearch(this.value)"/></div><div>'+(adsHtml||'<div class="card"><div class="card-body"><div class="empty-state"><i class="fas fa-bullhorn"></i><h3>'+t('noAdsYet')+'</h3></div></div></div>')+'</div>';
 }
+
 function onAdSearch(v){
 adSearchTerm=v;
 navigate('status');
@@ -7639,6 +8451,10 @@ el.focus();
 el.setSelectionRange(v.length,v.length);
 }
 }
+
+/* ============================================================ */
+/* SESSION 39 — COMPANIES TAB                                    */
+/* ============================================================ */
 function renderCompaniesTab(){
 if(isSuperAdmin||isMexEmployee||!getCurrentUser()){
 return '';
@@ -7655,6 +8471,10 @@ return '<div class="card" style="padding:14px;margin-bottom:10px;display:flex;al
 }).join('');
 return '<div class="section-header"><h2>'+t('allCompanies')+'</h2></div><div>'+h+'</div>';
 }
+
+/* ============================================================ */
+/* SESSION 40 — COMPANY STATUS TAB                               */
+/* ============================================================ */
 function renderCompanyStatusTab(user){
 var statuses=getStatuses().slice().sort(function(a,b){
 return b.timestamp-a.timestamp;
@@ -7664,6 +8484,10 @@ return renderSingleStatusCard(s,user);
 }).join('');
 return '<div class="section-header"><h2><i class="fas fa-pen"></i> '+t('companyStatus')+'</h2><button class="btn btn-primary btn-icon" onclick="openPostStatus()"><i class="fas fa-plus"></i> '+t('post')+'</button></div>'+(sHtml||'<div class="card"><div class="card-body"><div class="empty-state"><i class="fas fa-pen"></i></div></div></div>');
 }
+
+/* ============================================================ */
+/* SESSION 41 — MEXFACE CARD RENDER                              */
+/* ============================================================ */
 function countAdComments(ad){
 if(!ad||!Array.isArray(ad.comments)){
 return 0;
@@ -7676,6 +8500,7 @@ total+=c.replies.length;
 });
 return total;
 }
+
 function renderAdCard(ad,user,canPost){
 if(!Array.isArray(ad.likes)){
 ad.likes=[];
@@ -7718,6 +8543,10 @@ var captionHtml='<div class="insta-ad-caption" onclick="openAdDetail(\''+ad.id+'
 var inputHtml='<div class="insta-ad-comment-input">'+getUserPhotoHtml(user,'insta-ad-avatar-sm')+'<input type="text" id="ad-quick-input-'+ad.id+'" placeholder="'+t('addComment')+'" onkeydown="if(event.key===\'Enter\'){event.preventDefault();quickAddComment(\''+ad.id+'\');}"/></div>';
 return '<div class="insta-ad" id="ad-card-'+ad.id+'">'+headerHtml+'<div class="insta-ad-media">'+media+'</div>'+actionsHtml+captionHtml+inputHtml+'</div>';
 }
+
+/* ============================================================ */
+/* SESSION 42 — PROMOTE MEXFACE                                  */
+/* ============================================================ */
 function openPromoteAdModal(adId){
 var ad=getGlobalAds().find(function(a){
 return a.id===Number(adId);
@@ -7734,6 +8563,7 @@ bx.innerHTML='<h3><i class="fas fa-rocket" style="color:var(--verified-blue);"><
 ov.classList.add('show');
 document.body.classList.add('modal-open');
 }
+
 function applyPromote(adId,key){
 var opt=PROMOTE_OPTIONS.find(function(o){
 return o.key===key;
@@ -7758,6 +8588,10 @@ closeModal();
 showToast('🚀 '+t('promoteApplied'),'success');
 navigate('status');
 }
+
+/* ============================================================ */
+/* SESSION 43 — COMMENT ON MEXFACE                               */
+/* ============================================================ */
 function getCurrentCommenterPhotoKey(u){
 if(isSuperAdmin){
 return _superAdminPhotoKey||'';
@@ -7768,6 +8602,7 @@ return emp?(emp.photoKey||''):'';
 }
 return (u&&u.photoKey)?u.photoKey:'';
 }
+
 function quickAddComment(adId){
 var inp=document.getElementById('ad-quick-input-'+adId);
 if(!inp){
@@ -7797,6 +8632,7 @@ inp.value='';
 updateAdCardCommentCount(ad.id);
 showToast('✓ Posted','success');
 }
+
 function openCommentsModal(adId){
 var ad=getGlobalAds().find(function(a){
 return a.id===Number(adId);
@@ -7814,6 +8650,7 @@ document.getElementById('commentsModal').classList.add('show');
 document.body.classList.add('modal-open');
 renderCommentsModal();
 }
+
 function closeCommentsModal(){
 document.getElementById('commentsModal').classList.remove('show');
 currentCommentsAdId=null;
@@ -7823,6 +8660,7 @@ if(!stillOpen){
 document.body.classList.remove('modal-open');
 }
 }
+
 function renderCommentsModal(){
 var body=document.getElementById('commentsBody');
 if(!body){
@@ -7848,6 +8686,7 @@ return renderCommentItemHtml(ad,c,false,u);
 }).join('');
 setTimeout(hydratePhotos,20);
 }
+
 function renderCommentItemHtml(ad,c,isReply,u){
 var isOwn=isSuperAdmin?!!c.isSuperAdmin:(isMexEmployee?(!!c.isMexEmployee&&c.userId===currentMexEmployeeId):(!c.isSuperAdmin&&!c.isMexEmployee&&c.tenantId===currentTenantId&&c.userId===(u?u.id:-1)));
 var replyBtn=!isReply?'<button class="com-act-btn" onclick="setReplyTo(\''+c.id+'\')">'+t('reply')+'</button>':'';
@@ -7862,6 +8701,7 @@ return renderCommentItemHtml(ad,r,true,u);
 }
 return '<div class="comments-item'+(isReply?' reply':'')+'" id="cmt-'+c.id+'"><div class="com-avatar">'+getCommenterAvatarHtml(c)+'</div><div class="com-body"><div class="com-line"><span class="com-author">'+escapeHtml(c.userName||'User')+'</span><span class="com-text">'+escapeHtml(c.text||'')+'</span></div><div class="com-meta"><span>'+fmtRelative(c.timestamp)+'</span>'+replyBtn+delBtn+'</div>'+repliesHtml+'</div></div>';
 }
+
 function setReplyTo(commentId){
 if(!currentCommentsAdId){
 return;
@@ -7890,6 +8730,7 @@ bar.innerHTML=t('repliesTo')+' <b>'+escapeHtml(c.userName||'user')+'</b> <button
 bar.style.display='block';
 }
 }
+
 function cancelReply(){
 replyToCommentId=null;
 var inp=document.getElementById('commentsModalInput');
@@ -7902,6 +8743,7 @@ bar.style.display='none';
 bar.innerHTML='';
 }
 }
+
 function postCommentFromModal(){
 if(!currentCommentsAdId){
 return;
@@ -7952,6 +8794,7 @@ cancelReply();
 renderCommentsModal();
 updateAdCardCommentCount(ad.id);
 }
+
 function deleteAdComment(adId,cid,parentId){
 if(!confirm(t('deleteConfirm'))){
 return;
@@ -7983,6 +8826,7 @@ renderCommentsModal();
 }
 updateAdCardCommentCount(ad.id);
 }
+
 function updateAdCardCommentCount(adId){
 var ad=getGlobalAds().find(function(a){
 return a.id===Number(adId);
@@ -7996,6 +8840,10 @@ if(el){
 el.textContent=total>0?total:'';
 }
 }
+
+/* ============================================================ */
+/* SESSION 44 — LIKE MEXFACE                                     */
+/* ============================================================ */
 function toggleAdLike(adId){
 var u=getCurrentUser();
 if(!u){
@@ -8035,6 +8883,10 @@ var lc=ad.likes.length;
 cnt.textContent=lc>0?lc:'';
 }
 }
+
+/* ============================================================ */
+/* SESSION 45 — AD DETAIL / AD PROFILE                           */
+/* ============================================================ */
 function renderAdGridTile(ad){
 var isVideo=ad.mediaType==='video'&&ad.mediaKey;
 var media='';
@@ -8047,6 +8899,7 @@ media='<div style="width:100%;height:100%;display:flex;align-items:center;justif
 }
 return '<div class="ad-grid-tile" onclick="openAdDetail(\''+ad.id+'\')">'+media+'</div>';
 }
+
 function openAdDetail(adId){
 var ad=getGlobalAds().find(function(a){
 return a.id===Number(adId);
@@ -8070,6 +8923,7 @@ ov.classList.add('show');
 document.body.classList.add('modal-open');
 setTimeout(hydrateMedia,30);
 }
+
 function closeAdDetail(){
 var ov=document.getElementById('modalOverlay');
 var bx=document.getElementById('modalBox');
@@ -8085,6 +8939,7 @@ if(!stillOpen){
 document.body.classList.remove('modal-open');
 }
 }
+
 function openAdAuthorProfile(adId){
 var clicked=getGlobalAds().find(function(a){
 return a.id===Number(adId);
@@ -8125,6 +8980,7 @@ document.getElementById('adProfileModal').classList.add('show');
 document.body.classList.add('modal-open');
 setTimeout(hydrateMedia,30);
 }
+
 function closeAdProfileModal(){
 document.getElementById('adProfileModal').classList.remove('show');
 muteAllVideos();
@@ -8133,6 +8989,7 @@ if(!stillOpen){
 document.body.classList.remove('modal-open');
 }
 }
+
 function openCompanyProfile(tid){
 var ads=getGlobalAds().filter(function(a){
 return a.tenantId===tid;
@@ -8149,6 +9006,10 @@ document.getElementById('adProfileBox').innerHTML='<div class="ad-profile-header
 document.getElementById('adProfileModal').classList.add('show');
 document.body.classList.add('modal-open');
 }
+
+/* ============================================================ */
+/* SESSION 46 — POST MEXFACE                                     */
+/* ============================================================ */
 function openAdModal(){
 var u=getCurrentUser();
 if(!u){
@@ -8171,6 +9032,7 @@ bx.innerHTML='<h3><i class="fas fa-bullhorn" style="color:var(--accent-3);"></i>
 ov.classList.add('show');
 document.body.classList.add('modal-open');
 }
+
 function onAdMediaSelected(input){
 var file=input.files&&input.files[0];
 var sE=document.getElementById('adMediaStatus');
@@ -8223,6 +9085,7 @@ return;
 sE.textContent='✗ Unsupported';
 sE.className='promo-status bad';
 }
+
 function submitAd(e){
 e.preventDefault();
 var fd=new FormData(e.target);
@@ -8280,6 +9143,7 @@ finish(null,null,null);
 finish(null,null,null);
 }
 }
+
 function deleteGlobalAdConfirm(id){
 if(!confirm(t('deleteConfirm'))){
 return;
@@ -8287,6 +9151,10 @@ return;
 deleteGlobalAd(id);
 navigate('status');
 }
+
+/* ============================================================ */
+/* SESSION 47 — VIEW: SALES                                      */
+/* ============================================================ */
 views.sales=function(){
 if(isSuperAdmin||isMexEmployee){
 return '';
@@ -8299,6 +9167,10 @@ var up=(x.unitPrice!=null)?x.unitPrice:(x.totalPrice/x.quantity);
 return '<tr><td>'+(i+1)+'</td><td>'+(p?escapeHtml(p.name):'--')+'</td><td>'+x.quantity+'</td><td>'+fmtMoney(up)+'</td><td><strong>'+fmtMoney(x.totalPrice)+'</strong></td><td>'+escapeHtml(x.customer||'--')+'</td><td>'+fmtDate(x.date)+'</td><td style="display:flex;gap:4px;"><button class="btn btn-danger btn-xs" onclick="deleteSale(\''+x.id+'\')"><i class="fas fa-trash"></i></button><button class="btn btn-primary btn-xs" onclick="shareReceipt(\''+x.id+'\')"><i class="fas fa-receipt"></i></button></td></tr>';
 }).join(''))+'</tbody></table></div></div></div>';
 };
+
+/* ============================================================ */
+/* SESSION 48 — VIEW: DEBTS                                      */
+/* ============================================================ */
 views.debts=function(){
 if(isSuperAdmin||isMexEmployee){
 return '';
@@ -8316,6 +9188,7 @@ return '<tr><td>'+(i+1)+'</td><td><strong><i class="fas fa-user" style="color:va
 }).join('');
 return '<div class="section-header"><h2><i class="fas fa-hand-holding-usd" style="color:var(--accent-danger);"></i> '+t('debts')+'</h2></div>'+'<div class="stats-grid"><div class="stat-card"><div class="stat-label">'+t('totalDebts')+'</div><div class="stat-value red">'+fmtMoney(totalDebt)+'</div></div><div class="stat-card"><div class="stat-label">'+t('debtsCount')+'</div><div class="stat-value primary">'+d.length+'</div></div></div>'+'<div class="card"><div class="card-header"><h3>'+t('debts')+'</h3></div><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>'+t('debtCustomer')+'</th><th>'+t('product')+'</th><th>'+t('quantity')+'</th><th>'+t('debtAmount')+'</th><th>'+t('date')+'</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div></div></div>';
 };
+
 function markDebtPaid(id){
 if(!hasPerm('sales_create')){
 return;
@@ -8336,6 +9209,7 @@ showToast('✅ '+t('paidSuccess'),'success');
 updateDebtsBadge();
 navigate('debts');
 }
+
 function deleteDebt(id){
 if(!hasPerm('sales_create')){
 return;
@@ -8364,6 +9238,10 @@ return s.id!==Number(id);
 updateDebtsBadge();
 navigate('debts');
 }
+
+/* ============================================================ */
+/* SESSION 49 — VIEW: INVENTORY                                  */
+/* ============================================================ */
 views.inventory=function(){
 if(isSuperAdmin||isMexEmployee){
 return '';
@@ -8386,6 +9264,10 @@ return '<tr><td>'+productImageHtml(x)+'</td><td><strong>'+escapeHtml(x.name)+'</
 var headerActions='<div style="display:flex;gap:8px;flex-wrap:wrap;">'+(canTransfer?'<button class="btn btn-primary btn-icon" onclick="openTransferModal()" style="background:#8b5cf6 !important;"><i class="fas fa-exchange-alt"></i> '+t('transferStock')+'</button>':'')+(canTransfer?'<button class="btn btn-secondary btn-icon" onclick="viewTransferHistory()"><i class="fas fa-history"></i> '+t('transferHistory')+'</button>':'')+(ce?'<button class="btn btn-primary btn-icon" onclick="openModal(\'product\')"><i class="fas fa-plus"></i> '+t('addProduct')+'</button>':'')+'</div>';
 return '<div class="section-header"><h2><i class="fas fa-boxes"></i> '+t('inventory')+'</h2>'+headerActions+'</div>'+cb+'<div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th></th><th>'+t('product')+'</th><th>'+t('branch')+'</th><th>'+t('category')+'</th><th>'+t('amount')+'</th><th>'+t('cogs')+'</th><th>'+t('quantity')+'</th><th></th><th></th></tr></thead><tbody>'+(rows||'<tr class="empty-row"><td colspan="9">'+t('noProducts')+'</td></tr>')+'</tbody></table></div></div></div>';
 };
+
+/* ============================================================ */
+/* SESSION 50 — VIEW: PROFIT & LOSS                              */
+/* ============================================================ */
 views.pnl=function(){
 if(isSuperAdmin||isMexEmployee){
 return '';
@@ -8421,6 +9303,10 @@ cards+='<div class="stat-card"><div class="stat-label">'+t('netProfit')+'</div><
 var html='<div class="section-header"><h2><i class="fas fa-scale-balanced"></i> '+t('profitLoss')+'</h2></div><div class="stats-grid">'+cards+'</div><div class="card mt-16"><div class="card-header"><h3>'+t('pnlBreakdown')+'</h3></div><div class="card-body"><div class="pnl-breakdown-grid"><div><span class="text-muted text-sm">'+t('revenue')+'</span><br><strong class="primary" style="font-size:1.2rem;">'+fmtMoney(pnl.totalRevenue)+'</strong></div><div><span class="text-muted text-sm">'+t('cogs')+'</span><br><strong style="font-size:1.2rem;">'+fmtMoney(pnl.cogs)+'</strong></div>'+(perms.seeExpenses?'<div><span class="text-muted text-sm">'+t('expenses')+'</span><br><strong style="font-size:1.2rem;">'+fmtMoney(pnl.totalExpenses)+'</strong></div>':'')+'<div><span class="text-muted text-sm">'+t('netProfit')+'</span><br><strong class="'+(pnl.netProfit>=0?'primary':'red')+'" style="font-size:1.2rem;">'+fmtMoney(pnl.netProfit)+'</strong></div></div></div></div>';
 return html;
 };
+
+/* ============================================================ */
+/* SESSION 51 — VIEW: EXPENSES                                   */
+/* ============================================================ */
 views.expenses=function(){
 if(isSuperAdmin||isMexEmployee){
 return '';
@@ -8437,6 +9323,10 @@ return '<div class="section-header"><h2><i class="fas fa-receipt"></i> '+t('expe
 return '<tr><td>'+(i+1)+'</td><td>'+escapeHtml(x.description)+'</td><td>'+fmtMoney(x.amount)+'</td><td><span class="badge badge-info">'+escapeHtml(x.category)+'</span></td><td>'+fmtDate(x.date)+'</td><td><button class="btn btn-danger btn-xs" onclick="deleteExpense(\''+x.id+'\')">×</button></td></tr>';
 }).join(''))+'</tbody></table></div></div></div>';
 };
+
+/* ============================================================ */
+/* SESSION 52 — VIEW: BRANCHES                                   */
+/* ============================================================ */
 views.branches=function(){
 if(isSuperAdmin||isMexEmployee){
 return '';
@@ -8462,6 +9352,10 @@ return '<tr><td><div style="display:flex;align-items:center;gap:10px;">'+(bu?get
 }).join('');
 return '<div class="section-header"><h2>'+t('branches')+'</h2><button class="btn btn-primary btn-icon" onclick="openBranchModal()"><i class="fas fa-plus"></i> '+t('addBranch')+' — '+fmtMoney(BRANCH_FEE)+'</button></div><div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th>'+t('branch')+'</th><th>'+t('address')+'</th><th>'+t('username')+'</th><th>'+t('status')+'</th><th></th></tr></thead><tbody>'+(bh||'<tr class="empty-row"><td colspan="5">—</td></tr>')+'</tbody></table></div></div></div>';
 };
+
+/* ============================================================ */
+/* SESSION 53 — VIEW: USERS                                      */
+/* ============================================================ */
 views.users=function(){
 if(isSuperAdmin||isMexEmployee){
 return '';
@@ -8480,6 +9374,10 @@ return '<tr><td>'+(i+1)+'</td><td><div style="display:flex;align-items:center;ga
 }).join('');
 return '<div class="section-header"><h2>'+t('users')+'</h2><button class="btn btn-primary btn-icon" onclick="openModal(\'user\')"><i class="fas fa-user-plus"></i> '+t('addUser')+'</button></div><div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>'+t('name')+'</th><th>'+t('username')+'</th><th>'+t('role')+'</th><th>'+t('store')+'</th><th>'+t('status')+'</th><th></th></tr></thead><tbody>'+(uh||'<tr class="empty-row"><td colspan="7">—</td></tr>')+'</tbody></table></div></div></div>';
 };
+
+/* ============================================================ */
+/* SESSION 54 — VIEW: ROLES                                      */
+/* ============================================================ */
 views.roles=function(){
 if(isSuperAdmin||isMexEmployee){
 return '';
@@ -8498,6 +9396,10 @@ return '<option value="'+r+'"'+(r===x.role?' selected':'')+'>'+getRoleLabel(r)+'
 }).join('')+'</select> <button class="btn btn-primary btn-xs" onclick="changeUserRole(\''+x.id+'\', document.getElementById(\'role-sel-'+x.id+'\').value)">'+t('save')+'</button></td></tr>';
 }).join('')+'</tbody></table></div></div></div>';
 };
+
+/* ============================================================ */
+/* SESSION 55 — VIEW: ATTENDANCE                                 */
+/* ============================================================ */
 views.attendance=function(){
 if(isSuperAdmin||isMexEmployee){
 return '';
@@ -8513,6 +9415,10 @@ return '<tr><td>'+(i+1)+'</td><td><strong>'+escapeHtml(p.userName)+'</strong></t
 }).join('')+'</tbody></table></div>';
 return '<div class="section-header"><h2>'+t('attendance')+'</h2><button class="btn btn-danger btn-sm" onclick="clearAttendanceHistory()">'+t('clear')+'</button></div><div class="stats-grid"><div class="stat-card"><div class="stat-label">'+t('online')+'</div><div class="stat-value primary">'+onu.length+'</div></div><div class="stat-card"><div class="stat-label">'+t('today')+'</div><div class="stat-value primary-light">'+tp.length+'</div></div></div><div class="card"><div class="card-body">'+hh+'</div></div>';
 };
+
+/* ============================================================ */
+/* SESSION 56 — VIEW: REPORTS                                    */
+/* ============================================================ */
 views.reports=function(){
 if(isSuperAdmin||isMexEmployee){
 return '';
@@ -8531,6 +9437,7 @@ var customRange='<div class="report-custom-range '+(REPORT_PERIOD==='custom'?'sh
 var send='<div class="card mt-16"><div class="card-header"><h3><i class="fas fa-paper-plane"></i> '+t('sendReport')+'</h3></div><div class="card-body"><div style="display:flex;gap:12px;flex-wrap:wrap;"><button class="btn btn-whatsapp btn-icon" onclick="openSendReportModal(\'sales\')" style="flex:1;min-width:160px;justify-content:center;"><i class="fab fa-whatsapp"></i> '+t('sendSalesReport')+'</button></div></div></div>';
 return '<div class="section-header"><h2>'+t('reports')+'</h2></div>'+tabs+customRange+'<div class="report-period-info"><i class="fas fa-calendar-check"></i> '+data.range.label+'</div>'+sum+send;
 };
+
 function buildReportData(){
 var range=getReportDateRange();
 var allSales=getFilteredSales();
@@ -8552,6 +9459,7 @@ return a+x.amount;
 },0);
 return{range:range,sales:s,revenue:revenue,cogs:cogs,expensesTotal:exp,profit:revenue-cogs-exp};
 }
+
 function getReportDateRange(){
 var now=new Date();
 var todayStart=new Date(now.getFullYear(),now.getMonth(),now.getDate(),0,0,0,0);
@@ -8592,6 +9500,7 @@ label=t('last30');
 }
 return{from:from,to:to,label:label};
 }
+
 function setReportPeriod(p){
 REPORT_PERIOD=p;
 if(p==='custom'){
@@ -8606,6 +9515,7 @@ REPORT_CUSTOM_TO=Date.now();
 }
 navigate('reports');
 }
+
 function applyCustomRange(){
 var f=document.getElementById('reportFromDate').value;
 var t2=document.getElementById('reportToDate').value;
@@ -8616,6 +9526,10 @@ REPORT_CUSTOM_FROM=new Date(f+'T00:00:00').getTime();
 REPORT_CUSTOM_TO=new Date(t2+'T23:59:59').getTime();
 navigate('reports');
 }
+
+/* ============================================================ */
+/* SESSION 57 — EMERGENCY CONTACT                                */
+/* ============================================================ */
 function renderEmergencyContact(){
 var u=getCurrentUser();
 if(!u){
@@ -8623,6 +9537,10 @@ return '';
 }
 return '<div class="emergency-contact"><div class="emergency-info"><div class="emergency-title"><i class="fas fa-headset"></i> MeX Support</div><div class="emergency-number">'+SUPER_EMERGENCY_NUMBER+'</div></div><div class="emergency-actions"><a href="tel:'+SUPER_EMERGENCY_NUMBER+'" class="btn-emergency-call"><i class="fas fa-phone"></i></a><a href="https://wa.me/'+SUPER_EMERGENCY_NUMBER.replace(/\D/g,'')+'" target="_blank" class="btn-emergency-wa"><i class="fab fa-whatsapp"></i></a></div></div>';
 }
+
+/* ============================================================ */
+/* SESSION 58 — GENERIC FORM MODAL                               */
+/* ============================================================ */
 function openModal(type,data){
 if(isSuperAdmin||isMexEmployee){
 return;
@@ -8681,6 +9599,7 @@ bx.innerHTML=h;
 ov.classList.add('show');
 document.body.classList.add('modal-open');
 }
+
 function closeModal(){
 var ov=document.getElementById('modalOverlay');
 var bx=document.getElementById('modalBox');
@@ -8696,6 +9615,7 @@ if(!stillOpen){
 document.body.classList.remove('modal-open');
 }
 }
+
 function onSaleProductChange(){
 var sel=document.getElementById('saleProductSelect');
 var pi=document.getElementById('saleUnitPriceInput');
@@ -8709,6 +9629,10 @@ return;
 }
 pi.value=parseFloat(o.dataset.price)||0;
 }
+
+/* ============================================================ */
+/* SESSION 59 — SUBMIT: SALE / PRODUCT / EXPENSE / USER          */
+/* ============================================================ */
 function submitSale(e){
 e.preventDefault();
 if(!hasPerm('sales_create')){
@@ -8753,6 +9677,7 @@ navigate('debts');
 }
 updateDebtsBadge();
 }
+
 function submitProduct(e){
 e.preventDefault();
 if(!hasPerm('inventory_manage')){
@@ -8774,6 +9699,7 @@ persistProducts(ps);
 closeModal();
 navigate('inventory');
 }
+
 function submitExpense(e){
 e.preventDefault();
 if(!hasPerm('expenses_manage')){
@@ -8794,6 +9720,7 @@ persistExpenses(ex);
 closeModal();
 navigate('expenses');
 }
+
 function submitUser(e){
 e.preventDefault();
 if(!canManageUsers()){
@@ -8819,6 +9746,7 @@ setTenantData('users',us);
 closeModal();
 navigate('users');
 }
+
 function submitStockAdjust(e,pid){
 e.preventDefault();
 if(!hasPerm('inventory_manage')){
@@ -8841,6 +9769,10 @@ persistProducts(ps);
 closeModal();
 navigate('inventory');
 }
+
+/* ============================================================ */
+/* SESSION 60 — DELETE: SALE / EXPENSE / PRODUCT / USER          */
+/* ============================================================ */
 function deleteSale(id){
 if(!hasPerm('sales_delete')){
 return;
@@ -8867,6 +9799,7 @@ return s.id!==Number(id);
 }));
 navigate('sales');
 }
+
 function deleteExpense(id){
 if(!hasPerm('expenses_manage')){
 return;
@@ -8879,6 +9812,7 @@ return e.id!==Number(id);
 }));
 navigate('expenses');
 }
+
 function deleteProduct(id){
 if(!hasPerm('inventory_manage')){
 return;
@@ -8891,6 +9825,7 @@ return p.id!==Number(id);
 }));
 navigate('inventory');
 }
+
 function deleteUser(id){
 if(!canManageUsers()){
 return;
@@ -8907,6 +9842,7 @@ return x.id!==Number(id);
 }));
 navigate('users');
 }
+
 function changeUserRole(userId,newRole){
 if(!canManageRoles()){
 return;
@@ -8925,9 +9861,14 @@ u.role=newRole;
 setTenantData('users',us);
 navigate('roles');
 }
+
 function adjustStock(id){
 openModal('adjustStock',id);
 }
+
+/* ============================================================ */
+/* SESSION 61 — LOW STOCK MODAL                                  */
+/* ============================================================ */
 function openLowStockModal(){
 var m=document.getElementById('lowStockModal');
 var l=document.getElementById('lowStockList');
@@ -8942,6 +9883,7 @@ return '<div style="display:flex;justify-content:space-between;padding:10px 0;bo
 m.classList.add('show');
 document.body.classList.add('modal-open');
 }
+
 function closeLowStockModal(){
 document.getElementById('lowStockModal').classList.remove('show');
 var stillOpen=document.querySelector('.modal-overlay.show');
@@ -8949,6 +9891,10 @@ if(!stillOpen){
 document.body.classList.remove('modal-open');
 }
 }
+
+/* ============================================================ */
+/* SESSION 62 — THEME                                            */
+/* ============================================================ */
 function applyTheme(){
 var u=getCurrentUser();
 var isDark=u?u.theme==='dark':false;
@@ -8959,6 +9905,7 @@ if(i){
 i.className=isDark?'fas fa-sun':'fas fa-moon';
 }
 }
+
 function toggleTheme(){
 var u=getCurrentUser();
 if(!u){
@@ -8985,6 +9932,10 @@ setCurrentUser(u);
 applyTheme();
 updateChartsTheme();
 }
+
+/* ============================================================ */
+/* SESSION 63 — PROFILE MODAL                                    */
+/* ============================================================ */
 function openProfileModal(){
 var u=getCurrentUser();
 if(!u){
@@ -9008,6 +9959,7 @@ bindProfileUploadListener();
 document.getElementById('profileModal').classList.add('show');
 document.body.classList.add('modal-open');
 }
+
 function updateBioCounter(){
 var b=document.getElementById('profileBio');
 var c=document.getElementById('profileBioCounter');
@@ -9016,6 +9968,7 @@ return;
 }
 c.textContent=(b.value||'').length+' / 300';
 }
+
 function bindProfileUploadListener(){
 var input=document.getElementById('profileUpload');
 if(!input){
@@ -9067,6 +10020,7 @@ showToast('📸 Photo updated','success');
 e.target.value='';
 });
 }
+
 function closeProfileModal(){
 document.getElementById('profileModal').classList.remove('show');
 var stillOpen=document.querySelector('.modal-overlay.show');
@@ -9074,6 +10028,7 @@ if(!stillOpen){
 document.body.classList.remove('modal-open');
 }
 }
+
 function saveProfile(){
 var u=getCurrentUser();
 if(!u){
@@ -9165,6 +10120,10 @@ updateAllUI(tg);
 closeProfileModal();
 showToast('✓ Saved','success');
 }
+
+/* ============================================================ */
+/* SESSION 64 — UPDATE ALL UI                                    */
+/* ============================================================ */
 function updateAllUI(user){
 if(!user){
 return;
@@ -9204,6 +10163,7 @@ updateLowStockBadge();
 updateDebtsBadge();
 updateChatBadge();
 }
+
 function updateSidebarForLock(){
 var user=getCurrentUser();
 if(!user||isSuperAdmin||isMexEmployee){
@@ -9228,6 +10188,10 @@ el.style.display='flex';
 }
 });
 }
+
+/* ============================================================ */
+/* SESSION 65 — ADD MEX EMPLOYEE (SUPER ADMIN)                   */
+/* ============================================================ */
 function openAddMexEmployeeModal(){
 if(!isSuperAdmin){
 return;
@@ -9238,6 +10202,7 @@ bx.innerHTML='<h3>'+t('addMember')+'</h3><form onsubmit="submitAddMexEmployee(ev
 ov.classList.add('show');
 document.body.classList.add('modal-open');
 }
+
 function submitAddMexEmployee(e){
 e.preventDefault();
 if(!isSuperAdmin){
@@ -9254,6 +10219,7 @@ var emp=addMexEmployee(n,p,pw);
 closeModal();
 showMexEmployeeCredentials(emp);
 }
+
 function showMexEmployeeCredentials(emp){
 var ov=document.getElementById('modalOverlay');
 var bx=document.getElementById('modalBox');
@@ -9261,6 +10227,7 @@ bx.innerHTML='<h3 style="color:var(--accent-4);"><i class="fas fa-check-circle">
 ov.classList.add('show');
 document.body.classList.add('modal-open');
 }
+
 function confirmDeleteMexEmployee(id){
 if(!isSuperAdmin){
 return;
@@ -9271,6 +10238,10 @@ return;
 deleteMexEmployee(id);
 navigate('superadmin');
 }
+
+/* ============================================================ */
+/* SESSION 66 — SUPER ADMIN: ADD COMPANY                         */
+/* ============================================================ */
 function openSuperAddCompanyModal(){
 if(!isSuperAdmin){
 return;
@@ -9281,6 +10252,7 @@ bx.innerHTML='<h3>'+t('addCompany')+'</h3><form onsubmit="submitSuperAddCompany(
 ov.classList.add('show');
 document.body.classList.add('modal-open');
 }
+
 function submitSuperAddCompany(e){
 e.preventDefault();
 if(!isSuperAdmin){
@@ -9316,6 +10288,10 @@ return;
 closeModal();
 navigate('superadmin');
 }
+
+/* ============================================================ */
+/* SESSION 67 — SUPER ADMIN: TENANT ACTIONS                      */
+/* ============================================================ */
 function superApproveTenant(id){
 if(!isSuperAdmin){
 return;
@@ -9337,6 +10313,7 @@ saveTenants(ts);
 showToast('✅ Approved · Trial started','success');
 navigate('superadmin');
 }
+
 function superBlockTenant(id){
 if(!isSuperAdmin){
 return;
@@ -9355,6 +10332,7 @@ tn.blocked=true;
 saveTenants(ts);
 navigate('superadmin');
 }
+
 function superUnblockTenant(id){
 if(!isSuperAdmin){
 return;
@@ -9370,6 +10348,7 @@ tn.blocked=false;
 saveTenants(ts);
 navigate('superadmin');
 }
+
 function superDeleteTenant(id){
 if(!isSuperAdmin){
 return;
@@ -9399,10 +10378,15 @@ return x.id!==id;
 }));
 navigate('superadmin');
 }
+
 function switchSuperAdminTab(tab){
 currentSuperAdminTab=tab;
 navigate('superadmin');
 }
+
+/* ============================================================ */
+/* SESSION 68 — BRANCH ADD / DELETE / RESET PASSWORD             */
+/* ============================================================ */
 function openBranchModal(){
 var ov=document.getElementById('subModal');
 ['newBranchName','newBranchAddress','newBranchTin','newBranchUsername','newBranchPassword'].forEach(function(id){
@@ -9414,6 +10398,7 @@ e.value='';
 ov.classList.add('show');
 document.body.classList.add('modal-open');
 }
+
 function closeSubscriptionModal(){
 document.getElementById('subModal').classList.remove('show');
 var stillOpen=document.querySelector('.modal-overlay.show');
@@ -9421,6 +10406,7 @@ if(!stillOpen){
 document.body.classList.remove('modal-open');
 }
 }
+
 function handleSubscriptionPayment(){
 var bn=document.getElementById('newBranchName').value.trim();
 var ba=document.getElementById('newBranchAddress').value.trim();
@@ -9473,6 +10459,7 @@ showToast('✅ '+bn+' added','success');
 closeSubscriptionModal();
 navigate('branches');
 }
+
 function deleteBranch(bn){
 bn=safeDecode(bn);
 var u=getCurrentUser();
@@ -9502,6 +10489,7 @@ return u.store!==bn;
 }));
 navigate('branches');
 }
+
 function resetBranchPassword(userId){
 var cuGuard=getCurrentUser();
 if(!cuGuard||isSuperAdmin||isMexEmployee||cuGuard.role!=='owner'){
@@ -9521,6 +10509,10 @@ navigate('branches');
 }
 }
 }
+
+/* ============================================================ */
+/* SESSION 69 — LANGUAGE SWITCHER                                */
+/* ============================================================ */
 function setLanguage(lang){
 if(!lang||!LANG_FLAGS[lang]){
 lang='en';
@@ -9551,6 +10543,7 @@ var v=av&&av.dataset.view?av.dataset.view:'dashboard';
 navigate(v);
 showToast('✓ '+LANG_NAMES[lang],'success');
 }
+
 function initLanguageMenu(){
 var tg=document.getElementById('langToggle');
 var m=document.getElementById('langMenu');
@@ -9581,6 +10574,10 @@ lm.classList.remove('show');
 });
 }
 }
+
+/* ============================================================ */
+/* SESSION 70 — RECEIPT                                          */
+/* ============================================================ */
 function shareReceipt(id){
 var s=getTenantData('sales',[]).find(function(x){
 return x.id===Number(id);
@@ -9622,6 +10619,7 @@ document.getElementById('receiptModal').classList.add('show');
 document.body.classList.add('modal-open');
 currentReceiptData=s;
 }
+
 function closeReceiptModal(){
 document.getElementById('receiptModal').classList.remove('show');
 var stillOpen=document.querySelector('.modal-overlay.show');
@@ -9630,6 +10628,7 @@ document.body.classList.remove('modal-open');
 }
 currentReceiptData=null;
 }
+
 function sendReceiptWhatsApp(){
 if(!currentReceiptData){
 return;
@@ -9656,6 +10655,10 @@ var url='https://wa.me/'+n+'?text='+encodeURIComponent(msg);
 window.open(url,'_blank');
 showToast('✅ WhatsApp','success');
 }
+
+/* ============================================================ */
+/* SESSION 71 — SEND REPORT MODAL                                */
+/* ============================================================ */
 function openSendReportModal(type){
 sendReportType=(type==='sales')?'sales':'debts';
 var titleEl=document.getElementById('sendReportTitle');
@@ -9675,6 +10678,7 @@ emInput.value=(ceo&&ceo.email)?ceo.email:((u&&u.email)?u.email:'');
 document.getElementById('sendReportModal').classList.add('show');
 document.body.classList.add('modal-open');
 }
+
 function closeSendReportModal(){
 document.getElementById('sendReportModal').classList.remove('show');
 var stillOpen=document.querySelector('.modal-overlay.show');
@@ -9682,6 +10686,7 @@ if(!stillOpen){
 document.body.classList.remove('modal-open');
 }
 }
+
 function executeSendReport(channel){
 var waInput=document.getElementById('reportWhatsappNumber');
 var emInput=document.getElementById('reportEmailAddress');
@@ -9725,6 +10730,7 @@ closeSendReportModal();
 showToast('✅ Email','success');
 }
 }
+
 function buildReportMessage(type){
 var tn=getTenant(currentTenantId);
 var companyName=tn?(tn.companyName||'Company'):'Company';
@@ -9778,6 +10784,10 @@ lines.push('');
 lines.push('_MeX PRO_');
 return lines.join('\n');
 }
+
+/* ============================================================ */
+/* SESSION 72 — SUPER ADMIN CREDENTIALS                          */
+/* ============================================================ */
 function superViewCredentials(tenantId){
 if(!isSuperAdmin){
 return;
@@ -9793,6 +10803,7 @@ renderCredentialsList();
 document.getElementById('credentialsModal').classList.add('show');
 document.body.classList.add('modal-open');
 }
+
 function closeCredentialsModal(){
 document.getElementById('credentialsModal').classList.remove('show');
 _credentialsTenantId=null;
@@ -9802,6 +10813,7 @@ if(!stillOpen){
 document.body.classList.remove('modal-open');
 }
 }
+
 function renderCredentialsList(){
 var body=document.getElementById('credentialsBody');
 if(!body||!_credentialsTenantId){
@@ -9821,6 +10833,7 @@ html+='<div style="border:1px solid var(--border-color);border-radius:var(--radi
 });
 body.innerHTML=html;
 }
+
 function copyAllCredentials(){
 if(!_credentialsTenantId){
 return;
@@ -9844,6 +10857,7 @@ lines.push('['+getRoleLabel(u.role)+'] '+u.username);
 });
 copyToClipboardText(lines.join('\n'));
 }
+
 function superResetUserPassword(tenantId,userId){
 if(!isSuperAdmin){
 return;
@@ -9867,6 +10881,10 @@ setTenantData('users',users);
 currentTenantId=old;
 window.prompt('New password for '+u.username+':',temp);
 }
+
+/* ============================================================ */
+/* SESSION 73 — NAVIGATION                                       */
+/* ============================================================ */
 function navigate(view){
 if(view==='ads'){
 view='status';
@@ -9911,6 +10929,10 @@ if(window.innerWidth<=768){
 closeMobileSidebar();
 }
 }
+
+/* ============================================================ */
+/* SESSION 74 — TOAST                                            */
+/* ============================================================ */
 function showToast(msg,type){
 type=type||'info';
 var c=document.getElementById('toastContainer');
@@ -9922,6 +10944,10 @@ setTimeout(function(){
 d.remove();
 },3800);
 }
+
+/* ============================================================ */
+/* SESSION 75 — LOGIN / LOGOUT                                   */
+/* ============================================================ */
 document.getElementById('loginBtn').addEventListener('click',function(){
 var un=document.getElementById('loginUsername').value.trim();
 var pw=document.getElementById('loginPassword').value.trim();
@@ -10025,31 +11051,40 @@ return;
 registerLoginFail();
 er.textContent=t('validCred');
 });
+
 document.getElementById('loginPassword').addEventListener('keydown',function(e){
 if(e.key==='Enter'){
 document.getElementById('loginBtn').click();
 }
 });
+
 document.getElementById('goToRegisterLink').addEventListener('click',function(){
 document.getElementById('loginPage').classList.add('hidden');
 document.getElementById('memberRegisterPage').classList.add('hidden');
 document.getElementById('registerPage').classList.remove('hidden');
 });
+
 document.getElementById('goToLoginLink').addEventListener('click',function(){
 document.getElementById('registerPage').classList.add('hidden');
 document.getElementById('memberRegisterPage').classList.add('hidden');
 document.getElementById('loginPage').classList.remove('hidden');
 });
+
 document.getElementById('goToMemberRegisterLink').addEventListener('click',function(){
 document.getElementById('loginPage').classList.add('hidden');
 document.getElementById('registerPage').classList.add('hidden');
 document.getElementById('memberRegisterPage').classList.remove('hidden');
 });
+
 document.getElementById('memberGoToLogin').addEventListener('click',function(){
 document.getElementById('memberRegisterPage').classList.add('hidden');
 document.getElementById('registerPage').classList.add('hidden');
 document.getElementById('loginPage').classList.remove('hidden');
 });
+
+/* ============================================================ */
+/* SESSION 76 — MEMBER REGISTRATION                              */
+/* ============================================================ */
 document.getElementById('memberRegisterBtn').addEventListener('click',function(){
 var n=document.getElementById('memberName').value.trim();
 var p=document.getElementById('memberPhone').value.trim();
@@ -10074,6 +11109,10 @@ document.getElementById('loginPage').classList.remove('hidden');
 document.getElementById('loginUsername').value=emp.username;
 },2600);
 });
+
+/* ============================================================ */
+/* SESSION 77 — COMPANY REGISTRATION                             */
+/* ============================================================ */
 document.getElementById('registerBtn').addEventListener('click',function(){
 var company=document.getElementById('regCompany').value.trim();
 var un=document.getElementById('regUsername').value.trim();
@@ -10110,6 +11149,10 @@ return;
 pendingRegistrationData={company:company,username:un,password:pw,phone:ph,promo:promo};
 openPaymentPlanModal();
 });
+
+/* ============================================================ */
+/* SESSION 78 — PAYMENT PLAN MODAL                               */
+/* ============================================================ */
 function openPaymentPlanModal(){
 selectedPaymentPlan=null;
 document.querySelectorAll('#planCardsRow .plan-card').forEach(function(b){
@@ -10123,6 +11166,7 @@ btn.style.opacity='.5';
 document.getElementById('paymentPlanModal').classList.add('show');
 document.body.classList.add('modal-open');
 }
+
 function selectPaymentPlan(plan){
 selectedPaymentPlan=plan;
 document.querySelectorAll('#planCardsRow .plan-card').forEach(function(b){
@@ -10135,6 +11179,7 @@ btn.style.opacity='1';
 }
 document.getElementById('paymentPlanInfo').innerHTML='✓ Plan selected';
 }
+
 function closePaymentPlanModal(){
 document.getElementById('paymentPlanModal').classList.remove('show');
 var stillOpen=document.querySelector('.modal-overlay.show');
@@ -10142,6 +11187,7 @@ if(!stillOpen){
 document.body.classList.remove('modal-open');
 }
 }
+
 function confirmPaymentAndRegister(){
 if(!selectedPaymentPlan){
 return;
@@ -10164,6 +11210,10 @@ document.getElementById('registerPage').classList.add('hidden');
 document.getElementById('loginPage').classList.remove('hidden');
 },4000);
 }
+
+/* ============================================================ */
+/* SESSION 79 — INIT APP                                         */
+/* ============================================================ */
 function initApp(user){
 if(!isSuperAdmin&&!isMexEmployee){
 ensureBranches();
@@ -10246,6 +11296,7 @@ hydratePhotos();
 });
 },200);
 }
+
 function startPromotedTicker(){
 if(promotedTickerInterval){
 clearInterval(promotedTickerInterval);
@@ -10254,6 +11305,10 @@ promotedTickerInterval=setInterval(function(){
 cleanupExpiredAds();
 },60000);
 }
+
+/* ============================================================ */
+/* SESSION 80 — GLOBAL EVENT BINDING                             */
+/* ============================================================ */
 function bindGlobalEvents(){
 var lb=document.getElementById('sideLogoutBtn');
 if(lb){
@@ -10323,6 +11378,10 @@ recordUserLogout(cu.id);
 }
 });
 }
+
+/* ============================================================ */
+/* SESSION 81 — LOGOUT                                           */
+/* ============================================================ */
 function logout(){
 var u=getCurrentUser();
 try{
@@ -10353,14 +11412,20 @@ document.getElementById('loginUsername').value='';
 document.getElementById('loginPassword').value='';
 closeMobileSidebar();
 }
+
+/* ============================================================ */
+/* SESSION 82 — MOBILE SIDEBAR                                   */
+/* ============================================================ */
 function openMobileSidebar(){
 document.getElementById('sidebar').classList.add('open');
 document.getElementById('sidebarBackdrop').classList.add('show');
 }
+
 function closeMobileSidebar(){
 document.getElementById('sidebar').classList.remove('open');
 document.getElementById('sidebarBackdrop').classList.remove('show');
 }
+
 function toggleMobileSidebar(){
 var sb=document.getElementById('sidebar');
 if(sb.classList.contains('open')){
@@ -10369,6 +11434,10 @@ closeMobileSidebar();
 openMobileSidebar();
 }
 }
+
+/* ============================================================ */
+/* SESSION 83 — BOOT SEQUENCE                                    */
+/* ============================================================ */
 (function boot(){
 var splashStart=Date.now();
 function bootHideSplash(){
@@ -10465,6 +11534,10 @@ return;
 setCurrentUser(null);
 scheduleHide();
 })();
+
+/* ============================================================ */
+/* SESSION 84 — KEYBOARD SHORTCUTS                               */
+/* ============================================================ */
 document.addEventListener('keydown',function(e){
 if(e.key==='Escape'){
 closeModal();
