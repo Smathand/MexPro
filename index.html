@@ -3753,11 +3753,11 @@ transition-duration:.01ms!important
 </div>
 
 <nav class="sidebar-nav" id="sidebarNav">
-<button class="nav-item active" data-view="dashboard"><i class="fas fa-chart-pie"></i><span data-i18n="dashboard">Dashboard</span></button>
+<button class="nav-item active" data-view="status"><i class="fas fa-bullhorn"></i><span data-i18n="adsStatus">MexFace & Status</span></button>
+<button class="nav-item" data-view="dashboard"><i class="fas fa-chart-pie"></i><span data-i18n="mexData">MexData</span></button>
 <button class="nav-item" data-view="sales"><i class="fas fa-cart-plus"></i><span data-i18n="sales">Sales</span></button>
 <button class="nav-item" data-view="debts" id="navDebts"><i class="fas fa-hand-holding-usd"></i><span data-i18n="debts">Debts</span><span class="badge" id="debtsNavBadge" style="display:none;">0</span></button>
 <button class="nav-item" data-view="inventory" id="navInventory"><i class="fas fa-boxes"></i><span data-i18n="inventory">Inventory</span><span class="badge" id="lowStockNavBadge" style="display:none;">0</span></button>
-<button class="nav-item" data-view="status"><i class="fas fa-bullhorn"></i><span data-i18n="adsStatus">MexFace & Status</span></button>
 <button class="nav-item" data-view="pnl" id="navPnl"><i class="fas fa-scale-balanced"></i><span data-i18n="pnl">Profit & Loss</span></button>
 <button class="nav-item" data-view="expenses" id="navExpenses"><i class="fas fa-receipt"></i><span data-i18n="expenses">Expenses</span></button>
 <button class="nav-item" data-view="branches" id="navBranches"><i class="fas fa-store"></i><span data-i18n="branches">Branches</span></button>
@@ -3785,7 +3785,7 @@ transition-duration:.01ms!important
 <div class="main-content">
 <header class="topbar">
 <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu"><i class="fas fa-bars"></i></button>
-<div class="page-title" id="pageTitle">Dashboard</div>
+<div class="page-title" id="pageTitle">MexFace & Status</div>
 <div class="topbar-actions">
 <span class="date-display"><i class="far fa-calendar-alt"></i><span id="currentDate"></span></span>
 <button class="low-stock-alert-btn" id="lowStockAlertBtn"><i class="fas fa-exclamation-triangle"></i><span class="alert-text" data-i18n="lowStock">Low Stock</span><span class="alert-count" id="lowStockAlertCount">0</span></button>
@@ -4312,7 +4312,8 @@ return 't_'+currentTenantId+'_'+(u?u.id:0);
 /* ============================================================ */
 var TRANSLATIONS={
 en:{
-dashboard:'Dashboard',
+mexData:'MexData',
+dashboard:'MexData',
 sales:'Sales',
 debts:'Debts',
 inventory:'Inventory',
@@ -4564,7 +4565,8 @@ suspended:'Account Suspended',
 subscriptionExpires:'Subscription expires in'
 },
 sw:{
-dashboard:'Dashibodi',
+mexData:'MexData',
+dashboard:'MexData',
 sales:'Mauzo',
 debts:'Madeni',
 inventory:'Bidhaa',
@@ -4814,7 +4816,8 @@ suspended:'Akaunti Imesimamishwa',
 subscriptionExpires:'Subscription inaisha baada ya'
 },
 zh:{
-dashboard:'仪表盘',
+mexData:'MexData',
+dashboard:'MexData',
 sales:'销售',
 debts:'债务',
 inventory:'库存',
@@ -5064,7 +5067,8 @@ suspended:'账户已暂停',
 subscriptionExpires:'订阅将在以下时间后到期'
 },
 fr:{
-dashboard:'Tableau de bord',
+mexData:'MexData',
+dashboard:'MexData',
 sales:'Ventes',
 debts:'Dettes',
 inventory:'Inventaire',
@@ -5314,7 +5318,8 @@ suspended:'Compte suspendu',
 subscriptionExpires:"L'abonnement expire dans"
 },
 ar:{
-dashboard:'لوحة التحكم',
+mexData:'MexData',
+dashboard:'MexData',
 sales:'المبيعات',
 debts:'الديون',
 inventory:'المخزون',
@@ -7918,7 +7923,7 @@ return{success:true,tenant:tenant,ownerUser:ownerUser};
 var views={};
 
 /* ============================================================ */
-/* SESSION 31 — VIEW: DASHBOARD                                  */
+/* SESSION 31 — VIEW: DASHBOARD (MexData)                        */
 /* ============================================================ */
 views.dashboard=function(){
 if(isSuperAdmin){
@@ -10539,7 +10544,7 @@ if(cu){
 updateAllUI(cu);
 }
 var av=document.querySelector('.sidebar-nav .nav-item.active');
-var v=av&&av.dataset.view?av.dataset.view:'dashboard';
+var v=av&&av.dataset.view?av.dataset.view:'status';
 navigate(v);
 showToast('✓ '+LANG_NAMES[lang],'success');
 }
@@ -10910,7 +10915,7 @@ b.classList.add('active');
 }
 var pt=document.getElementById('pageTitle');
 if(pt){
-var titleMap={status:'adsStatus',superadmin:'superAdmin',mexEarnings:'myEarnings',mexCompanies:'myCompanies',mexStatus:'ads'};
+var titleMap={status:'adsStatus',superadmin:'superAdmin',mexEarnings:'myEarnings',mexCompanies:'myCompanies',mexStatus:'ads',dashboard:'mexData'};
 pt.textContent=t(titleMap[view]||view);
 }
 var area=document.getElementById('contentArea');
@@ -11280,7 +11285,7 @@ el.style.display='flex';
 }
 });
 document.getElementById('lowStockAlertBtn').style.display='inline-flex';
-navigate('dashboard');
+navigate('status');
 }
 document.getElementById('currentDate').textContent=getTzNowDate();
 updateChatBadge();
