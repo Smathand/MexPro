@@ -45,7 +45,9 @@
 --report-period-bg:#e8f5e9;
 --report-period-border:#a5d6a7;
 --report-period-text:#1b5e20;
---media-bg:linear-gradient(135deg,#e2e8f0,#cbd5e1)
+--media-bg:linear-gradient(135deg,#e2e8f0,#cbd5e1);
+--chat-bg-light:#efeae2;
+--chat-bg-dark:#0b141a
 }
 body.dark{
 --bg-body:#0a0a0a;
@@ -76,7 +78,9 @@ box-sizing:border-box
 }
 html,body{
 scrollbar-width:none;
--ms-overflow-style:none
+-ms-overflow-style:none;
+-webkit-text-size-adjust:100%;
+text-size-adjust:100%
 }
 html::-webkit-scrollbar,body::-webkit-scrollbar{
 width:0;
@@ -126,7 +130,9 @@ font-family:'Noto Sans SC','Inter',sans-serif
 }
 input,textarea,select{
 user-select:text;
--webkit-user-select:text
+-webkit-user-select:text;
+font-size:16px;
+touch-action:manipulation
 }
 body.modal-open{
 overflow:hidden
@@ -139,7 +145,8 @@ border-radius:12px!important;
 cursor:pointer;
 font-family:var(--font);
 transition:background .15s ease,color .15s ease,border-color .15s ease;
-font-weight:600
+font-weight:600;
+touch-action:manipulation
 }
 .btn-primary{
 background:var(--accent-1)!important;
@@ -235,7 +242,8 @@ font-size:16px;
 font-family:var(--font);
 outline:none;
 transition:.2s;
-font-weight:500
+font-weight:500;
+touch-action:manipulation
 }
 input:focus,select:focus,textarea:focus{
 border-color:var(--accent-1);
@@ -584,14 +592,13 @@ width:38px;
 height:38px;
 border-radius:50%;
 background:rgba(255,255,255,.2);
-display:flex;
-align-items:center;
-justify-content:center;
+display:block;
 font-weight:800;
 font-size:.85rem;
 color:#fff;
 flex-shrink:0;
 overflow:hidden;
+object-fit:cover;
 background-size:cover!important;
 background-position:center!important
 }
@@ -625,7 +632,12 @@ cursor:pointer;
 display:flex;
 align-items:center;
 justify-content:center;
-font-size:.9rem
+font-size:.9rem;
+flex-shrink:0
+}
+.sidebar-footer .logout-btn:hover{
+background:rgba(255,255,255,.2);
+color:#fff
 }
 .main-content{
 flex:1;
@@ -1220,9 +1232,10 @@ flex:1;
 border:none!important;
 background:transparent!important;
 padding:4px 0!important;
-font-size:.88rem!important;
+font-size:16px!important;
 box-shadow:none!important;
-border-radius:0!important
+border-radius:0!important;
+touch-action:manipulation
 }
 .insta-ad-comment-input input:focus{
 box-shadow:none!important
@@ -1400,9 +1413,10 @@ flex:1;
 border:none!important;
 background:transparent!important;
 padding:6px 0!important;
-font-size:.9rem!important;
+font-size:16px!important;
 box-shadow:none!important;
-border-radius:0!important
+border-radius:0!important;
+touch-action:manipulation
 }
 .comments-modal .comments-input-area input:focus{
 box-shadow:none!important
@@ -2334,6 +2348,30 @@ font-size:1.05rem;
 color:#fff;
 font-weight:800
 }
+.chat-modal .modal-box .chat-header .chat-header-actions{
+display:flex;
+gap:8px;
+align-items:center;
+flex-shrink:0
+}
+.chat-modal .modal-box .chat-header .chat-wallpaper-btn{
+background:rgba(255,255,255,.2);
+color:#fff;
+border:none!important;
+border-radius:50%!important;
+width:32px;
+height:32px;
+cursor:pointer;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:.9rem;
+padding:0;
+transition:background .15s ease
+}
+.chat-modal .modal-box .chat-header .chat-wallpaper-btn:hover{
+background:rgba(255,255,255,.35)
+}
 .chat-modal .modal-box .chat-header .chat-close{
 background:rgba(255,255,255,.2);
 color:#fff;
@@ -2344,7 +2382,13 @@ height:32px;
 cursor:pointer;
 display:flex;
 align-items:center;
-justify-content:center
+justify-content:center;
+flex-shrink:0;
+padding:0;
+transition:background .15s ease
+}
+.chat-modal .modal-box .chat-header .chat-close:hover{
+background:rgba(255,255,255,.35)
 }
 .chat-modal .modal-box .chat-body{
 display:flex;
@@ -2433,7 +2477,14 @@ overflow-y:auto;
 padding:16px 20px;
 display:flex;
 flex-direction:column;
-gap:6px
+gap:6px;
+background-color:var(--chat-bg-light);
+background-size:180px 180px;
+background-repeat:repeat;
+background-position:center center
+}
+body.dark .chat-modal .modal-box .chat-messages{
+background-color:var(--chat-bg-dark)
 }
 .chat-modal .modal-box .chat-messages .no-chat{
 display:flex;
@@ -2461,7 +2512,8 @@ flex:1;
 padding:10px 14px;
 border-radius:24px;
 font-size:16px;
-min-width:100px
+min-width:100px;
+touch-action:manipulation
 }
 .chat-msg{
 max-width:75%;
@@ -2512,6 +2564,84 @@ font-weight:800;
 margin-bottom:3px;
 opacity:.85;
 display:block
+}
+.wp-picker-grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(100px,1fr));
+gap:10px;
+margin:16px 0
+}
+.wp-option{
+border-radius:12px;
+overflow:hidden;
+height:88px;
+cursor:pointer;
+border:3px solid transparent;
+position:relative;
+background-size:cover;
+background-position:center;
+background-repeat:no-repeat;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:0;
+transition:transform .15s ease,border-color .15s ease
+}
+.wp-option:hover{
+border-color:var(--accent-1)
+}
+.wp-option.selected{
+border-color:var(--accent-1);
+box-shadow:0 0 0 3px rgba(18,140,126,.25)
+}
+.wp-option .wp-label{
+position:absolute;
+bottom:0;
+left:0;
+right:0;
+background:linear-gradient(to top,rgba(0,0,0,.75),transparent);
+color:#fff;
+font-size:.66rem;
+font-weight:700;
+padding:14px 4px 4px;
+text-align:center;
+letter-spacing:.02em
+}
+.wp-option .wp-check{
+position:absolute;
+top:6px;
+right:6px;
+width:22px;
+height:22px;
+border-radius:50%;
+background:var(--accent-1);
+color:#fff;
+display:none;
+align-items:center;
+justify-content:center;
+font-size:.65rem;
+box-shadow:0 2px 6px rgba(0,0,0,.3)
+}
+.wp-option.selected .wp-check{
+display:flex
+}
+.wp-upload-btn{
+display:flex;
+align-items:center;
+justify-content:center;
+gap:8px;
+padding:12px 20px;
+border-radius:12px!important;
+background:var(--accent-1)!important;
+color:#fff!important;
+font-weight:700;
+cursor:pointer;
+width:100%;
+margin-top:6px;
+font-size:.88rem
+}
+.wp-upload-btn:hover{
+background:var(--accent-2)!important
 }
 .ad-profile-modal .modal-box{
 max-width:680px;
@@ -2897,7 +3027,8 @@ border-radius:0 18px 18px 0;
 z-index:9999;
 transform:translateX(-100%);
 transition:transform .3s;
-padding:20px 12px
+padding:20px 12px;
+padding-bottom:calc(20px + env(safe-area-inset-bottom,0px))
 }
 html[dir="rtl"] .sidebar{
 left:auto;
@@ -3072,6 +3203,30 @@ max-height:88vh
 border-radius:22px 22px 0 0;
 max-height:92vh
 }
+.chat-modal .modal-box{
+max-width:100%;
+height:85vh;
+border-radius:22px 22px 0 0;
+margin-bottom:0
+}
+.chat-modal .modal-box .chat-header{
+padding:14px 16px;
+padding-top:calc(14px + env(safe-area-inset-top,0px));
+min-height:56px
+}
+.chat-modal .modal-box .chat-header .chat-close,
+.chat-modal .modal-box .chat-header .chat-wallpaper-btn{
+width:40px;
+height:40px;
+font-size:1.05rem
+}
+.chat-modal .modal-box .chat-contacts{
+width:100%;
+max-height:180px
+}
+.chat-modal .modal-box .chat-body{
+flex-direction:column
+}
 .table-wrap{
 margin:0 -16px;
 padding:0 16px
@@ -3104,18 +3259,6 @@ margin-left:-12px;
 margin-right:-12px;
 width:calc(100% + 24px);
 max-width:calc(100% + 24px)
-}
-.chat-modal .modal-box{
-max-width:100%;
-height:90vh;
-border-radius:22px 22px 0 0
-}
-.chat-modal .modal-box .chat-contacts{
-width:100%;
-max-height:180px
-}
-.chat-modal .modal-box .chat-body{
-flex-direction:column
 }
 }
 @media(max-width:420px){
@@ -3384,7 +3527,7 @@ transition-duration:.01ms!important
 <button class="nav-item" data-view="mexStatus" id="navMexStatus" style="display:none;"><i class="fas fa-bullhorn"></i><span data-i18n="ads">MexFace</span></button>
 </nav>
 <div class="sidebar-footer">
-<div class="user-avatar" id="sideUserAvatar" data-photo-key=""></div>
+<img class="user-avatar" id="sideUserAvatar" data-photo-key="" src="https://ui-avatars.com/api/?background=128C7E&color=fff&name=User&bold=true&size=128" alt="User"/>
 <div class="user-info">
 <div class="name" id="sideUserName">Owner</div>
 <div class="role" id="sideUserRole">Owner</div>
@@ -3527,7 +3670,10 @@ transition-duration:.01ms!important
 <div class="modal-box">
 <div class="chat-header">
 <h3><i class="fas fa-comments"></i> <span data-i18n="chat">Chat</span></h3>
-<button class="chat-close" onclick="closeChatModal()"><i class="fas fa-times"></i></button>
+<div class="chat-header-actions">
+<button class="chat-wallpaper-btn" onclick="openChatWallpaperPicker()" title="Wallpaper" aria-label="Wallpaper"><i class="fas fa-image"></i></button>
+<button class="chat-close" onclick="closeChatModal()" aria-label="Close"><i class="fas fa-times"></i></button>
+</div>
 </div>
 <div class="chat-body">
 <div class="chat-contacts" id="chatContactsList"></div>
@@ -3540,6 +3686,22 @@ transition-duration:.01ms!important
 <button class="btn btn-primary btn-icon" onclick="sendChatMessage()"><i class="fas fa-paper-plane"></i> <span data-i18n="send">Send</span></button>
 </div>
 </div>
+</div>
+</div>
+</div>
+
+<div class="modal-overlay" id="chatWallpaperModal">
+<div class="modal-box" style="max-width:560px;">
+<h3><i class="fas fa-image" style="color:var(--accent-1);"></i> Chat Wallpaper</h3>
+<p style="font-size:.82rem;color:var(--text-muted);font-weight:500;margin-bottom:10px;">Chagua wall paper ya chat. Bila kuchagua, itatumia default yenye small symbols kama WhatsApp.</p>
+<div class="wp-picker-grid" id="wpPickerGrid"></div>
+<label class="wp-upload-btn">
+<i class="fas fa-upload"></i> Upload Custom Photo
+<input type="file" id="wpUploadInput" accept="image/*" style="display:none;"/>
+</label>
+<div class="form-actions" style="margin-top:16px;">
+<button class="btn btn-secondary" onclick="closeChatWallpaperPicker()" data-i18n="cancel">Cancel</button>
+<button class="btn btn-primary" onclick="saveChatWallpaperPicker()"><i class="fas fa-check"></i> Apply</button>
 </div>
 </div>
 </div>
@@ -3638,6 +3800,8 @@ var SUPER_ADMIN_SESSION_KEY='sb_superadmin_logged_in';
 var SUPER_ADMIN_PHOTO_KEY='sb_super_admin_photo_key';
 var FOLLOWS_KEY_SUFFIX='follows';
 var CHAT_KEY='sb_chat_messages';
+var CHAT_WALLPAPER_TYPE_KEY='sb_chat_wallpaper_type';
+var CHAT_WALLPAPER_VALUE_KEY='sb_chat_wallpaper_value';
 var TRANSFERS_KEY_SUFFIX='transfers';
 var LANG_KEY='sb_lang';
 var MAX_VIDEO_MB=200;
@@ -3652,6 +3816,14 @@ var BRANCH_FEE=10000;
 var BRANCH_COMMISSION_RATE=0.20;
 var FREE_TRIAL_DAYS=7;
 var FREE_TRIAL_MS=FREE_TRIAL_DAYS*24*60*60*1000;
+var CHAT_WALLPAPER_COLORS=[
+{key:'beige',color:'#efeae2',label:'Beige'},
+{key:'white',color:'#ffffff',label:'White'},
+{key:'gray',color:'#e5e7eb',label:'Gray'},
+{key:'teal',color:'#d1f2e8',label:'Teal'},
+{key:'pink',color:'#fce4ec',label:'Pink'},
+{key:'dark',color:'#0b141a',label:'Dark'}
+];
 var PROMOTE_OPTIONS=[
 {key:'3d',label:'3 Days',days:3,price:5000},
 {key:'7d',label:'7 Days',days:7,price:10000},
@@ -3931,7 +4103,7 @@ itemsRemaining:'Items Remaining',
 salesRecorded:'Sales Recorded',
 last7DaysSales:'Last 7 Days Sales',
 expensesByCategory:'Expenses by Category',
-companyStatus:'Company Status',
+companyStatus:'Status',
 viewAll:'View All',
 newSale:'New Sale',
 addProduct:'Add Product',
@@ -4184,7 +4356,7 @@ itemsRemaining:'Bidhaa Zilizosalia',
 salesRecorded:'Mauzo Yaliyorekodiwa',
 last7DaysSales:'Mauzo ya Siku 7',
 expensesByCategory:'Matumizi kwa Aina',
-companyStatus:'Hali ya Kampuni',
+companyStatus:'Hali',
 viewAll:'Ona Zote',
 newSale:'Mauzo Mapya',
 addProduct:'Ongeza Bidhaa',
@@ -4435,7 +4607,7 @@ itemsRemaining:'剩余商品',
 salesRecorded:'已记录销售',
 last7DaysSales:'过去7天销售',
 expensesByCategory:'按类别支出',
-companyStatus:'公司状态',
+companyStatus:'状态',
 viewAll:'查看全部',
 newSale:'新销售',
 addProduct:'添加产品',
@@ -4686,7 +4858,7 @@ itemsRemaining:'Articles restants',
 salesRecorded:'Ventes enregistrées',
 last7DaysSales:'Ventes des 7 derniers jours',
 expensesByCategory:'Dépenses par catégorie',
-companyStatus:"Statut de l'entreprise",
+companyStatus:'Statut',
 viewAll:'Tout voir',
 newSale:'Nouvelle vente',
 addProduct:'Ajouter un produit',
@@ -4937,7 +5109,7 @@ itemsRemaining:'العناصر المتبقية',
 salesRecorded:'المبيعات المسجلة',
 last7DaysSales:'مبيعات آخر 7 أيام',
 expensesByCategory:'المصروفات حسب الفئة',
-companyStatus:'حالة الشركة',
+companyStatus:'الحالة',
 viewAll:'عرض الكل',
 newSale:'بيع جديد',
 addProduct:'إضافة منتج',
@@ -5557,6 +5729,246 @@ el.src=url;
 });
 });
 hydratePhotos();
+}
+var _adViewObserver=null;
+var _adViewTimers={};
+function initAdViewObserver(){
+if(_adViewObserver){
+return;
+}
+if(!('IntersectionObserver' in window)){
+return;
+}
+_adViewObserver=new IntersectionObserver(function(entries){
+entries.forEach(function(entry){
+var el=entry.target;
+if(!el){
+return;
+}
+var adId=el.dataset.adId;
+if(!adId){
+return;
+}
+if(entry.isIntersecting&&entry.intersectionRatio>=0.5){
+if(_adViewTimers[adId]){
+clearTimeout(_adViewTimers[adId]);
+}
+_adViewTimers[adId]=setTimeout(function(){
+incrementAdView(adId);
+},2000);
+}else{
+if(_adViewTimers[adId]){
+clearTimeout(_adViewTimers[adId]);
+delete _adViewTimers[adId];
+}
+}
+});
+},{threshold:[0.5,0.75]});
+}
+function observeAdCards(){
+initAdViewObserver();
+if(!_adViewObserver){
+return;
+}
+document.querySelectorAll('.insta-ad[id^="ad-card-"]').forEach(function(el){
+if(el.dataset.viewObserved==='1'){
+return;
+}
+var adId=el.id.replace('ad-card-','');
+if(!adId){
+return;
+}
+el.dataset.adId=adId;
+el.dataset.viewObserved='1';
+try{
+_adViewObserver.observe(el);
+}catch(e){}
+});
+}
+function getChatWallpaperSvgDataUrl(isDark){
+var strokeColor=isDark?'#8a9a90':'#7a8a85';
+var fillColor=isDark?'#8a9a90':'#7a8a85';
+var opacityChat=isDark?'0.09':'0.12';
+var opacityDot=isDark?'0.09':'0.11';
+var opacityStar=isDark?'0.07':'0.09';
+var svg="<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'>";
+svg+="<defs><pattern id='wp' width='60' height='60' patternUnits='userSpaceOnUse'>";
+svg+="<path d='M5 8 h12 a2 2 0 0 1 2 2 v6 a2 2 0 0 1 -2 2 h-8 l-4 3 v-3 a2 2 0 0 1 -2 -2 v-6 a2 2 0 0 1 2 -2 z' fill='none' stroke='"+strokeColor+"' stroke-width='0.7' opacity='"+opacityChat+"'/>";
+svg+="<circle cx='35' cy='15' r='1.5' fill='"+fillColor+"' opacity='"+opacityDot+"'/>";
+svg+="<path d='M40 40 l1.5 3 l3 0.5 l-2 2.5 l0.5 3 l-3 -1.5 l-3 1.5 l0.5 -3 l-2 -2.5 l3 -0.5 z' fill='"+fillColor+"' opacity='"+opacityStar+"'/>";
+svg+="<path d='M15 42 c-1 -2 -4 -2 -4 0 c0 2 4 4 4 4 c0 0 4 -2 4 -4 c0 -2 -3 -2 -4 0 z' fill='"+fillColor+"' opacity='"+opacityStar+"'/>";
+svg+="<circle cx='50' cy='55' r='1' fill='"+fillColor+"' opacity='"+opacityDot+"'/>";
+svg+="<circle cx='25' cy='55' r='1.2' fill='"+fillColor+"' opacity='"+opacityDot+"'/>";
+svg+="</pattern></defs>";
+svg+="<rect width='180' height='180' fill='url(#wp)'/>";
+svg+="</svg>";
+return 'data:image/svg+xml;utf8,'+encodeURIComponent(svg);
+}
+function getCurrentChatWallpaper(){
+var type=localStorage.getItem(CHAT_WALLPAPER_TYPE_KEY)||'default';
+var value=localStorage.getItem(CHAT_WALLPAPER_VALUE_KEY)||'';
+return{type:type,value:value};
+}
+function setCurrentChatWallpaper(type,value){
+if(type==='default'){
+localStorage.removeItem(CHAT_WALLPAPER_TYPE_KEY);
+localStorage.removeItem(CHAT_WALLPAPER_VALUE_KEY);
+}else{
+localStorage.setItem(CHAT_WALLPAPER_TYPE_KEY,type);
+localStorage.setItem(CHAT_WALLPAPER_VALUE_KEY,value||'');
+}
+}
+function applyChatWallpaper(){
+var el=document.getElementById('chatMessagesArea');
+if(!el){
+return;
+}
+var isDark=document.body.classList.contains('dark');
+var wp=getCurrentChatWallpaper();
+el.style.backgroundImage='';
+el.style.backgroundColor='';
+el.style.backgroundSize='180px 180px';
+el.style.backgroundRepeat='repeat';
+el.style.backgroundPosition='center center';
+if(wp.type==='custom'&&wp.value){
+getMediaUrl(wp.value).then(function(url){
+if(url){
+el.style.backgroundImage='url("'+url+'")';
+el.style.backgroundSize='cover';
+el.style.backgroundPosition='center';
+el.style.backgroundRepeat='no-repeat';
+el.style.backgroundColor=isDark?'#0b141a':'#efeae2';
+}else{
+el.style.backgroundImage='url("'+getChatWallpaperSvgDataUrl(isDark)+'")';
+}
+});
+}else if(wp.type==='color'&&wp.value){
+el.style.backgroundColor=wp.value;
+el.style.backgroundImage='none';
+}else{
+el.style.backgroundImage='url("'+getChatWallpaperSvgDataUrl(isDark)+'")';
+}
+}
+var _wpPickerTemp=null;
+function openChatWallpaperPicker(){
+_wpPickerTemp=getCurrentChatWallpaper();
+renderChatWallpaperPicker();
+document.getElementById('chatWallpaperModal').classList.add('show');
+document.body.classList.add('modal-open');
+}
+function closeChatWallpaperPicker(){
+document.getElementById('chatWallpaperModal').classList.remove('show');
+var stillOpen=document.querySelector('.modal-overlay.show');
+if(!stillOpen){
+document.body.classList.remove('modal-open');
+}
+_wpPickerTemp=null;
+}
+function renderChatWallpaperPicker(){
+var grid=document.getElementById('wpPickerGrid');
+if(!grid){
+return;
+}
+var isDark=document.body.classList.contains('dark');
+var defaultUrl=getChatWallpaperSvgDataUrl(isDark);
+var current=_wpPickerTemp||{type:'default',value:''};
+var html='';
+var isDefaultSel=(current.type==='default');
+html+='<button type="button" class="wp-option'+(isDefaultSel?' selected':'')+'" data-wp-type="default" onclick="selectChatWallpaperOption(\'default\',\'\')">';
+html+='<span class="wp-check"><i class="fas fa-check"></i></span>';
+html+='<span style="position:absolute;inset:0;background-color:'+(isDark?'#0b141a':'#efeae2')+';background-image:url(\''+defaultUrl+'\');background-size:cover;background-repeat:repeat;"></span>';
+html+='<span class="wp-label">Default</span>';
+html+='</button>';
+CHAT_WALLPAPER_COLORS.forEach(function(c){
+var isSel=(current.type==='color'&&current.value===c.color);
+html+='<button type="button" class="wp-option'+(isSel?' selected':'')+'" data-wp-type="color" data-wp-value="'+c.color+'" onclick="selectChatWallpaperOption(\'color\',\''+c.color+'\')" style="background-color:'+c.color+'">';
+html+='<span class="wp-check"><i class="fas fa-check"></i></span>';
+html+='<span class="wp-label">'+c.label+'</span>';
+html+='</button>';
+});
+grid.innerHTML=html;
+if(current.type==='custom'&&current.value){
+var grid2=document.getElementById('wpPickerGrid');
+getMediaUrl(current.value).then(function(url){
+if(url&&grid2){
+var btn=document.createElement('button');
+btn.type='button';
+btn.className='wp-option selected';
+btn.setAttribute('data-wp-type','custom');
+btn.style.backgroundImage='url("'+url+'")';
+btn.onclick=function(){
+selectChatWallpaperOption('custom',current.value);
+};
+btn.innerHTML='<span class="wp-check"><i class="fas fa-check"></i></span><span class="wp-label">Your Photo</span>';
+grid2.appendChild(btn);
+}
+});
+}
+}
+function selectChatWallpaperOption(type,value){
+if(type==='custom'&&value){
+_wpPickerTemp={type:'custom',value:value};
+}else if(type==='color'){
+_wpPickerTemp={type:'color',value:value};
+}else{
+_wpPickerTemp={type:'default',value:''};
+}
+document.querySelectorAll('#wpPickerGrid .wp-option').forEach(function(el){
+var t2=el.getAttribute('data-wp-type');
+var v=el.getAttribute('data-wp-value')||'';
+var match=false;
+if(_wpPickerTemp.type==='default'&&t2==='default'){
+match=true;
+}
+if(_wpPickerTemp.type==='color'&&t2==='color'&&v===_wpPickerTemp.value){
+match=true;
+}
+if(_wpPickerTemp.type==='custom'&&t2==='custom'){
+match=true;
+}
+el.classList.toggle('selected',match);
+});
+}
+function saveChatWallpaperPicker(){
+if(!_wpPickerTemp){
+_wpPickerTemp={type:'default',value:''};
+}
+setCurrentChatWallpaper(_wpPickerTemp.type,_wpPickerTemp.value);
+applyChatWallpaper();
+closeChatWallpaperPicker();
+showToast('✓ Wallpaper applied','success');
+}
+function initChatWallpaperUpload(){
+var input=document.getElementById('wpUploadInput');
+if(!input){
+return;
+}
+var ni=input.cloneNode(true);
+input.parentNode.replaceChild(ni,input);
+ni.addEventListener('change',function(e){
+var f=e.target.files&&e.target.files[0];
+if(!f){
+return;
+}
+if(f.size>10*1024*1024){
+showToast('Max 10MB','error');
+e.target.value='';
+return;
+}
+if(f.type.indexOf('image/')!==0){
+showToast('Please select an image','error');
+e.target.value='';
+return;
+}
+saveMediaBlob(f,'wp_').then(function(k){
+_wpPickerTemp={type:'custom',value:k};
+renderChatWallpaperPicker();
+showToast('✓ Photo ready — tap Apply','success');
+}).catch(function(){
+showToast('Upload failed','error');
+});
+e.target.value='';
+});
 }
 function lsGet(key,def){
 try{
@@ -6237,6 +6649,10 @@ if(ad.posterKey&&!_mediaUrlCache[ad.posterKey]){
 promises.push(getMediaUrl(ad.posterKey));
 }
 });
+var wp=getCurrentChatWallpaper();
+if(wp.type==='custom'&&wp.value&&!_mediaUrlCache[wp.value]){
+promises.push(getMediaUrl(wp.value));
+}
 return Promise.all(promises);
 }
 var SOCIAL_FIELDS=[
@@ -6744,6 +7160,8 @@ var m=document.getElementById('chatModal');
 m.classList.add('show');
 document.body.classList.add('modal-open');
 renderChatContacts();
+applyChatWallpaper();
+initChatWallpaperUpload();
 }
 function closeChatModal(){
 document.getElementById('chatModal').classList.remove('show');
@@ -6889,6 +7307,7 @@ return;
 var me=chatUserKey();
 if(!me||!chatCurrentContact){
 area.innerHTML='<div class="no-chat"><i class="fas fa-comment-dots"></i><span>'+t('selectContact')+'</span></div>';
+applyChatWallpaper();
 return;
 }
 var messages=getChatMessages().filter(function(m){
@@ -6898,6 +7317,7 @@ return a.timestamp-b.timestamp;
 });
 if(messages.length===0){
 area.innerHTML='<div class="no-chat"><i class="fas fa-comment-dots"></i><span>'+t('noComments')+'</span></div>';
+applyChatWallpaper();
 return;
 }
 area.innerHTML=messages.map(function(m){
@@ -6905,6 +7325,7 @@ var isMe=m.from===me.id;
 return '<div class="chat-msg '+(isMe?'me':'them')+'">'+(isMe?'':'<span class="msg-author">'+escapeHtml(chatCurrentContact.name)+'</span>')+escapeHtml(m.text||'')+'<span class="msg-time">'+fmtTime(m.timestamp)+'</span></div>';
 }).join('');
 area.scrollTop=area.scrollHeight;
+applyChatWallpaper();
 }
 function sendChatMessage(){
 var me=chatUserKey();
@@ -7017,10 +7438,6 @@ function incrementAdView(adId){
 if(!adId){
 return;
 }
-if(_viewedAdsSession[adId]){
-return;
-}
-_viewedAdsSession[adId]=true;
 var ads=getGlobalAds();
 var ad=ads.find(function(a){
 return a.id===Number(adId);
@@ -8678,28 +9095,66 @@ var perms=getUserPermissions();
 var pnl=calculatePnL();
 var sales=getFilteredSales();
 var expenses=perms.seeExpenses?getFilteredExpenses():[];
-var months={};
+var allMonthLabels=[];
+var revenueMap={};
 sales.forEach(function(s){
 var d=new Date(s.date);
 var m=d.toLocaleDateString('en-TZ',{timeZone:'Africa/Dar_es_Salaam',month:'short',year:'numeric'});
-months[m]=(months[m]||0)+s.totalPrice;
+if(allMonthLabels.indexOf(m)===-1){
+allMonthLabels.push(m);
+}
+revenueMap[m]=(revenueMap[m]||0)+s.totalPrice;
 });
-var sL=Object.keys(months);
-var sV=Object.values(months);
-var eM={};
+var expenseMap={};
 expenses.forEach(function(e){
 var d=new Date(e.date);
 var m=d.toLocaleDateString('en-TZ',{timeZone:'Africa/Dar_es_Salaam',month:'short',year:'numeric'});
-eM[m]=(eM[m]||0)+e.amount;
+if(allMonthLabels.indexOf(m)===-1){
+allMonthLabels.push(m);
+}
+expenseMap[m]=(expenseMap[m]||0)+e.amount;
 });
-var eL=Object.keys(eM);
-var eV=Object.values(eM);
+var revenueData=allMonthLabels.map(function(m){
+return revenueMap[m]||0;
+});
+var expenseData=allMonthLabels.map(function(m){
+return expenseMap[m]||0;
+});
 var cards='<div class="stat-card"><div class="stat-label">'+t('revenue')+'</div><div class="stat-value primary">'+fmtMoney(pnl.totalRevenue)+'</div></div><div class="stat-card"><div class="stat-label">'+t('cogs')+'</div><div class="stat-value primary-light">'+fmtMoney(pnl.cogs)+'</div></div>';
 if(perms.seeExpenses){
 cards+='<div class="stat-card"><div class="stat-label">'+t('expenses')+'</div><div class="stat-value">'+fmtMoney(pnl.totalExpenses)+'</div></div>';
 }
 cards+='<div class="stat-card"><div class="stat-label">'+t('netProfit')+'</div><div class="stat-value '+(pnl.netProfit>=0?'primary':'red')+'">'+fmtMoney(pnl.netProfit)+'</div></div>';
-var html='<div class="section-header"><h2><i class="fas fa-scale-balanced"></i> '+t('profitLoss')+'</h2></div><div class="stats-grid">'+cards+'</div><div class="card mt-16"><div class="card-header"><h3>'+t('pnlBreakdown')+'</h3></div><div class="card-body"><div class="pnl-breakdown-grid"><div><span class="text-muted text-sm">'+t('revenue')+'</span><br><strong class="primary" style="font-size:1.2rem;">'+fmtMoney(pnl.totalRevenue)+'</strong></div><div><span class="text-muted text-sm">'+t('cogs')+'</span><br><strong style="font-size:1.2rem;">'+fmtMoney(pnl.cogs)+'</strong></div>'+(perms.seeExpenses?'<div><span class="text-muted text-sm">'+t('expenses')+'</span><br><strong style="font-size:1.2rem;">'+fmtMoney(pnl.totalExpenses)+'</strong></div>':'')+'<div><span class="text-muted text-sm">'+t('netProfit')+'</span><br><strong class="'+(pnl.netProfit>=0?'primary':'red')+'" style="font-size:1.2rem;">'+fmtMoney(pnl.netProfit)+'</strong></div></div></div></div>';
+var chartHtml='<div class="card mt-16"><div class="card-header"><h3><i class="fas fa-chart-bar"></i> '+t('profitLoss')+'</h3></div><div class="card-body"><div class="chart-container"><canvas id="pnlChart"></canvas></div></div></div>';
+var html='<div class="section-header"><h2><i class="fas fa-scale-balanced"></i> '+t('profitLoss')+'</h2></div><div class="stats-grid">'+cards+'</div>'+chartHtml+'<div class="card mt-16"><div class="card-header"><h3>'+t('pnlBreakdown')+'</h3></div><div class="card-body"><div class="pnl-breakdown-grid"><div><span class="text-muted text-sm">'+t('revenue')+'</span><br><strong class="primary" style="font-size:1.2rem;">'+fmtMoney(pnl.totalRevenue)+'</strong></div><div><span class="text-muted text-sm">'+t('cogs')+'</span><br><strong style="font-size:1.2rem;">'+fmtMoney(pnl.cogs)+'</strong></div>'+(perms.seeExpenses?'<div><span class="text-muted text-sm">'+t('expenses')+'</span><br><strong style="font-size:1.2rem;">'+fmtMoney(pnl.totalExpenses)+'</strong></div>':'')+'<div><span class="text-muted text-sm">'+t('netProfit')+'</span><br><strong class="'+(pnl.netProfit>=0?'primary':'red')+'" style="font-size:1.2rem;">'+fmtMoney(pnl.netProfit)+'</strong></div></div></div></div>';
+setTimeout(function(){
+var canvas=document.getElementById('pnlChart');
+if(canvas&&typeof Chart!=='undefined'){
+destroyChart('pnlChart');
+var isDark=document.body.classList.contains('dark');
+var tc=isDark?'#b0b0c8':'#64748b';
+var gc=isDark?'rgba(255,255,255,0.06)':'rgba(0,0,0,0.04)';
+var datasets=[
+{label:t('revenue'),data:revenueData,backgroundColor:'#128C7E',borderColor:'#0e6b5f',borderWidth:2,borderRadius:6}
+];
+if(perms.seeExpenses){
+datasets.push({label:t('expenses'),data:expenseData,backgroundColor:'#ef4444',borderColor:'#dc2626',borderWidth:2,borderRadius:6});
+}
+_reportCharts.pnlChart=new Chart(canvas,{
+type:'bar',
+data:{labels:allMonthLabels.length?allMonthLabels:[t('noData')],datasets:datasets},
+options:{
+responsive:true,
+maintainAspectRatio:false,
+plugins:{legend:{display:true,position:'top',labels:{color:tc}}},
+scales:{
+y:{beginAtZero:true,grid:{color:gc},ticks:{color:tc}},
+x:{grid:{display:false},ticks:{color:tc}}
+}
+}
+});
+}
+},100);
 return html;
 };
 views.expenses=function(){
@@ -9239,6 +9694,7 @@ var i=document.querySelector('#themeToggle i');
 if(i){
 i.className=isDark?'fas fa-sun':'fas fa-moon';
 }
+applyChatWallpaper();
 }
 function toggleTheme(){
 var u=getCurrentUser();
@@ -9452,22 +9908,32 @@ return;
 }
 var photo=getUserPhoto(user);
 var key=getUserPhotoKey(user);
+var dn=user.fullName||user.username||'User';
 var av=document.getElementById('sideUserAvatar');
 if(av){
-av.style.backgroundImage=cssUrl(photo);
-av.style.backgroundSize='cover';
-av.style.backgroundPosition='center';
-av.innerHTML='';
+av.src=photo;
 av.dataset.photoKey=key;
+av.onerror=function(){
+this.src=avatarUrl(dn,'128C7E');
+};
+av.style.display='block';
 }
 var ti=document.getElementById('topProfileImg');
 if(ti){
 ti.src=photo;
 ti.dataset.photoKey=key;
+ti.onerror=function(){
+this.src=avatarUrl(dn,'128C7E');
+};
 }
-var dn=user.fullName||user.username||'User';
-document.getElementById('sideUserName').textContent=dn;
-document.getElementById('topProfileName').textContent=dn;
+var sideName=document.getElementById('sideUserName');
+if(sideName){
+sideName.textContent=dn;
+}
+var topName=document.getElementById('topProfileName');
+if(topName){
+topName.textContent=dn;
+}
 if(isSuperAdmin){
 document.getElementById('sideUserRole').textContent=t('superAdminRole');
 document.getElementById('companyNameDisplay').textContent='MeX Admin';
@@ -9877,7 +10343,6 @@ var tin=co.tin||'';
 var addr=co.address||'';
 var seller=getUser(s.createdBy);
 var sellerName=seller?(seller.fullName||seller.username):'--';
-var isSw=currentLang==='sw';
 var c=document.getElementById('receiptContent');
 var html='<div class="receipt-header"><div class="receipt-brand">'+escapeHtml(cn)+'</div>';
 if(addr){
@@ -9931,7 +10396,6 @@ var s=currentReceiptData;
 var p=getProduct(s.productId);
 var co=getTenantData('company',{});
 var cn=co.name||'Company';
-var up=Number(s.unitPrice)||(s.totalPrice/s.quantity);
 var msg='*RECEIPT*\n━━━━━━━━━━━━━━━━━━\n🏢 *'+cn+'*\n📅 '+fmtDateTime(s.date)+'\n🧾 #'+String(s.id).slice(-8)+'\n\n📦 '+(p?p.name:'--')+'\n🔢 Qty: '+s.quantity+'\n💰 Total: '+fmtMoney(s.totalPrice)+'\n\n_MeX PRO_';
 var url='https://wa.me/'+n+'?text='+encodeURIComponent(msg);
 window.open(url,'_blank');
@@ -10185,6 +10649,7 @@ console.error('View error:',err);
 area.innerHTML='<div class="card"><div class="card-body"><p style="color:var(--accent-danger);">Error</p></div></div>';
 }
 setTimeout(hydrateMedia,20);
+setTimeout(observeAdCards,60);
 updateLowStockBadge();
 updateDebtsBadge();
 updateSidebarForLock();
@@ -10541,6 +11006,7 @@ if(lb){
 lb.onclick=logout;
 }
 initLanguageMenu();
+initChatWallpaperUpload();
 document.querySelectorAll('.sidebar-nav .nav-item').forEach(function(btn){
 btn.onclick=function(){
 var v=this.dataset.view;
@@ -10757,6 +11223,7 @@ closeTransferModal();
 closeMobileSidebar();
 closePaymentPlanModal();
 closeChatModal();
+closeChatWallpaperPicker();
 closeAdProfileModal();
 closeAdDetail();
 closeCommentsModal();
