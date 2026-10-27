@@ -370,7 +370,48 @@ body.dark .chat-modal .modal-box .chat-messages{background-color:#0b141a}
 .sync-now-btn.success{background:#10b981!important}
 .sync-now-btn.visible{display:flex!important}
 
-/* ============ MOBILE MEDIA QUERIES (FIXED: !important on mobile-menu-btn) ============ */
+/* ============ REALTIME SYNC INDICATOR ============ */
+.sync-indicator {
+  position: fixed;
+  top: 75px;
+  right: 24px;
+  background: var(--accent-1);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  z-index: 99997;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.3s, transform 0.3s;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 12px rgba(18,140,126,0.3);
+}
+.sync-indicator.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.sync-indicator i {
+  animation: syncSpin 1s linear infinite;
+}
+@keyframes syncSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@media(max-width:768px){
+  .sync-indicator {
+    top: 55px;
+    right: 12px;
+    font-size: 0.68rem;
+    padding: 6px 12px;
+  }
+}
+
+/* ============ MOBILE MEDIA QUERIES ============ */
 @media(max-width:768px){
   .app-container{padding:0;gap:0;height:100dvh}
   .main-content{border-radius:0;box-shadow:none;height:100dvh;min-width:0}
@@ -714,12 +755,15 @@ body.dark .chat-modal .modal-box .chat-messages{background-color:#0b141a}
 <div class="toast-container" id="toastContainer"></div>
 <button id="syncNowBtn" class="sync-now-btn" onclick="forceSyncAll()" title="Sync"><i class="fas fa-sync-alt"></i></button>
 
+<!-- REALTIME SYNC INDICATOR -->
+<div id="syncIndicator" class="sync-indicator">
+  <i class="fas fa-cloud-download-alt"></i> <span>Syncing...</span>
+</div>
+
 <script>
 'use strict';
 
-/* ============================================================
-   CONFIG
-   ============================================================ */
+/* CONFIG */
 var SUPER_ADMIN_USERNAME='Mex';
 var SUPER_ADMIN_HASH='h1$cc098c531ea5366c7735d08df65954c8bfefe8b5ae99ee1bd13e3c994c4b7cbf';
 var SUPER_EMERGENCY_NUMBER='+255670601120';
@@ -760,9 +804,7 @@ var PROMOTE_OPTIONS=[
   {key:'30d',label:'30 Days',days:30,price:35000}
 ];
 
-/* ============================================================
-   SUPABASE SYNC LAYER
-   ============================================================ */
+/* SUPABASE SYNC LAYER */
 var SUPABASE_URL='https://snswbfohhxianhgdaenv.supabase.co';
 var SUPABASE_PUBLISHABLE_KEY='sb_publishable_-KyAgqCZBgsvmdKp9uQdAA_nCCUxa0s';
 var SUPABASE_MEDIA_BUCKET='media';
@@ -1169,6 +1211,226 @@ function getSupabaseMediaUrl(key){
 }
 
 /* ============================================================
+   REALTIME SYNC + PERIODIC REFRESH
+   ============================================================ */
+var _realtimeChannels = [];
+var _realtimeDebounceTimer = null;
+var _periodicRefreshTimer = null;
+
+function setSyncIndicator(on) {
+  var el = document.getElementById('syncIndicator');
+  if (el) {
+    if (on) el.classList.add('visible');
+    else el.classList.remove('visible');
+  }
+}
+
+function setupRealtimeSync() {
+  if (!supabaseClient) {
+    console.warn('[Realtime] No client — skipping subscriptions');
+    return;
+  }
+  _realtimeChannels.forEach(function(ch) {
+    try { supabaseClient.removeChannel(ch); } catch (e) {}
+  });
+  _realtimeChannels = [];
+  console.log('[Realtime] Subscribing to table changes...');
+
+  try {
+    var kvChannel = supabaseClient
+      .channel('mex_kv_realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: TBL_KV }, function(payload) {
+        if (!payload.new || !payload.new.key) return;
+        if (!shouldSyncKey(payload.new.key)) return;
+        if (_pendingKVWrites[payload.new.key]) return;
+        try {
+          localStorage.setItem(payload.new.key, JSON.stringify(payload.new.value));
+        } catch (e) {}
+        console.log('[Realtime] KV updated:', payload.new.key);
+        scheduleSoftReRender();
+      })
+      .subscribe(function(status) {
+        console.log('[Realtime] KV channel:', status);
+      });
+    _realtimeChannels.push(kvChannel);
+  } catch (e) { console.warn('[Realtime] KV sub failed:', e); }
+
+  try {
+    var postsChannel = supabaseClient
+      .channel('mex_posts_realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: TBL_POSTS }, function(payload) {
+        if (payload.eventType === 'DELETE' && payload.old && payload.old.id) {
+          var ads = getGlobalAds();
+          var filtered = [];
+          for (var i = 0; i < ads.length; i++) {
+            if (Number(ads[i].id) !== Number(payload.old.id)) filtered.push(ads[i]);
+          }
+          if (filtered.length !== ads.length) {
+            lsSet(GLOBAL_ADS_KEY, filtered);
+          }
+        }
+        scheduleSoftReRender();
+      })
+      .subscribe();
+    _realtimeChannels.push(postsChannel);
+  } catch (e) { console.warn('[Realtime] Posts sub failed:', e); }
+
+  try {
+    var likesChannel = supabaseClient
+      .channel('mex_likes_realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: TBL_LIKES }, function() {
+        scheduleSoftReRender();
+      })
+      .subscribe();
+    _realtimeChannels.push(likesChannel);
+  } catch (e) { console.warn('[Realtime] Likes sub failed:', e); }
+
+  try {
+    var commentsChannel = supabaseClient
+      .channel('mex_comments_realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: TBL_COMMENTS }, function() {
+        scheduleSoftReRender();
+      })
+      .subscribe();
+    _realtimeChannels.push(commentsChannel);
+  } catch (e) { console.warn('[Realtime] Comments sub failed:', e); }
+
+  try {
+    var profilesChannel = supabaseClient
+      .channel('mex_profiles_realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: TBL_PROFILES }, function(payload) {
+        if (payload.new) {
+          try { applyProfileFromCloud(payload.new); } catch (e) {}
+        }
+        scheduleSoftReRender();
+      })
+      .subscribe();
+    _realtimeChannels.push(profilesChannel);
+  } catch (e) { console.warn('[Realtime] Profiles sub failed:', e); }
+}
+
+function scheduleSoftReRender() {
+  if (_realtimeDebounceTimer) clearTimeout(_realtimeDebounceTimer);
+  _realtimeDebounceTimer = setTimeout(function() {
+    softRefreshCurrentView();
+  }, 1200);
+}
+
+function softRefreshCurrentView() {
+  var active = document.activeElement;
+  if (active) {
+    var tag = active.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+  }
+  var openModal = document.querySelector('.modal-overlay.show');
+  if (openModal) return;
+  var app = document.getElementById('appContainer');
+  if (!app || !app.classList.contains('active')) return;
+
+  var currentView = 'status';
+  var activeNav = document.querySelector('.sidebar-nav .nav-item.active');
+  if (activeNav) currentView = activeNav.dataset.view;
+
+  var reRenderable = ['status', 'mexStatus', 'dashboard', 'sales', 'debts', 'inventory', 'expenses', 'users', 'branches', 'reports', 'pnl', 'superadmin', 'mexEarnings', 'mexCompanies'];
+  if (reRenderable.indexOf(currentView) === -1) return;
+
+  try {
+    var area = document.getElementById('contentArea');
+    if (area && typeof views[currentView] === 'function') {
+      var scrollPos = area.scrollTop;
+      area.innerHTML = views[currentView]();
+      area.scrollTop = scrollPos;
+      setTimeout(hydrateMedia, 20);
+    }
+  } catch (e) {
+    console.warn('[Soft refresh] err:', e);
+  }
+}
+
+function startPeriodicRefresh() {
+  if (_periodicRefreshTimer) clearInterval(_periodicRefreshTimer);
+  _periodicRefreshTimer = setInterval(function() {
+    if (!supabaseClient) return;
+    pullFromCloudOnly().then(function() {
+      softRefreshCurrentView();
+    });
+  }, 30000);
+}
+
+function pullFromCloudOnly() {
+  if (!supabaseClient) return Promise.resolve();
+  setSyncIndicator(true);
+
+  return Promise.all([
+    supabaseClient.from(TBL_KV).select('key,value'),
+    supabaseClient.from(TBL_PROFILES).select('*'),
+    supabaseClient.from(TBL_POSTS).select('*'),
+    supabaseClient.from(TBL_LIKES).select('*'),
+    supabaseClient.from(TBL_COMMENTS).select('*')
+  ]).then(function(results) {
+    var kvRes = results[0];
+    var profRes = results[1];
+    var postRes = results[2];
+    var likeRes = results[3];
+    var cmtRes = results[4];
+
+    if (kvRes && !kvRes.error && kvRes.data) {
+      kvRes.data.forEach(function(row) {
+        if (!shouldSyncKey(row.key)) return;
+        if (_pendingKVWrites[row.key]) return;
+        try {
+          if (row.value !== null && row.value !== undefined) {
+            localStorage.setItem(row.key, JSON.stringify(row.value));
+          }
+        } catch (e) {}
+      });
+    }
+
+    if (profRes && !profRes.error && profRes.data) {
+      profRes.data.forEach(function(p) {
+        try { applyProfileFromCloud(p); } catch (e) {}
+      });
+    }
+
+    if (postRes && !postRes.error && postRes.data) {
+      try {
+        mergePostsFromCloud(
+          postRes.data,
+          likeRes && likeRes.data || [],
+          cmtRes && cmtRes.data || []
+        );
+      } catch (e) {}
+    }
+
+    setSyncIndicator(false);
+    console.log('[Cloud pull] done');
+    return Promise.resolve();
+  }).catch(function(e) {
+    setSyncIndicator(false);
+    console.warn('[Cloud pull] err:', e);
+  });
+}
+
+function cleanupRealtimeSync() {
+  _realtimeChannels.forEach(function(ch) {
+    try { if (supabaseClient) supabaseClient.removeChannel(ch); } catch (e) {}
+  });
+  _realtimeChannels = [];
+  if (_periodicRefreshTimer) {
+    clearInterval(_periodicRefreshTimer);
+    _periodicRefreshTimer = null;
+  }
+}
+
+document.addEventListener('visibilitychange', function() {
+  if (document.visibilityState === 'visible' && supabaseClient) {
+    pullFromCloudOnly().then(function() {
+      softRefreshCurrentView();
+    });
+  }
+});
+
+/* ============================================================
    SHA-256
    ============================================================ */
 var _sha={K:null,H:null};
@@ -1248,9 +1510,7 @@ function superSessionToken(){return getSuperHash().slice(-24);}
 function encArg(s){return encodeURIComponent(String(s==null?'':s)).replace(/'/g,'%27');}
 function safeDecode(s){try{return decodeURIComponent(String(s));}catch(e){return String(s);}}
 
-/* ============================================================
-   INDEXEDDB (MEDIA)
-   ============================================================ */
+/* INDEXEDDB */
 var DB_NAME='mex_pro_db_v11';
 var DB_VERSION=1;
 var STORES={media:'media',json:'json'};
@@ -1333,9 +1593,7 @@ function deleteMediaKey(key){
   return dbDel(STORES.media,key);
 }
 
-/* ============================================================
-   LOCALSTORAGE (FIXED: robust error handling + auto cleanup)
-   ============================================================ */
+/* LOCALSTORAGE (robust) */
 function lsGet(key,def){
   try{
     var d=localStorage.getItem(key);
@@ -1347,7 +1605,6 @@ function lsGet(key,def){
 
 function tryCleanupLocalStorage(){
   try{
-    // 1) Remove expired ads
     var ads=lsGet(GLOBAL_ADS_KEY,[]);
     if(Array.isArray(ads)&&ads.length){
       var active=[];
@@ -1359,7 +1616,6 @@ function tryCleanupLocalStorage(){
         console.log('[Storage] Removed '+(ads.length-active.length)+' expired ads');
       }
     }
-    // 2) Remove any legacy base64 blobs from ads
     var ads2=lsGet(GLOBAL_ADS_KEY,[]);
     if(Array.isArray(ads2)&&ads2.length){
       var changed=false;
@@ -1377,7 +1633,6 @@ function tryCleanupLocalStorage(){
         console.log('[Storage] Removed base64 blobs from ads');
       }
     }
-    // 3) Trim old chat messages
     var msgs=lsGet(CHAT_KEY,[]);
     if(Array.isArray(msgs)&&msgs.length>200){
       var cutoff=Date.now()-30*86400000;
@@ -1390,7 +1645,6 @@ function tryCleanupLocalStorage(){
         console.log('[Storage] Trimmed chat: '+msgs.length+' → '+filtered.length);
       }
     }
-    // 4) Report storage size
     var total=0;
     for(var m=0;m<localStorage.length;m++){
       var kk=localStorage.key(m);
@@ -1440,9 +1694,7 @@ function lsRemove(key){
   }
 }
 
-/* ============================================================
-   STATE
-   ============================================================ */
+/* STATE */
 var isSuperAdmin=false;
 var isMexEmployee=false;
 var currentMexEmployeeId=null;
@@ -1464,13 +1716,10 @@ var REPORT_CUSTOM_TO=null;
 var currentCommentsAdId=null;
 var replyToCommentId=null;
 var _credentialsTenantId=null;
-
 var _loginFails=0;
 var _loginLockUntil=Number(lsGet('sb_login_lock',0))||0;
 
-/* ============================================================
-   UTILS
-   ============================================================ */
+/* UTILS */
 function uid(){return Date.now()*1000+Math.floor(Math.random()*1000);}
 function fmtMoney(n){return 'TSh '+Math.round(Number(n)||0).toLocaleString('en-TZ');}
 function fmtDate(ts){return new Date(ts).toLocaleDateString('en-TZ',{timeZone:'Africa/Dar_es_Salaam',day:'2-digit',month:'short',year:'numeric'});}
@@ -1511,9 +1760,6 @@ function avatarUrl(name,bg){
   return 'https://ui-avatars.com/api/?background='+b+'&color=fff&name='+encodeURIComponent(n)+'&bold=true&size=128';
 }
 
-/* ============================================================
-   TOAST
-   ============================================================ */
 function showToast(msg,type){
   type=type||'info';
   try{
@@ -1527,9 +1773,7 @@ function showToast(msg,type){
   }catch(e){}
 }
 
-/* ============================================================
-   THEME
-   ============================================================ */
+/* THEME */
 function applyTheme(){
   var u=getCurrentUser();
   var isDark=u?u.theme==='dark':false;
@@ -1539,9 +1783,7 @@ function applyTheme(){
   applyChatWallpaper();
 }
 
-/* ============================================================
-   TENANT DATA HELPERS
-   ============================================================ */
+/* TENANT DATA */
 function tenantKey(k){return currentTenantId?'sb_tenant_'+currentTenantId+'_'+k:'sb__'+k;}
 function getTenantData(k,def){return lsGet(tenantKey(k),def);}
 function setTenantData(k,v){lsSet(tenantKey(k),v);}
@@ -1553,9 +1795,7 @@ function getTenant(id){
   return null;
 }
 
-/* ============================================================
-   CURRENT USER
-   ============================================================ */
+/* CURRENT USER */
 function getCurrentUser(){
   if(isSuperAdmin){
     var su=lsGet('sb_superadmin_user',null);
@@ -1623,9 +1863,7 @@ function getCompanyPhotoHtml(id,cls,st){
   return '<img src="'+src+'"'+c+s+attrs+' alt=""/>';
 }
 
-/* ============================================================
-   MEDIA / VIDEO
-   ============================================================ */
+/* MEDIA / VIDEO */
 var _videoRetryCount={};
 var _videoObserver=null;
 function initVideoObserver(){
@@ -1730,9 +1968,7 @@ function hydrateMedia(){
   hydratePhotos();
 }
 
-/* ============================================================
-   OWNER PUBLIC / SYNC
-   ============================================================ */
+/* OWNER PUBLIC */
 function getTenantOwnerPublic(tenantId){
   var tn=getTenant(tenantId);
   if(!tn)return {};
@@ -1775,9 +2011,7 @@ function syncTenantOwnerPublic(tenantId){
   saveTenants(ts);
 }
 
-/* ============================================================
-   FOLLOW
-   ============================================================ */
+/* FOLLOW */
 function getFollows(){
   if(isSuperAdmin||isMexEmployee)return [];
   var d=getTenantData(FOLLOWS_KEY_SUFFIX,[]);
@@ -1818,9 +2052,7 @@ function renderFollowButton(id){
 }
 function renderVerifiedBadge(){return '<span class="verified-badge"><i class="fas fa-check"></i></span>';}
 
-/* ============================================================
-   MEX EMPLOYEES (Members)
-   ============================================================ */
+/* MEX EMPLOYEES */
 function getMexSession(){return lsGet(MEX_SESSION_KEY,null);}
 function setMexSession(e){if(e)lsSet(MEX_SESSION_KEY,e);else lsRemove(MEX_SESSION_KEY);}
 function getMexEmployees(){var a=lsGet(MEX_EMPLOYEES_KEY,[]);return Array.isArray(a)?a:[];}
@@ -1934,9 +2166,7 @@ function copyToClipboardText(text){
   }catch(e){showToast('⚠ Error','error');}
 }
 
-/* ============================================================
-   USERNAME CHECK
-   ============================================================ */
+/* USERNAME */
 function isUsernameTaken(un){
   var u=String(un||'').trim().toLowerCase();
   if(!u)return false;
@@ -1963,9 +2193,7 @@ function likeKey(u){
   return 't_'+currentTenantId+'_'+(u?u.id:0);
 }
 
-/* ============================================================
-   LOGIN LOCK
-   ============================================================ */
+/* LOGIN LOCK */
 function loginLockedSeconds(){
   var left=Math.ceil((_loginLockUntil-Date.now())/1000);
   return left>0?left:0;
@@ -1979,9 +2207,7 @@ function registerLoginFail(){
   }
 }
 
-/* ============================================================
-   PRODUCT/SALES/EXPENSES
-   ============================================================ */
+/* PRODUCTS */
 function getBranchList(){
   var t=getTenant(currentTenantId);
   return (t&&Array.isArray(t.branches))?t.branches:[];
@@ -2149,9 +2375,7 @@ function updateDebtsBadge(){
   if(b){if(c>0){b.textContent=c;b.style.display='inline-block';}else b.style.display='none';}
 }
 
-/* ============================================================
-   PERMISSIONS
-   ============================================================ */
+/* PERMISSIONS */
 var DEFAULT_ROLE_PERMS={
   admin:['sales_create','sales_delete','inventory_view','inventory_manage','expenses_view','expenses_manage','reports_view','pnl_view','users_manage','attendance_view'],
   accountant:['sales_create','sales_delete','inventory_view','inventory_manage','expenses_view','expenses_manage','reports_view','pnl_view'],
@@ -2207,9 +2431,7 @@ function getUserPermissions(){
 function canSeeNetProfit(){return getUserPermissions().seeNetProfit;}
 function canSeeExpenses(){return getUserPermissions().seeExpenses;}
 
-/* ============================================================
-   SESSIONS / ATTENDANCE
-   ============================================================ */
+/* SESSIONS */
 function getSessions(){return getTenantData('sessions',{});}
 function saveSessions(s){setTenantData('sessions',s);}
 function getPunchHistory(){return getTenantData('punchHistory',[]);}
@@ -2254,9 +2476,7 @@ function startHeartbeat(){
   },30000);
 }
 
-/* ============================================================
-   ADS
-   ============================================================ */
+/* ADS */
 function getGlobalAds(){var a=lsGet(GLOBAL_ADS_KEY,[]);return Array.isArray(a)?a:[];}
 function saveGlobalAds(a,skipPush){
   lsSet(GLOBAL_ADS_KEY,a);
@@ -2424,9 +2644,7 @@ function getCommenterAvatarHtml(c){
   return '<img src="'+src+'"'+attrs+' alt=""/>';
 }
 
-/* ============================================================
-   COMMENTS MODAL
-   ============================================================ */
+/* COMMENTS */
 function openCommentsModal(adId){
   var ads=getGlobalAds();
   var ad=null;
@@ -2579,9 +2797,7 @@ function updateAdCardCommentCount(adId){
   if(el)el.textContent=total>0?total:'';
 }
 
-/* ============================================================
-   MEMBER EARNINGS
-   ============================================================ */
+/* MEMBER EARNINGS */
 function getMemberEarnings(){var a=lsGet(MEMBER_EARNINGS_KEY,[]);return Array.isArray(a)?a:[];}
 function saveMemberEarnings(a){lsSet(MEMBER_EARNINGS_KEY,a||[]);}
 function getMemberPayments(){var a=lsGet(MEMBER_PAYMENTS_KEY,[]);return Array.isArray(a)?a:[];}
@@ -2689,9 +2905,7 @@ function creditTenantCommission(tn){
   tn.commissionCredited=true;
 }
 
-/* ============================================================
-   CREATE TENANT
-   ============================================================ */
+/* CREATE TENANT */
 function createTenant(companyName,username,password,phone,promoCode,pendingApproval,planKey){
   if(isUsernameTaken(username))return {success:false,msg:'Username taken.'};
   var id='t'+Date.now()+'_'+Math.random().toString(36).substr(2,6);
@@ -2752,9 +2966,7 @@ function createTenant(companyName,username,password,phone,promoCode,pendingAppro
   return {success:true,tenant:tenant,ownerUser:ownerUser};
 }
 
-/* ============================================================
-   LANGUAGE
-   ============================================================ */
+/* LANGUAGE */
 var LANG_FLAGS={en:'🇬🇧',sw:'🇹🇿',zh:'🇨🇳',fr:'🇫🇷',ar:'🇸🇦'};
 var LANG_LABELS={en:'EN',sw:'SW',zh:'中文',fr:'FR',ar:'ع'};
 var LANG_NAMES={en:'English',sw:'Kiswahili',zh:'中文',fr:'Français',ar:'العربية'};
@@ -2797,9 +3009,7 @@ function initLanguageMenu(){
   }
 }
 
-/* ============================================================
-   CHAT
-   ============================================================ */
+/* CHAT */
 function getChatMessages(){return lsGet(CHAT_KEY,[]);}
 function saveChatMessages(list){lsSet(CHAT_KEY,list||[]);}
 function chatUserKey(){
@@ -2975,9 +3185,7 @@ function sendChatMessage(){
   renderChatMessages();
 }
 
-/* ============================================================
-   CHAT WALLPAPER
-   ============================================================ */
+/* CHAT WALLPAPER */
 function getChatWallpaperSvgDataUrl(isDark){
   var sc=isDark?'#8a9a90':'#7a8a85';
   var fc=isDark?'#8a9a90':'#7a8a85';
@@ -3038,7 +3246,6 @@ function closeChatWallpaperPicker(){
 }
 function renderChatWallpaperPicker(){
   var grid=document.getElementById('wpPickerGrid');if(!grid)return;
-  var isDark=document.body.classList.contains('dark');
   var cur=_wpPickerTemp||{type:'default',value:''};
   var h='';
   h+='<button type="button" class="wp-option'+(cur.type==='default'?' selected':'')+'" data-wp-type="default" onclick="selectChatWallpaperOption(\'default\',\'\')"><span class="wp-check"><i class="fas fa-check"></i></span><span class="wp-label">Default</span></button>';
@@ -3062,9 +3269,7 @@ function saveChatWallpaperPicker(){
   showToast('✓ Applied','success');
 }
 
-/* ============================================================
-   SIDEBAR / NAV
-   ============================================================ */
+/* SIDEBAR */
 function openMobileSidebar(){
   document.getElementById('sidebar').classList.add('open');
   document.getElementById('sidebarBackdrop').classList.add('show');
@@ -3079,9 +3284,7 @@ function toggleMobileSidebar(){
   else openMobileSidebar();
 }
 
-/* ============================================================
-   UPDATE UI
-   ============================================================ */
+/* UPDATE UI */
 function updateAllUI(user){
   if(!user)return;
   var photo=getUserPhoto(user);
@@ -3121,9 +3324,7 @@ function updateAllUI(user){
   updateChatBadge();
 }
 
-/* ============================================================
-   NAVIGATE
-   ============================================================ */
+/* NAVIGATE */
 function navigate(view){
   if(view==='ads')view='status';
   if(isMexEmployee){
@@ -3156,9 +3357,7 @@ function navigate(view){
   if(window.innerWidth<=768)closeMobileSidebar();
 }
 
-/* ============================================================
-   VIEWS
-   ============================================================ */
+/* VIEWS */
 var views={};
 
 views.status=function(){
@@ -3499,7 +3698,6 @@ views.mexEarnings=function(){
   if(!isMexEmployee)return '';
   var emp=findMexEmployeeById(currentMexEmployeeId);
   if(!emp)return '';
-  var regs=Array.isArray(emp.registeredCompanyIds)?emp.registeredCompanyIds:[];
   var totalE=getMemberTotalEarnings(emp.id);
   var paidE=getMemberPaidEarnings(emp.id);
   var pendingE=getMemberPendingEarnings(emp.id);
@@ -3540,9 +3738,7 @@ views.mexStatus=function(){
   return renderAdsTab();
 };
 
-/* ============================================================
-   STATUS HELPERS
-   ============================================================ */
+/* STATUS */
 function getStatuses(){
   if(isSuperAdmin||isMexEmployee)return [];
   return getTenantData('statuses',[]);
@@ -3642,9 +3838,7 @@ function renderSingleStatusCard(s,user){
   return '<div class="card" style="margin-bottom:16px;padding:16px;"><div class="status-card"><div class="status-header">'+getUserPhotoHtml(author,'status-avatar')+'<div class="status-meta"><div class="status-name">'+escapeHtml(an)+renderVerifiedBadge()+'</div><div class="status-time">'+fmtDateTime(s.timestamp)+'</div></div>'+(isOwn?'<button class="btn btn-danger btn-xs" onclick="deleteStatus(\''+s.id+'\')" style="margin-left:auto;"><i class="fas fa-trash"></i></button>':'')+'</div><div class="status-body"><div class="status-content"><p class="status-text">'+escapeHtml(s.text||'')+'</p><div style="display:flex;gap:10px;align-items:center;"><button class="btn '+(isL?'btn-primary':'btn-secondary')+' btn-sm" onclick="toggleLike(\''+s.id+'\')"><i class="fas fa-heart"></i> '+lc+'</button><button class="btn btn-secondary btn-sm" onclick="toggleCommentInput(\''+s.id+'\')"><i class="fas fa-comment"></i> '+comments.length+'</button></div><div style="margin-top:8px;"><div id="comment-input-'+s.id+'" style="display:none;margin-bottom:8px;"><div style="display:flex;gap:8px;align-items:center;">'+getUserPhotoHtml(user,'','width:34px;height:34px;border-radius:50%;object-fit:cover;')+'<input type="text" id="comment-text-'+s.id+'" placeholder="Add comment..." style="flex:1;padding:9px 14px;border-radius:20px;font-size:16px;"/><button class="btn btn-sm btn-primary" onclick="addComment(\''+s.id+'\')"><i class="fas fa-paper-plane"></i></button></div></div><div style="max-height:200px;overflow-y:auto;">'+clh+'</div></div></div></div></div></div>';
 }
 
-/* ============================================================
-   AD CARDS
-   ============================================================ */
+/* AD CARDS */
 function getAdAuthorPhotoKey(ad){
   if(!ad)return '';
   if(ad.postedBy==='super')return _superAdminPhotoKey||'';
@@ -3764,9 +3958,7 @@ function renderAdCard(ad,user,canPost){
   return '<div class="insta-ad" id="ad-card-'+ad.id+'">'+hh+'<div class="insta-ad-media">'+media+'</div>'+ah+capH+inH+'</div>';
 }
 
-/* ============================================================
-   PROMOTE / AD AUTHOR
-   ============================================================ */
+/* PROMOTE / AD AUTHOR */
 function openPromoteAdModal(adId){
   var ads=getGlobalAds();
   var ad=null;
@@ -3969,9 +4161,7 @@ function deleteGlobalAdConfirm(id){
   navigate('status');
 }
 
-/* ============================================================
-   PROFILE BIO/SOCIAL
-   ============================================================ */
+/* PROFILE BIO/SOCIAL */
 var SOCIAL_FIELDS=[
   {key:'socialWhatsapp',icon:'fab fa-whatsapp',label:'WhatsApp',ph:'+255 xxx xxx xxx'},
   {key:'socialInstagram',icon:'fab fa-instagram',label:'Instagram',ph:'https://instagram.com/...'},
@@ -4039,9 +4229,7 @@ function renderProfileBioAndSocial(source){
   return h;
 }
 
-/* ============================================================
-   PROFILE MODAL
-   ============================================================ */
+/* PROFILE MODAL */
 function openProfileModal(){
   var u=getCurrentUser();
   if(!u)return;
@@ -4215,9 +4403,7 @@ function saveProfile(){
   showToast('✓ Saved','success');
 }
 
-/* ============================================================
-   GENERIC MODAL (sale/product/expense/user/adjustStock)
-   ============================================================ */
+/* GENERIC MODAL */
 function openModal(type,data){
   if(isSuperAdmin||isMexEmployee)return;
   var ov=document.getElementById('modalOverlay');
@@ -4277,9 +4463,7 @@ function closeModal(){
   if(!so)document.body.classList.remove('modal-open');
 }
 
-/* ============================================================
-   CRUD ACTIONS
-   ============================================================ */
+/* CRUD */
 function onSaleProductChange(){
   var sel=document.getElementById('saleProductSelect');
   var pi=document.getElementById('saleUnitPriceInput');
@@ -4504,9 +4688,7 @@ function closeLowStockModal(){
   if(!so)document.body.classList.remove('modal-open');
 }
 
-/* ============================================================
-   TRANSFER STOCK
-   ============================================================ */
+/* TRANSFER */
 function openTransferModal(){
   if(isSuperAdmin||isMexEmployee){showToast('Not allowed','error');return;}
   var u=getCurrentUser();
@@ -4585,7 +4767,7 @@ function submitTransfer(e){
     if(Number(ps[i].id)===pid&&normStore(ps[i].store)===normStore(from)){srcProd=ps[i];break;}
   }
   if(!srcProd){showToast('Product not in source','error');return;}
-  if(Number(srcProd.quantity)<qty){showToast('Not enough stock (available: '+srcProd.quantity+')','error');return;}
+  if(Number(srcProd.quantity)<qty){showToast('Not enough stock','error');return;}
   var targetProd=null;
   for(var j=0;j<ps.length;j++){
     if(normStore(ps[j].store)===normStore(to)&&normName(ps[j].name)===normName(srcProd.name)&&Number(ps[j].price)===Number(srcProd.price)&&Number(ps[j].cost)===Number(srcProd.cost)){targetProd=ps[j];break;}
@@ -4595,7 +4777,6 @@ function submitTransfer(e){
   else{
     var newProd={id:uid(),name:srcProd.name,price:srcProd.price,cost:srcProd.cost,category:srcProd.category||'General',quantity:qty,store:to,image:srcProd.image||''};
     ps.push(newProd);
-    targetProd=newProd;
   }
   persistProducts(ps);
   var transfers=getTenantData(TRANSFERS_KEY_SUFFIX,[]);
@@ -4623,9 +4804,7 @@ function viewTransferHistory(){
   document.body.classList.add('modal-open');
 }
 
-/* ============================================================
-   BRANCH MANAGEMENT
-   ============================================================ */
+/* BRANCH */
 function openBranchModal(){
   var ov=document.getElementById('subModal');
   ['newBranchName','newBranchAddress','newBranchTin','newBranchUsername','newBranchPassword'].forEach(function(id){
@@ -4703,9 +4882,7 @@ function clearAttendanceHistory(){
   navigate('attendance');
 }
 
-/* ============================================================
-   SUPER ADMIN ACTIONS
-   ============================================================ */
+/* SUPER ADMIN ACTIONS */
 function switchSuperAdminTab(tab){currentSuperAdminTab=tab;navigate('superadmin');}
 function openAddMexEmployeeModal(){
   if(!isSuperAdmin)return;
@@ -4821,9 +4998,7 @@ function superDeleteTenant(id){
   navigate('superadmin');
 }
 
-/* ============================================================
-   RECEIPT
-   ============================================================ */
+/* RECEIPT */
 function shareReceipt(id){
   var sales=getTenantData('sales',[]);
   var s=null;
@@ -4882,9 +5057,7 @@ function sendReceiptWhatsApp(){
   showToast('✅ WhatsApp','success');
 }
 
-/* ============================================================
-   REPORTS
-   ============================================================ */
+/* REPORTS */
 function buildReportData(){
   var range=getReportDateRange();
   var allS=getFilteredSales();
@@ -4997,9 +5170,7 @@ function buildReportMessage(type){
   return lines.join('\n');
 }
 
-/* ============================================================
-   CREDENTIALS VIEW (Super Admin)
-   ============================================================ */
+/* CREDENTIALS */
 function closeCredentialsModal(){
   document.getElementById('credentialsModal').classList.remove('show');
   _credentialsTenantId=null;
@@ -5007,9 +5178,7 @@ function closeCredentialsModal(){
   if(!so)document.body.classList.remove('modal-open');
 }
 
-/* ============================================================
-   CHARTS
-   ============================================================ */
+/* CHARTS */
 var _reportCharts={};
 function destroyChart(id){
   if(_reportCharts[id]){
@@ -5018,9 +5187,7 @@ function destroyChart(id){
   }
 }
 
-/* ============================================================
-   LOGOUT
-   ============================================================ */
+/* LOGOUT */
 function logout(){
   var u=getCurrentUser();
   try{localStorage.removeItem(SUPER_ADMIN_SESSION_KEY);}catch(e){}
@@ -5028,6 +5195,7 @@ function logout(){
   if(u&&!isSuperAdmin&&!isMexEmployee)recordUserLogout(u.id);
   if(heartbeatInterval)clearInterval(heartbeatInterval);
   if(promotedTickerInterval)clearInterval(promotedTickerInterval);
+  try{cleanupRealtimeSync();}catch(e){}
   setCurrentUser(null);
   setMexSession(null);
   lsRemove('sb_session');
@@ -5042,9 +5210,7 @@ function logout(){
   closeMobileSidebar();
 }
 
-/* ============================================================
-   BIND EVENTS
-   ============================================================ */
+/* BIND */
 function bindGlobalEvents(){
   var lb=document.getElementById('sideLogoutBtn');
   if(lb)lb.onclick=logout;
@@ -5108,9 +5274,7 @@ function toggleTheme(){
   applyTheme();
 }
 
-/* ============================================================
-   INIT APP
-   ============================================================ */
+/* INIT APP */
 function initApp(user){
   if(!isSuperAdmin&&!isMexEmployee){
     ensureCategories();
@@ -5130,6 +5294,12 @@ function initApp(user){
   }catch(e){}
   updateAllUI(user);
   cleanupExpiredAds();
+
+  // ▼ START REALTIME + PERIODIC SYNC
+  try{setupRealtimeSync();}catch(e){console.warn('[Init] realtime err:',e);}
+  try{startPeriodicRefresh();}catch(e){console.warn('[Init] periodic err:',e);}
+  // ▲
+
   if(promotedTickerInterval)clearInterval(promotedTickerInterval);
   promotedTickerInterval=setInterval(function(){cleanupExpiredAds();},60000);
 
@@ -5177,9 +5347,7 @@ function initApp(user){
   showSyncButton();
 }
 
-/* ============================================================
-   LOGIN HANDLERS
-   ============================================================ */
+/* LOGIN */
 function handleLogin(){
   var un=document.getElementById('loginUsername').value.trim();
   var pw=document.getElementById('loginPassword').value.trim();
@@ -5188,7 +5356,6 @@ function handleLogin(){
   if(!un||!pw)return;
   var lock=loginLockedSeconds();
   if(lock>0){er.textContent='⏳ Wait '+lock+'s';return;}
-  // Super admin
   if(un===SUPER_ADMIN_USERNAME&&hashPw(un,pw)===getSuperHash()){
     _loginFails=0;
     isSuperAdmin=true;isMexEmployee=false;currentMexEmployeeId=null;currentTenantId=null;
@@ -5200,7 +5367,6 @@ function handleLogin(){
     initApp(su);
     return;
   }
-  // Mexican employee
   var mex=getMexEmployees();
   var uL=normalizeUsername(un);
   for(var j=0;j<mex.length;j++){
@@ -5219,7 +5385,6 @@ function handleLogin(){
       return;
     }
   }
-  // Tenant user
   var ts=getAllTenants();
   for(var k=0;k<ts.length;k++){
     var tn=ts[k];
@@ -5257,9 +5422,7 @@ function handleLogin(){
   er.textContent='⚠ Invalid credentials';
 }
 
-/* ============================================================
-   PAYMENT PLAN (Registration)
-   ============================================================ */
+/* PAYMENT PLAN */
 function openPaymentPlanModal(){
   selectedPaymentPlan=null;
   var cards=document.querySelectorAll('#planCardsRow .plan-card');
@@ -5300,104 +5463,46 @@ function confirmPaymentAndRegister(){
   },4000);
 }
 
-/* ============================================================
-   SYNC BUTTON (auto-hide after 15s)
-   ============================================================ */
+/* SYNC BUTTON */
 function showSyncButton(){
   var btn=document.getElementById('syncNowBtn');
   if(!btn)return;
   btn.classList.add('visible');
   setTimeout(function(){btn.classList.remove('visible');},15000);
 }
+
 function forceSyncAll(){
   if(!supabaseClient){alert('Supabase not connected. Refresh.');return;}
   var btn=document.getElementById('syncNowBtn');
-  if(btn){btn.innerHTML='<i class="fas fa-spinner fa-spin"></i>';btn.disabled=true;btn.classList.remove('success');}
-  var tasks=[];
-  var stat={kv:0,posts:0,likes:0,comments:0,profiles:0};
-  // KV
-  var rows=[];
-  try{
-    for(var i=0;i<localStorage.length;i++){
-      var k=localStorage.key(i);
-      if(!shouldSyncKey(k))continue;
-      var raw=localStorage.getItem(k);
-      if(raw===null)continue;
-      try{rows.push({key:k,value:JSON.parse(raw),updated_at:new Date().toISOString()});}catch(e){}
-    }
-  }catch(e){}
-  if(rows.length){
-    stat.kv=rows.length;
-    var chunks=[];
-    for(var j=0;j<rows.length;j+=100)chunks.push(rows.slice(j,j+100));
-    for(var c=0;c<chunks.length;c++){
-      tasks.push(supabaseClient.from(TBL_KV).upsert(chunks[c],{onConflict:'key'}));
-    }
-  }
-  // Posts + Likes + Comments
-  var ads=getGlobalAds();
-  if(ads.length){
-    stat.posts=ads.length;
-    var postRows=[];
-    for(var p=0;p<ads.length;p++)postRows.push(postToRow(ads[p]));
-    tasks.push(supabaseClient.from(TBL_POSTS).upsert(postRows,{onConflict:'id'}));
-    var likeRows=[],cRows=[];
-    for(var l=0;l<ads.length;l++){
-      var ad=ads[l];
-      (ad.likes||[]).forEach(function(uk){likeRows.push({post_id:Number(ad.id),user_key:uk});});
-      (ad.comments||[]).forEach(function(cm){
-        cRows.push({id:Number(cm.id),post_id:Number(ad.id),parent_id:null,user_id:cm.userId?Number(cm.userId):null,user_name:cm.userName||'',photo_key:cm.photoKey||null,is_super_admin:!!cm.isSuperAdmin,is_mex_employee:!!cm.isMexEmployee,mex_employee_id:cm.mexEmployeeId?Number(cm.mexEmployeeId):null,tenant_id:cm.tenantId||null,text:cm.text||'',timestamp:Number(cm.timestamp)||Date.now()});
-        (cm.replies||[]).forEach(function(r){
-          cRows.push({id:Number(r.id),post_id:Number(ad.id),parent_id:Number(cm.id),user_id:r.userId?Number(r.userId):null,user_name:r.userName||'',photo_key:r.photoKey||null,is_super_admin:!!r.isSuperAdmin,is_mex_employee:!!r.isMexEmployee,mex_employee_id:r.mexEmployeeId?Number(r.mexEmployeeId):null,tenant_id:r.tenantId||null,text:r.text||'',timestamp:Number(r.timestamp)||Date.now()});
-        });
-      });
-    }
-    stat.likes=likeRows.length;
-    stat.comments=cRows.length;
-    if(likeRows.length)tasks.push(supabaseClient.from(TBL_LIKES).upsert(likeRows,{onConflict:'post_id,user_key'}));
-    if(cRows.length)tasks.push(supabaseClient.from(TBL_COMMENTS).upsert(cRows,{onConflict:'id'}));
-  }
-  // Profiles
-  var profRows=[];
-  var su=lsGet('sb_superadmin_user',null);
-  if(su)profRows.push({user_key:'super',user_type:'super',tenant_id:null,user_id:0,username:'Super Admin',full_name:su.fullName||'Super Admin',photo_key:su.photoKey||null,bio:su.bio||'',phone:su.phone||'',email:su.email||'',social_whatsapp:su.socialWhatsapp||'',social_instagram:su.socialInstagram||'',social_facebook:su.socialFacebook||'',social_tiktok:su.socialTiktok||'',social_website:su.socialWebsite||'',theme:su.theme||'light',updated_at:new Date().toISOString()});
-  var mex=getMexEmployees();
-  for(var m=0;m<mex.length;m++){
-    var e=mex[m];
-    profRows.push({user_key:'mex_'+e.id,user_type:'mex',tenant_id:null,user_id:e.id,username:e.username||'',full_name:e.name||'',photo_key:e.photoKey||null,bio:e.bio||'',phone:e.phone||'',email:e.email||'',social_whatsapp:e.socialWhatsapp||'',social_instagram:e.socialInstagram||'',social_facebook:e.socialFacebook||'',social_tiktok:e.socialTiktok||'',social_website:e.socialWebsite||'',theme:e.theme||'light',updated_at:new Date().toISOString()});
-  }
-  var allT=getAllTenants();
-  for(var t=0;t<allT.length;t++){
-    var tn=allT[t];
-    var users=lsGet('sb_tenant_'+tn.id+'_users',[]);
-    if(Array.isArray(users)){
-      for(var u=0;u<users.length;u++){
-        var usr=users[u];
-        profRows.push({user_key:'t_'+tn.id+'_'+usr.id,user_type:'tenant',tenant_id:tn.id,user_id:usr.id,username:usr.username||'',full_name:usr.fullName||usr.username||'',photo_key:usr.photoKey||null,bio:usr.bio||'',phone:usr.phone||'',email:usr.email||'',social_whatsapp:usr.socialWhatsapp||'',social_instagram:usr.socialInstagram||'',social_facebook:usr.socialFacebook||'',social_tiktok:usr.socialTiktok||'',social_website:usr.socialWebsite||'',theme:usr.theme||'light',updated_at:new Date().toISOString()});
+  if(btn){btn.innerHTML='<i class="fas fa-sync-alt fa-spin"></i>';btn.disabled=true;btn.classList.remove('success');}
+  setSyncIndicator(true);
+
+  try{flushKVWrites();flushRelWrites();}catch(e){}
+
+  setTimeout(function(){
+    pullFromCloudOnly().then(function(){
+      var openModal=document.querySelector('.modal-overlay.show');
+      if(!openModal){
+        softRefreshCurrentView();
       }
-    }
-  }
-  if(profRows.length){
-    stat.profiles=profRows.length;
-    tasks.push(supabaseClient.from(TBL_PROFILES).upsert(profRows,{onConflict:'user_key'}));
-  }
-  Promise.all(tasks).then(function(results){
-    var failed=0;
-    for(var i=0;i<results.length;i++)if(results[i]&&results[i].error)failed++;
-    if(btn){btn.innerHTML='<i class="fas fa-check"></i>';btn.classList.add('success');}
-    setTimeout(function(){
-      alert('✅ Sync complete!\n\nKV: '+stat.kv+'\nPosts: '+stat.posts+'\nLikes: '+stat.likes+'\nComments: '+stat.comments+'\nProfiles: '+stat.profiles+(failed?'\n\nErrors: '+failed:''));
-      if(btn){btn.innerHTML='<i class="fas fa-sync-alt"></i>';btn.classList.remove('success');btn.disabled=false;}
-    },400);
-  }).catch(function(e){
-    alert('❌ Error: '+(e.message||e));
-    if(btn){btn.innerHTML='<i class="fas fa-sync-alt"></i>';btn.disabled=false;}
-  });
+      if(btn){
+        btn.innerHTML='<i class="fas fa-check"></i>';
+        btn.classList.add('success');
+        setTimeout(function(){
+          btn.innerHTML='<i class="fas fa-sync-alt"></i>';
+          btn.classList.remove('success');
+          btn.disabled=false;
+        },1500);
+      }
+      showToast('✓ Data refreshed from cloud','success');
+    }).catch(function(e){
+      if(btn){btn.innerHTML='<i class="fas fa-sync-alt"></i>';btn.disabled=false;}
+      showToast('⚠ Sync failed','error');
+    });
+  },800);
 }
 
-/* ============================================================
-   LOGIN PAGE EVENTS
-   ============================================================ */
+/* LOGIN PAGE EVENTS */
 document.getElementById('loginBtn').addEventListener('click',handleLogin);
 document.getElementById('loginPassword').addEventListener('keydown',function(e){
   if(e.key==='Enter')document.getElementById('loginBtn').click();
@@ -5462,9 +5567,7 @@ document.getElementById('registerBtn').addEventListener('click',function(){
   openPaymentPlanModal();
 });
 
-/* ============================================================
-   GLOBAL KEYBOARD
-   ============================================================ */
+/* KEYBOARD */
 document.addEventListener('keydown',function(e){
   if(e.key==='Escape'){
     closeModal();
@@ -5487,9 +5590,7 @@ document.addEventListener('keydown',function(e){
   }
 });
 
-/* ============================================================
-   BOOT
-   ============================================================ */
+/* BOOT */
 (function boot(){
   var splashStart=Date.now();
   function bootHideSplash(){
@@ -5503,7 +5604,6 @@ document.addEventListener('keydown',function(e){
     setTimeout(bootHideSplash,Math.max(0,BOOT_DURATION-elapsed));
   }
 
-  // Load saved language
   try{
     var sl=localStorage.getItem(LANG_KEY);
     if(sl&&LANG_FLAGS[sl]){
@@ -5515,15 +5615,11 @@ document.addEventListener('keydown',function(e){
     }
   }catch(e){}
 
-  // Cleanup local storage
   try{tryCleanupLocalStorage();}catch(e){console.warn('[Boot] cleanup err:',e);}
-
-  // Init
   try{initLanguageMenu();}catch(e){}
   try{initVideoObserver();}catch(e){}
   try{initSupabase();}catch(e){}
 
-  // Pull data from Supabase
   var pulledData=(function(){
     try{return pullAllFromSupabase();}catch(e){console.warn('[Boot] pull err:',e);return Promise.resolve();}
   })();
@@ -5555,7 +5651,6 @@ document.addEventListener('keydown',function(e){
   }
 
   function bootContinue(){
-    // 1. Super admin session
     try{
       if(localStorage.getItem(SUPER_ADMIN_SESSION_KEY)===superSessionToken()){
         isSuperAdmin=true;
@@ -5570,7 +5665,6 @@ document.addEventListener('keydown',function(e){
       }
     }catch(e){}
 
-    // 2. Mexican session
     var ms=getMexSession();
     if(ms){
       var emp=findMexEmployeeById(ms.id);
@@ -5587,7 +5681,6 @@ document.addEventListener('keydown',function(e){
       } else setMexSession(null);
     }
 
-    // 3. Tenant session
     var sess=lsGet('sb_session',null);
     if(!sess||!sess.tid){scheduleHide();return;}
     var tenant=getTenant(sess.tid);
