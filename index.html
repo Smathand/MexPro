@@ -370,7 +370,6 @@ body.dark .chat-modal .modal-box .chat-messages{background-color:#0b141a}
 .sync-now-btn.success{background:#10b981!important}
 .sync-now-btn.visible{display:flex!important}
 
-/* REALTIME SYNC INDICATOR */
 .sync-indicator{position:fixed;top:75px;right:24px;background:var(--accent-1);color:#fff;padding:8px 16px;border-radius:20px;font-size:.75rem;font-weight:700;z-index:99997;opacity:0;transform:translateY(-10px);transition:opacity .3s,transform .3s;pointer-events:none;display:flex;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(18,140,126,.3)}
 .sync-indicator.visible{opacity:1;transform:translateY(0)}
 .sync-indicator i{animation:syncSpin 1s linear infinite}
@@ -792,8 +791,11 @@ function initSupabase(){
   }
 }
 
+/* ============================================================
+   UPDATED: pullAllFromSupabase — inarudisha {ok,reason} badala ya kunyamaza
+   ============================================================ */
 function pullAllFromSupabase(){
-  if(!supabaseClient)return Promise.resolve();
+  if(!supabaseClient) return Promise.resolve({ok:false, reason:'no-client'});
   return Promise.all([
     supabaseClient.from(TBL_KV).select('key,value'),
     supabaseClient.from(TBL_PROFILES).select('*'),
@@ -801,11 +803,17 @@ function pullAllFromSupabase(){
     supabaseClient.from(TBL_LIKES).select('*'),
     supabaseClient.from(TBL_COMMENTS).select('*')
   ]).then(function(results){
+    var hadError=false;
+    for(var i=0;i<results.length;i++){
+      if(results[i] && results[i].error){ hadError=true; console.warn('[Pull] table error:', results[i].error); }
+    }
+
     var kvRes=results[0];
     var profRes=results[1];
     var postRes=results[2];
     var likeRes=results[3];
     var cmtRes=results[4];
+
     if(kvRes&&!kvRes.error&&kvRes.data){
       var cloudKeys={};
       kvRes.data.forEach(function(row){
@@ -829,11 +837,46 @@ function pullAllFromSupabase(){
       mergePostsFromCloud(postRes.data,likeRes&&likeRes.data||[],cmtRes&&cmtRes.data||[]);
     }
     console.log('[Supabase] pulled KV='+(kvRes&&kvRes.data?kvRes.data.length:0)+' posts='+(postRes&&postRes.data?postRes.data.length:0));
-    return Promise.resolve();
+    return {ok:!hadError};
   }).catch(function(e){
     console.warn('[Supabase] pull failed:',e);
-    return Promise.resolve();
+    return {ok:false, reason:(e&&e.message)||'pull-failed'};
   });
+}
+
+/* ============================================================
+   NEW: Pull login-critical keys direkti kutoka Supabase
+   Inaitwa kila mtumiaji anapobonyeza Login
+   ============================================================ */
+async function pullLoginCredentialsFromCloud(){
+  if(!supabaseClient) return {ok:false, error:'No Supabase client'};
+  try{
+    var results = await Promise.all([
+      supabaseClient.from(TBL_KV).select('key,value')
+        .in('key', ['sb_super_hash','sb_tenants','sb_mex_employees']),
+      supabaseClient.from(TBL_KV).select('key,value')
+        .like('key','sb_tenant_%_users')
+    ]);
+    var total = 0;
+    for(var i=0;i<results.length;i++){
+      var res = results[i];
+      if(res && res.error) throw res.error;
+      var rows = (res && res.data) || [];
+      for(var j=0;j<rows.length;j++){
+        try{
+          if(rows[j].value !== null && rows[j].value !== undefined){
+            localStorage.setItem(rows[j].key, JSON.stringify(rows[j].value));
+            total++;
+          }
+        }catch(e){}
+      }
+    }
+    console.log('[Login sync] pulled', total, 'keys');
+    return {ok:true, count:total};
+  }catch(e){
+    console.warn('[Login sync] failed:', e);
+    return {ok:false, error:(e && e.message) || 'Sync failed'};
+  }
 }
 
 function applyProfileFromCloud(p){
@@ -908,7 +951,6 @@ function mergePostsFromCloud(posts,likes,comments){
   try{
     var adsById={};
 
-    // Preserve any pending local posts (not yet confirmed in cloud)
     var existing=getGlobalAds();
     for(var e=0;e<existing.length;e++){
       var eid=String(existing[e].id);
@@ -1165,9 +1207,6 @@ function getSupabaseMediaUrl(key){
   return null;
 }
 
-/* ============================================================
-   REALTIME SYNC + OWN-WRITE COOLDOWN + SMART REFRESH
-   ============================================================ */
 var _realtimeChannels=[];
 var _realtimeDebounceTimer=null;
 var _cloudPullTimer=null;
@@ -1217,7 +1256,6 @@ function setupRealtimeSync(){
   _realtimeChannels=[];
   console.log('[Realtime] Subscribing to table changes...');
 
-  // KV store
   try{
     var kvChannel=supabaseClient
       .channel('mex_kv_realtime')
@@ -1234,7 +1272,6 @@ function setupRealtimeSync(){
     _realtimeChannels.push(kvChannel);
   }catch(e){console.warn('[Realtime] KV sub failed:',e);}
 
-  // Posts
   try{
     var postsChannel=supabaseClient
       .channel('mex_posts_realtime')
@@ -1246,7 +1283,6 @@ function setupRealtimeSync(){
     _realtimeChannels.push(postsChannel);
   }catch(e){console.warn('[Realtime] Posts sub failed:',e);}
 
-  // Likes
   try{
     var likesChannel=supabaseClient
       .channel('mex_likes_realtime')
@@ -1258,7 +1294,6 @@ function setupRealtimeSync(){
     _realtimeChannels.push(likesChannel);
   }catch(e){console.warn('[Realtime] Likes sub failed:',e);}
 
-  // Comments
   try{
     var commentsChannel=supabaseClient
       .channel('mex_comments_realtime')
@@ -1270,7 +1305,6 @@ function setupRealtimeSync(){
     _realtimeChannels.push(commentsChannel);
   }catch(e){console.warn('[Realtime] Comments sub failed:',e);}
 
-  // Profiles
   try{
     var profilesChannel=supabaseClient
       .channel('mex_profiles_realtime')
@@ -1311,7 +1345,6 @@ function softRefreshCurrentView(force){
   var app=document.getElementById('appContainer');
   if(!app||!app.classList.contains('active'))return;
 
-  // If user just interacted, defer the refresh
   if(!force&&userJustInteracted()){
     setTimeout(function(){softRefreshCurrentView(false);},2500);
     return;
@@ -2054,7 +2087,6 @@ function startHeartbeat(){if(heartbeatInterval)clearInterval(heartbeatInterval);
 /* ADS */
 function getGlobalAds(){var a=lsGet(GLOBAL_ADS_KEY,[]);return Array.isArray(a)?a:[];}
 
-// ★★★ FIX: skipPush=true means LOCAL-ONLY (no KV push). Relational tables handle sync.
 function saveGlobalAds(a,skipPush){
   if(skipPush){
     try{localStorage.setItem(GLOBAL_ADS_KEY,JSON.stringify(a));}
@@ -2118,7 +2150,6 @@ function countAdComments(ad){
   return total;
 }
 
-// ★★★ FIX: markOwnWrite() prevents own events from triggering re-renders
 function toggleAdLike(adId){
   var u=getCurrentUser();if(!u)return;
   markOwnWrite();
@@ -2501,7 +2532,7 @@ function navigate(view){
   if(window.innerWidth<=768)closeMobileSidebar();
 }
 
-/* VIEWS - preserved from previous version */
+/* VIEWS */
 var views={};
 
 views.status=function(){
@@ -2984,7 +3015,6 @@ function bindProfileUploadListener(){
       getMediaUrl(k).then(function(url){
         var prev=document.getElementById('modalProfilePreview');prev.src=url||'';prev.dataset.photoKey=k;
         updateAllUI(getCurrentUser());
-        // ★★★ FORCE REFRESH CURRENT VIEW so avatars update everywhere
         setTimeout(function(){softRefreshCurrentView(true);},100);
         showToast('📸 Photo updated','success');
       });
@@ -3288,26 +3318,133 @@ function initApp(user){
   showSyncButton();
 }
 
-/* LOGIN */
-function handleLogin(){
-  var un=document.getElementById('loginUsername').value.trim();
-  var pw=document.getElementById('loginPassword').value.trim();
-  var er=document.getElementById('loginError');er.textContent='';
-  if(!un||!pw)return;
-  var lock=loginLockedSeconds();if(lock>0){er.textContent='⏳ Wait '+lock+'s';return;}
-  if(un===SUPER_ADMIN_USERNAME&&hashPw(un,pw)===getSuperHash()){
-    _loginFails=0;isSuperAdmin=true;isMexEmployee=false;currentMexEmployeeId=null;currentTenantId=null;
-    var su=lsGet('sb_superadmin_user',null)||{id:0,username:'Super Admin',fullName:'Super Admin',role:'superadmin',store:'All',theme:'light'};
-    setCurrentUser(su);try{localStorage.setItem(SUPER_ADMIN_SESSION_KEY,superSessionToken());}catch(e){}
+/* ============================================================
+   UPDATED: handleLogin — inapull credentials kutoka Supabase KABLA ya kuverify
+   ============================================================ */
+async function handleLogin(){
+  var un = document.getElementById('loginUsername').value.trim();
+  var pw = document.getElementById('loginPassword').value.trim();
+  var er = document.getElementById('loginError');
+  var btn = document.getElementById('loginBtn');
+  er.textContent = '';
+  er.style.color = '';
+  if(!un || !pw) return;
+
+  var lock = loginLockedSeconds();
+  if(lock > 0){ er.textContent = '⏳ Wait ' + lock + 's'; return; }
+
+  // ★ Pull fresh credentials from Supabase BEFORE verifying
+  if(supabaseClient){
+    er.textContent = '⏳ Verifying...';
+    er.style.color = 'var(--text-muted)';
+    if(btn) btn.disabled = true;
+    var sync = await pullLoginCredentialsFromCloud();
+    er.textContent = '';
+    er.style.color = '';
+    if(btn) btn.disabled = false;
+
+    if(!sync.ok && !localStorage.getItem('sb_tenants')){
+      er.textContent = '⚠ Mtandao haupatikani. Jaribu tena.';
+      return;
+    }
+  }
+
+  // ── Super Admin ──
+  if(un === SUPER_ADMIN_USERNAME && hashPw(un,pw) === getSuperHash()){
+    _loginFails = 0;
+    isSuperAdmin = true;
+    isMexEmployee = false;
+    currentMexEmployeeId = null;
+    currentTenantId = null;
+    var su = lsGet('sb_superadmin_user',null) || {id:0,username:'Super Admin',fullName:'Super Admin',role:'superadmin',store:'All',theme:'light'};
+    setCurrentUser(su);
+    try{ localStorage.setItem(SUPER_ADMIN_SESSION_KEY, superSessionToken()); }catch(e){}
     document.getElementById('loginPage').classList.add('hidden');
     document.getElementById('appContainer').classList.add('active');
-    initApp(su);return;
+    initApp(su);
+    return;
   }
-  var mex=getMexEmployees();var uL=normalizeUsername(un);
-  for(var j=0;j<mex.length;j++){var emp=mex[j];var eu=normalizeUsername(emp.username);if(eu&&eu===uL&&verifyPw(emp,pw)){_loginFails=0;if(!isHashed(emp.password))updateMexEmployee(emp.id,{password:hashPw(emp.username,pw)});isSuperAdmin=false;isMexEmployee=true;currentMexEmployeeId=emp.id;currentTenantId=null;var eo={id:emp.id,username:emp.username,fullName:emp.name,role:'mexemployee',phone:emp.phone||'',photoKey:emp.photoKey||'',theme:emp.theme||'light',bio:emp.bio||''};setMexSession(eo);setCurrentUser(null);document.getElementById('loginPage').classList.add('hidden');document.getElementById('appContainer').classList.add('active');initApp(eo);return;}}
-  var ts=getAllTenants();
-  for(var k=0;k<ts.length;k++){var tn=ts[k];var old=currentTenantId;currentTenantId=tn.id;var users=getTenantData('users',[]);currentTenantId=old;var u=null;for(var m=0;m<users.length;m++){if(users[m].username===un&&verifyPw(users[m],pw)){u=users[m];break;}}if(u){if(tn.pendingApproval){er.textContent='⏳ Account pending approval';return;}if(tn.blocked){er.textContent='🚫 Account blocked';return;}if(isTenantSuspended(tn.id)){er.textContent='🔒 Subscription expired';return;}_loginFails=0;isSuperAdmin=false;isMexEmployee=false;currentMexEmployeeId=null;currentTenantId=tn.id;if(!isHashed(u.password)){var allU=getTenantData('users',[]);for(var n=0;n<allU.length;n++){if(Number(allU[n].id)===Number(u.id)){allU[n].password=hashPw(allU[n].username,pw);u=allU[n];break;}}setTenantData('users',allU);}setCurrentUser(u);lsSet('sb_session',{tid:tn.id,uid:u.id});recordUserLogin(u.id,u.store);document.getElementById('loginPage').classList.add('hidden');document.getElementById('appContainer').classList.add('active');initApp(u);return;}}
-  registerLoginFail();er.textContent='⚠ Invalid credentials';
+
+  // ── MEX Employee ──
+  var mex = getMexEmployees();
+  var uL = normalizeUsername(un);
+  for(var j=0;j<mex.length;j++){
+    var emp = mex[j];
+    var eu = normalizeUsername(emp.username);
+    if(eu && eu === uL && verifyPw(emp,pw)){
+      _loginFails = 0;
+      if(!isHashed(emp.password)){
+        updateMexEmployee(emp.id,{password:hashPw(emp.username,pw)});
+      }
+      isSuperAdmin = false;
+      isMexEmployee = true;
+      currentMexEmployeeId = emp.id;
+      currentTenantId = null;
+      var eo = {id:emp.id,username:emp.username,fullName:emp.name,role:'mexemployee',
+                phone:emp.phone||'',photoKey:emp.photoKey||'',
+                theme:emp.theme||'light',bio:emp.bio||''};
+      setMexSession(eo);
+      setCurrentUser(null);
+      document.getElementById('loginPage').classList.add('hidden');
+      document.getElementById('appContainer').classList.add('active');
+      initApp(eo);
+      return;
+    }
+  }
+
+  // ── Tenant user ──
+  var ts = getAllTenants();
+  for(var k=0;k<ts.length;k++){
+    var tn = ts[k];
+    var oldTid = currentTenantId;
+    currentTenantId = tn.id;
+    var users = getTenantData('users',[]);
+    currentTenantId = oldTid;
+
+    // Normalized compare (fixes case-sensitivity bug too)
+    var found = null;
+    for(var m=0;m<users.length;m++){
+      if(normalizeUsername(users[m].username) === normalizeUsername(un)){
+        found = users[m];
+        break;
+      }
+    }
+    if(found && verifyPw(found,pw)){
+      if(tn.pendingApproval){ er.textContent = '⏳ Account pending approval'; return; }
+      if(tn.blocked){ er.textContent = '🚫 Account blocked'; return; }
+      if(isTenantSuspended(tn.id)){ er.textContent = '🔒 Subscription expired'; return; }
+
+      _loginFails = 0;
+      isSuperAdmin = false;
+      isMexEmployee = false;
+      currentMexEmployeeId = null;
+      currentTenantId = tn.id;
+
+      // Upgrade plain password → hashed
+      if(!isHashed(found.password)){
+        var allU = getTenantData('users',[]);
+        for(var n=0;n<allU.length;n++){
+          if(Number(allU[n].id) === Number(found.id)){
+            allU[n].password = hashPw(allU[n].username,pw);
+            found = allU[n];
+            break;
+          }
+        }
+        setTenantData('users',allU);
+      }
+
+      setCurrentUser(found);
+      lsSet('sb_session',{tid:tn.id,uid:found.id});
+      recordUserLogin(found.id,found.store);
+      document.getElementById('loginPage').classList.add('hidden');
+      document.getElementById('appContainer').classList.add('active');
+      initApp(found);
+      return;
+    }
+  }
+
+  registerLoginFail();
+  er.textContent = '⚠ Invalid credentials';
 }
 
 /* PAYMENT PLAN */
@@ -3389,8 +3526,8 @@ document.addEventListener('keydown',function(e){
   try{initLanguageMenu();}catch(e){}
   try{initVideoObserver();}catch(e){}
   try{initSupabase();}catch(e){}
-  var pulledData=(function(){try{return pullAllFromSupabase();}catch(e){console.warn('[Boot] pull err:',e);return Promise.resolve();}})();
-  pulledData.then(function(){setTimeout(function(){try{preloadAllMedia();}catch(e){}},100);bootContinue();}).catch(function(e){console.warn('[Boot] pull failed:',e);setTimeout(function(){try{preloadAllMedia();}catch(e2){}},100);bootContinue();});
+  var pulledData=(function(){try{return pullAllFromSupabase();}catch(e){console.warn('[Boot] pull err:',e);return Promise.resolve({ok:false});}})();
+  pulledData.then(function(result){if(result&&result.ok===false)console.warn('[Boot] initial pull not ok:',result.reason);setTimeout(function(){try{preloadAllMedia();}catch(e){}},100);bootContinue();}).catch(function(e){console.warn('[Boot] pull failed:',e);setTimeout(function(){try{preloadAllMedia();}catch(e2){}},100);bootContinue();});
   function preloadAllMedia(){
     var pr=[];
     pr.push(dbGet(STORES.json,SUPER_ADMIN_PHOTO_KEY).then(function(k){if(k){_superAdminPhotoKey=k;if(!_mediaUrlCache[k])return getMediaUrl(k);}}).catch(function(){}));
