@@ -58,7 +58,7 @@ th{text-align:left;padding:12px 12px 12px 0;color:var(--text-muted);font-weight:
 td{padding:14px 12px 14px 0;border-bottom:1px solid var(--border-color);color:var(--text-secondary);vertical-align:middle;font-weight:500}
 tr:last-child td{border-bottom:none}
 .empty-row td{text-align:center;padding:40px;color:var(--text-muted)}
-.page-overlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:var(--bg-body);background-image: url(./Temple\ 1.jpeg);padding:20px;overflow-y:auto}
+.page-overlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:var(--bg-body);padding:20px;overflow-y:auto}
 .page-overlay.hidden{display:none}
 .page-card{margin:20px auto;max-height:92vh;overflow-y:auto;padding:26px 24px;width:100%;max-width:420px;background:var(--bg-card);border-radius:var(--radius-card);box-shadow:var(--shadow-dropdown);border:1px solid var(--border-color);text-align:center}
 .page-card .logo-icon{font-size:44px;color:var(--accent-1);margin-bottom:4px}
@@ -749,12 +749,32 @@ var _relWriteTimer=null;
 
 var SUPABASE_SYNC_EXCLUDE=['sb_session','sb_login_lock','sb_superadmin_logged_in','sb_mex_current_employee','sb_chat_wallpaper_type','sb_chat_wallpaper_value','sb_lang'];
 
+/* ★★★ UPDATED: shouldSyncKey — pia ina-exclude *_currentUser keys */
 function shouldSyncKey(key){
   if(!key)return false;
   for(var i=0;i<SUPABASE_SYNC_EXCLUDE.length;i++){
     if(key.indexOf(SUPABASE_SYNC_EXCLUDE[i])===0)return false;
   }
+  if(/_currentUser$/.test(key))return false;
   return true;
+}
+
+/* ★★★ NEW: patchBuilderCatch — inawezesha .catch() kwenye Postgrest builder */
+function patchBuilderCatch(){
+  try{
+    if(!supabaseClient) return;
+    var p=supabaseClient.from(TBL_KV).select('key');
+    while(p && !Object.prototype.hasOwnProperty.call(p,'then')) p=Object.getPrototypeOf(p);
+    if(p && typeof p.catch!=='function'){
+      Object.defineProperty(p,'catch',{
+        value:function(f){return this.then(undefined,f);},
+        configurable:true,writable:true
+      });
+      console.log('[Supabase] .catch patched on builder prototype');
+    }
+  }catch(e){
+    console.warn('[Supabase] patchBuilderCatch failed:',e);
+  }
 }
 
 function initSupabase(){
@@ -762,6 +782,7 @@ function initSupabase(){
     if(window.supabase && typeof window.supabase.createClient==='function'){
       supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
       console.log('[Supabase] client ready');
+      patchBuilderCatch();
     } else {
       console.warn('[Supabase] SDK missing');
     }
@@ -792,9 +813,11 @@ function pullAllFromSupabase(){
 
     if(kvRes&&!kvRes.error&&kvRes.data){
       var cloudKeys={};
+      var SKIP_KEYS={'sb_global_ads':1,'sb_chat_messages':1,'sb_member_earnings':1,'sb_member_payments':1};
       kvRes.data.forEach(function(row){
         cloudKeys[row.key]=true;
         if(!shouldSyncKey(row.key))return;
+        if(SKIP_KEYS[row.key]){console.log('[Boot pull] skip redundant:',row.key);return;}
         try{
           if(row.value!==null&&row.value!==undefined){
             localStorage.setItem(row.key,JSON.stringify(row.value));
@@ -824,11 +847,11 @@ function pullAllFromSupabase(){
   });
 }
 
-/* ★★★ FIX: pullLoginCredentialsFromCloud — cleans heavy keys FIRST, then pulls ONLY login-critical keys */
+/* ★★★ UPDATED: 3 queries — users + subscription_expiry tofauti, skip heavy keys */
 async function pullLoginCredentialsFromCloud(){
   if(!supabaseClient) return {ok:false, error:'No Supabase client'};
 
-  // Step 1: Safisha keys nzito ambazo hazihitajiki kwa login
+  // Step 1: safisha keys nzito
   var heavyKeys = ['sb_global_ads','sb_chat_messages','sb_member_earnings','sb_member_payments'];
   for(var h=0;h<heavyKeys.length;h++){
     try{
@@ -838,17 +861,15 @@ async function pullLoginCredentialsFromCloud(){
       }
     }catch(e){}
   }
-
-  // Step 2: Cleanup zaidi
   try{tryCleanupLocalStorage();}catch(e){}
 
-  // Step 3: Pull keys muhimu za login TU
+  // Step 2: pull 3 sets za keys muhimu
   try{
     var results = await Promise.all([
       supabaseClient.from(TBL_KV).select('key,value')
-        .in('key', ['sb_super_hash','sb_superadmin_user','sb_tenants','sb_mex_employees']),
-      supabaseClient.from(TBL_KV).select('key,value')
-        .like('key','sb_tenant%')
+        .in('key',['sb_super_hash','sb_superadmin_user','sb_tenants','sb_mex_employees']),
+      supabaseClient.from(TBL_KV).select('key,value').like('key','sb_tenant_%_users'),
+      supabaseClient.from(TBL_KV).select('key,value').like('key','sb_tenant_%_subscription_expiry')
     ]);
 
     var total = 0;
@@ -863,7 +884,6 @@ async function pullLoginCredentialsFromCloud(){
       var rows = (res && res.data) || [];
       for(var j=0;j<rows.length;j++){
         var key = rows[j].key;
-        // Skip heavy keys hata kama zimerudi (hatuzihitaji kwa login)
         if(key === 'sb_global_ads' || key === 'sb_chat_messages' || key === 'sb_member_earnings' || key === 'sb_member_payments') continue;
         try{
           if(rows[j].value !== null && rows[j].value !== undefined){
@@ -957,15 +977,11 @@ function applyProfileFromCloud(p){
 function mergePostsFromCloud(posts,likes,comments){
   try{
     var adsById={};
-
     var existing=getGlobalAds();
     for(var e=0;e<existing.length;e++){
       var eid=String(existing[e].id);
-      if(_pendingPostUpserts[eid]){
-        adsById[existing[e].id]=existing[e];
-      }
+      if(_pendingPostUpserts[eid]){adsById[existing[e].id]=existing[e];}
     }
-
     var likesByPost={};
     likes.forEach(function(l){
       if(!likesByPost[l.post_id])likesByPost[l.post_id]=[];
@@ -976,7 +992,6 @@ function mergePostsFromCloud(posts,likes,comments){
       if(!cmtsByPost[c.post_id])cmtsByPost[c.post_id]=[];
       cmtsByPost[c.post_id].push(c);
     });
-
     posts.forEach(function(p){
       var ad=adsById[p.id]||{id:p.id};
       ad.title=p.title||'';
@@ -990,10 +1005,7 @@ function mergePostsFromCloud(posts,likes,comments){
       ad.mediaType=p.media_type||null;
       ad.posterKey=p.poster_key||null;
       ad.image=p.image||'';
-      // ★ Strip base64 bloat
-      if(ad.image && typeof ad.image==='string' && ad.image.indexOf('data:')===0 && ad.image.length>2000){
-        ad.image='';
-      }
+      if(ad.image && typeof ad.image==='string' && ad.image.indexOf('data:')===0 && ad.image.length>2000){ad.image='';}
       ad.promoted=!!p.promoted;
       ad.promotedUntil=Number(p.promoted_until)||0;
       ad.promotedAt=Number(p.promoted_at)||0;
@@ -1014,15 +1026,12 @@ function mergePostsFromCloud(posts,likes,comments){
       var top=[];
       cmts.forEach(function(c){
         var obj=byId[c.id];
-        if(c.parent_id&&byId[c.parent_id]){
-          obj.parentId=c.parent_id;
-          byId[c.parent_id].replies.push(obj);
-        } else top.push(obj);
+        if(c.parent_id&&byId[c.parent_id]){obj.parentId=c.parent_id;byId[c.parent_id].replies.push(obj);}
+        else top.push(obj);
       });
       ad.comments=top;
       adsById[p.id]=ad;
     });
-
     saveGlobalAds(Object.keys(adsById).map(function(k){return adsById[k];}),true);
   } catch(e){
     console.warn('[Merge posts] error:',e);
@@ -1035,7 +1044,7 @@ function migrateMissingLocalKeys(cloudKeys){
     for(var i=0;i<localStorage.length;i++){
       var k=localStorage.key(i);
       if(!shouldSyncKey(k))continue;
-      if(cloudKeys[k])continue;
+      if(cloudKeys && cloudKeys[k])continue;
       var raw=localStorage.getItem(k);
       if(raw===null)continue;
       try{missing.push({key:k,value:JSON.parse(raw),updated_at:new Date().toISOString()});}catch(e){}
@@ -1134,19 +1143,14 @@ function flushRelWrites(){
   if(_pendingPostDeletes.length){
     var delIds=_pendingPostDeletes.slice();
     _pendingPostDeletes=[];
-    delIds.forEach(function(id){
-      supabaseClient.from(TBL_POSTS).delete().eq('id',id).catch(function(e){});
-    });
+    delIds.forEach(function(id){supabaseClient.from(TBL_POSTS).delete().eq('id',id).catch(function(e){});});
   }
   if(_pendingLikeOps.length){
     var ops=_pendingLikeOps.slice();
     _pendingLikeOps=[];
     ops.forEach(function(op){
-      if(op.liked){
-        supabaseClient.from(TBL_LIKES).upsert({post_id:op.postId,user_key:op.userKey},{onConflict:'post_id,user_key'}).catch(function(e){});
-      }else{
-        supabaseClient.from(TBL_LIKES).delete().eq('post_id',op.postId).eq('user_key',op.userKey).catch(function(e){});
-      }
+      if(op.liked){supabaseClient.from(TBL_LIKES).upsert({post_id:op.postId,user_key:op.userKey},{onConflict:'post_id,user_key'}).catch(function(e){});}
+      else{supabaseClient.from(TBL_LIKES).delete().eq('post_id',op.postId).eq('user_key',op.userKey).catch(function(e){});}
     });
   }
   var cKeys=Object.keys(_pendingCommentUpserts);
@@ -1171,9 +1175,7 @@ function flushRelWrites(){
   if(_pendingCommentDeletes.length){
     var delC=_pendingCommentDeletes.slice();
     _pendingCommentDeletes=[];
-    delC.forEach(function(cid){
-      supabaseClient.from(TBL_COMMENTS).delete().eq('id',cid).catch(function(e){});
-    });
+    delC.forEach(function(cid){supabaseClient.from(TBL_COMMENTS).delete().eq('id',cid).catch(function(e){});});
   }
   var prKeys=Object.keys(_pendingProfileUpserts);
   if(prKeys.length){
@@ -1254,10 +1256,7 @@ function setupRealtimeSync(){
         if(!shouldSyncKey(payload.new.key))return;
         if(_pendingKVWrites[payload.new.key])return;
         try{localStorage.setItem(payload.new.key,JSON.stringify(payload.new.value));}
-        catch(e){
-          tryCleanupLocalStorage();
-          try{localStorage.setItem(payload.new.key,JSON.stringify(payload.new.value));}catch(e2){}
-        }
+        catch(e){tryCleanupLocalStorage();try{localStorage.setItem(payload.new.key,JSON.stringify(payload.new.value));}catch(e2){}}
         scheduleSoftReRender();
       })
       .subscribe(function(status){console.log('[Realtime] KV:',status);});
@@ -1265,63 +1264,34 @@ function setupRealtimeSync(){
   }catch(e){console.warn('[Realtime] KV sub failed:',e);}
 
   try{
-    var postsChannel=supabaseClient
-      .channel('mex_posts_realtime')
-      .on('postgres_changes',{event:'*',schema:'public',table:TBL_POSTS},function(){
-        if(isInOwnWriteCooldown())return;
-        scheduleCloudPullAndRender();
-      })
-      .subscribe();
+    var postsChannel=supabaseClient.channel('mex_posts_realtime').on('postgres_changes',{event:'*',schema:'public',table:TBL_POSTS},function(){if(isInOwnWriteCooldown())return;scheduleCloudPullAndRender();}).subscribe();
     _realtimeChannels.push(postsChannel);
   }catch(e){console.warn('[Realtime] Posts sub failed:',e);}
 
   try{
-    var likesChannel=supabaseClient
-      .channel('mex_likes_realtime')
-      .on('postgres_changes',{event:'*',schema:'public',table:TBL_LIKES},function(){
-        if(isInOwnWriteCooldown())return;
-        scheduleCloudPullAndRender();
-      })
-      .subscribe();
+    var likesChannel=supabaseClient.channel('mex_likes_realtime').on('postgres_changes',{event:'*',schema:'public',table:TBL_LIKES},function(){if(isInOwnWriteCooldown())return;scheduleCloudPullAndRender();}).subscribe();
     _realtimeChannels.push(likesChannel);
   }catch(e){console.warn('[Realtime] Likes sub failed:',e);}
 
   try{
-    var commentsChannel=supabaseClient
-      .channel('mex_comments_realtime')
-      .on('postgres_changes',{event:'*',schema:'public',table:TBL_COMMENTS},function(){
-        if(isInOwnWriteCooldown())return;
-        scheduleCloudPullAndRender();
-      })
-      .subscribe();
+    var commentsChannel=supabaseClient.channel('mex_comments_realtime').on('postgres_changes',{event:'*',schema:'public',table:TBL_COMMENTS},function(){if(isInOwnWriteCooldown())return;scheduleCloudPullAndRender();}).subscribe();
     _realtimeChannels.push(commentsChannel);
   }catch(e){console.warn('[Realtime] Comments sub failed:',e);}
 
   try{
-    var profilesChannel=supabaseClient
-      .channel('mex_profiles_realtime')
-      .on('postgres_changes',{event:'*',schema:'public',table:TBL_PROFILES},function(payload){
-        if(isInOwnWriteCooldown())return;
-        if(payload.new){try{applyProfileFromCloud(payload.new);}catch(e){}}
-        scheduleSoftReRender();
-      })
-      .subscribe();
+    var profilesChannel=supabaseClient.channel('mex_profiles_realtime').on('postgres_changes',{event:'*',schema:'public',table:TBL_PROFILES},function(payload){if(isInOwnWriteCooldown())return;if(payload.new){try{applyProfileFromCloud(payload.new);}catch(e){}}scheduleSoftReRender();}).subscribe();
     _realtimeChannels.push(profilesChannel);
   }catch(e){console.warn('[Realtime] Profiles sub failed:',e);}
 }
 
 function scheduleCloudPullAndRender(){
   if(_cloudPullTimer)clearTimeout(_cloudPullTimer);
-  _cloudPullTimer=setTimeout(function(){
-    pullFromCloudOnly().then(function(changed){if(changed){softRefreshCurrentView(true);}});
-  },700);
+  _cloudPullTimer=setTimeout(function(){pullFromCloudOnly().then(function(changed){if(changed){softRefreshCurrentView(true);}});},700);
 }
-
 function scheduleSoftReRender(){
   if(_realtimeDebounceTimer)clearTimeout(_realtimeDebounceTimer);
   _realtimeDebounceTimer=setTimeout(function(){softRefreshCurrentView(false);},1500);
 }
-
 function softRefreshCurrentView(force){
   var active=document.activeElement;
   if(active){var tag=active.tagName;if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT')return;}
@@ -1345,15 +1315,10 @@ function softRefreshCurrentView(force){
     }
   }catch(e){console.warn('[Soft refresh] err:',e);}
 }
-
 function startPeriodicRefresh(){
   if(_periodicRefreshTimer)clearInterval(_periodicRefreshTimer);
-  _periodicRefreshTimer=setInterval(function(){
-    if(!supabaseClient)return;
-    pullFromCloudOnly().then(function(changed){if(changed){softRefreshCurrentView(false);}});
-  },45000);
+  _periodicRefreshTimer=setInterval(function(){if(!supabaseClient)return;pullFromCloudOnly().then(function(changed){if(changed){softRefreshCurrentView(false);}});},45000);
 }
-
 function pullFromCloudOnly(){
   if(!supabaseClient)return Promise.resolve(false);
   setSyncIndicator(true);
@@ -1365,49 +1330,29 @@ function pullFromCloudOnly(){
     supabaseClient.from(TBL_LIKES).select('*'),
     supabaseClient.from(TBL_COMMENTS).select('*')
   ]).then(function(results){
-    var kvRes=results[0];
-    var profRes=results[1];
-    var postRes=results[2];
-    var likeRes=results[3];
-    var cmtRes=results[4];
-
+    var kvRes=results[0],profRes=results[1],postRes=results[2],likeRes=results[3],cmtRes=results[4];
     if(kvRes&&!kvRes.error&&kvRes.data){
       kvRes.data.forEach(function(row){
         if(!shouldSyncKey(row.key))return;
         if(_pendingKVWrites[row.key])return;
-        try{
-          if(row.value!==null&&row.value!==undefined){
-            localStorage.setItem(row.key,JSON.stringify(row.value));
-          }
-        }catch(e){tryCleanupLocalStorage();try{localStorage.setItem(row.key,JSON.stringify(row.value));}catch(e2){}}
+        try{if(row.value!==null&&row.value!==undefined){localStorage.setItem(row.key,JSON.stringify(row.value));}}
+        catch(e){tryCleanupLocalStorage();try{localStorage.setItem(row.key,JSON.stringify(row.value));}catch(e2){}}
       });
     }
-    if(profRes&&!profRes.error&&profRes.data){
-      profRes.data.forEach(function(p){try{applyProfileFromCloud(p);}catch(e){}});
-    }
-    if(postRes&&!postRes.error&&postRes.data){
-      try{mergePostsFromCloud(postRes.data,likeRes&&likeRes.data||[],cmtRes&&cmtRes.data||[]);}catch(e){}
-    }
+    if(profRes&&!profRes.error&&profRes.data){profRes.data.forEach(function(p){try{applyProfileFromCloud(p);}catch(e){}});}
+    if(postRes&&!postRes.error&&postRes.data){try{mergePostsFromCloud(postRes.data,likeRes&&likeRes.data||[],cmtRes&&cmtRes.data||[]);}catch(e){}}
     var afterHash=localStateHash();
     setSyncIndicator(false);
     return beforeHash!==afterHash;
-  }).catch(function(e){
-    setSyncIndicator(false);
-    console.warn('[Cloud pull] err:',e);
-    return false;
-  });
+  }).catch(function(e){setSyncIndicator(false);console.warn('[Cloud pull] err:',e);return false;});
 }
-
 function cleanupRealtimeSync(){
   _realtimeChannels.forEach(function(ch){try{if(supabaseClient)supabaseClient.removeChannel(ch);}catch(e){}});
   _realtimeChannels=[];
   if(_periodicRefreshTimer){clearInterval(_periodicRefreshTimer);_periodicRefreshTimer=null;}
 }
-
 document.addEventListener('visibilitychange',function(){
-  if(document.visibilityState==='visible'&&supabaseClient){
-    pullFromCloudOnly().then(function(changed){if(changed){softRefreshCurrentView(true);}});
-  }
+  if(document.visibilityState==='visible'&&supabaseClient){pullFromCloudOnly().then(function(changed){if(changed){softRefreshCurrentView(true);}});}
 });
 
 /* SHA-256 */
@@ -1500,44 +1445,10 @@ function openDB(){
   });
   return _dbPromise;
 }
-function dbSet(store,key,val){
-  return openDB().then(function(db){
-    return new Promise(function(resolve,reject){
-      var tx=db.transaction(store,'readwrite');
-      tx.objectStore(store).put(val,key);
-      tx.oncomplete=function(){resolve(true);};
-      tx.onerror=function(){reject(tx.error);};
-    });
-  });
-}
-function dbGet(store,key){
-  return openDB().then(function(db){
-    return new Promise(function(resolve,reject){
-      var tx=db.transaction(store,'readonly');
-      var req=tx.objectStore(store).get(key);
-      req.onsuccess=function(){resolve(req.result==null?null:req.result);};
-      req.onerror=function(){reject(req.error);};
-    });
-  });
-}
-function dbDel(store,key){
-  if(!key)return Promise.resolve(true);
-  return openDB().then(function(db){
-    return new Promise(function(resolve){
-      var tx=db.transaction(store,'readwrite');
-      tx.objectStore(store).delete(key);
-      tx.oncomplete=function(){resolve(true);};
-      tx.onerror=function(){resolve(false);};
-    });
-  });
-}
-function saveMediaBlob(blob,prefix){
-  var key=(prefix||'media_')+Date.now()+'_'+Math.floor(Math.random()*100000);
-  return dbSet(STORES.media,key,blob).then(function(){
-    uploadMediaToSupabase(key,blob);
-    return key;
-  });
-}
+function dbSet(store,key,val){return openDB().then(function(db){return new Promise(function(resolve,reject){var tx=db.transaction(store,'readwrite');tx.objectStore(store).put(val,key);tx.oncomplete=function(){resolve(true);};tx.onerror=function(){reject(tx.error);};});});}
+function dbGet(store,key){return openDB().then(function(db){return new Promise(function(resolve,reject){var tx=db.transaction(store,'readonly');var req=tx.objectStore(store).get(key);req.onsuccess=function(){resolve(req.result==null?null:req.result);};req.onerror=function(){reject(req.error);};});});}
+function dbDel(store,key){if(!key)return Promise.resolve(true);return openDB().then(function(db){return new Promise(function(resolve){var tx=db.transaction(store,'readwrite');tx.objectStore(store).delete(key);tx.oncomplete=function(){resolve(true);};tx.onerror=function(){resolve(false);};});});}
+function saveMediaBlob(blob,prefix){var key=(prefix||'media_')+Date.now()+'_'+Math.floor(Math.random()*100000);return dbSet(STORES.media,key,blob).then(function(){uploadMediaToSupabase(key,blob);return key;});}
 function getMediaUrl(key){
   if(!key)return Promise.resolve(null);
   if(_mediaUrlCache[key])return Promise.resolve(_mediaUrlCache[key]);
@@ -1546,11 +1457,7 @@ function getMediaUrl(key){
     var sbUrl=getSupabaseMediaUrl(key);
     if(sbUrl){_mediaUrlCache[key]=sbUrl;return sbUrl;}
     return null;
-  }).catch(function(){
-    var sbUrl=getSupabaseMediaUrl(key);
-    if(sbUrl){_mediaUrlCache[key]=sbUrl;return sbUrl;}
-    return null;
-  });
+  }).catch(function(){var sbUrl=getSupabaseMediaUrl(key);if(sbUrl){_mediaUrlCache[key]=sbUrl;return sbUrl;}return null;});
 }
 function deleteMediaKey(key){if(!key)return Promise.resolve();delete _mediaUrlCache[key];return dbDel(STORES.media,key);}
 
@@ -1584,7 +1491,6 @@ function tryCleanupLocalStorage(){
       for(var k=0;k<msgs.length;k++){if(msgs[k]&&msgs[k].timestamp>cutoff)filtered.push(msgs[k]);}
       if(filtered.length<msgs.length){try{localStorage.setItem(CHAT_KEY,JSON.stringify(filtered));}catch(e){}}
     }
-    // Aggressive purge when near quota
     var total=0;
     for(var n=0;n<localStorage.length;n++){
       var kk=localStorage.key(n);
@@ -1595,12 +1501,7 @@ function tryCleanupLocalStorage(){
     if(total > 4000000){
       var purge=[GLOBAL_ADS_KEY, CHAT_KEY, MEMBER_EARNINGS_KEY, MEMBER_PAYMENTS_KEY];
       for(var p=0;p<purge.length;p++){
-        try{
-          if(localStorage.getItem(purge[p])){
-            localStorage.removeItem(purge[p]);
-            console.log('[Storage] PURGED:', purge[p]);
-          }
-        }catch(e){}
+        try{if(localStorage.getItem(purge[p])){localStorage.removeItem(purge[p]);console.log('[Storage] PURGED:', purge[p]);}}catch(e){}
       }
     }
   }catch(e){console.warn('[Storage] Cleanup error:',e);}
@@ -1934,7 +1835,11 @@ function saveGlobalAds(a,skipPush){
     }
     return;
   }
-  lsSet(GLOBAL_ADS_KEY,a);
+  try{localStorage.setItem(GLOBAL_ADS_KEY,JSON.stringify(a));}
+  catch(e){
+    try{var recent2=a.filter(function(ad){return ad && ad.timestamp && (Date.now()-ad.timestamp) < 7*24*60*60*1000;});localStorage.setItem(GLOBAL_ADS_KEY,JSON.stringify(recent2));}
+    catch(e2){try{localStorage.removeItem(GLOBAL_ADS_KEY);}catch(e3){}}
+  }
   if(Array.isArray(a)){for(var j=0;j<a.length;j++){if(a[j]&&a[j].id)schedulePostPush(a[j]);}}
 }
 function addGlobalAd(ad){var a=getGlobalAds();a.push(ad);saveGlobalAds(a);schedulePostPush(ad);return ad;}
@@ -2182,7 +2087,6 @@ function navigate(view){
 
 /* VIEWS */
 var views={};
-
 views.status=function(){
   var user=getCurrentUser();
   if(isSuperAdmin)return renderAdsTab();
@@ -2200,7 +2104,6 @@ views.status=function(){
   else content=renderCompanyStatusTab(user);
   return tabs+content;
 };
-
 views.dashboard=function(){
   if(isSuperAdmin)return views.superadmin();
   if(isMexEmployee)return views.mexEarnings();
@@ -2885,7 +2788,7 @@ function initApp(user){
   showSyncButton();
 }
 
-/* ★★★ FIX: handleLogin — verbose, shows real errors, doesn't block Super Admin on empty tenants */
+/* ★★★ UPDATED: handleLogin — verbose errors + migrateMissingLocalKeys({}) after login */
 async function handleLogin(){
   var un = document.getElementById('loginUsername').value.trim();
   var pw = document.getElementById('loginPassword').value.trim();
@@ -2898,41 +2801,43 @@ async function handleLogin(){
   var lock = loginLockedSeconds();
   if(lock > 0){ er.textContent = '⏳ Wait ' + lock + 's'; return; }
 
+  // ★ Check Supabase loaded
+  if(!supabaseClient){
+    er.textContent='⚠ Hakuna muunganisho wa server (Supabase haijapakia). Jaribu mtandao mwingine.';
+    return;
+  }
+
   var isSuperAttempt = (un === SUPER_ADMIN_USERNAME);
 
-  // ★ Pull credentials from Supabase BEFORE verifying
-  if(supabaseClient){
-    er.textContent = '⏳ Verifying...';
-    er.style.color = 'var(--text-muted)';
-    if(btn) btn.disabled = true;
-    var sync = await pullLoginCredentialsFromCloud();
-    er.textContent = '';
-    er.style.color = '';
-    if(btn) btn.disabled = false;
+  er.textContent = '⏳ Verifying...';
+  er.style.color = 'var(--text-muted)';
+  if(btn) btn.disabled = true;
+  var sync = await pullLoginCredentialsFromCloud();
+  er.textContent = '';
+  er.style.color = '';
+  if(btn) btn.disabled = false;
 
-    if(!sync.ok){
-      er.textContent = '⚠ Server: ' + (sync.error || 'Cannot reach Supabase') + ' — jaribu tena';
-      console.warn('[Login] Sync failed:', sync);
+  if(!sync.ok){
+    er.textContent = '⚠ Server: ' + (sync.error || 'Cannot reach Supabase') + ' — jaribu tena';
+    console.warn('[Login] Sync failed:', sync);
+    return;
+  }
+
+  if(!isSuperAttempt){
+    var tenantsStr = localStorage.getItem('sb_tenants');
+    if(!tenantsStr){
+      er.textContent = '⚠ Data ya companies haikupatikana. Jaribu tena.';
+      console.warn('[Login] No sb_tenants after sync');
       return;
     }
-
-    // ★ Check tenants ONLY for non-super-admin (Super Admin can login even on empty setup)
-    if(!isSuperAttempt){
-      var tenantsStr = localStorage.getItem('sb_tenants');
-      if(!tenantsStr){
-        er.textContent = '⚠ Data ya companies haikupatikana. Jaribu tena.';
-        console.warn('[Login] No sb_tenants after sync');
+    try{
+      var tj = JSON.parse(tenantsStr);
+      if(!Array.isArray(tj) || tj.length === 0){
+        er.textContent = '⚠ Hakuna company iliyosajiliwa. Wasiliana na admin.';
+        console.warn('[Login] sb_tenants is empty');
         return;
       }
-      try{
-        var tj = JSON.parse(tenantsStr);
-        if(!Array.isArray(tj) || tj.length === 0){
-          er.textContent = '⚠ Hakuna company iliyosajiliwa. Wasiliana na admin.';
-          console.warn('[Login] sb_tenants is empty');
-          return;
-        }
-      }catch(e){ console.warn('[Login] sb_tenants parse error:', e); }
-    }
+    }catch(e){ console.warn('[Login] sb_tenants parse error:', e); }
   }
 
   // ── Super Admin ──
@@ -2948,6 +2853,8 @@ async function handleLogin(){
     document.getElementById('loginPage').classList.add('hidden');
     document.getElementById('appContainer').classList.add('active');
     initApp(su);
+    // ★ Push any local keys that aren't in cloud
+    try{migrateMissingLocalKeys({}).then(function(){console.log('[Login] uploaded');});}catch(e){console.warn('[Login] migrate err:',e);}
     return;
   }
 
@@ -2970,6 +2877,7 @@ async function handleLogin(){
       document.getElementById('loginPage').classList.add('hidden');
       document.getElementById('appContainer').classList.add('active');
       initApp(eo);
+      try{migrateMissingLocalKeys({}).then(function(){console.log('[Login] uploaded');});}catch(e){console.warn('[Login] migrate err:',e);}
       return;
     }
   }
@@ -3012,6 +2920,7 @@ async function handleLogin(){
       document.getElementById('loginPage').classList.add('hidden');
       document.getElementById('appContainer').classList.add('active');
       initApp(found);
+      try{migrateMissingLocalKeys({}).then(function(){console.log('[Login] uploaded');});}catch(e){console.warn('[Login] migrate err:',e);}
       return;
     }
   }
