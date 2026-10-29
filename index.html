@@ -230,12 +230,7 @@ tr:last-child td{border-bottom:none}
 .boot-tag{font-size:.85rem;color:rgba(255,255,255,.72);letter-spacing:3px;font-weight:600;text-transform:uppercase;z-index:2}
 .boot-spinner{width:34px;height:34px;border:3px solid rgba(255,255,255,.16);border-top-color:#fff;border-right-color:#f59e0b;border-radius:50%;animation:bootSpin .9s linear infinite;z-index:2}
 @keyframes bootSpin{to{transform:rotate(360deg)}}
-.mobile-menu-btn{
-  display:none;align-items:center;justify-content:center;
-  background:var(--input-bg);border:1px solid var(--border-color)!important;
-  border-radius:12px!important;width:42px;height:42px;cursor:pointer;
-  color:var(--text-secondary);font-size:1.1rem;flex-shrink:0;
-}
+.mobile-menu-btn{display:none;align-items:center;justify-content:center;background:var(--input-bg);border:1px solid var(--border-color)!important;border-radius:12px!important;width:42px;height:42px;cursor:pointer;color:var(--text-secondary);font-size:1.1rem;flex-shrink:0}
 .sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9998}
 .sidebar-backdrop.show{display:block}
 .mt-16{margin-top:16px}.mb-16{margin-bottom:16px}.text-muted{color:var(--text-muted)}.text-sm{font-size:.8rem}.hidden{display:none!important}
@@ -369,13 +364,11 @@ body.dark .chat-modal .modal-box .chat-messages{background-color:#0b141a}
 .sync-now-btn{position:fixed;bottom:20px;right:20px;z-index:99998;background:#f59e0b;color:#fff;border:none!important;border-radius:50%!important;width:60px;height:60px;font-size:24px;box-shadow:0 4px 20px rgba(245,158,11,.5);cursor:pointer;display:none;align-items:center;justify-content:center;transition:opacity .4s,transform .15s}
 .sync-now-btn.success{background:#10b981!important}
 .sync-now-btn.visible{display:flex!important}
-
 .sync-indicator{position:fixed;top:75px;right:24px;background:var(--accent-1);color:#fff;padding:8px 16px;border-radius:20px;font-size:.75rem;font-weight:700;z-index:99997;opacity:0;transform:translateY(-10px);transition:opacity .3s,transform .3s;pointer-events:none;display:flex;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(18,140,126,.3)}
 .sync-indicator.visible{opacity:1;transform:translateY(0)}
 .sync-indicator i{animation:syncSpin 1s linear infinite}
 @keyframes syncSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 @media(max-width:768px){.sync-indicator{top:55px;right:12px;font-size:.68rem;padding:6px 12px}}
-
 @media(max-width:768px){
   .app-container{padding:0;gap:0;height:100dvh}
   .main-content{border-radius:0;box-shadow:none;height:100dvh;min-width:0}
@@ -791,9 +784,6 @@ function initSupabase(){
   }
 }
 
-/* ============================================================
-   UPDATED: pullAllFromSupabase — inarudisha {ok,reason} badala ya kunyamaza
-   ============================================================ */
 function pullAllFromSupabase(){
   if(!supabaseClient) return Promise.resolve({ok:false, reason:'no-client'});
   return Promise.all([
@@ -823,7 +813,11 @@ function pullAllFromSupabase(){
           if(row.value!==null&&row.value!==undefined){
             localStorage.setItem(row.key,JSON.stringify(row.value));
           }
-        }catch(e){}
+        }catch(e){
+          // ★ FIX: Quota hit during boot pull — cleanup and retry once
+          tryCleanupLocalStorage();
+          try{localStorage.setItem(row.key,JSON.stringify(row.value));}catch(e2){}
+        }
       });
       migrateMissingLocalKeys(cloudKeys);
     }
@@ -844,10 +838,7 @@ function pullAllFromSupabase(){
   });
 }
 
-/* ============================================================
-   NEW: Pull login-critical keys direkti kutoka Supabase
-   Inaitwa kila mtumiaji anapobonyeza Login
-   ============================================================ */
+/* ★ FIX: pullLoginCredentialsFromCloud — with quota recovery */
 async function pullLoginCredentialsFromCloud(){
   if(!supabaseClient) return {ok:false, error:'No Supabase client'};
   try{
@@ -858,6 +849,7 @@ async function pullLoginCredentialsFromCloud(){
         .like('key','sb_tenant_%_users')
     ]);
     var total = 0;
+    var failed = [];
     for(var i=0;i<results.length;i++){
       var res = results[i];
       if(res && res.error) throw res.error;
@@ -865,14 +857,35 @@ async function pullLoginCredentialsFromCloud(){
       for(var j=0;j<rows.length;j++){
         try{
           if(rows[j].value !== null && rows[j].value !== undefined){
-            localStorage.setItem(rows[j].key, JSON.stringify(rows[j].value));
+            // ★ Strip base64 bloat before writing
+            var val = rows[j].value;
+            if(val && Array.isArray(val)){
+              for(var x=0;x<val.length;x++){
+                var item = val[x];
+                if(item && item.image && typeof item.image==='string' && item.image.indexOf('data:')===0 && item.image.length>2000){
+                  item.image = '';
+                }
+              }
+            }
+            localStorage.setItem(rows[j].key, JSON.stringify(val));
             total++;
           }
-        }catch(e){}
+        }catch(e){
+          // ★ Quota hit — cleanup and retry ONCE
+          console.warn('[Login sync] Quota hit on key:', rows[j].key);
+          tryCleanupLocalStorage();
+          try{
+            localStorage.setItem(rows[j].key, JSON.stringify(rows[j].value));
+            total++;
+          }catch(e2){
+            failed.push(rows[j].key);
+            console.warn('[Login sync] Still failed after cleanup:', rows[j].key);
+          }
+        }
       }
     }
-    console.log('[Login sync] pulled', total, 'keys');
-    return {ok:true, count:total};
+    console.log('[Login sync] pulled', total, 'keys; failed:', failed);
+    return {ok:true, count:total, failed:failed};
   }catch(e){
     console.warn('[Login sync] failed:', e);
     return {ok:false, error:(e && e.message) || 'Sync failed'};
@@ -983,6 +996,10 @@ function mergePostsFromCloud(posts,likes,comments){
       ad.mediaType=p.media_type||null;
       ad.posterKey=p.poster_key||null;
       ad.image=p.image||'';
+      // ★ FIX: Strip base64 bloat (huge images bloat localStorage → quota exceeded on fresh devices)
+      if(ad.image && typeof ad.image==='string' && ad.image.indexOf('data:')===0 && ad.image.length>2000){
+        ad.image='';
+      }
       ad.promoted=!!p.promoted;
       ad.promotedUntil=Number(p.promoted_until)||0;
       ad.promotedAt=Number(p.promoted_at)||0;
@@ -1214,15 +1231,9 @@ var _periodicRefreshTimer=null;
 var _ownWriteCooldown=0;
 var _lastUserInteraction=0;
 
-function markOwnWrite(){
-  _ownWriteCooldown=Date.now()+5000;
-}
-function isInOwnWriteCooldown(){
-  return Date.now()<_ownWriteCooldown;
-}
-function userJustInteracted(){
-  return (Date.now()-_lastUserInteraction)<2000;
-}
+function markOwnWrite(){_ownWriteCooldown=Date.now()+5000;}
+function isInOwnWriteCooldown(){return Date.now()<_ownWriteCooldown;}
+function userJustInteracted(){return (Date.now()-_lastUserInteraction)<2000;}
 
 document.addEventListener('click',function(){_lastUserInteraction=Date.now();},true);
 document.addEventListener('input',function(){_lastUserInteraction=Date.now();},true);
@@ -1230,25 +1241,10 @@ document.addEventListener('keydown',function(){_lastUserInteraction=Date.now();}
 document.addEventListener('scroll',function(){_lastUserInteraction=Date.now();},true);
 document.addEventListener('touchstart',function(){_lastUserInteraction=Date.now();},true);
 
-function setSyncIndicator(on){
-  var el=document.getElementById('syncIndicator');
-  if(el){if(on)el.classList.add('visible');else el.classList.remove('visible');}
-}
+function setSyncIndicator(on){var el=document.getElementById('syncIndicator');if(el){if(on)el.classList.add('visible');else el.classList.remove('visible');}}
 
-function quickHash(str){
-  var h=0;
-  for(var i=0;i<str.length;i++){h=((h<<5)-h+str.charCodeAt(i))|0;}
-  return h;
-}
-function localStateHash(){
-  try{
-    return quickHash(
-      (localStorage.getItem(GLOBAL_ADS_KEY)||'')+
-      (localStorage.getItem('sb_tenants')||'')+
-      (localStorage.getItem(MEX_EMPLOYEES_KEY)||'')
-    );
-  }catch(e){return 0;}
-}
+function quickHash(str){var h=0;for(var i=0;i<str.length;i++){h=((h<<5)-h+str.charCodeAt(i))|0;}return h;}
+function localStateHash(){try{return quickHash((localStorage.getItem(GLOBAL_ADS_KEY)||'')+(localStorage.getItem('sb_tenants')||'')+(localStorage.getItem(MEX_EMPLOYEES_KEY)||''));}catch(e){return 0;}}
 
 function setupRealtimeSync(){
   if(!supabaseClient){console.warn('[Realtime] No client — skipping');return;}
@@ -1264,7 +1260,7 @@ function setupRealtimeSync(){
         if(!payload.new||!payload.new.key)return;
         if(!shouldSyncKey(payload.new.key))return;
         if(_pendingKVWrites[payload.new.key])return;
-        try{localStorage.setItem(payload.new.key,JSON.stringify(payload.new.value));}catch(e){}
+        try{localStorage.setItem(payload.new.key,JSON.stringify(payload.new.value));}catch(e){tryCleanupLocalStorage();try{localStorage.setItem(payload.new.key,JSON.stringify(payload.new.value));}catch(e2){}};
         console.log('[Realtime] KV updated:',payload.new.key);
         scheduleSoftReRender();
       })
@@ -1275,7 +1271,7 @@ function setupRealtimeSync(){
   try{
     var postsChannel=supabaseClient
       .channel('mex_posts_realtime')
-      .on('postgres_changes',{event:'*',schema:'public',table:TBL_POSTS},function(payload){
+      .on('postgres_changes',{event:'*',schema:'public',table:TBL_POSTS},function(){
         if(isInOwnWriteCooldown())return;
         scheduleCloudPullAndRender();
       })
@@ -1329,34 +1325,22 @@ function scheduleCloudPullAndRender(){
 
 function scheduleSoftReRender(){
   if(_realtimeDebounceTimer)clearTimeout(_realtimeDebounceTimer);
-  _realtimeDebounceTimer=setTimeout(function(){
-    softRefreshCurrentView(false);
-  },1500);
+  _realtimeDebounceTimer=setTimeout(function(){softRefreshCurrentView(false);},1500);
 }
 
 function softRefreshCurrentView(force){
   var active=document.activeElement;
-  if(active){
-    var tag=active.tagName;
-    if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT')return;
-  }
+  if(active){var tag=active.tagName;if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT')return;}
   var openModal=document.querySelector('.modal-overlay.show');
   if(openModal)return;
   var app=document.getElementById('appContainer');
   if(!app||!app.classList.contains('active'))return;
-
-  if(!force&&userJustInteracted()){
-    setTimeout(function(){softRefreshCurrentView(false);},2500);
-    return;
-  }
-
+  if(!force&&userJustInteracted()){setTimeout(function(){softRefreshCurrentView(false);},2500);return;}
   var currentView='status';
   var activeNav=document.querySelector('.sidebar-nav .nav-item.active');
   if(activeNav)currentView=activeNav.dataset.view;
-
   var reRenderable=['status','mexStatus','dashboard','sales','debts','inventory','expenses','users','branches','reports','pnl','superadmin','mexEarnings','mexCompanies'];
   if(reRenderable.indexOf(currentView)===-1)return;
-
   try{
     var area=document.getElementById('contentArea');
     if(area&&typeof views[currentView]==='function'){
@@ -1365,9 +1349,7 @@ function softRefreshCurrentView(force){
       area.scrollTop=scrollPos;
       setTimeout(hydrateMedia,20);
     }
-  }catch(e){
-    console.warn('[Soft refresh] err:',e);
-  }
+  }catch(e){console.warn('[Soft refresh] err:',e);}
 }
 
 function startPeriodicRefresh(){
@@ -1384,7 +1366,6 @@ function pullFromCloudOnly(){
   if(!supabaseClient)return Promise.resolve(false);
   setSyncIndicator(true);
   var beforeHash=localStateHash();
-
   return Promise.all([
     supabaseClient.from(TBL_KV).select('key,value'),
     supabaseClient.from(TBL_PROFILES).select('*'),
@@ -1406,7 +1387,10 @@ function pullFromCloudOnly(){
           if(row.value!==null&&row.value!==undefined){
             localStorage.setItem(row.key,JSON.stringify(row.value));
           }
-        }catch(e){}
+        }catch(e){
+          tryCleanupLocalStorage();
+          try{localStorage.setItem(row.key,JSON.stringify(row.value));}catch(e2){}
+        }
       });
     }
 
@@ -1415,14 +1399,11 @@ function pullFromCloudOnly(){
     }
 
     if(postRes&&!postRes.error&&postRes.data){
-      try{
-        mergePostsFromCloud(postRes.data,likeRes&&likeRes.data||[],cmtRes&&cmtRes.data||[]);
-      }catch(e){}
+      try{mergePostsFromCloud(postRes.data,likeRes&&likeRes.data||[],cmtRes&&cmtRes.data||[]);}catch(e){}
     }
 
     var afterHash=localStateHash();
     setSyncIndicator(false);
-    console.log('[Cloud pull] done, changed:',beforeHash!==afterHash);
     return beforeHash!==afterHash;
   }).catch(function(e){
     setSyncIndicator(false);
@@ -1512,11 +1493,7 @@ function genTempPassword(){
   for(var i=0;i<8;i++)out+=chars.charAt(arr[i]%chars.length);
   return out;
 }
-function getSuperHash(){
-  var c=null;
-  try{c=JSON.parse(localStorage.getItem('sb_super_hash')||'null');}catch(e){}
-  return c||SUPER_ADMIN_HASH;
-}
+function getSuperHash(){var c=null;try{c=JSON.parse(localStorage.getItem('sb_super_hash')||'null');}catch(e){}return c||SUPER_ADMIN_HASH;}
 function superSessionToken(){return getSuperHash().slice(-24);}
 function encArg(s){return encodeURIComponent(String(s==null?'':s)).replace(/'/g,'%27');}
 function safeDecode(s){try{return decodeURIComponent(String(s));}catch(e){return String(s);}}
@@ -1608,6 +1585,8 @@ function deleteMediaKey(key){
 function lsGet(key,def){
   try{var d=localStorage.getItem(key);return d?JSON.parse(d):def;}catch(e){return def;}
 }
+
+/* ★ FIX: tryCleanupLocalStorage — with aggressive purge when near quota */
 function tryCleanupLocalStorage(){
   try{
     var ads=lsGet(GLOBAL_ADS_KEY,[]);
@@ -1638,8 +1617,30 @@ function tryCleanupLocalStorage(){
       for(var k=0;k<msgs.length;k++){if(msgs[k]&&msgs[k].timestamp>cutoff)filtered.push(msgs[k]);}
       if(filtered.length<msgs.length){try{localStorage.setItem(CHAT_KEY,JSON.stringify(filtered));}catch(e){}}
     }
+
+    // ★ FIX: Aggressive purge when near quota
+    var total=0;
+    for(var n=0;n<localStorage.length;n++){
+      var kk=localStorage.key(n);
+      total += (kk||'').length + (localStorage.getItem(kk)||'').length;
+    }
+    total = total * 2; // UTF-16
+    console.log('[Storage] Usage: '+(total/1024/1024).toFixed(2)+' MB / ~5 MB');
+
+    if(total > 4000000){
+      var purge=[GLOBAL_ADS_KEY, CHAT_KEY, MEMBER_EARNINGS_KEY, MEMBER_PAYMENTS_KEY];
+      for(var p=0;p<purge.length;p++){
+        try{
+          if(localStorage.getItem(purge[p])){
+            localStorage.removeItem(purge[p]);
+            console.log('[Storage] PURGED:', purge[p]);
+          }
+        }catch(e){}
+      }
+    }
   }catch(e){console.warn('[Storage] Cleanup error:',e);}
 }
+
 function lsSet(key,val){
   try{
     var json=JSON.stringify(val);
@@ -1655,7 +1656,7 @@ function lsSet(key,val){
         try{scheduleSupabasePush(key,val);}catch(e3){}
         return {ok:true};
       }catch(e2){
-        try{showToast('⚠ Local storage full','error');}catch(e3){}
+        try{showToast('⚠ Storage full','error');}catch(e3){}
         return {ok:false};
       }
     } else {
@@ -1714,12 +1715,7 @@ function fmtHoursLeft(ms){
   if(h>=1)return h+'h '+m+'m';
   return m+'m';
 }
-function fmtViews(n){
-  n=Number(n)||0;
-  if(n>=1000000)return (n/1000000).toFixed(1).replace(/\.0$/,'')+'M';
-  if(n>=1000)return (n/1000).toFixed(1).replace(/\.0$/,'')+'K';
-  return String(n);
-}
+function fmtViews(n){n=Number(n)||0;if(n>=1000000)return (n/1000000).toFixed(1).replace(/\.0$/,'')+'M';if(n>=1000)return (n/1000).toFixed(1).replace(/\.0$/,'')+'K';return String(n);}
 function fmtDateInput(ts){var d=new Date(ts);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function getTzNowDate(){return new Date().toLocaleDateString('en-TZ',{timeZone:'Africa/Dar_es_Salaam',weekday:'long',day:'numeric',month:'long',year:'numeric'});}
 function getDayStart(o){var d=new Date();d.setDate(d.getDate()+o);d.setHours(0,0,0,0);return d;}
@@ -1728,11 +1724,7 @@ function escapeHtml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace
 function escapeAttr(s){return escapeHtml(s);}
 function normStore(s){return String(s==null?'':s).trim();}
 function normName(s){return String(s==null?'':s).trim().toLowerCase();}
-function avatarUrl(name,bg){
-  var n=String(name||'User').trim()||'User';
-  var b=(bg||'128C7E').replace('#','');
-  return 'https://ui-avatars.com/api/?background='+b+'&color=fff&name='+encodeURIComponent(n)+'&bold=true&size=128';
-}
+function avatarUrl(name,bg){var n=String(name||'User').trim()||'User';var b=(bg||'128C7E').replace('#','');return 'https://ui-avatars.com/api/?background='+b+'&color=fff&name='+encodeURIComponent(n)+'&bold=true&size=128';}
 function showToast(msg,type){
   type=type||'info';
   try{
@@ -1746,7 +1738,6 @@ function showToast(msg,type){
   }catch(e){}
 }
 
-/* THEME */
 function applyTheme(){
   var u=getCurrentUser();
   var isDark=u?u.theme==='dark':false;
@@ -1762,11 +1753,7 @@ function getTenantData(k,def){return lsGet(tenantKey(k),def);}
 function setTenantData(k,v){lsSet(tenantKey(k),v);}
 function getAllTenants(){var a=lsGet('sb_tenants',[]);return Array.isArray(a)?a:[];}
 function saveTenants(ts){return lsSet('sb_tenants',ts).ok;}
-function getTenant(id){
-  var all=getAllTenants();
-  for(var i=0;i<all.length;i++){if(all[i].id===id)return all[i];}
-  return null;
-}
+function getTenant(id){var all=getAllTenants();for(var i=0;i<all.length;i++){if(all[i].id===id)return all[i];}return null;}
 
 /* CURRENT USER */
 function getCurrentUser(){
@@ -1787,11 +1774,7 @@ function setCurrentUser(u){
   if(u){var safe=Object.assign({},u);delete safe.password;setTenantData('_currentUser',safe);}
   else setTenantData('_currentUser',null);
 }
-function getUser(id){
-  var all=getTenantData('users',[]);
-  for(var i=0;i<all.length;i++){if(all[i].id===id)return all[i];}
-  return null;
-}
+function getUser(id){var all=getTenantData('users',[]);for(var i=0;i<all.length;i++){if(all[i].id===id)return all[i];}return null;}
 function getUserPhotoKey(user){if(!user)return '';return user.photoKey||'';}
 function getUserPhoto(user){
   if(!user)return avatarUrl('User','128C7E');
@@ -1802,21 +1785,17 @@ function getUserPhoto(user){
   return avatarUrl(name,'128C7E');
 }
 function getUserPhotoHtml(user,cls,st){
-  var key=getUserPhotoKey(user);
-  var src=getUserPhoto(user);
+  var key=getUserPhotoKey(user);var src=getUserPhoto(user);
   var attrs=key?' data-photo-key="'+escapeHtml(key)+'"':'';
-  var c=cls?' class="'+cls+'"':'';
-  var s=st?' style="'+st+'"':'';
+  var c=cls?' class="'+cls+'"':'';var s=st?' style="'+st+'"':'';
   return '<img src="'+src+'"'+c+s+attrs+' alt=""/>';
 }
 function getCompanyPhotoHtml(id,cls,st){
-  var op=getTenantOwnerPublic(id);
-  var key=op.photoKey||'';
+  var op=getTenantOwnerPublic(id);var key=op.photoKey||'';
   var t2=getTenant(id);
   var src=(key&&_mediaUrlCache[key])?_mediaUrlCache[key]:avatarUrl((t2&&t2.companyName)||'Company','128C7E');
   var attrs=key?' data-photo-key="'+escapeHtml(key)+'"':'';
-  var c=cls?' class="'+cls+'"':'';
-  var s=st?' style="'+st+'"':'';
+  var c=cls?' class="'+cls+'"':'';var s=st?' style="'+st+'"':'';
   return '<img src="'+src+'"'+c+s+attrs+' alt=""/>';
 }
 
@@ -1905,9 +1884,7 @@ function getTenantOwnerPublic(tenantId){
   var op=Object.assign({},tn.ownerPublic||{});
   var users=lsGet('sb_tenant_'+tenantId+'_users',[]);
   var owner=null;
-  if(Array.isArray(users)){
-    for(var i=0;i<users.length;i++){if(users[i].role==='owner'){owner=users[i];break;}}
-  }
+  if(Array.isArray(users)){for(var i=0;i<users.length;i++){if(users[i].role==='owner'){owner=users[i];break;}}}
   if(owner){
     if(!op.photoKey&&owner.photoKey)op.photoKey=owner.photoKey;
     if(!op.bio&&owner.bio)op.bio=owner.bio;
@@ -2087,18 +2064,34 @@ function startHeartbeat(){if(heartbeatInterval)clearInterval(heartbeatInterval);
 /* ADS */
 function getGlobalAds(){var a=lsGet(GLOBAL_ADS_KEY,[]);return Array.isArray(a)?a:[];}
 
+/* ★ FIX: saveGlobalAds — strip base64 + prune on quota */
 function saveGlobalAds(a,skipPush){
+  // ★ Strip base64 bloat BEFORE writing
+  if(Array.isArray(a)){
+    for(var i=0;i<a.length;i++){
+      var ad=a[i];
+      if(ad && ad.image && typeof ad.image==='string' && ad.image.indexOf('data:')===0 && ad.image.length>2000){
+        ad.image='';
+      }
+    }
+  }
   if(skipPush){
     try{localStorage.setItem(GLOBAL_ADS_KEY,JSON.stringify(a));}
     catch(e){
-      tryCleanupLocalStorage();
-      try{localStorage.setItem(GLOBAL_ADS_KEY,JSON.stringify(a));}catch(e2){}
+      // ★ On quota error, keep only last 7 days of ads
+      try{
+        var recent=a.filter(function(ad){return ad && ad.timestamp && (Date.now()-ad.timestamp) < 7*24*60*60*1000;});
+        localStorage.setItem(GLOBAL_ADS_KEY,JSON.stringify(recent));
+        console.log('[Storage] Pruned ads to last 7 days ('+recent.length+'/'+a.length+')');
+      }catch(e2){
+        try{localStorage.removeItem(GLOBAL_ADS_KEY);}catch(e3){}
+      }
     }
     return;
   }
   lsSet(GLOBAL_ADS_KEY,a);
   if(Array.isArray(a)){
-    for(var i=0;i<a.length;i++){if(a[i]&&a[i].id)schedulePostPush(a[i]);}
+    for(var j=0;j<a.length;j++){if(a[j]&&a[j].id)schedulePostPush(a[j]);}
   }
 }
 
@@ -2166,11 +2159,7 @@ function toggleAdLike(adId){
   if(supabaseClient)supabaseClient.from(TBL_POSTS).update({likes_count:ad.likes.length,updated_at:new Date().toISOString()}).eq('id',Number(adId)).catch(function(e){});
   var btn=document.getElementById('like-btn-'+adId);
   var cnt=document.getElementById('like-count-'+adId);
-  if(btn){
-    btn.classList.toggle('liked',!wasLiked);
-    var icon=btn.querySelector('i');
-    if(icon)icon.className=(!wasLiked?'fas':'far')+' fa-heart';
-  }
+  if(btn){btn.classList.toggle('liked',!wasLiked);var icon=btn.querySelector('i');if(icon)icon.className=(!wasLiked?'fas':'far')+' fa-heart';}
   if(cnt)cnt.textContent=ad.likes.length>0?ad.likes.length:'';
 }
 
@@ -3318,9 +3307,6 @@ function initApp(user){
   showSyncButton();
 }
 
-/* ============================================================
-   UPDATED: handleLogin — inapull credentials kutoka Supabase KABLA ya kuverify
-   ============================================================ */
 async function handleLogin(){
   var un = document.getElementById('loginUsername').value.trim();
   var pw = document.getElementById('loginPassword').value.trim();
@@ -3333,7 +3319,6 @@ async function handleLogin(){
   var lock = loginLockedSeconds();
   if(lock > 0){ er.textContent = '⏳ Wait ' + lock + 's'; return; }
 
-  // ★ Pull fresh credentials from Supabase BEFORE verifying
   if(supabaseClient){
     er.textContent = '⏳ Verifying...';
     er.style.color = 'var(--text-muted)';
@@ -3349,7 +3334,6 @@ async function handleLogin(){
     }
   }
 
-  // ── Super Admin ──
   if(un === SUPER_ADMIN_USERNAME && hashPw(un,pw) === getSuperHash()){
     _loginFails = 0;
     isSuperAdmin = true;
@@ -3365,7 +3349,6 @@ async function handleLogin(){
     return;
   }
 
-  // ── MEX Employee ──
   var mex = getMexEmployees();
   var uL = normalizeUsername(un);
   for(var j=0;j<mex.length;j++){
@@ -3373,16 +3356,12 @@ async function handleLogin(){
     var eu = normalizeUsername(emp.username);
     if(eu && eu === uL && verifyPw(emp,pw)){
       _loginFails = 0;
-      if(!isHashed(emp.password)){
-        updateMexEmployee(emp.id,{password:hashPw(emp.username,pw)});
-      }
+      if(!isHashed(emp.password)){updateMexEmployee(emp.id,{password:hashPw(emp.username,pw)});}
       isSuperAdmin = false;
       isMexEmployee = true;
       currentMexEmployeeId = emp.id;
       currentTenantId = null;
-      var eo = {id:emp.id,username:emp.username,fullName:emp.name,role:'mexemployee',
-                phone:emp.phone||'',photoKey:emp.photoKey||'',
-                theme:emp.theme||'light',bio:emp.bio||''};
+      var eo = {id:emp.id,username:emp.username,fullName:emp.name,role:'mexemployee',phone:emp.phone||'',photoKey:emp.photoKey||'',theme:emp.theme||'light',bio:emp.bio||''};
       setMexSession(eo);
       setCurrentUser(null);
       document.getElementById('loginPage').classList.add('hidden');
@@ -3392,7 +3371,6 @@ async function handleLogin(){
     }
   }
 
-  // ── Tenant user ──
   var ts = getAllTenants();
   for(var k=0;k<ts.length;k++){
     var tn = ts[k];
@@ -3401,13 +3379,9 @@ async function handleLogin(){
     var users = getTenantData('users',[]);
     currentTenantId = oldTid;
 
-    // Normalized compare (fixes case-sensitivity bug too)
     var found = null;
     for(var m=0;m<users.length;m++){
-      if(normalizeUsername(users[m].username) === normalizeUsername(un)){
-        found = users[m];
-        break;
-      }
+      if(normalizeUsername(users[m].username) === normalizeUsername(un)){found = users[m];break;}
     }
     if(found && verifyPw(found,pw)){
       if(tn.pendingApproval){ er.textContent = '⏳ Account pending approval'; return; }
@@ -3420,15 +3394,10 @@ async function handleLogin(){
       currentMexEmployeeId = null;
       currentTenantId = tn.id;
 
-      // Upgrade plain password → hashed
       if(!isHashed(found.password)){
         var allU = getTenantData('users',[]);
         for(var n=0;n<allU.length;n++){
-          if(Number(allU[n].id) === Number(found.id)){
-            allU[n].password = hashPw(allU[n].username,pw);
-            found = allU[n];
-            break;
-          }
+          if(Number(allU[n].id) === Number(found.id)){allU[n].password = hashPw(allU[n].username,pw);found = allU[n];break;}
         }
         setTenantData('users',allU);
       }
@@ -3445,6 +3414,26 @@ async function handleLogin(){
 
   registerLoginFail();
   er.textContent = '⚠ Invalid credentials';
+}
+
+/* ★ DIAGNOSTIC — checkStorageUsage() in browser console */
+function checkStorageUsage(){
+  var sizes = {}; var total = 0;
+  for(var i=0;i<localStorage.length;i++){
+    var k = localStorage.key(i);
+    var v = localStorage.getItem(k) || '';
+    var size = (k.length + v.length) * 2;
+    sizes[k] = size; total += size;
+  }
+  var sorted = Object.keys(sizes).sort(function(a,b){return sizes[b]-sizes[a];});
+  console.log('=== 📊 STORAGE USAGE ===');
+  console.log('Total: ' + (total/1024/1024).toFixed(2) + ' MB / ~5 MB (' + ((total/5242880)*100).toFixed(1) + '%)');
+  console.log('Top 15 keys:');
+  for(var j=0;j<Math.min(sorted.length,15);j++){
+    var key = sorted[j];
+    console.log('  ' + (sizes[key]/1024).toFixed(1).padStart(8) + ' KB  ' + key);
+  }
+  return {total:total, breakdown:sizes};
 }
 
 /* PAYMENT PLAN */
