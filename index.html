@@ -749,7 +749,6 @@ var _relWriteTimer=null;
 
 var SUPABASE_SYNC_EXCLUDE=['sb_session','sb_login_lock','sb_superadmin_logged_in','sb_mex_current_employee','sb_chat_wallpaper_type','sb_chat_wallpaper_value','sb_lang'];
 
-/* ★★★ UPDATED: shouldSyncKey — pia ina-exclude *_currentUser keys */
 function shouldSyncKey(key){
   if(!key)return false;
   for(var i=0;i<SUPABASE_SYNC_EXCLUDE.length;i++){
@@ -759,7 +758,6 @@ function shouldSyncKey(key){
   return true;
 }
 
-/* ★★★ NEW: patchBuilderCatch — inawezesha .catch() kwenye Postgrest builder */
 function patchBuilderCatch(){
   try{
     if(!supabaseClient) return;
@@ -770,25 +768,17 @@ function patchBuilderCatch(){
         value:function(f){return this.then(undefined,f);},
         configurable:true,writable:true
       });
-      console.log('[Supabase] .catch patched on builder prototype');
     }
-  }catch(e){
-    console.warn('[Supabase] patchBuilderCatch failed:',e);
-  }
+  }catch(e){console.warn('[Supabase] patchBuilderCatch failed:',e);}
 }
 
 function initSupabase(){
   try{
     if(window.supabase && typeof window.supabase.createClient==='function'){
       supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
-      console.log('[Supabase] client ready');
       patchBuilderCatch();
-    } else {
-      console.warn('[Supabase] SDK missing');
-    }
-  } catch(e){
-    console.warn('[Supabase] init failed:',e);
-  }
+    } else {console.warn('[Supabase] SDK missing');}
+  } catch(e){console.warn('[Supabase] init failed:',e);}
 }
 
 function pullAllFromSupabase(){
@@ -801,109 +791,66 @@ function pullAllFromSupabase(){
     supabaseClient.from(TBL_COMMENTS).select('*')
   ]).then(function(results){
     var hadError=false;
-    for(var i=0;i<results.length;i++){
-      if(results[i] && results[i].error){ hadError=true; console.warn('[Pull] table error:', results[i].error); }
-    }
-
-    var kvRes=results[0];
-    var profRes=results[1];
-    var postRes=results[2];
-    var likeRes=results[3];
-    var cmtRes=results[4];
-
+    for(var i=0;i<results.length;i++){if(results[i] && results[i].error){hadError=true;console.warn('[Pull] table error:',results[i].error);}}
+    var kvRes=results[0],profRes=results[1],postRes=results[2],likeRes=results[3],cmtRes=results[4];
     if(kvRes&&!kvRes.error&&kvRes.data){
       var cloudKeys={};
       var SKIP_KEYS={'sb_global_ads':1,'sb_chat_messages':1,'sb_member_earnings':1,'sb_member_payments':1};
       kvRes.data.forEach(function(row){
         cloudKeys[row.key]=true;
         if(!shouldSyncKey(row.key))return;
-        if(SKIP_KEYS[row.key]){console.log('[Boot pull] skip redundant:',row.key);return;}
-        try{
-          if(row.value!==null&&row.value!==undefined){
-            localStorage.setItem(row.key,JSON.stringify(row.value));
-          }
-        }catch(e){
-          console.warn('[Boot pull] quota hit for',row.key,'- cleaning');
-          tryCleanupLocalStorage();
-          try{localStorage.setItem(row.key,JSON.stringify(row.value));}catch(e2){console.warn('[Boot pull] still failed:',row.key);}
-        }
+        if(SKIP_KEYS[row.key])return;
+        try{if(row.value!==null&&row.value!==undefined){localStorage.setItem(row.key,JSON.stringify(row.value));}}
+        catch(e){tryCleanupLocalStorage();try{localStorage.setItem(row.key,JSON.stringify(row.value));}catch(e2){console.warn('[Boot pull] still failed:',row.key);}}
       });
       migrateMissingLocalKeys(cloudKeys);
     }
     if(profRes&&!profRes.error&&profRes.data){
       profRes.data.forEach(applyProfileFromCloud);
-      if(_superAdminPhotoKey){
-        dbSet(STORES.json,SUPER_ADMIN_PHOTO_KEY,_superAdminPhotoKey).catch(function(){});
-      }
+      if(_superAdminPhotoKey){dbSet(STORES.json,SUPER_ADMIN_PHOTO_KEY,_superAdminPhotoKey).catch(function(){});}
     }
-    if(postRes&&!postRes.error&&postRes.data){
-      mergePostsFromCloud(postRes.data,likeRes&&likeRes.data||[],cmtRes&&cmtRes.data||[]);
-    }
-    console.log('[Supabase] pulled KV='+(kvRes&&kvRes.data?kvRes.data.length:0)+' posts='+(postRes&&postRes.data?postRes.data.length:0));
+    if(postRes&&!postRes.error&&postRes.data){mergePostsFromCloud(postRes.data,likeRes&&likeRes.data||[],cmtRes&&cmtRes.data||[]);}
     return {ok:!hadError};
-  }).catch(function(e){
-    console.warn('[Supabase] pull failed:',e);
-    return {ok:false, reason:(e&&e.message)||'pull-failed'};
-  });
+  }).catch(function(e){console.warn('[Supabase] pull failed:',e);return {ok:false,reason:(e&&e.message)||'pull-failed'};});
 }
 
-/* ★★★ UPDATED: 3 queries — users + subscription_expiry tofauti, skip heavy keys */
+/* ★★★ FIXED: pullLoginCredentialsFromCloud — broader query + dedupe + retry */
 async function pullLoginCredentialsFromCloud(){
   if(!supabaseClient) return {ok:false, error:'No Supabase client'};
-
-  // Step 1: safisha keys nzito
   var heavyKeys = ['sb_global_ads','sb_chat_messages','sb_member_earnings','sb_member_payments'];
-  for(var h=0;h<heavyKeys.length;h++){
-    try{
-      if(localStorage.getItem(heavyKeys[h])){
-        localStorage.removeItem(heavyKeys[h]);
-        console.log('[Login sync] freed:', heavyKeys[h]);
-      }
-    }catch(e){}
-  }
+  for(var h=0;h<heavyKeys.length;h++){try{if(localStorage.getItem(heavyKeys[h]))localStorage.removeItem(heavyKeys[h]);}catch(e){}}
   try{tryCleanupLocalStorage();}catch(e){}
-
-  // Step 2: pull 3 sets za keys muhimu
   try{
     var results = await Promise.all([
-      supabaseClient.from(TBL_KV).select('key,value')
-        .in('key',['sb_super_hash','sb_superadmin_user','sb_tenants','sb_mex_employees']),
+      supabaseClient.from(TBL_KV).select('key,value').in('key',['sb_super_hash','sb_superadmin_user','sb_tenants','sb_mex_employees']),
       supabaseClient.from(TBL_KV).select('key,value').like('key','sb_tenant_%_users'),
-      supabaseClient.from(TBL_KV).select('key,value').like('key','sb_tenant_%_subscription_expiry')
+      supabaseClient.from(TBL_KV).select('key,value').like('key','sb_tenant_%_subscription_expiry'),
+      supabaseClient.from(TBL_KV).select('key,value').like('key','sb_tenant_%')
     ]);
-
-    var total = 0;
-    var failed = [];
-    var pulledKeys = [];
+    var total = 0;var failed = [];var seen = {};
     for(var i=0;i<results.length;i++){
       var res = results[i];
-      if(res && res.error){
-        console.warn('[Login sync] query error:', res.error);
-        throw res.error;
-      }
+      if(res && res.error){console.warn('[Login sync] query error:', res.error);continue;}
       var rows = (res && res.data) || [];
       for(var j=0;j<rows.length;j++){
         var key = rows[j].key;
+        if(!key || seen[key]) continue;
+        seen[key] = true;
         if(key === 'sb_global_ads' || key === 'sb_chat_messages' || key === 'sb_member_earnings' || key === 'sb_member_payments') continue;
+        if(!shouldSyncKey(key)) continue;
         try{
           if(rows[j].value !== null && rows[j].value !== undefined){
             localStorage.setItem(key, JSON.stringify(rows[j].value));
             total++;
-            pulledKeys.push(key);
           }
         }catch(e){
           failed.push(key);
-          console.warn('[Login sync] write fail for',key);
+          try{tryCleanupLocalStorage();localStorage.setItem(key, JSON.stringify(rows[j].value));total++;var idx=failed.indexOf(key);if(idx>-1)failed.splice(idx,1);}catch(e2){}
         }
       }
     }
-    console.log('[Login sync] pulled', total, 'keys:', pulledKeys);
-    if(failed.length) console.warn('[Login sync] failed:', failed);
-    return {ok:true, count:total, failed:failed, keys:pulledKeys};
-  }catch(e){
-    console.warn('[Login sync] failed:', e);
-    return {ok:false, error:(e && e.message) || 'Sync failed'};
-  }
+    return {ok:true, count:total, failed:failed};
+  }catch(e){console.warn('[Login sync] failed:', e);return {ok:false, error:(e && e.message) || 'Sync failed'};}
 }
 
 function applyProfileFromCloud(p){
@@ -913,129 +860,63 @@ function applyProfileFromCloud(p){
       _superAdminPhotoKey=p.photo_key||null;
       var su=lsGet('sb_superadmin_user',null)||{id:0,username:'Super Admin',role:'superadmin',store:'All',theme:'light'};
       su.fullName=p.full_name||su.fullName||'Super Admin';
-      su.bio=p.bio||'';
-      su.phone=p.phone||'';
-      su.email=p.email||'';
-      su.photoKey=p.photo_key||'';
-      su.theme=p.theme||'light';
-      su.socialWhatsapp=p.social_whatsapp||'';
-      su.socialInstagram=p.social_instagram||'';
-      su.socialFacebook=p.social_facebook||'';
-      su.socialTiktok=p.social_tiktok||'';
-      su.socialWebsite=p.social_website||'';
-      lsSet('sb_superadmin_user',su);
-      return;
+      su.bio=p.bio||'';su.phone=p.phone||'';su.email=p.email||'';su.photoKey=p.photo_key||'';su.theme=p.theme||'light';
+      su.socialWhatsapp=p.social_whatsapp||'';su.socialInstagram=p.social_instagram||'';su.socialFacebook=p.social_facebook||'';
+      su.socialTiktok=p.social_tiktok||'';su.socialWebsite=p.social_website||'';
+      lsSet('sb_superadmin_user',su);return;
     }
     if(p.user_type==='mex'){
-      var emps=getMexEmployees();
-      var idx=-1;
-      for(var i=0;i<emps.length;i++){
-        if(Number(emps[i].id)===Number(p.user_id)){idx=i;break;}
-      }
+      var emps=getMexEmployees();var idx=-1;
+      for(var i=0;i<emps.length;i++){if(Number(emps[i].id)===Number(p.user_id)){idx=i;break;}}
       if(idx===-1)return;
-      emps[idx].name=p.full_name||emps[idx].name;
-      emps[idx].bio=p.bio||'';
-      emps[idx].phone=p.phone||emps[idx].phone||'';
-      emps[idx].email=p.email||'';
-      emps[idx].photoKey=p.photo_key||'';
-      emps[idx].theme=p.theme||'light';
-      emps[idx].socialWhatsapp=p.social_whatsapp||'';
-      emps[idx].socialInstagram=p.social_instagram||'';
-      emps[idx].socialFacebook=p.social_facebook||'';
-      emps[idx].socialTiktok=p.social_tiktok||'';
-      emps[idx].socialWebsite=p.social_website||'';
-      saveMexEmployees(emps);
-      return;
+      emps[idx].name=p.full_name||emps[idx].name;emps[idx].bio=p.bio||'';emps[idx].phone=p.phone||emps[idx].phone||'';
+      emps[idx].email=p.email||'';emps[idx].photoKey=p.photo_key||'';emps[idx].theme=p.theme||'light';
+      emps[idx].socialWhatsapp=p.social_whatsapp||'';emps[idx].socialInstagram=p.social_instagram||'';
+      emps[idx].socialFacebook=p.social_facebook||'';emps[idx].socialTiktok=p.social_tiktok||'';emps[idx].socialWebsite=p.social_website||'';
+      saveMexEmployees(emps);return;
     }
     if(p.user_type==='tenant'&&p.tenant_id){
-      var users=lsGet('sb_tenant_'+p.tenant_id+'_users',[]);
-      if(!Array.isArray(users))users=[];
+      var users=lsGet('sb_tenant_'+p.tenant_id+'_users',[]);if(!Array.isArray(users))users=[];
       var uidx=-1;
-      for(var j=0;j<users.length;j++){
-        if(Number(users[j].id)===Number(p.user_id)){uidx=j;break;}
-      }
+      for(var j=0;j<users.length;j++){if(Number(users[j].id)===Number(p.user_id)){uidx=j;break;}}
       if(uidx===-1)return;
       users[uidx].fullName=p.full_name||users[uidx].fullName||users[uidx].username;
-      users[uidx].bio=p.bio||'';
-      users[uidx].phone=p.phone||'';
-      users[uidx].email=p.email||'';
-      users[uidx].photoKey=p.photo_key||'';
-      users[uidx].theme=p.theme||'light';
-      users[uidx].socialWhatsapp=p.social_whatsapp||'';
-      users[uidx].socialInstagram=p.social_instagram||'';
-      users[uidx].socialFacebook=p.social_facebook||'';
-      users[uidx].socialTiktok=p.social_tiktok||'';
-      users[uidx].socialWebsite=p.social_website||'';
+      users[uidx].bio=p.bio||'';users[uidx].phone=p.phone||'';users[uidx].email=p.email||'';users[uidx].photoKey=p.photo_key||'';users[uidx].theme=p.theme||'light';
+      users[uidx].socialWhatsapp=p.social_whatsapp||'';users[uidx].socialInstagram=p.social_instagram||'';
+      users[uidx].socialFacebook=p.social_facebook||'';users[uidx].socialTiktok=p.social_tiktok||'';users[uidx].socialWebsite=p.social_website||'';
       lsSet('sb_tenant_'+p.tenant_id+'_users',users);
       if(users[uidx].role==='owner')syncTenantOwnerPublic(p.tenant_id);
     }
-  } catch(e){
-    console.warn('[Profile apply] error:',e);
-  }
+  } catch(e){console.warn('[Profile apply] error:',e);}
 }
 
 function mergePostsFromCloud(posts,likes,comments){
   try{
     var adsById={};
     var existing=getGlobalAds();
-    for(var e=0;e<existing.length;e++){
-      var eid=String(existing[e].id);
-      if(_pendingPostUpserts[eid]){adsById[existing[e].id]=existing[e];}
-    }
+    for(var e=0;e<existing.length;e++){var eid=String(existing[e].id);if(_pendingPostUpserts[eid]){adsById[existing[e].id]=existing[e];}}
     var likesByPost={};
-    likes.forEach(function(l){
-      if(!likesByPost[l.post_id])likesByPost[l.post_id]=[];
-      likesByPost[l.post_id].push(l.user_key);
-    });
+    likes.forEach(function(l){if(!likesByPost[l.post_id])likesByPost[l.post_id]=[];likesByPost[l.post_id].push(l.user_key);});
     var cmtsByPost={};
-    comments.forEach(function(c){
-      if(!cmtsByPost[c.post_id])cmtsByPost[c.post_id]=[];
-      cmtsByPost[c.post_id].push(c);
-    });
+    comments.forEach(function(c){if(!cmtsByPost[c.post_id])cmtsByPost[c.post_id]=[];cmtsByPost[c.post_id].push(c);});
     posts.forEach(function(p){
       var ad=adsById[p.id]||{id:p.id};
-      ad.title=p.title||'';
-      ad.content=p.content||'';
-      ad.postedBy=p.posted_by||'company';
-      ad.posterId=p.poster_id||null;
-      ad.tenantId=p.tenant_id||null;
-      ad.authorName=p.author_name||'';
-      ad.companyName=p.company_name||'';
-      ad.mediaKey=p.media_key||null;
-      ad.mediaType=p.media_type||null;
-      ad.posterKey=p.poster_key||null;
-      ad.image=p.image||'';
+      ad.title=p.title||'';ad.content=p.content||'';ad.postedBy=p.posted_by||'company';
+      ad.posterId=p.poster_id||null;ad.tenantId=p.tenant_id||null;ad.authorName=p.author_name||'';
+      ad.companyName=p.company_name||'';ad.mediaKey=p.media_key||null;ad.mediaType=p.media_type||null;
+      ad.posterKey=p.poster_key||null;ad.image=p.image||'';
       if(ad.image && typeof ad.image==='string' && ad.image.indexOf('data:')===0 && ad.image.length>2000){ad.image='';}
-      ad.promoted=!!p.promoted;
-      ad.promotedUntil=Number(p.promoted_until)||0;
-      ad.promotedAt=Number(p.promoted_at)||0;
-      ad.views=Number(p.views)||0;
-      ad.timestamp=Number(p.timestamp)||Date.now();
+      ad.promoted=!!p.promoted;ad.promotedUntil=Number(p.promoted_until)||0;ad.promotedAt=Number(p.promoted_at)||0;
+      ad.views=Number(p.views)||0;ad.timestamp=Number(p.timestamp)||Date.now();
       ad.likes=likesByPost[p.id]||[];
-      var cmts=cmtsByPost[p.id]||[];
-      var byId={};
-      cmts.forEach(function(c){
-        byId[c.id]={
-          id:c.id,userId:c.user_id,userName:c.user_name||'User',
-          photoKey:c.photo_key||'',isSuperAdmin:!!c.is_super_admin,
-          isMexEmployee:!!c.is_mex_employee,mexEmployeeId:c.mex_employee_id||null,
-          tenantId:c.tenant_id||null,text:c.text||'',
-          timestamp:Number(c.timestamp)||0,replies:[]
-        };
-      });
+      var cmts=cmtsByPost[p.id]||[];var byId={};
+      cmts.forEach(function(c){byId[c.id]={id:c.id,userId:c.user_id,userName:c.user_name||'User',photoKey:c.photo_key||'',isSuperAdmin:!!c.is_super_admin,isMexEmployee:!!c.is_mex_employee,mexEmployeeId:c.mex_employee_id||null,tenantId:c.tenant_id||null,text:c.text||'',timestamp:Number(c.timestamp)||0,replies:[]};});
       var top=[];
-      cmts.forEach(function(c){
-        var obj=byId[c.id];
-        if(c.parent_id&&byId[c.parent_id]){obj.parentId=c.parent_id;byId[c.parent_id].replies.push(obj);}
-        else top.push(obj);
-      });
-      ad.comments=top;
-      adsById[p.id]=ad;
+      cmts.forEach(function(c){var obj=byId[c.id];if(c.parent_id&&byId[c.parent_id]){obj.parentId=c.parent_id;byId[c.parent_id].replies.push(obj);}else top.push(obj);});
+      ad.comments=top;adsById[p.id]=ad;
     });
     saveGlobalAds(Object.keys(adsById).map(function(k){return adsById[k];}),true);
-  } catch(e){
-    console.warn('[Merge posts] error:',e);
-  }
+  } catch(e){console.warn('[Merge posts] error:',e);}
 }
 
 function migrateMissingLocalKeys(cloudKeys){
@@ -1053,17 +934,9 @@ function migrateMissingLocalKeys(cloudKeys){
     var chunks=[];
     for(var j=0;j<missing.length;j+=100)chunks.push(missing.slice(j,j+100));
     var p=Promise.resolve();
-    chunks.forEach(function(batch){
-      p=p.then(function(){
-        return supabaseClient.from(TBL_KV).upsert(batch,{onConflict:'key'}).then(function(r){
-          if(r.error)throw r.error;
-        });
-      });
-    });
+    chunks.forEach(function(batch){p=p.then(function(){return supabaseClient.from(TBL_KV).upsert(batch,{onConflict:'key'}).then(function(r){if(r.error)throw r.error;});});});
     return p.catch(function(e){console.warn('[Supabase] missing push:',e);});
-  }catch(e){
-    return Promise.resolve();
-  }
+  }catch(e){return Promise.resolve();}
 }
 
 function scheduleSupabasePush(key,value){
@@ -1078,21 +951,12 @@ function flushKVWrites(){
   if(!supabaseClient)return;
   var keys=Object.keys(_pendingKVWrites);
   if(!keys.length)return;
-  var writes=_pendingKVWrites;
-  _pendingKVWrites={};
+  var writes=_pendingKVWrites;_pendingKVWrites={};
   var rows=[];
-  for(var i=0;i<keys.length;i++){
-    rows.push({key:keys[i],value:writes[keys[i]],updated_at:new Date().toISOString()});
-  }
+  for(var i=0;i<keys.length;i++)rows.push({key:keys[i],value:writes[keys[i]],updated_at:new Date().toISOString()});
   supabaseClient.from(TBL_KV).upsert(rows,{onConflict:'key'})
     .then(function(r){if(r.error)throw r.error;})
-    .catch(function(e){
-      console.warn('[Supabase] KV retry:',e);
-      Object.keys(writes).forEach(function(k){
-        if(!_pendingKVWrites[k])_pendingKVWrites[k]=writes[k];
-      });
-      setTimeout(flushKVWrites,4000);
-    });
+    .catch(function(e){console.warn('[Supabase] KV retry:',e);Object.keys(writes).forEach(function(k){if(!_pendingKVWrites[k])_pendingKVWrites[k]=writes[k];});setTimeout(flushKVWrites,4000);});
 }
 
 function deleteFromSupabase(key){
@@ -1102,33 +966,14 @@ function deleteFromSupabase(key){
 }
 
 function postToRow(ad){
-  return {
-    id:Number(ad.id),title:ad.title||'',content:ad.content||'',
-    posted_by:ad.postedBy||'company',
-    poster_id:ad.posterId?Number(ad.posterId):null,
-    tenant_id:ad.tenantId||null,
-    author_name:ad.authorName||'',
-    company_name:ad.companyName||'',
-    media_key:ad.mediaKey||null,
-    media_type:ad.mediaType||null,
-    poster_key:ad.posterKey||null,
-    image:ad.image||null,
-    promoted:!!ad.promoted,
-    promoted_until:Number(ad.promotedUntil)||0,
-    promoted_at:Number(ad.promotedAt)||0,
-    views:Number(ad.views)||0,
-    likes_count:Array.isArray(ad.likes)?ad.likes.length:0,
-    comments_count:countAdComments(ad),
-    timestamp:Number(ad.timestamp)||Date.now(),
-    updated_at:new Date().toISOString()
-  };
+  return {id:Number(ad.id),title:ad.title||'',content:ad.content||'',posted_by:ad.postedBy||'company',poster_id:ad.posterId?Number(ad.posterId):null,tenant_id:ad.tenantId||null,author_name:ad.authorName||'',company_name:ad.companyName||'',media_key:ad.mediaKey||null,media_type:ad.mediaType||null,poster_key:ad.posterKey||null,image:ad.image||null,promoted:!!ad.promoted,promoted_until:Number(ad.promotedUntil)||0,promoted_at:Number(ad.promotedAt)||0,views:Number(ad.views)||0,likes_count:Array.isArray(ad.likes)?ad.likes.length:0,comments_count:countAdComments(ad),timestamp:Number(ad.timestamp)||Date.now(),updated_at:new Date().toISOString()};
 }
 
-function schedulePostPush(ad){if(!supabaseClient)return;if(!ad||!ad.id)return;_pendingPostUpserts[ad.id]=ad;scheduleRelFlush();}
+function schedulePostPush(ad){if(!supabaseClient||!ad||!ad.id)return;_pendingPostUpserts[ad.id]=ad;scheduleRelFlush();}
 function scheduleLikePush(postId,userKey,liked){if(!supabaseClient)return;_pendingLikeOps.push({postId:Number(postId),userKey:userKey,liked:!!liked});scheduleRelFlush();}
-function scheduleCommentPush(postId,c){if(!supabaseClient)return;if(!c||!c.id)return;_pendingCommentUpserts[c.id]=Object.assign({postId:Number(postId)},c);scheduleRelFlush();}
+function scheduleCommentPush(postId,c){if(!supabaseClient||!c||!c.id)return;_pendingCommentUpserts[c.id]=Object.assign({postId:Number(postId)},c);scheduleRelFlush();}
 function scheduleCommentDelete(cid){if(!supabaseClient)return;_pendingCommentDeletes.push(Number(cid));scheduleRelFlush();}
-function scheduleProfilePush(p){if(!supabaseClient)return;if(!p||!p.userKey)return;_pendingProfileUpserts[p.userKey]=p;scheduleRelFlush();}
+function scheduleProfilePush(p){if(!supabaseClient||!p||!p.userKey)return;_pendingProfileUpserts[p.userKey]=p;scheduleRelFlush();}
 function scheduleRelFlush(){if(_relWriteTimer)clearTimeout(_relWriteTimer);_relWriteTimer=setTimeout(flushRelWrites,600);}
 
 function flushRelWrites(){
@@ -1141,13 +986,11 @@ function flushRelWrites(){
     supabaseClient.from(TBL_POSTS).upsert(postRows,{onConflict:'id'}).catch(function(e){console.warn('[Supabase] posts push:',e);});
   }
   if(_pendingPostDeletes.length){
-    var delIds=_pendingPostDeletes.slice();
-    _pendingPostDeletes=[];
+    var delIds=_pendingPostDeletes.slice();_pendingPostDeletes=[];
     delIds.forEach(function(id){supabaseClient.from(TBL_POSTS).delete().eq('id',id).catch(function(e){});});
   }
   if(_pendingLikeOps.length){
-    var ops=_pendingLikeOps.slice();
-    _pendingLikeOps=[];
+    var ops=_pendingLikeOps.slice();_pendingLikeOps=[];
     ops.forEach(function(op){
       if(op.liked){supabaseClient.from(TBL_LIKES).upsert({post_id:op.postId,user_key:op.userKey},{onConflict:'post_id,user_key'}).catch(function(e){});}
       else{supabaseClient.from(TBL_LIKES).delete().eq('post_id',op.postId).eq('user_key',op.userKey).catch(function(e){});}
@@ -1158,23 +1001,13 @@ function flushRelWrites(){
     var cRows=[];
     for(var j=0;j<cKeys.length;j++){
       var c=_pendingCommentUpserts[cKeys[j]];
-      cRows.push({
-        id:Number(c.id),post_id:Number(c.postId),
-        parent_id:c.parentId?Number(c.parentId):null,
-        user_id:c.userId?Number(c.userId):null,
-        user_name:c.userName||'',photo_key:c.photoKey||null,
-        is_super_admin:!!c.isSuperAdmin,is_mex_employee:!!c.isMexEmployee,
-        mex_employee_id:c.mexEmployeeId?Number(c.mexEmployeeId):null,
-        tenant_id:c.tenantId||null,text:c.text||'',
-        timestamp:Number(c.timestamp)||Date.now()
-      });
+      cRows.push({id:Number(c.id),post_id:Number(c.postId),parent_id:c.parentId?Number(c.parentId):null,user_id:c.userId?Number(c.userId):null,user_name:c.userName||'',photo_key:c.photoKey||null,is_super_admin:!!c.isSuperAdmin,is_mex_employee:!!c.isMexEmployee,mex_employee_id:c.mexEmployeeId?Number(c.mexEmployeeId):null,tenant_id:c.tenantId||null,text:c.text||'',timestamp:Number(c.timestamp)||Date.now()});
     }
     _pendingCommentUpserts={};
     supabaseClient.from(TBL_COMMENTS).upsert(cRows,{onConflict:'id'}).catch(function(e){console.warn('[Supabase] comments push:',e);});
   }
   if(_pendingCommentDeletes.length){
-    var delC=_pendingCommentDeletes.slice();
-    _pendingCommentDeletes=[];
+    var delC=_pendingCommentDeletes.slice();_pendingCommentDeletes=[];
     delC.forEach(function(cid){supabaseClient.from(TBL_COMMENTS).delete().eq('id',cid).catch(function(e){});});
   }
   var prKeys=Object.keys(_pendingProfileUpserts);
@@ -1182,19 +1015,7 @@ function flushRelWrites(){
     var prRows=[];
     for(var k=0;k<prKeys.length;k++){
       var p=_pendingProfileUpserts[prKeys[k]];
-      prRows.push({
-        user_key:p.userKey,user_type:p.userType,
-        tenant_id:p.tenantId||null,user_id:p.userId?Number(p.userId):null,
-        username:p.username||'',full_name:p.fullName||'',
-        photo_key:p.photoKey||null,bio:p.bio||'',
-        phone:p.phone||'',email:p.email||'',
-        social_whatsapp:p.socialWhatsapp||'',
-        social_instagram:p.socialInstagram||'',
-        social_facebook:p.socialFacebook||'',
-        social_tiktok:p.socialTiktok||'',
-        social_website:p.socialWebsite||'',
-        theme:p.theme||'light',updated_at:new Date().toISOString()
-      });
+      prRows.push({user_key:p.userKey,user_type:p.userType,tenant_id:p.tenantId||null,user_id:p.userId?Number(p.userId):null,username:p.username||'',full_name:p.fullName||'',photo_key:p.photoKey||null,bio:p.bio||'',phone:p.phone||'',email:p.email||'',social_whatsapp:p.socialWhatsapp||'',social_instagram:p.socialInstagram||'',social_facebook:p.socialFacebook||'',social_tiktok:p.socialTiktok||'',social_website:p.socialWebsite||'',theme:p.theme||'light',updated_at:new Date().toISOString()});
     }
     _pendingProfileUpserts={};
     supabaseClient.from(TBL_PROFILES).upsert(prRows,{onConflict:'user_key'}).catch(function(e){console.warn('[Supabase] profiles push:',e);});
@@ -1245,39 +1066,30 @@ function setupRealtimeSync(){
   if(!supabaseClient){console.warn('[Realtime] No client — skipping');return;}
   _realtimeChannels.forEach(function(ch){try{supabaseClient.removeChannel(ch);}catch(e){}});
   _realtimeChannels=[];
-  console.log('[Realtime] Subscribing to table changes...');
-
   try{
-    var kvChannel=supabaseClient
-      .channel('mex_kv_realtime')
-      .on('postgres_changes',{event:'*',schema:'public',table:TBL_KV},function(payload){
-        if(isInOwnWriteCooldown())return;
-        if(!payload.new||!payload.new.key)return;
-        if(!shouldSyncKey(payload.new.key))return;
-        if(_pendingKVWrites[payload.new.key])return;
-        try{localStorage.setItem(payload.new.key,JSON.stringify(payload.new.value));}
-        catch(e){tryCleanupLocalStorage();try{localStorage.setItem(payload.new.key,JSON.stringify(payload.new.value));}catch(e2){}}
-        scheduleSoftReRender();
-      })
-      .subscribe(function(status){console.log('[Realtime] KV:',status);});
+    var kvChannel=supabaseClient.channel('mex_kv_realtime').on('postgres_changes',{event:'*',schema:'public',table:TBL_KV},function(payload){
+      if(isInOwnWriteCooldown())return;
+      if(!payload.new||!payload.new.key)return;
+      if(!shouldSyncKey(payload.new.key))return;
+      if(_pendingKVWrites[payload.new.key])return;
+      try{localStorage.setItem(payload.new.key,JSON.stringify(payload.new.value));}
+      catch(e){tryCleanupLocalStorage();try{localStorage.setItem(payload.new.key,JSON.stringify(payload.new.value));}catch(e2){}}
+      scheduleSoftReRender();
+    }).subscribe(function(status){console.log('[Realtime] KV:',status);});
     _realtimeChannels.push(kvChannel);
   }catch(e){console.warn('[Realtime] KV sub failed:',e);}
-
   try{
     var postsChannel=supabaseClient.channel('mex_posts_realtime').on('postgres_changes',{event:'*',schema:'public',table:TBL_POSTS},function(){if(isInOwnWriteCooldown())return;scheduleCloudPullAndRender();}).subscribe();
     _realtimeChannels.push(postsChannel);
   }catch(e){console.warn('[Realtime] Posts sub failed:',e);}
-
   try{
     var likesChannel=supabaseClient.channel('mex_likes_realtime').on('postgres_changes',{event:'*',schema:'public',table:TBL_LIKES},function(){if(isInOwnWriteCooldown())return;scheduleCloudPullAndRender();}).subscribe();
     _realtimeChannels.push(likesChannel);
   }catch(e){console.warn('[Realtime] Likes sub failed:',e);}
-
   try{
     var commentsChannel=supabaseClient.channel('mex_comments_realtime').on('postgres_changes',{event:'*',schema:'public',table:TBL_COMMENTS},function(){if(isInOwnWriteCooldown())return;scheduleCloudPullAndRender();}).subscribe();
     _realtimeChannels.push(commentsChannel);
   }catch(e){console.warn('[Realtime] Comments sub failed:',e);}
-
   try{
     var profilesChannel=supabaseClient.channel('mex_profiles_realtime').on('postgres_changes',{event:'*',schema:'public',table:TBL_PROFILES},function(payload){if(isInOwnWriteCooldown())return;if(payload.new){try{applyProfileFromCloud(payload.new);}catch(e){}}scheduleSoftReRender();}).subscribe();
     _realtimeChannels.push(profilesChannel);
@@ -1492,17 +1304,11 @@ function tryCleanupLocalStorage(){
       if(filtered.length<msgs.length){try{localStorage.setItem(CHAT_KEY,JSON.stringify(filtered));}catch(e){}}
     }
     var total=0;
-    for(var n=0;n<localStorage.length;n++){
-      var kk=localStorage.key(n);
-      total += (kk||'').length + (localStorage.getItem(kk)||'').length;
-    }
+    for(var n=0;n<localStorage.length;n++){var kk=localStorage.key(n);total += (kk||'').length + (localStorage.getItem(kk)||'').length;}
     total = total * 2;
-    console.log('[Storage] Usage: '+(total/1024/1024).toFixed(2)+' MB / ~5 MB');
     if(total > 4000000){
       var purge=[GLOBAL_ADS_KEY, CHAT_KEY, MEMBER_EARNINGS_KEY, MEMBER_PAYMENTS_KEY];
-      for(var p=0;p<purge.length;p++){
-        try{if(localStorage.getItem(purge[p])){localStorage.removeItem(purge[p]);console.log('[Storage] PURGED:', purge[p]);}}catch(e){}
-      }
+      for(var p=0;p<purge.length;p++){try{if(localStorage.getItem(purge[p])){localStorage.removeItem(purge[p]);}}catch(e){}}
     }
   }catch(e){console.warn('[Storage] Cleanup error:',e);}
 }
@@ -1549,6 +1355,7 @@ var replyToCommentId=null;
 var _credentialsTenantId=null;
 var _loginFails=0;
 var _loginLockUntil=Number(lsGet('sb_login_lock',0))||0;
+var sendReportType='sales';
 
 /* UTILS */
 function uid(){return Date.now()*1000+Math.floor(Math.random()*1000);}
@@ -1873,9 +1680,34 @@ function resolveCommentPhotoKey(c){if(!c)return '';if(c.photoKey)return c.photoK
 function getCommenterAvatarHtml(c){if(!c)return '<img src="'+avatarUrl('User','128C7E')+'" alt=""/>';var key=resolveCommentPhotoKey(c);var name=c.userName||'User';var bg=c.isSuperAdmin?'f59e0b':(c.isMexEmployee?'f59e0b':'128C7E');var src=(key&&_mediaUrlCache[key])?_mediaUrlCache[key]:avatarUrl(name,bg);var attrs=key?' data-photo-key="'+escapeHtml(key)+'"':'';return '<img src="'+src+'"'+attrs+' alt=""/>';}
 
 /* COMMENTS MODAL */
-function openCommentsModal(adId){var ads=getGlobalAds();var ad=null;for(var i=0;i<ads.length;i++){if(Number(ads[i].id)===Number(adId)){ad=ads[i];break;}}if(!ad)return;currentCommentsAdId=Number(adId);replyToCommentId=null;var inp=document.getElementById('commentsModalInput');if(inp)inp.value='';document.getElementById('commentsModal').classList.add('show');document.body.classList.add('modal-open');renderCommentsModal();}
-function closeCommentsModal(){document.getElementById('commentsModal').classList.remove('show');currentCommentsAdId=null;replyToCommentId=null;var so=document.querySelector('.modal-overlay.show');if(!so)document.body.classList.remove('modal-open');}
-function renderCommentsModal(){var body=document.getElementById('commentsBody');if(!body)return;var ads=getGlobalAds();var ad=null;for(var i=0;i<ads.length;i++){if(Number(ads[i].id)===Number(currentCommentsAdId)){ad=ads[i];break;}}if(!ad){body.innerHTML='<div class="comments-empty">No data</div>';return;}var comments=Array.isArray(ad.comments)?ad.comments:[];if(!comments.length){body.innerHTML='<div class="comments-empty">No comments yet.</div>';return;}var u=getCurrentUser();var html='';var sorted=comments.slice().sort(function(a,b){return a.timestamp-b.timestamp;});for(var j=0;j<sorted.length;j++)html+=renderCommentItemHtml(ad,sorted[j],false,u);body.innerHTML=html;setTimeout(hydratePhotos,20);}
+function openCommentsModal(adId){
+  var ads=getGlobalAds();var ad=null;
+  for(var i=0;i<ads.length;i++){if(Number(ads[i].id)===Number(adId)){ad=ads[i];break;}}
+  if(!ad)return;
+  currentCommentsAdId=Number(adId);replyToCommentId=null;
+  var inp=document.getElementById('commentsModalInput');if(inp)inp.value='';
+  document.getElementById('commentsModal').classList.add('show');
+  document.body.classList.add('modal-open');
+  renderCommentsModal();
+}
+function closeCommentsModal(){
+  document.getElementById('commentsModal').classList.remove('show');
+  currentCommentsAdId=null;replyToCommentId=null;
+  var so=document.querySelector('.modal-overlay.show');
+  if(!so)document.body.classList.remove('modal-open');
+}
+function renderCommentsModal(){
+  var body=document.getElementById('commentsBody');if(!body)return;
+  var ads=getGlobalAds();var ad=null;
+  for(var i=0;i<ads.length;i++){if(Number(ads[i].id)===Number(currentCommentsAdId)){ad=ads[i];break;}}
+  if(!ad){body.innerHTML='<div class="comments-empty">No data</div>';return;}
+  var comments=Array.isArray(ad.comments)?ad.comments:[];
+  if(!comments.length){body.innerHTML='<div class="comments-empty">No comments yet.</div>';return;}
+  var u=getCurrentUser();var html='';
+  var sorted=comments.slice().sort(function(a,b){return a.timestamp-b.timestamp;});
+  for(var j=0;j<sorted.length;j++)html+=renderCommentItemHtml(ad,sorted[j],false,u);
+  body.innerHTML=html;setTimeout(hydratePhotos,20);
+}
 function renderCommentItemHtml(ad,c,isReply,u){
   var isOwn=isSuperAdmin?!!c.isSuperAdmin:(isMexEmployee?(!!c.isMexEmployee&&c.userId===currentMexEmployeeId):(!c.isSuperAdmin&&!c.isMexEmployee&&c.tenantId===currentTenantId&&c.userId===(u?u.id:-1)));
   var replyBtn=!isReply?'<button class="com-act-btn" onclick="setReplyTo(\''+c.id+'\')">Reply</button>':'';
@@ -1889,8 +1721,24 @@ function renderCommentItemHtml(ad,c,isReply,u){
   }
   return '<div class="comments-item'+(isReply?' reply':'')+'" id="cmt-'+c.id+'"><div class="com-avatar">'+getCommenterAvatarHtml(c)+'</div><div class="com-body"><div class="com-line"><span class="com-author">'+escapeHtml(c.userName||'User')+'</span><span class="com-text">'+escapeHtml(c.text||'')+'</span></div><div class="com-meta"><span>'+fmtRelative(c.timestamp)+'</span>'+replyBtn+delBtn+'</div>'+repliesHtml+'</div></div>';
 }
-function setReplyTo(commentId){if(!currentCommentsAdId)return;var ads=getGlobalAds();var ad=null;for(var i=0;i<ads.length;i++){if(Number(ads[i].id)===Number(currentCommentsAdId)){ad=ads[i];break;}}if(!ad||!Array.isArray(ad.comments))return;var c=null;for(var j=0;j<ad.comments.length;j++){if(Number(ad.comments[j].id)===Number(commentId)){c=ad.comments[j];break;}}if(!c)return;replyToCommentId=Number(commentId);var inp=document.getElementById('commentsModalInput');if(inp){inp.placeholder='Replying to '+(c.userName||'user')+'...';inp.focus();}var bar=document.getElementById('replyIndicator');if(bar){bar.innerHTML='Replying to <b>'+escapeHtml(c.userName||'user')+'</b> <button onclick="cancelReply()" style="background:none!important;color:var(--accent-danger)!important;font-size:.9rem;padding:0 4px!important;font-weight:700;">×</button>';bar.style.display='block';}}
-function cancelReply(){replyToCommentId=null;var inp=document.getElementById('commentsModalInput');if(inp)inp.placeholder='Add a comment...';var bar=document.getElementById('replyIndicator');if(bar){bar.style.display='none';bar.innerHTML='';}}
+function setReplyTo(commentId){
+  if(!currentCommentsAdId)return;
+  var ads=getGlobalAds();var ad=null;
+  for(var i=0;i<ads.length;i++){if(Number(ads[i].id)===Number(currentCommentsAdId)){ad=ads[i];break;}}
+  if(!ad||!Array.isArray(ad.comments))return;
+  var c=null;for(var j=0;j<ad.comments.length;j++){if(Number(ad.comments[j].id)===Number(commentId)){c=ad.comments[j];break;}}
+  if(!c)return;
+  replyToCommentId=Number(commentId);
+  var inp=document.getElementById('commentsModalInput');
+  if(inp){inp.placeholder='Replying to '+(c.userName||'user')+'...';inp.focus();}
+  var bar=document.getElementById('replyIndicator');
+  if(bar){bar.innerHTML='Replying to <b>'+escapeHtml(c.userName||'user')+'</b> <button onclick="cancelReply()" style="background:none!important;color:var(--accent-danger)!important;font-size:.9rem;padding:0 4px!important;font-weight:700;">×</button>';bar.style.display='block';}
+}
+function cancelReply(){
+  replyToCommentId=null;
+  var inp=document.getElementById('commentsModalInput');if(inp)inp.placeholder='Add a comment...';
+  var bar=document.getElementById('replyIndicator');if(bar){bar.style.display='none';bar.innerHTML='';}
+}
 function postCommentFromModal(){
   if(!currentCommentsAdId)return;
   var u=getCurrentUser();if(!u)return;
@@ -1902,10 +1750,12 @@ function postCommentFromModal(){
   if(!ad)return;
   if(!Array.isArray(ad.comments))ad.comments=[];
   var newC={id:uid(),userId:isSuperAdmin?0:(isMexEmployee?currentMexEmployeeId:u.id),userName:isSuperAdmin?'Super Admin':(u.fullName||u.username),photoKey:getCurrentCommenterPhotoKey(u),isSuperAdmin:isSuperAdmin,isMexEmployee:isMexEmployee,mexEmployeeId:isMexEmployee?currentMexEmployeeId:null,tenantId:(isSuperAdmin||isMexEmployee)?null:currentTenantId,text:tx,timestamp:Date.now()};
-  if(replyToCommentId){var parent=null;for(var j=0;j<ad.comments.length;j++){if(Number(ad.comments[j].id)===Number(replyToCommentId)){parent=ad.comments[j];break;}}if(parent){if(!Array.isArray(parent.replies))parent.replies=[];newC.parentId=parent.id;parent.replies.push(newC);}}
-  else{newC.replies=[];ad.comments.push(newC);}
-  saveGlobalAds(ads,true);
-  scheduleCommentPush(ad.id,newC);
+  if(replyToCommentId){
+    var parent=null;
+    for(var j=0;j<ad.comments.length;j++){if(Number(ad.comments[j].id)===Number(replyToCommentId)){parent=ad.comments[j];break;}}
+    if(parent){if(!Array.isArray(parent.replies))parent.replies=[];newC.parentId=parent.id;parent.replies.push(newC);}
+  } else {newC.replies=[];ad.comments.push(newC);}
+  saveGlobalAds(ads,true);scheduleCommentPush(ad.id,newC);
   if(supabaseClient)supabaseClient.from(TBL_POSTS).update({comments_count:countAdComments(ad),updated_at:new Date().toISOString()}).eq('id',Number(ad.id)).catch(function(e){});
   inp.value='';cancelReply();renderCommentsModal();updateAdCardCommentCount(ad.id);
 }
@@ -1915,15 +1765,26 @@ function deleteAdComment(adId,cid,parentId){
   var ads=getGlobalAds();var ad=null;
   for(var i=0;i<ads.length;i++){if(Number(ads[i].id)===Number(adId)){ad=ads[i];break;}}
   if(!ad||!Array.isArray(ad.comments))return;
-  if(parentId&&parentId!=='null'&&parentId!==null){var p=null;for(var j=0;j<ad.comments.length;j++){if(Number(ad.comments[j].id)===Number(parentId)){p=ad.comments[j];break;}}if(p&&Array.isArray(p.replies)){var filtered=[];for(var k=0;k<p.replies.length;k++)if(Number(p.replies[k].id)!==Number(cid))filtered.push(p.replies[k]);p.replies=filtered;}}
-  else{var filtered2=[];for(var m=0;m<ad.comments.length;m++)if(Number(ad.comments[m].id)!==Number(cid))filtered2.push(ad.comments[m]);ad.comments=filtered2;}
-  saveGlobalAds(ads,true);
-  scheduleCommentDelete(Number(cid));
+  if(parentId&&parentId!=='null'&&parentId!==null){
+    var p=null;
+    for(var j=0;j<ad.comments.length;j++){if(Number(ad.comments[j].id)===Number(parentId)){p=ad.comments[j];break;}}
+    if(p&&Array.isArray(p.replies)){var filtered=[];for(var k=0;k<p.replies.length;k++)if(Number(p.replies[k].id)!==Number(cid))filtered.push(p.replies[k]);p.replies=filtered;}
+  } else {
+    var filtered2=[];for(var m=0;m<ad.comments.length;m++)if(Number(ad.comments[m].id)!==Number(cid))filtered2.push(ad.comments[m]);ad.comments=filtered2;
+  }
+  saveGlobalAds(ads,true);scheduleCommentDelete(Number(cid));
   if(supabaseClient)supabaseClient.from(TBL_POSTS).update({comments_count:countAdComments(ad),updated_at:new Date().toISOString()}).eq('id',Number(adId)).catch(function(e){});
   if(currentCommentsAdId&&Number(currentCommentsAdId)===Number(adId))renderCommentsModal();
   updateAdCardCommentCount(ad.id);
 }
-function updateAdCardCommentCount(adId){var ads=getGlobalAds();var ad=null;for(var i=0;i<ads.length;i++){if(Number(ads[i].id)===Number(adId)){ad=ads[i];break;}}if(!ad)return;var total=countAdComments(ad);var el=document.getElementById('comment-count-'+adId);if(el)el.textContent=total>0?total:'';}
+function updateAdCardCommentCount(adId){
+  var ads=getGlobalAds();var ad=null;
+  for(var i=0;i<ads.length;i++){if(Number(ads[i].id)===Number(adId)){ad=ads[i];break;}}
+  if(!ad)return;
+  var total=countAdComments(ad);
+  var el=document.getElementById('comment-count-'+adId);
+  if(el)el.textContent=total>0?total:'';
+}
 
 /* MEMBER EARNINGS */
 function getMemberEarnings(){var a=lsGet(MEMBER_EARNINGS_KEY,[]);return Array.isArray(a)?a:[];}
@@ -2020,7 +1881,16 @@ function renderChatContacts(){
   }
   list.innerHTML=html;setTimeout(hydratePhotos,20);
 }
-function selectChatContact(id){var cid=safeDecode(id);var contacts=getChatContacts();var c=null;for(var i=0;i<contacts.length;i++){if(contacts[i].id===cid){c=contacts[i];break;}}if(!c)return;chatCurrentContact=c;var me=chatUserKey();var messages=getChatMessages();var changed=false;for(var j=0;j<messages.length;j++){if(messages[j].from===c.id&&messages[j].to===me.id&&!messages[j].read){messages[j].read=true;changed=true;}}if(changed){saveChatMessages(messages);updateChatBadge();}renderChatContacts();renderChatMessages();var inp=document.getElementById('chatInputArea');if(inp)inp.style.display='flex';}
+function selectChatContact(id){
+  var cid=safeDecode(id);var contacts=getChatContacts();var c=null;
+  for(var i=0;i<contacts.length;i++){if(contacts[i].id===cid){c=contacts[i];break;}}
+  if(!c)return;
+  chatCurrentContact=c;var me=chatUserKey();var messages=getChatMessages();var changed=false;
+  for(var j=0;j<messages.length;j++){if(messages[j].from===c.id&&messages[j].to===me.id&&!messages[j].read){messages[j].read=true;changed=true;}}
+  if(changed){saveChatMessages(messages);updateChatBadge();}
+  renderChatContacts();renderChatMessages();
+  var inp=document.getElementById('chatInputArea');if(inp)inp.style.display='flex';
+}
 function renderChatMessages(){
   var area=document.getElementById('chatMessagesArea');if(!area)return;
   var me=chatUserKey();
@@ -2741,6 +2611,15 @@ function bindGlobalEvents(){
   var lsb=document.getElementById('lowStockAlertBtn');if(lsb)lsb.onclick=openLowStockModal;
   var cb=document.getElementById('chatTopbarBtn');if(cb)cb.onclick=function(){openChatModal();};
   var be=document.getElementById('profileBio');if(be)be.addEventListener('input',updateBioCounter);
+  var wpUp=document.getElementById('wpUploadInput');
+  if(wpUp){
+    wpUp.addEventListener('change',function(e){
+      var f=e.target.files&&e.target.files[0];if(!f)return;
+      if(f.size>10*1024*1024){showToast('Max 10MB','error');return;}
+      saveMediaBlob(f,'wallpaper_').then(function(k){_wpPickerTemp={type:'custom',value:k};showToast('✓ Photo uploaded — click Apply','success');});
+      e.target.value='';
+    });
+  }
   window.addEventListener('beforeunload',function(){var cu=getCurrentUser();if(cu&&!isSuperAdmin&&!isMexEmployee)recordUserLogout(cu.id);try{flushKVWrites();flushRelWrites();}catch(e){}});
 }
 function toggleTheme(){
@@ -2788,7 +2667,7 @@ function initApp(user){
   showSyncButton();
 }
 
-/* ★★★ UPDATED: handleLogin — verbose errors + migrateMissingLocalKeys({}) after login */
+/* ★★★ FIXED: handleLogin — robust verification + auto-heal plaintext passwords */
 async function handleLogin(){
   var un = document.getElementById('loginUsername').value.trim();
   var pw = document.getElementById('loginPassword').value.trim();
@@ -2801,9 +2680,8 @@ async function handleLogin(){
   var lock = loginLockedSeconds();
   if(lock > 0){ er.textContent = '⏳ Wait ' + lock + 's'; return; }
 
-  // ★ Check Supabase loaded
   if(!supabaseClient){
-    er.textContent='⚠ Hakuna muunganisho wa server (Supabase haijapakia). Jaribu mtandao mwingine.';
+    er.textContent='⚠ Server not connected. Check internet and refresh.';
     return;
   }
 
@@ -2818,26 +2696,8 @@ async function handleLogin(){
   if(btn) btn.disabled = false;
 
   if(!sync.ok){
-    er.textContent = '⚠ Server: ' + (sync.error || 'Cannot reach Supabase') + ' — jaribu tena';
-    console.warn('[Login] Sync failed:', sync);
+    er.textContent = '⚠ Server: ' + (sync.error || 'Cannot reach Supabase') + ' — try again';
     return;
-  }
-
-  if(!isSuperAttempt){
-    var tenantsStr = localStorage.getItem('sb_tenants');
-    if(!tenantsStr){
-      er.textContent = '⚠ Data ya companies haikupatikana. Jaribu tena.';
-      console.warn('[Login] No sb_tenants after sync');
-      return;
-    }
-    try{
-      var tj = JSON.parse(tenantsStr);
-      if(!Array.isArray(tj) || tj.length === 0){
-        er.textContent = '⚠ Hakuna company iliyosajiliwa. Wasiliana na admin.';
-        console.warn('[Login] sb_tenants is empty');
-        return;
-      }
-    }catch(e){ console.warn('[Login] sb_tenants parse error:', e); }
   }
 
   // ── Super Admin ──
@@ -2853,8 +2713,7 @@ async function handleLogin(){
     document.getElementById('loginPage').classList.add('hidden');
     document.getElementById('appContainer').classList.add('active');
     initApp(su);
-    // ★ Push any local keys that aren't in cloud
-    try{migrateMissingLocalKeys({}).then(function(){console.log('[Login] uploaded');});}catch(e){console.warn('[Login] migrate err:',e);}
+    try{migrateMissingLocalKeys({}).then(function(){});}catch(e){}
     return;
   }
 
@@ -2877,52 +2736,67 @@ async function handleLogin(){
       document.getElementById('loginPage').classList.add('hidden');
       document.getElementById('appContainer').classList.add('active');
       initApp(eo);
-      try{migrateMissingLocalKeys({}).then(function(){console.log('[Login] uploaded');});}catch(e){console.warn('[Login] migrate err:',e);}
+      try{migrateMissingLocalKeys({}).then(function(){});}catch(e){}
       return;
     }
   }
 
-  // ── Tenant user ──
+  // ── Tenant user (scan all tenants) ──
   var ts = getAllTenants();
+  if(!ts || !ts.length){
+    er.textContent = '⚠ No companies found on server. Contact admin.';
+    return;
+  }
+
   for(var k=0;k<ts.length;k++){
     var tn = ts[k];
+    if(!tn || !tn.id) continue;
     var oldTid = currentTenantId;
     currentTenantId = tn.id;
     var users = getTenantData('users',[]);
     currentTenantId = oldTid;
-
+    if(!Array.isArray(users)) users = [];
     var found = null;
     for(var m=0;m<users.length;m++){
-      if(normalizeUsername(users[m].username) === normalizeUsername(un)){found = users[m];break;}
+      var uu = users[m];
+      if(!uu) continue;
+      if(normalizeUsername(uu.username) === normalizeUsername(un)){ found = uu; break; }
     }
-    if(found && verifyPw(found,pw)){
-      if(tn.pendingApproval){ er.textContent = '⏳ Account pending approval'; return; }
-      if(tn.blocked){ er.textContent = '🚫 Account blocked'; return; }
-      if(isTenantSuspended(tn.id)){ er.textContent = '🔒 Subscription expired'; return; }
+    if(!found) continue;
+    if(!verifyPw(found,pw)) continue;
 
-      _loginFails = 0;
-      isSuperAdmin = false;
-      isMexEmployee = false;
-      currentMexEmployeeId = null;
-      currentTenantId = tn.id;
+    if(tn.pendingApproval){ er.textContent = '⏳ Account pending approval'; return; }
+    if(tn.blocked){ er.textContent = '🚫 Account blocked'; return; }
+    if(isTenantSuspended(tn.id)){ er.textContent = '🔒 Subscription expired'; return; }
 
-      if(!isHashed(found.password)){
-        var allU = getTenantData('users',[]);
-        for(var n=0;n<allU.length;n++){
-          if(Number(allU[n].id) === Number(found.id)){allU[n].password = hashPw(allU[n].username,pw);found = allU[n];break;}
+    _loginFails = 0;
+    isSuperAdmin = false;
+    isMexEmployee = false;
+    currentMexEmployeeId = null;
+    currentTenantId = tn.id;
+
+    // ★ Auto-upgrade plaintext password to hash (and push to cloud)
+    if(!isHashed(found.password)){
+      var allU = getTenantData('users',[]);
+      for(var n=0;n<allU.length;n++){
+        if(Number(allU[n].id) === Number(found.id)){
+          allU[n].password = hashPw(allU[n].username, pw);
+          found = allU[n];
+          break;
         }
-        setTenantData('users',allU);
       }
-
-      setCurrentUser(found);
-      lsSet('sb_session',{tid:tn.id,uid:found.id});
-      recordUserLogin(found.id,found.store);
-      document.getElementById('loginPage').classList.add('hidden');
-      document.getElementById('appContainer').classList.add('active');
-      initApp(found);
-      try{migrateMissingLocalKeys({}).then(function(){console.log('[Login] uploaded');});}catch(e){console.warn('[Login] migrate err:',e);}
-      return;
+      setTenantData('users', allU);
+      console.log('[Login] Upgraded plaintext password to hash for', found.username);
     }
+
+    setCurrentUser(found);
+    lsSet('sb_session',{tid:tn.id,uid:found.id});
+    recordUserLogin(found.id,found.store);
+    document.getElementById('loginPage').classList.add('hidden');
+    document.getElementById('appContainer').classList.add('active');
+    initApp(found);
+    try{migrateMissingLocalKeys({}).then(function(){});}catch(e){}
+    return;
   }
 
   registerLoginFail();
