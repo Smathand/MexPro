@@ -58,7 +58,7 @@ th{text-align:left;padding:12px 12px 12px 0;color:var(--text-muted);font-weight:
 td{padding:14px 12px 14px 0;border-bottom:1px solid var(--border-color);color:var(--text-secondary);vertical-align:middle;font-weight:500}
 tr:last-child td{border-bottom:none}
 .empty-row td{text-align:center;padding:40px;color:var(--text-muted)}
-.page-overlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:var(--bg-body);padding:20px;overflow-y:auto}
+.page-overlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:var(--bg-body);background-image: url(./Temple\ 1.jpeg);padding:20px;overflow-y:auto}
 .page-overlay.hidden{display:none}
 .page-card{margin:20px auto;max-height:92vh;overflow-y:auto;padding:26px 24px;width:100%;max-width:420px;background:var(--bg-card);border-radius:var(--radius-card);box-shadow:var(--shadow-dropdown);border:1px solid var(--border-color);text-align:center}
 .page-card .logo-icon{font-size:44px;color:var(--accent-1);margin-bottom:4px}
@@ -749,7 +749,6 @@ var _relWriteTimer=null;
 
 var SUPABASE_SYNC_EXCLUDE=['sb_session','sb_login_lock','sb_superadmin_logged_in','sb_mex_current_employee','sb_chat_wallpaper_type','sb_chat_wallpaper_value','sb_lang'];
 
-/* ★★★ UPDATED: shouldSyncKey — pia ina-exclude *_currentUser keys */
 function shouldSyncKey(key){
   if(!key)return false;
   for(var i=0;i<SUPABASE_SYNC_EXCLUDE.length;i++){
@@ -759,7 +758,6 @@ function shouldSyncKey(key){
   return true;
 }
 
-/* ★★★ NEW: patchBuilderCatch — inawezesha .catch() kwenye Postgrest builder */
 function patchBuilderCatch(){
   try{
     if(!supabaseClient) return;
@@ -791,20 +789,44 @@ function initSupabase(){
   }
 }
 
+/* ★ FIX: Snapshot ndogo yenye filter (posts za 48h, data ya kampuni yako tu) */
+function getSessionTenantId(){
+  var s=lsGet('sb_session',null);
+  return (s&&s.tid)?s.tid:null;
+}
+
+async function fetchCloudSnapshot(tid){
+  tid=tid||getSessionTenantId()||currentTenantId;
+  var sb=supabaseClient;
+  var since=Date.now()-AD_LIFETIME_MS;
+  var posts=await sb.from(TBL_POSTS).select('*')
+    .gte('timestamp',since).order('timestamp',{ascending:false}).limit(60);
+  var ids=(posts.data||[]).map(function(p){return p.id;});
+  var empty=Promise.resolve({data:[],error:null});
+  var r=await Promise.all([
+    sb.from(TBL_KV).select('key,value').in('key',['sb_tenants','sb_mex_employees','sb_super_hash','sb_superadmin_user']),
+    sb.from(TBL_KV).select('key,value').like('key','sb_tenant_%_users'),
+    sb.from(TBL_KV).select('key,value').like('key','sb_tenant_%_subscription_expiry'),
+    sb.from(TBL_KV).select('key,value').like('key','sb_tenant_%_follows'),
+    tid?sb.from(TBL_KV).select('key,value').like('key','sb_tenant_'+tid+'_%'):empty,
+    sb.from(TBL_PROFILES).select('*'),
+    ids.length?sb.from(TBL_LIKES).select('*').in('post_id',ids):empty,
+    ids.length?sb.from(TBL_COMMENTS).select('*').in('post_id',ids):empty
+  ]);
+  return [
+    {data:[].concat(r[0].data||[],r[1].data||[],r[2].data||[],r[3].data||[],r[4].data||[]),
+     error:r[0].error||r[1].error||r[2].error||r[3].error||r[4].error||null},
+    r[5],posts,r[6],r[7]
+  ];
+}
+
 function pullAllFromSupabase(){
   if(!supabaseClient) return Promise.resolve({ok:false, reason:'no-client'});
-  return Promise.all([
-    supabaseClient.from(TBL_KV).select('key,value'),
-    supabaseClient.from(TBL_PROFILES).select('*'),
-    supabaseClient.from(TBL_POSTS).select('*'),
-    supabaseClient.from(TBL_LIKES).select('*'),
-    supabaseClient.from(TBL_COMMENTS).select('*')
-  ]).then(function(results){
+  return fetchCloudSnapshot().then(function(results){
     var hadError=false;
     for(var i=0;i<results.length;i++){
       if(results[i] && results[i].error){ hadError=true; console.warn('[Pull] table error:', results[i].error); }
     }
-
     var kvRes=results[0];
     var profRes=results[1];
     var postRes=results[2];
@@ -812,23 +834,21 @@ function pullAllFromSupabase(){
     var cmtRes=results[4];
 
     if(kvRes&&!kvRes.error&&kvRes.data){
-      var cloudKeys={};
       var SKIP_KEYS={'sb_global_ads':1,'sb_chat_messages':1,'sb_member_earnings':1,'sb_member_payments':1};
       kvRes.data.forEach(function(row){
-        cloudKeys[row.key]=true;
         if(!shouldSyncKey(row.key))return;
-        if(SKIP_KEYS[row.key]){console.log('[Boot pull] skip redundant:',row.key);return;}
+        if(SKIP_KEYS[row.key])return;
+        if(_pendingKVWrites[row.key])return;
         try{
           if(row.value!==null&&row.value!==undefined){
             localStorage.setItem(row.key,JSON.stringify(row.value));
           }
         }catch(e){
-          console.warn('[Boot pull] quota hit for',row.key,'- cleaning');
           tryCleanupLocalStorage();
           try{localStorage.setItem(row.key,JSON.stringify(row.value));}catch(e2){console.warn('[Boot pull] still failed:',row.key);}
         }
       });
-      migrateMissingLocalKeys(cloudKeys);
+      /* migrateMissingLocalKeys imeondolewa — ilikuwa hatari */
     }
     if(profRes&&!profRes.error&&profRes.data){
       profRes.data.forEach(applyProfileFromCloud);
@@ -847,62 +867,40 @@ function pullAllFromSupabase(){
   });
 }
 
-/* ★★★ UPDATED: 3 queries — users + subscription_expiry tofauti, skip heavy keys */
 async function pullLoginCredentialsFromCloud(){
   if(!supabaseClient) return {ok:false, error:'No Supabase client'};
-
-  // Step 1: safisha keys nzito
-  var heavyKeys = ['sb_global_ads','sb_chat_messages','sb_member_earnings','sb_member_payments'];
+  var heavyKeys=['sb_global_ads','sb_chat_messages','sb_member_earnings','sb_member_payments'];
   for(var h=0;h<heavyKeys.length;h++){
-    try{
-      if(localStorage.getItem(heavyKeys[h])){
-        localStorage.removeItem(heavyKeys[h]);
-        console.log('[Login sync] freed:', heavyKeys[h]);
-      }
-    }catch(e){}
+    try{if(localStorage.getItem(heavyKeys[h])){localStorage.removeItem(heavyKeys[h]);}}catch(e){}
   }
   try{tryCleanupLocalStorage();}catch(e){}
-
-  // Step 2: pull 3 sets za keys muhimu
   try{
-    var results = await Promise.all([
-      supabaseClient.from(TBL_KV).select('key,value')
-        .in('key',['sb_super_hash','sb_superadmin_user','sb_tenants','sb_mex_employees']),
+    var results=await Promise.all([
+      supabaseClient.from(TBL_KV).select('key,value').in('key',['sb_super_hash','sb_superadmin_user','sb_tenants','sb_mex_employees']),
       supabaseClient.from(TBL_KV).select('key,value').like('key','sb_tenant_%_users'),
       supabaseClient.from(TBL_KV).select('key,value').like('key','sb_tenant_%_subscription_expiry')
     ]);
-
-    var total = 0;
-    var failed = [];
-    var pulledKeys = [];
+    var total=0;var failed=[];var pulledKeys=[];
     for(var i=0;i<results.length;i++){
-      var res = results[i];
-      if(res && res.error){
-        console.warn('[Login sync] query error:', res.error);
-        throw res.error;
-      }
-      var rows = (res && res.data) || [];
+      var res=results[i];
+      if(res && res.error){console.warn('[Login sync] query error:',res.error);throw res.error;}
+      var rows=(res&&res.data)||[];
       for(var j=0;j<rows.length;j++){
-        var key = rows[j].key;
-        if(key === 'sb_global_ads' || key === 'sb_chat_messages' || key === 'sb_member_earnings' || key === 'sb_member_payments') continue;
+        var key=rows[j].key;
+        if(key==='sb_global_ads'||key==='sb_chat_messages'||key==='sb_member_earnings'||key==='sb_member_payments')continue;
         try{
-          if(rows[j].value !== null && rows[j].value !== undefined){
-            localStorage.setItem(key, JSON.stringify(rows[j].value));
-            total++;
-            pulledKeys.push(key);
+          if(rows[j].value!==null&&rows[j].value!==undefined){
+            localStorage.setItem(key,JSON.stringify(rows[j].value));
+            total++;pulledKeys.push(key);
           }
-        }catch(e){
-          failed.push(key);
-          console.warn('[Login sync] write fail for',key);
-        }
+        }catch(e){failed.push(key);}
       }
     }
-    console.log('[Login sync] pulled', total, 'keys:', pulledKeys);
-    if(failed.length) console.warn('[Login sync] failed:', failed);
-    return {ok:true, count:total, failed:failed, keys:pulledKeys};
+    console.log('[Login sync] pulled',total,'keys');
+    return {ok:true,count:total,failed:failed,keys:pulledKeys};
   }catch(e){
-    console.warn('[Login sync] failed:', e);
-    return {ok:false, error:(e && e.message) || 'Sync failed'};
+    console.warn('[Login sync] failed:',e);
+    return {ok:false,error:(e&&e.message)||'Sync failed'};
   }
 }
 
@@ -1038,33 +1036,8 @@ function mergePostsFromCloud(posts,likes,comments){
   }
 }
 
-function migrateMissingLocalKeys(cloudKeys){
-  try{
-    var missing=[];
-    for(var i=0;i<localStorage.length;i++){
-      var k=localStorage.key(i);
-      if(!shouldSyncKey(k))continue;
-      if(cloudKeys && cloudKeys[k])continue;
-      var raw=localStorage.getItem(k);
-      if(raw===null)continue;
-      try{missing.push({key:k,value:JSON.parse(raw),updated_at:new Date().toISOString()});}catch(e){}
-    }
-    if(!missing.length)return Promise.resolve();
-    var chunks=[];
-    for(var j=0;j<missing.length;j+=100)chunks.push(missing.slice(j,j+100));
-    var p=Promise.resolve();
-    chunks.forEach(function(batch){
-      p=p.then(function(){
-        return supabaseClient.from(TBL_KV).upsert(batch,{onConflict:'key'}).then(function(r){
-          if(r.error)throw r.error;
-        });
-      });
-    });
-    return p.catch(function(e){console.warn('[Supabase] missing push:',e);});
-  }catch(e){
-    return Promise.resolve();
-  }
-}
+/* ★ FIX: imezimwa kabisa — ilikuwa inaweza kufuta data mpya ya cloud kwa data ya zamani ya kifaa */
+function migrateMissingLocalKeys(){ return Promise.resolve(); }
 
 function scheduleSupabasePush(key,value){
   if(!supabaseClient)return;
@@ -1245,7 +1218,6 @@ function setupRealtimeSync(){
   if(!supabaseClient){console.warn('[Realtime] No client — skipping');return;}
   _realtimeChannels.forEach(function(ch){try{supabaseClient.removeChannel(ch);}catch(e){}});
   _realtimeChannels=[];
-  console.log('[Realtime] Subscribing to table changes...');
 
   try{
     var kvChannel=supabaseClient
@@ -1284,9 +1256,10 @@ function setupRealtimeSync(){
   }catch(e){console.warn('[Realtime] Profiles sub failed:',e);}
 }
 
+/* ★ FIX: 700 -> 3000ms */
 function scheduleCloudPullAndRender(){
   if(_cloudPullTimer)clearTimeout(_cloudPullTimer);
-  _cloudPullTimer=setTimeout(function(){pullFromCloudOnly().then(function(changed){if(changed){softRefreshCurrentView(true);}});},700);
+  _cloudPullTimer=setTimeout(function(){pullFromCloudOnly().then(function(changed){if(changed){softRefreshCurrentView(true);}});},3000);
 }
 function scheduleSoftReRender(){
   if(_realtimeDebounceTimer)clearTimeout(_realtimeDebounceTimer);
@@ -1315,21 +1288,16 @@ function softRefreshCurrentView(force){
     }
   }catch(e){console.warn('[Soft refresh] err:',e);}
 }
+/* ★ FIX: 45000 -> 180000ms */
 function startPeriodicRefresh(){
   if(_periodicRefreshTimer)clearInterval(_periodicRefreshTimer);
-  _periodicRefreshTimer=setInterval(function(){if(!supabaseClient)return;pullFromCloudOnly().then(function(changed){if(changed){softRefreshCurrentView(false);}});},45000);
+  _periodicRefreshTimer=setInterval(function(){if(!supabaseClient)return;pullFromCloudOnly().then(function(changed){if(changed){softRefreshCurrentView(false);}});},180000);
 }
 function pullFromCloudOnly(){
   if(!supabaseClient)return Promise.resolve(false);
   setSyncIndicator(true);
   var beforeHash=localStateHash();
-  return Promise.all([
-    supabaseClient.from(TBL_KV).select('key,value'),
-    supabaseClient.from(TBL_PROFILES).select('*'),
-    supabaseClient.from(TBL_POSTS).select('*'),
-    supabaseClient.from(TBL_LIKES).select('*'),
-    supabaseClient.from(TBL_COMMENTS).select('*')
-  ]).then(function(results){
+  return fetchCloudSnapshot().then(function(results){
     var kvRes=results[0],profRes=results[1],postRes=results[2],likeRes=results[3],cmtRes=results[4];
     if(kvRes&&!kvRes.error&&kvRes.data){
       kvRes.data.forEach(function(row){
@@ -1497,11 +1465,10 @@ function tryCleanupLocalStorage(){
       total += (kk||'').length + (localStorage.getItem(kk)||'').length;
     }
     total = total * 2;
-    console.log('[Storage] Usage: '+(total/1024/1024).toFixed(2)+' MB / ~5 MB');
     if(total > 4000000){
       var purge=[GLOBAL_ADS_KEY, CHAT_KEY, MEMBER_EARNINGS_KEY, MEMBER_PAYMENTS_KEY];
       for(var p=0;p<purge.length;p++){
-        try{if(localStorage.getItem(purge[p])){localStorage.removeItem(purge[p]);console.log('[Storage] PURGED:', purge[p]);}}catch(e){}
+        try{if(localStorage.getItem(purge[p])){localStorage.removeItem(purge[p]);}}catch(e){}
       }
     }
   }catch(e){console.warn('[Storage] Cleanup error:',e);}
@@ -1549,6 +1516,7 @@ var replyToCommentId=null;
 var _credentialsTenantId=null;
 var _loginFails=0;
 var _loginLockUntil=Number(lsGet('sb_login_lock',0))||0;
+var sendReportType='debts';
 
 /* UTILS */
 function uid(){return Date.now()*1000+Math.floor(Math.random()*1000);}
@@ -1594,7 +1562,7 @@ function getCurrentUser(){
   return getTenantData('_currentUser',null);
 }
 function setCurrentUser(u){
-  if(isSuperAdmin){if(u)lsSet('sb_superadmin_user',u);else lsRemove('sb_superadmin_user');return;}
+  if(isSuperAdmin){if(u)lsSet('sb_superadmin_user',u);else{try{localStorage.removeItem('sb_superadmin_user');}catch(e){}}return;}
   if(u){var safe=Object.assign({},u);delete safe.password;setTenantData('_currentUser',safe);}
   else setTenantData('_currentUser',null);
 }
@@ -2788,165 +2756,192 @@ function initApp(user){
   showSyncButton();
 }
 
-/* ★★★ UPDATED: handleLogin — verbose errors + migrateMissingLocalKeys({}) after login */
+/* LOGIN */
 async function handleLogin(){
-  var un = document.getElementById('loginUsername').value.trim();
-  var pw = document.getElementById('loginPassword').value.trim();
-  var er = document.getElementById('loginError');
-  var btn = document.getElementById('loginBtn');
-  er.textContent = '';
-  er.style.color = '';
-  if(!un || !pw){ er.textContent = 'Fill username and password'; return; }
+  var un=document.getElementById('loginUsername').value.trim();
+  var pw=document.getElementById('loginPassword').value.trim();
+  var er=document.getElementById('loginError');
+  var btn=document.getElementById('loginBtn');
+  er.textContent='';
+  er.style.color='';
+  if(!un||!pw){er.textContent='Fill username and password';return;}
 
-  var lock = loginLockedSeconds();
-  if(lock > 0){ er.textContent = '⏳ Wait ' + lock + 's'; return; }
+  var lock=loginLockedSeconds();
+  if(lock>0){er.textContent='⏳ Wait '+lock+'s';return;}
 
-  // ★ Check Supabase loaded
   if(!supabaseClient){
     er.textContent='⚠ Hakuna muunganisho wa server (Supabase haijapakia). Jaribu mtandao mwingine.';
     return;
   }
 
-  var isSuperAttempt = (un === SUPER_ADMIN_USERNAME);
+  var isSuperAttempt=(un===SUPER_ADMIN_USERNAME);
 
-  er.textContent = '⏳ Verifying...';
-  er.style.color = 'var(--text-muted)';
-  if(btn) btn.disabled = true;
-  var sync = await pullLoginCredentialsFromCloud();
-  er.textContent = '';
-  er.style.color = '';
-  if(btn) btn.disabled = false;
+  er.textContent='⏳ Verifying...';
+  er.style.color='var(--text-muted)';
+  if(btn)btn.disabled=true;
+
+  /* ★ FIX: Super admin anasoma safu moja tu (sb_super_hash) */
+  var sync;
+  if(isSuperAttempt){
+    try{
+      var rr=await supabaseClient.from(TBL_KV).select('value').eq('key','sb_super_hash').maybeSingle();
+      if(rr.error)throw rr.error;
+      if(rr.data&&rr.data.value){
+        localStorage.setItem('sb_super_hash',JSON.stringify(rr.data.value));
+      }else{
+        var lh=localStorage.getItem('sb_super_hash');
+        if(lh){
+          supabaseClient.from(TBL_KV).upsert({key:'sb_super_hash',value:JSON.parse(lh),updated_at:new Date().toISOString()},{onConflict:'key'}).then(function(){});
+        }
+      }
+      sync={ok:true};
+    }catch(e){
+      sync={ok:false,error:(e&&e.message)||'Sync failed'};
+    }
+  }else{
+    sync=await pullLoginCredentialsFromCloud();
+  }
+
+  er.textContent='';
+  er.style.color='';
+  if(btn)btn.disabled=false;
 
   if(!sync.ok){
-    er.textContent = '⚠ Server: ' + (sync.error || 'Cannot reach Supabase') + ' — jaribu tena';
-    console.warn('[Login] Sync failed:', sync);
+    er.textContent='⚠ Server: '+(sync.error||'Cannot reach Supabase')+' — jaribu tena';
+    console.warn('[Login] Sync failed:',sync);
     return;
   }
 
   if(!isSuperAttempt){
-    var tenantsStr = localStorage.getItem('sb_tenants');
+    var tenantsStr=localStorage.getItem('sb_tenants');
     if(!tenantsStr){
-      er.textContent = '⚠ Data ya companies haikupatikana. Jaribu tena.';
-      console.warn('[Login] No sb_tenants after sync');
+      er.textContent='⚠ Data ya companies haikupatikana. Jaribu tena.';
       return;
     }
     try{
-      var tj = JSON.parse(tenantsStr);
-      if(!Array.isArray(tj) || tj.length === 0){
-        er.textContent = '⚠ Hakuna company iliyosajiliwa. Wasiliana na admin.';
-        console.warn('[Login] sb_tenants is empty');
+      var tj=JSON.parse(tenantsStr);
+      if(!Array.isArray(tj)||tj.length===0){
+        er.textContent='⚠ Hakuna company iliyosajiliwa. Wasiliana na admin.';
         return;
       }
-    }catch(e){ console.warn('[Login] sb_tenants parse error:', e); }
+    }catch(e){console.warn('[Login] sb_tenants parse error:',e);}
   }
 
-  // ── Super Admin ──
-  if(isSuperAttempt && hashPw(un,pw) === getSuperHash()){
-    _loginFails = 0;
-    isSuperAdmin = true;
-    isMexEmployee = false;
-    currentMexEmployeeId = null;
-    currentTenantId = null;
-    var su = lsGet('sb_superadmin_user',null) || {id:0,username:'Super Admin',fullName:'Super Admin',role:'superadmin',store:'All',theme:'light'};
+  /* Super Admin */
+  if(isSuperAttempt&&hashPw(un,pw)===getSuperHash()){
+    _loginFails=0;
+    isSuperAdmin=true;
+    isMexEmployee=false;
+    currentMexEmployeeId=null;
+    currentTenantId=null;
+    var su=lsGet('sb_superadmin_user',null)||{id:0,username:'Super Admin',fullName:'Super Admin',role:'superadmin',store:'All',theme:'light'};
     setCurrentUser(su);
-    try{ localStorage.setItem(SUPER_ADMIN_SESSION_KEY, superSessionToken()); }catch(e){}
+    try{localStorage.setItem(SUPER_ADMIN_SESSION_KEY,superSessionToken());}catch(e){}
     document.getElementById('loginPage').classList.add('hidden');
     document.getElementById('appContainer').classList.add('active');
     initApp(su);
-    // ★ Push any local keys that aren't in cloud
-    try{migrateMissingLocalKeys({}).then(function(){console.log('[Login] uploaded');});}catch(e){console.warn('[Login] migrate err:',e);}
+    /* ★ Leta orodha ya companies na data nyingine baada ya kuingia */
+    pullFromCloudOnly().then(function(){softRefreshCurrentView(true);});
     return;
   }
 
-  // ── MEX Employee ──
-  var mex = getMexEmployees();
-  var uL = normalizeUsername(un);
+  /* MEX Employee */
+  var mex=getMexEmployees();
+  var uL=normalizeUsername(un);
   for(var j=0;j<mex.length;j++){
-    var emp = mex[j];
-    var eu = normalizeUsername(emp.username);
-    if(eu && eu === uL && verifyPw(emp,pw)){
-      _loginFails = 0;
+    var emp=mex[j];
+    var eu=normalizeUsername(emp.username);
+    if(eu&&eu===uL&&verifyPw(emp,pw)){
+      _loginFails=0;
       if(!isHashed(emp.password)){updateMexEmployee(emp.id,{password:hashPw(emp.username,pw)});}
-      isSuperAdmin = false;
-      isMexEmployee = true;
-      currentMexEmployeeId = emp.id;
-      currentTenantId = null;
-      var eo = {id:emp.id,username:emp.username,fullName:emp.name,role:'mexemployee',phone:emp.phone||'',photoKey:emp.photoKey||'',theme:emp.theme||'light',bio:emp.bio||''};
+      isSuperAdmin=false;
+      isMexEmployee=true;
+      currentMexEmployeeId=emp.id;
+      currentTenantId=null;
+      var eo={id:emp.id,username:emp.username,fullName:emp.name,role:'mexemployee',phone:emp.phone||'',photoKey:emp.photoKey||'',theme:emp.theme||'light',bio:emp.bio||''};
       setMexSession(eo);
       setCurrentUser(null);
       document.getElementById('loginPage').classList.add('hidden');
       document.getElementById('appContainer').classList.add('active');
       initApp(eo);
-      try{migrateMissingLocalKeys({}).then(function(){console.log('[Login] uploaded');});}catch(e){console.warn('[Login] migrate err:',e);}
+      pullFromCloudOnly().then(function(){softRefreshCurrentView(true);});
       return;
     }
   }
 
-  // ── Tenant user ──
-  var ts = getAllTenants();
+  /* Tenant user */
+  var ts=getAllTenants();
   for(var k=0;k<ts.length;k++){
-    var tn = ts[k];
-    var oldTid = currentTenantId;
-    currentTenantId = tn.id;
-    var users = getTenantData('users',[]);
-    currentTenantId = oldTid;
+    var tn=ts[k];
+    var oldTid=currentTenantId;
+    currentTenantId=tn.id;
+    var users=getTenantData('users',[]);
+    currentTenantId=oldTid;
 
-    var found = null;
+    var found=null;
     for(var m=0;m<users.length;m++){
-      if(normalizeUsername(users[m].username) === normalizeUsername(un)){found = users[m];break;}
+      if(normalizeUsername(users[m].username)===normalizeUsername(un)){found=users[m];break;}
     }
-    if(found && verifyPw(found,pw)){
-      if(tn.pendingApproval){ er.textContent = '⏳ Account pending approval'; return; }
-      if(tn.blocked){ er.textContent = '🚫 Account blocked'; return; }
-      if(isTenantSuspended(tn.id)){ er.textContent = '🔒 Subscription expired'; return; }
+    if(found&&verifyPw(found,pw)){
+      if(tn.pendingApproval){er.textContent='⏳ Account pending approval';return;}
+      if(tn.blocked){er.textContent='🚫 Account blocked';return;}
+      if(isTenantSuspended(tn.id)){er.textContent='🔒 Subscription expired';return;}
 
-      _loginFails = 0;
-      isSuperAdmin = false;
-      isMexEmployee = false;
-      currentMexEmployeeId = null;
-      currentTenantId = tn.id;
+      _loginFails=0;
+      isSuperAdmin=false;
+      isMexEmployee=false;
+      currentMexEmployeeId=null;
+      currentTenantId=tn.id;
 
       if(!isHashed(found.password)){
-        var allU = getTenantData('users',[]);
+        var allU=getTenantData('users',[]);
         for(var n=0;n<allU.length;n++){
-          if(Number(allU[n].id) === Number(found.id)){allU[n].password = hashPw(allU[n].username,pw);found = allU[n];break;}
+          if(Number(allU[n].id)===Number(found.id)){allU[n].password=hashPw(allU[n].username,pw);found=allU[n];break;}
         }
         setTenantData('users',allU);
       }
 
       setCurrentUser(found);
       lsSet('sb_session',{tid:tn.id,uid:found.id});
+
+      /* ★ FIX: pakua data ya kampuni kabla ya initApp (kifaa kipya) */
+      er.style.color='var(--text-muted)';
+      er.textContent='⏳ Loading data...';
+      if(btn)btn.disabled=true;
+      try{await pullFromCloudOnly();}catch(e){console.warn('[Login] tenant pull err:',e);}
+      if(btn)btn.disabled=false;
+      er.textContent='';
+      er.style.color='';
+
       recordUserLogin(found.id,found.store);
       document.getElementById('loginPage').classList.add('hidden');
       document.getElementById('appContainer').classList.add('active');
       initApp(found);
-      try{migrateMissingLocalKeys({}).then(function(){console.log('[Login] uploaded');});}catch(e){console.warn('[Login] migrate err:',e);}
       return;
     }
   }
 
   registerLoginFail();
-  er.textContent = '⚠ Invalid credentials';
+  er.textContent='⚠ Invalid credentials';
 }
 
 /* DIAGNOSTIC */
 function checkStorageUsage(){
-  var sizes = {}; var total = 0;
+  var sizes={};var total=0;
   for(var i=0;i<localStorage.length;i++){
-    var k = localStorage.key(i);
-    var v = localStorage.getItem(k) || '';
-    var size = (k.length + v.length) * 2;
-    sizes[k] = size; total += size;
+    var k=localStorage.key(i);
+    var v=localStorage.getItem(k)||'';
+    var size=(k.length+v.length)*2;
+    sizes[k]=size;total+=size;
   }
-  var sorted = Object.keys(sizes).sort(function(a,b){return sizes[b]-sizes[a];});
-  console.log('=== 📊 STORAGE USAGE ===');
-  console.log('Total: ' + (total/1024/1024).toFixed(2) + ' MB / ~5 MB (' + ((total/5242880)*100).toFixed(1) + '%)');
-  console.log('Top 15 keys:');
+  var sorted=Object.keys(sizes).sort(function(a,b){return sizes[b]-sizes[a];});
+  console.log('=== STORAGE USAGE ===');
+  console.log('Total: '+(total/1024/1024).toFixed(2)+' MB / ~5 MB ('+((total/5242880)*100).toFixed(1)+'%)');
   for(var j=0;j<Math.min(sorted.length,15);j++){
-    var key = sorted[j];
-    console.log('  ' + (sizes[key]/1024).toFixed(1).padStart(8) + ' KB  ' + key);
+    var key=sorted[j];
+    console.log('  '+(sizes[key]/1024).toFixed(1).padStart(8)+' KB  '+key);
   }
-  return {total:total, breakdown:sizes};
+  return {total:total,breakdown:sizes};
 }
 
 /* PAYMENT PLAN */
@@ -3028,8 +3023,7 @@ document.addEventListener('keydown',function(e){
   try{initLanguageMenu();}catch(e){}
   try{initVideoObserver();}catch(e){}
   try{initSupabase();}catch(e){}
-  var pulledData=(function(){try{return pullAllFromSupabase();}catch(e){console.warn('[Boot] pull err:',e);return Promise.resolve({ok:false});}})();
-  pulledData.then(function(result){if(result&&result.ok===false)console.warn('[Boot] initial pull not ok:',result.reason);setTimeout(function(){try{preloadAllMedia();}catch(e){}},100);bootContinue();}).catch(function(e){console.warn('[Boot] pull failed:',e);setTimeout(function(){try{preloadAllMedia();}catch(e2){}},100);bootContinue();});
+
   function preloadAllMedia(){
     var pr=[];
     pr.push(dbGet(STORES.json,SUPER_ADMIN_PHOTO_KEY).then(function(k){if(k){_superAdminPhotoKey=k;if(!_mediaUrlCache[k])return getMediaUrl(k);}}).catch(function(){}));
@@ -3039,6 +3033,7 @@ document.addEventListener('keydown',function(e){
     for(var j=0;j<mex.length;j++){if(mex[j].photoKey&&!_mediaUrlCache[mex[j].photoKey])pr.push(getMediaUrl(mex[j].photoKey).catch(function(){}));}
     return Promise.all(pr);
   }
+
   function bootContinue(){
     try{
       if(localStorage.getItem(SUPER_ADMIN_SESSION_KEY)===superSessionToken()){
@@ -3069,6 +3064,14 @@ document.addEventListener('keydown',function(e){
     }
     setCurrentUser(null);scheduleHide();
   }
+
+  /* ★ FIX: app ifunguke mara moja kwa data ya kifaa; pull inaendelea nyuma */
+  bootContinue();
+  pullAllFromSupabase().then(function(result){
+    if(result&&result.ok===false)console.warn('[Boot] initial pull not ok:',result.reason);
+    try{preloadAllMedia();}catch(e){}
+    try{softRefreshCurrentView(true);}catch(e){}
+  }).catch(function(e){console.warn('[Boot] pull failed:',e);});
 })();
 </script>
 </body>
