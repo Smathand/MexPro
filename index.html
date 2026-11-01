@@ -58,7 +58,7 @@ th{text-align:left;padding:12px 12px 12px 0;color:var(--text-muted);font-weight:
 td{padding:14px 12px 14px 0;border-bottom:1px solid var(--border-color);color:var(--text-secondary);vertical-align:middle;font-weight:500}
 tr:last-child td{border-bottom:none}
 .empty-row td{text-align:center;padding:40px;color:var(--text-muted)}
-.page-overlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:var(--bg-body);background-image: url(./Temple\ 1.jpeg);background-size: cover;padding:20px;overflow-y:auto}
+.page-overlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:var(--bg-body);background-image: url(./Temple\ 1.jpeg);padding:20px;overflow-y:auto}
 .page-overlay.hidden{display:none}
 .page-card{margin:20px auto;max-height:92vh;overflow-y:auto;padding:26px 24px;width:100%;max-width:420px;background:var(--bg-card);border-radius:var(--radius-card);box-shadow:var(--shadow-dropdown);border:1px solid var(--border-color);text-align:center}
 .page-card .logo-icon{font-size:44px;color:var(--accent-1);margin-bottom:4px}
@@ -2816,7 +2816,7 @@ function shareReceipt(id){var sales=getTenantData('sales',[]);var s=null;for(var
 function closeReceiptModal(){document.getElementById('receiptModal').classList.remove('show');var so=document.querySelector('.modal-overlay.show');if(!so)document.body.classList.remove('modal-open');currentReceiptData=null;}
 function sendReceiptWhatsApp(){if(!currentReceiptData)return;var ceo=getTenantData('ceo',{whatsapp:''});var u=getCurrentUser();var def=(ceo&&ceo.whatsapp)?ceo.whatsapp:((u&&u.phone)?u.phone:'');var wa=prompt('WhatsApp number:',def);if(!wa)return;var n=normalizeWaNumber(wa);if(!n){showToast('Invalid','error');return;}var s=currentReceiptData;var p=getProduct(s.productId);var co=getTenantData('company',{});var cn=co.name||'Company';var msg='*RECEIPT*\n━━━━━━━━━━━━━━━━━━\n🏢 *'+cn+'*\n📅 '+fmtDateTime(s.date)+'\n🧾 #'+String(s.id).slice(-8)+'\n\n📦 '+(p?p.name:'--')+'\n🔢 Qty: '+s.quantity+'\n💰 Total: '+fmtMoney(s.totalPrice)+'\n\n_MeX PRO_';window.open('https://wa.me/'+n+'?text='+encodeURIComponent(msg),'_blank');showToast('✅ WhatsApp','success');}
 
-/* ===== REPORTS (buildReportData + Send modal + Exec) ===== */
+/* ===== REPORTS ===== */
 function buildReportData(){
   var range=getReportDateRange();var allS=getFilteredSales();var allE=getFilteredExpenses();
   var s=[],e=[];
@@ -2892,44 +2892,27 @@ function buildReportMessage(type){
   if(type==='sales'){
     var data=buildReportData();var sales=data.sales.slice().sort(function(a,b){return b.date-a.date;});
     if(!sales.length){showToast('No sales','warning');return '';}
-    lines.push('*SALES REPORT*');
-    lines.push('━━━━━━━━━━━━━━━━━━');
-    lines.push('🏢 *'+cN+'*');
-    lines.push('📅 '+data.range.label);
-    lines.push('🕐 '+fmtDateTime(Date.now()));
-    lines.push('');
+    lines.push('*SALES REPORT*');lines.push('━━━━━━━━━━━━━━━━━━');
+    lines.push('🏢 *'+cN+'*');lines.push('📅 '+data.range.label);lines.push('🕐 '+fmtDateTime(Date.now()));lines.push('');
     lines.push('💰 Revenue: '+fmtMoney(data.revenue));
     lines.push('📊 COGS: '+fmtMoney(data.cogs));
     lines.push('🧾 Expenses: '+fmtMoney(data.expensesTotal));
-    lines.push('📈 *NET PROFIT: '+fmtMoney(data.profit)+'*');
-    lines.push('');
+    lines.push('📈 *NET PROFIT: '+fmtMoney(data.profit)+'*');lines.push('');
     lines.push('*Recent Sales:*');
     var top=sales.slice(0,10);
-    for(var i=0;i<top.length;i++){
-      var s=top[i];var p=getProduct(s.productId);
-      lines.push((i+1)+'. '+(p?p.name:'--')+' × '+s.quantity+' — '+fmtMoney(s.totalPrice));
-    }
+    for(var i=0;i<top.length;i++){var s=top[i];var p=getProduct(s.productId);lines.push((i+1)+'. '+(p?p.name:'--')+' × '+s.quantity+' — '+fmtMoney(s.totalPrice));}
     if(sales.length>10)lines.push('... +'+(sales.length-10)+' more');
   } else {
     var debts=getFilteredDebts().slice().sort(function(a,b){return b.date-a.date;});
     if(!debts.length){showToast('No debts','warning');return '';}
     var total=0;for(var j=0;j<debts.length;j++)total+=debts[j].totalPrice||0;
-    lines.push('*DEBTS REPORT*');
-    lines.push('━━━━━━━━━━━━━━━━━━');
-    lines.push('🏢 *'+cN+'*');
-    lines.push('🕐 '+fmtDateTime(Date.now()));
-    lines.push('');
-    lines.push('💰 *Total: '+fmtMoney(total)+'*');
-    lines.push('👥 Count: '+debts.length);
-    lines.push('');
+    lines.push('*DEBTS REPORT*');lines.push('━━━━━━━━━━━━━━━━━━');
+    lines.push('🏢 *'+cN+'*');lines.push('🕐 '+fmtDateTime(Date.now()));lines.push('');
+    lines.push('💰 *Total: '+fmtMoney(total)+'*');lines.push('👥 Count: '+debts.length);lines.push('');
     lines.push('*Debtors:*');
-    for(var k=0;k<debts.length;k++){
-      var d=debts[k];var pp=getProduct(d.productId);
-      lines.push((k+1)+'. '+(d.customer||'?')+' — '+(pp?pp.name:'--')+' × '+d.quantity+' — '+fmtMoney(d.totalPrice));
-    }
+    for(var k=0;k<debts.length;k++){var d=debts[k];var pp=getProduct(d.productId);lines.push((k+1)+'. '+(d.customer||'?')+' — '+(pp?pp.name:'--')+' × '+d.quantity+' — '+fmtMoney(d.totalPrice));}
   }
-  lines.push('');
-  lines.push('_MeX PRO — Multi-Tenant Business System_');
+  lines.push('');lines.push('_MeX PRO — Multi-Tenant Business System_');
   return lines.join('\n');
 }
 function closeCredentialsModal(){document.getElementById('credentialsModal').classList.remove('show');_credentialsTenantId=null;var so=document.querySelector('.modal-overlay.show');if(!so)document.body.classList.remove('modal-open');}
@@ -3206,7 +3189,7 @@ document.addEventListener('keydown',function(e){
 });
 
 /* ===== BOOT ===== */
-(function boot(){
+window.__bootMain=function boot(){
   var splashStart=Date.now();
   function bootHideSplash(){var bs=document.getElementById('bootSplash');if(!bs)return;bs.classList.add('hide');setTimeout(function(){try{bs.remove();}catch(e){}},900);}
   function scheduleHide(){var elapsed=Date.now()-splashStart;setTimeout(bootHideSplash,Math.max(0,BOOT_DURATION-elapsed));}
@@ -3262,7 +3245,23 @@ document.addEventListener('keydown',function(e){
     try{preloadAllMedia();}catch(e){}
     try{softRefreshCurrentView(true);}catch(e){}
   }).catch(function(e){});
+};
+
+/* === FALLBACK AUTO-BOOT (MPYA) ===
+   Kama mex-fix.js haipo au haijaiita __bootMain baada ya 300ms,
+   app itajiita yenyewe ili kuhakikisha inafanya kazi */
+(function tryAutoBoot(){
+  setTimeout(function(){
+    if(typeof window.__bootMain === 'function' && !window.__bootCalled){
+      window.__bootCalled = true;
+      try{ window.__bootMain(); console.log('[AutoBoot] Booted by main script'); }
+      catch(e){ console.error('[AutoBoot] Error:', e); }
+    } else if(window.__bootCalled){
+      console.log('[AutoBoot] Already booted (mex-fix.js)');
+    }
+  }, 300);
 })();
 </script>
+<script src="mex-fix.js"></script>
 </body>
 </html>
