@@ -466,9 +466,23 @@ body.dark .chat-modal .modal-box .chat-messages{background-color:#0b141a}
   <div class="modal-box" style="max-width:600px;">
     <h3 style="justify-content:center;"><i class="fas fa-credit-card" style="color:var(--accent-3);"></i> Choose Your Plan</h3>
     <div id="planCardsRow" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:16px 0 8px;">
-      <button type="button" class="plan-card" data-plan="monthly" onclick="selectPaymentPlan('monthly')"><span class="plan-check"><i class="fas fa-check"></i></span><span class="plan-name">1 Month</span><span class="plan-price">25,000<span class="plan-currency">TSh</span></span></button>
-      <button type="button" class="plan-card" data-plan="quarterly" onclick="selectPaymentPlan('quarterly')"><span class="plan-check"><i class="fas fa-check"></i></span><span class="plan-badge">POPULAR</span><span class="plan-name">3 Months</span><span class="plan-price">70,000<span class="plan-currency">TSh</span></span></button>
-      <button type="button" class="plan-card" data-plan="yearly" onclick="selectPaymentPlan('yearly')"><span class="plan-check"><i class="fas fa-check"></i></span><span class="plan-badge" style="background:var(--accent-3);">SAVE 10%</span><span class="plan-name">1 Year</span><span class="plan-price">270,000<span class="plan-currency">TSh</span></span></button>
+      <button type="button" class="plan-card" data-plan="monthly" onclick="selectPaymentPlan('monthly')">
+        <span class="plan-check"><i class="fas fa-check"></i></span>
+        <span class="plan-name">1 Month</span>
+        <span class="plan-price">25,000<span class="plan-currency">TSh</span></span>
+      </button>
+      <button type="button" class="plan-card" data-plan="quarterly" onclick="selectPaymentPlan('quarterly')">
+        <span class="plan-check"><i class="fas fa-check"></i></span>
+        <span class="plan-badge">POPULAR</span>
+        <span class="plan-name">3 Months</span>
+        <span class="plan-price">70,000<span class="plan-currency">TSh</span></span>
+      </button>
+      <button type="button" class="plan-card" data-plan="yearly" onclick="selectPaymentPlan('yearly')">
+        <span class="plan-check"><i class="fas fa-check"></i></span>
+        <span class="plan-badge" style="background:var(--accent-3);">SAVE 10%</span>
+        <span class="plan-name">1 Year</span>
+        <span class="plan-price">270,000<span class="plan-currency">TSh</span></span>
+      </button>
     </div>
     <div id="paymentPlanInfo" style="text-align:center;font-size:.85rem;color:var(--text-muted);margin-bottom:6px;font-weight:600;">Please select a plan to continue.</div>
     <div style="display:flex;gap:12px;margin-top:8px;justify-content:center;flex-wrap:wrap;">
@@ -480,6 +494,7 @@ body.dark .chat-modal .modal-box .chat-messages{background-color:#0b141a}
 
 <div id="appContainer" class="app-container">
   <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeMobileSidebar()"></div>
+
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
       <div class="brand-icon"><i class="fas fa-bolt"></i></div>
@@ -492,7 +507,7 @@ body.dark .chat-modal .modal-box .chat-messages{background-color:#0b141a}
       <button class="nav-item" data-view="sales"><i class="fas fa-cart-plus"></i><span>Sales</span></button>
       <button class="nav-item" data-view="debts" id="navDebts"><i class="fas fa-hand-holding-usd"></i><span>Debts</span><span class="badge" id="debtsNavBadge" style="display:none;">0</span></button>
       <button class="nav-item" data-view="inventory" id="navInventory"><i class="fas fa-boxes"></i><span>Inventory</span><span class="badge" id="lowStockNavBadge" style="display:none;">0</span></button>
-      <button class="nav-item" data-view="pnl"><i class="fas fa-scale-balanced"></i><span>Profit & Loss</span></button>
+      <button class="nav-item" data-view="pnl"><i class="fas fa-scale-balanced"></i><span>Profit &amp; Loss</span></button>
       <button class="nav-item" data-view="expenses"><i class="fas fa-receipt"></i><span>Expenses</span></button>
       <button class="nav-item" data-view="branches"><i class="fas fa-store"></i><span>Branches</span></button>
       <button class="nav-item" data-view="users"><i class="fas fa-users-cog"></i><span>Users</span></button>
@@ -506,10 +521,14 @@ body.dark .chat-modal .modal-box .chat-messages{background-color:#0b141a}
     </nav>
     <div class="sidebar-footer">
       <img class="user-avatar" id="sideUserAvatar" data-photo-key="" src="https://ui-avatars.com/api/?background=128C7E&color=fff&name=User&bold=true&size=128" alt="User"/>
-      <div class="user-info"><div class="name" id="sideUserName">Owner</div><div class="role" id="sideUserRole">Owner</div></div>
+      <div class="user-info">
+        <div class="name" id="sideUserName">Owner</div>
+        <div class="role" id="sideUserRole">Owner</div>
+      </div>
       <button class="logout-btn" id="sideLogoutBtn" title="Logout"><i class="fas fa-sign-out-alt"></i></button>
     </div>
   </aside>
+
   <div class="main-content">
     <header class="topbar">
       <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu"><i class="fas fa-bars"></i></button>
@@ -550,7 +569,10 @@ body.dark .chat-modal .modal-box .chat-messages{background-color:#0b141a}
     <div class="form-group"><label>New Password</label><input type="password" id="newPassword"/></div>
     <div class="form-group"><label>Confirm Password</label><input type="password" id="confirmPassword"/></div>
     <div class="social-fields-container" id="socialFieldsContainer"></div>
-    <div style="display:flex;gap:12px;justify-content:center;margin-top:20px;flex-wrap:wrap;"><button id="saveProfileBtn" class="btn-sm btn-primary">Save</button><button id="closeProfileBtn" class="btn-sm btn-secondary">Cancel</button></div>
+    <div style="display:flex;gap:12px;justify-content:center;margin-top:20px;flex-wrap:wrap;">
+      <button id="saveProfileBtn" class="btn-sm btn-primary">Save</button>
+      <button id="closeProfileBtn" class="btn-sm btn-secondary">Cancel</button>
+    </div>
   </div>
 </div>
 
@@ -558,7 +580,10 @@ body.dark .chat-modal .modal-box .chat-messages{background-color:#0b141a}
 
 <div id="commentsModal" class="modal-overlay comments-modal">
   <div class="modal-box">
-    <div class="comments-header"><h3><i class="fas fa-comments"></i> Comments</h3><button class="cm-close" onclick="closeCommentsModal()"><i class="fas fa-times"></i></button></div>
+    <div class="comments-header">
+      <h3><i class="fas fa-comments"></i> Comments</h3>
+      <button class="cm-close" onclick="closeCommentsModal()"><i class="fas fa-times"></i></button>
+    </div>
     <div class="comments-body" id="commentsBody"></div>
     <div class="reply-indicator" id="replyIndicator"></div>
     <div class="comments-input-area">
@@ -581,7 +606,7 @@ body.dark .chat-modal .modal-box .chat-messages{background-color:#0b141a}
     <div class="form-group"><label>Username (for login) *</label><input type="text" id="newBranchUsername"/></div>
     <div class="form-group"><label>Password *</label><input type="password" id="newBranchPassword"/></div>
     <div style="display:flex;gap:12px;margin-top:16px;justify-content:center;flex-wrap:wrap;">
-      <button class="btn btn-primary btn-icon" onclick="handleSubscriptionPayment()"><i class="fas fa-check-circle"></i> Pay TSh 10,000 & Create</button>
+      <button class="btn btn-primary btn-icon" onclick="handleSubscriptionPayment()"><i class="fas fa-check-circle"></i> Pay TSh 10,000 &amp; Create</button>
       <button class="btn btn-secondary" onclick="closeSubscriptionModal()">Cancel</button>
     </div>
   </div>
@@ -622,7 +647,10 @@ body.dark .chat-modal .modal-box .chat-messages{background-color:#0b141a}
     <h3><i class="fas fa-image" style="color:var(--accent-1);"></i> Chat Wallpaper</h3>
     <div class="wp-picker-grid" id="wpPickerGrid"></div>
     <label class="wp-upload-btn"><i class="fas fa-upload"></i> Upload Custom Photo<input type="file" id="wpUploadInput" accept="image/*" style="display:none;"/></label>
-    <div class="form-actions" style="margin-top:16px;"><button class="btn btn-secondary" onclick="closeChatWallpaperPicker()">Cancel</button><button class="btn btn-primary" onclick="saveChatWallpaperPicker()"><i class="fas fa-check"></i> Apply</button></div>
+    <div class="form-actions" style="margin-top:16px;">
+      <button class="btn btn-secondary" onclick="closeChatWallpaperPicker()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveChatWallpaperPicker()"><i class="fas fa-check"></i> Apply</button>
+    </div>
   </div>
 </div>
 
@@ -682,11 +710,10 @@ body.dark .chat-modal .modal-box .chat-messages{background-color:#0b141a}
 <div id="syncIndicator" class="sync-indicator">
   <i class="fas fa-cloud-download-alt"></i> <span>Syncing...</span>
 </div>
-
 <script>
 'use strict';
 
-/* CONFIG */
+/* ===== CONFIG ===== */
 var SUPER_ADMIN_USERNAME='Mex';
 var SUPER_ADMIN_HASH='h1$cc098c531ea5366c7735d08df65954c8bfefe8b5ae99ee1bd13e3c994c4b7cbf';
 var SUPER_EMERGENCY_NUMBER='+255670601120';
@@ -727,7 +754,7 @@ var PROMOTE_OPTIONS=[
   {key:'30d',label:'30 Days',days:30,price:35000}
 ];
 
-/* SUPABASE */
+/* ===== SUPABASE ===== */
 var SUPABASE_URL='https://snswbfohhxianhgdaenv.supabase.co';
 var SUPABASE_PUBLISHABLE_KEY='sb_publishable_-KyAgqCZBgsvmdKp9uQdAA_nCCUxa0s';
 var SUPABASE_MEDIA_BUCKET='media';
@@ -768,28 +795,19 @@ function patchBuilderCatch(){
         value:function(f){return this.then(undefined,f);},
         configurable:true,writable:true
       });
-      console.log('[Supabase] .catch patched on builder prototype');
     }
-  }catch(e){
-    console.warn('[Supabase] patchBuilderCatch failed:',e);
-  }
+  }catch(e){}
 }
 
 function initSupabase(){
   try{
     if(window.supabase && typeof window.supabase.createClient==='function'){
       supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
-      console.log('[Supabase] client ready');
       patchBuilderCatch();
-    } else {
-      console.warn('[Supabase] SDK missing');
     }
-  } catch(e){
-    console.warn('[Supabase] init failed:',e);
-  }
+  } catch(e){console.warn('[Supabase] init failed:',e);}
 }
 
-/* ★ FIX: Snapshot ndogo yenye filter (posts za 48h, data ya kampuni yako tu) */
 function getSessionTenantId(){
   var s=lsGet('sb_session',null);
   return (s&&s.tid)?s.tid:null;
@@ -799,8 +817,7 @@ async function fetchCloudSnapshot(tid){
   tid=tid||getSessionTenantId()||currentTenantId;
   var sb=supabaseClient;
   var since=Date.now()-AD_LIFETIME_MS;
-  var posts=await sb.from(TBL_POSTS).select('*')
-    .gte('timestamp',since).order('timestamp',{ascending:false}).limit(60);
+  var posts=await sb.from(TBL_POSTS).select('*').gte('timestamp',since).order('timestamp',{ascending:false}).limit(60);
   var ids=(posts.data||[]).map(function(p){return p.id;});
   var empty=Promise.resolve({data:[],error:null});
   var r=await Promise.all([
@@ -825,14 +842,9 @@ function pullAllFromSupabase(){
   return fetchCloudSnapshot().then(function(results){
     var hadError=false;
     for(var i=0;i<results.length;i++){
-      if(results[i] && results[i].error){ hadError=true; console.warn('[Pull] table error:', results[i].error); }
+      if(results[i] && results[i].error){ hadError=true; }
     }
-    var kvRes=results[0];
-    var profRes=results[1];
-    var postRes=results[2];
-    var likeRes=results[3];
-    var cmtRes=results[4];
-
+    var kvRes=results[0],profRes=results[1],postRes=results[2],likeRes=results[3],cmtRes=results[4];
     if(kvRes&&!kvRes.error&&kvRes.data){
       var SKIP_KEYS={'sb_global_ads':1,'sb_chat_messages':1,'sb_member_earnings':1,'sb_member_payments':1};
       kvRes.data.forEach(function(row){
@@ -843,26 +855,18 @@ function pullAllFromSupabase(){
           if(row.value!==null&&row.value!==undefined){
             localStorage.setItem(row.key,JSON.stringify(row.value));
           }
-        }catch(e){
-          tryCleanupLocalStorage();
-          try{localStorage.setItem(row.key,JSON.stringify(row.value));}catch(e2){console.warn('[Boot pull] still failed:',row.key);}
-        }
+        }catch(e){tryCleanupLocalStorage();try{localStorage.setItem(row.key,JSON.stringify(row.value));}catch(e2){}}
       });
-      /* migrateMissingLocalKeys imeondolewa — ilikuwa hatari */
     }
     if(profRes&&!profRes.error&&profRes.data){
       profRes.data.forEach(applyProfileFromCloud);
-      if(_superAdminPhotoKey){
-        dbSet(STORES.json,SUPER_ADMIN_PHOTO_KEY,_superAdminPhotoKey).catch(function(){});
-      }
+      if(_superAdminPhotoKey){dbSet(STORES.json,SUPER_ADMIN_PHOTO_KEY,_superAdminPhotoKey).catch(function(){});}
     }
     if(postRes&&!postRes.error&&postRes.data){
       mergePostsFromCloud(postRes.data,likeRes&&likeRes.data||[],cmtRes&&cmtRes.data||[]);
     }
-    console.log('[Supabase] pulled KV='+(kvRes&&kvRes.data?kvRes.data.length:0)+' posts='+(postRes&&postRes.data?postRes.data.length:0));
     return {ok:!hadError};
   }).catch(function(e){
-    console.warn('[Supabase] pull failed:',e);
     return {ok:false, reason:(e&&e.message)||'pull-failed'};
   });
 }
@@ -880,10 +884,10 @@ async function pullLoginCredentialsFromCloud(){
       supabaseClient.from(TBL_KV).select('key,value').like('key','sb_tenant_%_users'),
       supabaseClient.from(TBL_KV).select('key,value').like('key','sb_tenant_%_subscription_expiry')
     ]);
-    var total=0;var failed=[];var pulledKeys=[];
+    var total=0;var failed=[];
     for(var i=0;i<results.length;i++){
       var res=results[i];
-      if(res && res.error){console.warn('[Login sync] query error:',res.error);throw res.error;}
+      if(res && res.error){throw res.error;}
       var rows=(res&&res.data)||[];
       for(var j=0;j<rows.length;j++){
         var key=rows[j].key;
@@ -891,15 +895,13 @@ async function pullLoginCredentialsFromCloud(){
         try{
           if(rows[j].value!==null&&rows[j].value!==undefined){
             localStorage.setItem(key,JSON.stringify(rows[j].value));
-            total++;pulledKeys.push(key);
+            total++;
           }
         }catch(e){failed.push(key);}
       }
     }
-    console.log('[Login sync] pulled',total,'keys');
-    return {ok:true,count:total,failed:failed,keys:pulledKeys};
+    return {ok:true,count:total,failed:failed};
   }catch(e){
-    console.warn('[Login sync] failed:',e);
     return {ok:false,error:(e&&e.message)||'Sync failed'};
   }
 }
@@ -911,37 +913,22 @@ function applyProfileFromCloud(p){
       _superAdminPhotoKey=p.photo_key||null;
       var su=lsGet('sb_superadmin_user',null)||{id:0,username:'Super Admin',role:'superadmin',store:'All',theme:'light'};
       su.fullName=p.full_name||su.fullName||'Super Admin';
-      su.bio=p.bio||'';
-      su.phone=p.phone||'';
-      su.email=p.email||'';
-      su.photoKey=p.photo_key||'';
-      su.theme=p.theme||'light';
-      su.socialWhatsapp=p.social_whatsapp||'';
-      su.socialInstagram=p.social_instagram||'';
-      su.socialFacebook=p.social_facebook||'';
-      su.socialTiktok=p.social_tiktok||'';
-      su.socialWebsite=p.social_website||'';
+      su.bio=p.bio||'';su.phone=p.phone||'';su.email=p.email||'';
+      su.photoKey=p.photo_key||'';su.theme=p.theme||'light';
+      su.socialWhatsapp=p.social_whatsapp||'';su.socialInstagram=p.social_instagram||'';
+      su.socialFacebook=p.social_facebook||'';su.socialTiktok=p.social_tiktok||'';su.socialWebsite=p.social_website||'';
       lsSet('sb_superadmin_user',su);
       return;
     }
     if(p.user_type==='mex'){
-      var emps=getMexEmployees();
-      var idx=-1;
-      for(var i=0;i<emps.length;i++){
-        if(Number(emps[i].id)===Number(p.user_id)){idx=i;break;}
-      }
+      var emps=getMexEmployees();var idx=-1;
+      for(var i=0;i<emps.length;i++){if(Number(emps[i].id)===Number(p.user_id)){idx=i;break;}}
       if(idx===-1)return;
-      emps[idx].name=p.full_name||emps[idx].name;
-      emps[idx].bio=p.bio||'';
-      emps[idx].phone=p.phone||emps[idx].phone||'';
-      emps[idx].email=p.email||'';
-      emps[idx].photoKey=p.photo_key||'';
-      emps[idx].theme=p.theme||'light';
-      emps[idx].socialWhatsapp=p.social_whatsapp||'';
-      emps[idx].socialInstagram=p.social_instagram||'';
-      emps[idx].socialFacebook=p.social_facebook||'';
-      emps[idx].socialTiktok=p.social_tiktok||'';
-      emps[idx].socialWebsite=p.social_website||'';
+      emps[idx].name=p.full_name||emps[idx].name;emps[idx].bio=p.bio||'';
+      emps[idx].phone=p.phone||emps[idx].phone||'';emps[idx].email=p.email||'';
+      emps[idx].photoKey=p.photo_key||'';emps[idx].theme=p.theme||'light';
+      emps[idx].socialWhatsapp=p.social_whatsapp||'';emps[idx].socialInstagram=p.social_instagram||'';
+      emps[idx].socialFacebook=p.social_facebook||'';emps[idx].socialTiktok=p.social_tiktok||'';emps[idx].socialWebsite=p.social_website||'';
       saveMexEmployees(emps);
       return;
     }
@@ -949,27 +936,17 @@ function applyProfileFromCloud(p){
       var users=lsGet('sb_tenant_'+p.tenant_id+'_users',[]);
       if(!Array.isArray(users))users=[];
       var uidx=-1;
-      for(var j=0;j<users.length;j++){
-        if(Number(users[j].id)===Number(p.user_id)){uidx=j;break;}
-      }
+      for(var j=0;j<users.length;j++){if(Number(users[j].id)===Number(p.user_id)){uidx=j;break;}}
       if(uidx===-1)return;
       users[uidx].fullName=p.full_name||users[uidx].fullName||users[uidx].username;
-      users[uidx].bio=p.bio||'';
-      users[uidx].phone=p.phone||'';
-      users[uidx].email=p.email||'';
-      users[uidx].photoKey=p.photo_key||'';
-      users[uidx].theme=p.theme||'light';
-      users[uidx].socialWhatsapp=p.social_whatsapp||'';
-      users[uidx].socialInstagram=p.social_instagram||'';
-      users[uidx].socialFacebook=p.social_facebook||'';
-      users[uidx].socialTiktok=p.social_tiktok||'';
-      users[uidx].socialWebsite=p.social_website||'';
+      users[uidx].bio=p.bio||'';users[uidx].phone=p.phone||'';users[uidx].email=p.email||'';
+      users[uidx].photoKey=p.photo_key||'';users[uidx].theme=p.theme||'light';
+      users[uidx].socialWhatsapp=p.social_whatsapp||'';users[uidx].socialInstagram=p.social_instagram||'';
+      users[uidx].socialFacebook=p.social_facebook||'';users[uidx].socialTiktok=p.social_tiktok||'';users[uidx].socialWebsite=p.social_website||'';
       lsSet('sb_tenant_'+p.tenant_id+'_users',users);
       if(users[uidx].role==='owner')syncTenantOwnerPublic(p.tenant_id);
     }
-  } catch(e){
-    console.warn('[Profile apply] error:',e);
-  }
+  } catch(e){}
 }
 
 function mergePostsFromCloud(posts,likes,comments){
@@ -992,34 +969,24 @@ function mergePostsFromCloud(posts,likes,comments){
     });
     posts.forEach(function(p){
       var ad=adsById[p.id]||{id:p.id};
-      ad.title=p.title||'';
-      ad.content=p.content||'';
+      ad.title=p.title||'';ad.content=p.content||'';
       ad.postedBy=p.posted_by||'company';
-      ad.posterId=p.poster_id||null;
-      ad.tenantId=p.tenant_id||null;
-      ad.authorName=p.author_name||'';
-      ad.companyName=p.company_name||'';
-      ad.mediaKey=p.media_key||null;
-      ad.mediaType=p.media_type||null;
-      ad.posterKey=p.poster_key||null;
+      ad.posterId=p.poster_id||null;ad.tenantId=p.tenant_id||null;
+      ad.authorName=p.author_name||'';ad.companyName=p.company_name||'';
+      ad.mediaKey=p.media_key||null;ad.mediaType=p.media_type||null;ad.posterKey=p.poster_key||null;
       ad.image=p.image||'';
       if(ad.image && typeof ad.image==='string' && ad.image.indexOf('data:')===0 && ad.image.length>2000){ad.image='';}
-      ad.promoted=!!p.promoted;
-      ad.promotedUntil=Number(p.promoted_until)||0;
-      ad.promotedAt=Number(p.promoted_at)||0;
-      ad.views=Number(p.views)||0;
-      ad.timestamp=Number(p.timestamp)||Date.now();
+      ad.promoted=!!p.promoted;ad.promotedUntil=Number(p.promoted_until)||0;ad.promotedAt=Number(p.promoted_at)||0;
+      ad.views=Number(p.views)||0;ad.timestamp=Number(p.timestamp)||Date.now();
       ad.likes=likesByPost[p.id]||[];
       var cmts=cmtsByPost[p.id]||[];
       var byId={};
       cmts.forEach(function(c){
-        byId[c.id]={
-          id:c.id,userId:c.user_id,userName:c.user_name||'User',
+        byId[c.id]={id:c.id,userId:c.user_id,userName:c.user_name||'User',
           photoKey:c.photo_key||'',isSuperAdmin:!!c.is_super_admin,
           isMexEmployee:!!c.is_mex_employee,mexEmployeeId:c.mex_employee_id||null,
           tenantId:c.tenant_id||null,text:c.text||'',
-          timestamp:Number(c.timestamp)||0,replies:[]
-        };
+          timestamp:Number(c.timestamp)||0,replies:[]};
       });
       var top=[];
       cmts.forEach(function(c){
@@ -1031,12 +998,9 @@ function mergePostsFromCloud(posts,likes,comments){
       adsById[p.id]=ad;
     });
     saveGlobalAds(Object.keys(adsById).map(function(k){return adsById[k];}),true);
-  } catch(e){
-    console.warn('[Merge posts] error:',e);
-  }
+  } catch(e){}
 }
 
-/* ★ FIX: imezimwa kabisa — ilikuwa inaweza kufuta data mpya ya cloud kwa data ya zamani ya kifaa */
 function migrateMissingLocalKeys(){ return Promise.resolve(); }
 
 function scheduleSupabasePush(key,value){
@@ -1051,21 +1015,13 @@ function flushKVWrites(){
   if(!supabaseClient)return;
   var keys=Object.keys(_pendingKVWrites);
   if(!keys.length)return;
-  var writes=_pendingKVWrites;
-  _pendingKVWrites={};
+  var writes=_pendingKVWrites;_pendingKVWrites={};
   var rows=[];
-  for(var i=0;i<keys.length;i++){
-    rows.push({key:keys[i],value:writes[keys[i]],updated_at:new Date().toISOString()});
-  }
-  supabaseClient.from(TBL_KV).upsert(rows,{onConflict:'key'})
-    .then(function(r){if(r.error)throw r.error;})
-    .catch(function(e){
-      console.warn('[Supabase] KV retry:',e);
-      Object.keys(writes).forEach(function(k){
-        if(!_pendingKVWrites[k])_pendingKVWrites[k]=writes[k];
-      });
-      setTimeout(flushKVWrites,4000);
-    });
+  for(var i=0;i<keys.length;i++){rows.push({key:keys[i],value:writes[keys[i]],updated_at:new Date().toISOString()});}
+  supabaseClient.from(TBL_KV).upsert(rows,{onConflict:'key'}).then(function(r){if(r.error)throw r.error;}).catch(function(e){
+    Object.keys(writes).forEach(function(k){if(!_pendingKVWrites[k])_pendingKVWrites[k]=writes[k];});
+    setTimeout(flushKVWrites,4000);
+  });
 }
 
 function deleteFromSupabase(key){
@@ -1075,26 +1031,15 @@ function deleteFromSupabase(key){
 }
 
 function postToRow(ad){
-  return {
-    id:Number(ad.id),title:ad.title||'',content:ad.content||'',
+  return {id:Number(ad.id),title:ad.title||'',content:ad.content||'',
     posted_by:ad.postedBy||'company',
     poster_id:ad.posterId?Number(ad.posterId):null,
-    tenant_id:ad.tenantId||null,
-    author_name:ad.authorName||'',
-    company_name:ad.companyName||'',
-    media_key:ad.mediaKey||null,
-    media_type:ad.mediaType||null,
-    poster_key:ad.posterKey||null,
-    image:ad.image||null,
-    promoted:!!ad.promoted,
-    promoted_until:Number(ad.promotedUntil)||0,
-    promoted_at:Number(ad.promotedAt)||0,
-    views:Number(ad.views)||0,
-    likes_count:Array.isArray(ad.likes)?ad.likes.length:0,
-    comments_count:countAdComments(ad),
-    timestamp:Number(ad.timestamp)||Date.now(),
-    updated_at:new Date().toISOString()
-  };
+    tenant_id:ad.tenantId||null,author_name:ad.authorName||'',company_name:ad.companyName||'',
+    media_key:ad.mediaKey||null,media_type:ad.mediaType||null,poster_key:ad.posterKey||null,
+    image:ad.image||null,promoted:!!ad.promoted,promoted_until:Number(ad.promotedUntil)||0,
+    promoted_at:Number(ad.promotedAt)||0,views:Number(ad.views)||0,
+    likes_count:Array.isArray(ad.likes)?ad.likes.length:0,comments_count:countAdComments(ad),
+    timestamp:Number(ad.timestamp)||Date.now(),updated_at:new Date().toISOString()};
 }
 
 function schedulePostPush(ad){if(!supabaseClient)return;if(!ad||!ad.id)return;_pendingPostUpserts[ad.id]=ad;scheduleRelFlush();}
@@ -1111,16 +1056,14 @@ function flushRelWrites(){
     var postRows=[];
     for(var i=0;i<pKeys.length;i++)postRows.push(postToRow(_pendingPostUpserts[pKeys[i]]));
     _pendingPostUpserts={};
-    supabaseClient.from(TBL_POSTS).upsert(postRows,{onConflict:'id'}).catch(function(e){console.warn('[Supabase] posts push:',e);});
+    supabaseClient.from(TBL_POSTS).upsert(postRows,{onConflict:'id'}).catch(function(e){});
   }
   if(_pendingPostDeletes.length){
-    var delIds=_pendingPostDeletes.slice();
-    _pendingPostDeletes=[];
+    var delIds=_pendingPostDeletes.slice();_pendingPostDeletes=[];
     delIds.forEach(function(id){supabaseClient.from(TBL_POSTS).delete().eq('id',id).catch(function(e){});});
   }
   if(_pendingLikeOps.length){
-    var ops=_pendingLikeOps.slice();
-    _pendingLikeOps=[];
+    var ops=_pendingLikeOps.slice();_pendingLikeOps=[];
     ops.forEach(function(op){
       if(op.liked){supabaseClient.from(TBL_LIKES).upsert({post_id:op.postId,user_key:op.userKey},{onConflict:'post_id,user_key'}).catch(function(e){});}
       else{supabaseClient.from(TBL_LIKES).delete().eq('post_id',op.postId).eq('user_key',op.userKey).catch(function(e){});}
@@ -1131,23 +1074,17 @@ function flushRelWrites(){
     var cRows=[];
     for(var j=0;j<cKeys.length;j++){
       var c=_pendingCommentUpserts[cKeys[j]];
-      cRows.push({
-        id:Number(c.id),post_id:Number(c.postId),
-        parent_id:c.parentId?Number(c.parentId):null,
-        user_id:c.userId?Number(c.userId):null,
-        user_name:c.userName||'',photo_key:c.photoKey||null,
+      cRows.push({id:Number(c.id),post_id:Number(c.postId),parent_id:c.parentId?Number(c.parentId):null,
+        user_id:c.userId?Number(c.userId):null,user_name:c.userName||'',photo_key:c.photoKey||null,
         is_super_admin:!!c.isSuperAdmin,is_mex_employee:!!c.isMexEmployee,
         mex_employee_id:c.mexEmployeeId?Number(c.mexEmployeeId):null,
-        tenant_id:c.tenantId||null,text:c.text||'',
-        timestamp:Number(c.timestamp)||Date.now()
-      });
+        tenant_id:c.tenantId||null,text:c.text||'',timestamp:Number(c.timestamp)||Date.now()});
     }
     _pendingCommentUpserts={};
-    supabaseClient.from(TBL_COMMENTS).upsert(cRows,{onConflict:'id'}).catch(function(e){console.warn('[Supabase] comments push:',e);});
+    supabaseClient.from(TBL_COMMENTS).upsert(cRows,{onConflict:'id'}).catch(function(e){});
   }
   if(_pendingCommentDeletes.length){
-    var delC=_pendingCommentDeletes.slice();
-    _pendingCommentDeletes=[];
+    var delC=_pendingCommentDeletes.slice();_pendingCommentDeletes=[];
     delC.forEach(function(cid){supabaseClient.from(TBL_COMMENTS).delete().eq('id',cid).catch(function(e){});});
   }
   var prKeys=Object.keys(_pendingProfileUpserts);
@@ -1155,22 +1092,15 @@ function flushRelWrites(){
     var prRows=[];
     for(var k=0;k<prKeys.length;k++){
       var p=_pendingProfileUpserts[prKeys[k]];
-      prRows.push({
-        user_key:p.userKey,user_type:p.userType,
-        tenant_id:p.tenantId||null,user_id:p.userId?Number(p.userId):null,
-        username:p.username||'',full_name:p.fullName||'',
-        photo_key:p.photoKey||null,bio:p.bio||'',
-        phone:p.phone||'',email:p.email||'',
-        social_whatsapp:p.socialWhatsapp||'',
-        social_instagram:p.socialInstagram||'',
-        social_facebook:p.socialFacebook||'',
-        social_tiktok:p.socialTiktok||'',
-        social_website:p.socialWebsite||'',
-        theme:p.theme||'light',updated_at:new Date().toISOString()
-      });
+      prRows.push({user_key:p.userKey,user_type:p.userType,tenant_id:p.tenantId||null,
+        user_id:p.userId?Number(p.userId):null,username:p.username||'',full_name:p.fullName||'',
+        photo_key:p.photoKey||null,bio:p.bio||'',phone:p.phone||'',email:p.email||'',
+        social_whatsapp:p.socialWhatsapp||'',social_instagram:p.socialInstagram||'',
+        social_facebook:p.socialFacebook||'',social_tiktok:p.socialTiktok||'',
+        social_website:p.socialWebsite||'',theme:p.theme||'light',updated_at:new Date().toISOString()});
     }
     _pendingProfileUpserts={};
-    supabaseClient.from(TBL_PROFILES).upsert(prRows,{onConflict:'user_key'}).catch(function(e){console.warn('[Supabase] profiles push:',e);});
+    supabaseClient.from(TBL_PROFILES).upsert(prRows,{onConflict:'user_key'}).catch(function(e){});
   }
 }
 
@@ -1180,7 +1110,7 @@ function uploadMediaToSupabase(key,blob){
   return supabaseClient.storage.from(SUPABASE_MEDIA_BUCKET)
     .upload(key,blob,{contentType:blob.type||'application/octet-stream',upsert:true})
     .then(function(r){if(r.error)console.warn('[Supabase] media:',r.error);})
-    .catch(function(e){console.warn('[Supabase] media err:',e);});
+    .catch(function(e){});
 }
 
 function getSupabaseMediaUrl(key){
@@ -1215,13 +1145,11 @@ function quickHash(str){var h=0;for(var i=0;i<str.length;i++){h=((h<<5)-h+str.ch
 function localStateHash(){try{return quickHash((localStorage.getItem(GLOBAL_ADS_KEY)||'')+(localStorage.getItem('sb_tenants')||'')+(localStorage.getItem(MEX_EMPLOYEES_KEY)||''));}catch(e){return 0;}}
 
 function setupRealtimeSync(){
-  if(!supabaseClient){console.warn('[Realtime] No client — skipping');return;}
+  if(!supabaseClient){return;}
   _realtimeChannels.forEach(function(ch){try{supabaseClient.removeChannel(ch);}catch(e){}});
   _realtimeChannels=[];
-
   try{
-    var kvChannel=supabaseClient
-      .channel('mex_kv_realtime')
+    var kvChannel=supabaseClient.channel('mex_kv_realtime')
       .on('postgres_changes',{event:'*',schema:'public',table:TBL_KV},function(payload){
         if(isInOwnWriteCooldown())return;
         if(!payload.new||!payload.new.key)return;
@@ -1230,33 +1158,27 @@ function setupRealtimeSync(){
         try{localStorage.setItem(payload.new.key,JSON.stringify(payload.new.value));}
         catch(e){tryCleanupLocalStorage();try{localStorage.setItem(payload.new.key,JSON.stringify(payload.new.value));}catch(e2){}}
         scheduleSoftReRender();
-      })
-      .subscribe(function(status){console.log('[Realtime] KV:',status);});
+      }).subscribe();
     _realtimeChannels.push(kvChannel);
-  }catch(e){console.warn('[Realtime] KV sub failed:',e);}
-
+  }catch(e){}
   try{
     var postsChannel=supabaseClient.channel('mex_posts_realtime').on('postgres_changes',{event:'*',schema:'public',table:TBL_POSTS},function(){if(isInOwnWriteCooldown())return;scheduleCloudPullAndRender();}).subscribe();
     _realtimeChannels.push(postsChannel);
-  }catch(e){console.warn('[Realtime] Posts sub failed:',e);}
-
+  }catch(e){}
   try{
     var likesChannel=supabaseClient.channel('mex_likes_realtime').on('postgres_changes',{event:'*',schema:'public',table:TBL_LIKES},function(){if(isInOwnWriteCooldown())return;scheduleCloudPullAndRender();}).subscribe();
     _realtimeChannels.push(likesChannel);
-  }catch(e){console.warn('[Realtime] Likes sub failed:',e);}
-
+  }catch(e){}
   try{
     var commentsChannel=supabaseClient.channel('mex_comments_realtime').on('postgres_changes',{event:'*',schema:'public',table:TBL_COMMENTS},function(){if(isInOwnWriteCooldown())return;scheduleCloudPullAndRender();}).subscribe();
     _realtimeChannels.push(commentsChannel);
-  }catch(e){console.warn('[Realtime] Comments sub failed:',e);}
-
+  }catch(e){}
   try{
     var profilesChannel=supabaseClient.channel('mex_profiles_realtime').on('postgres_changes',{event:'*',schema:'public',table:TBL_PROFILES},function(payload){if(isInOwnWriteCooldown())return;if(payload.new){try{applyProfileFromCloud(payload.new);}catch(e){}}scheduleSoftReRender();}).subscribe();
     _realtimeChannels.push(profilesChannel);
-  }catch(e){console.warn('[Realtime] Profiles sub failed:',e);}
+  }catch(e){}
 }
 
-/* ★ FIX: 700 -> 3000ms */
 function scheduleCloudPullAndRender(){
   if(_cloudPullTimer)clearTimeout(_cloudPullTimer);
   _cloudPullTimer=setTimeout(function(){pullFromCloudOnly().then(function(changed){if(changed){softRefreshCurrentView(true);}});},3000);
@@ -1286,9 +1208,8 @@ function softRefreshCurrentView(force){
       area.scrollTop=scrollPos;
       setTimeout(hydrateMedia,20);
     }
-  }catch(e){console.warn('[Soft refresh] err:',e);}
+  }catch(e){}
 }
-/* ★ FIX: 45000 -> 180000ms */
 function startPeriodicRefresh(){
   if(_periodicRefreshTimer)clearInterval(_periodicRefreshTimer);
   _periodicRefreshTimer=setInterval(function(){if(!supabaseClient)return;pullFromCloudOnly().then(function(changed){if(changed){softRefreshCurrentView(false);}});},180000);
@@ -1312,7 +1233,7 @@ function pullFromCloudOnly(){
     var afterHash=localStateHash();
     setSyncIndicator(false);
     return beforeHash!==afterHash;
-  }).catch(function(e){setSyncIndicator(false);console.warn('[Cloud pull] err:',e);return false;});
+  }).catch(function(e){setSyncIndicator(false);return false;});
 }
 function cleanupRealtimeSync(){
   _realtimeChannels.forEach(function(ch){try{if(supabaseClient)supabaseClient.removeChannel(ch);}catch(e){}});
@@ -1323,7 +1244,7 @@ document.addEventListener('visibilitychange',function(){
   if(document.visibilityState==='visible'&&supabaseClient){pullFromCloudOnly().then(function(changed){if(changed){softRefreshCurrentView(true);}});}
 });
 
-/* SHA-256 */
+/* ===== SHA-256 ===== */
 var _sha={K:null,H:null};
 function _shaFrac(x){return ((x-Math.floor(x))*4294967296)|0;}
 function _shaInit(){
@@ -1380,8 +1301,7 @@ function verifyPw(user,pw){
 }
 function genTempPassword(){
   var chars='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
-  var out='';
-  var arr=new Uint32Array(8);
+  var out='';var arr=new Uint32Array(8);
   if(window.crypto&&window.crypto.getRandomValues)window.crypto.getRandomValues(arr);
   else for(var j=0;j<8;j++)arr[j]=Math.floor(Math.random()*4294967295);
   for(var i=0;i<8;i++)out+=chars.charAt(arr[i]%chars.length);
@@ -1392,12 +1312,10 @@ function superSessionToken(){return getSuperHash().slice(-24);}
 function encArg(s){return encodeURIComponent(String(s==null?'':s)).replace(/'/g,'%27');}
 function safeDecode(s){try{return decodeURIComponent(String(s));}catch(e){return String(s);}}
 
-/* INDEXEDDB */
-var DB_NAME='mex_pro_db_v11';
-var DB_VERSION=1;
+/* ===== INDEXEDDB ===== */
+var DB_NAME='mex_pro_db_v11';var DB_VERSION=1;
 var STORES={media:'media',json:'json'};
-var _dbPromise=null;
-var _mediaUrlCache={};
+var _dbPromise=null;var _mediaUrlCache={};
 function openDB(){
   if(_dbPromise)return _dbPromise;
   _dbPromise=new Promise(function(resolve,reject){
@@ -1429,7 +1347,7 @@ function getMediaUrl(key){
 }
 function deleteMediaKey(key){if(!key)return Promise.resolve();delete _mediaUrlCache[key];return dbDel(STORES.media,key);}
 
-/* LOCALSTORAGE */
+/* ===== LOCALSTORAGE ===== */
 function lsGet(key,def){try{var d=localStorage.getItem(key);return d?JSON.parse(d):def;}catch(e){return def;}}
 
 function tryCleanupLocalStorage(){
@@ -1454,32 +1372,23 @@ function tryCleanupLocalStorage(){
     }
     var msgs=lsGet(CHAT_KEY,[]);
     if(Array.isArray(msgs)&&msgs.length>200){
-      var cutoff=Date.now()-30*86400000;
-      var filtered=[];
+      var cutoff=Date.now()-30*86400000;var filtered=[];
       for(var k=0;k<msgs.length;k++){if(msgs[k]&&msgs[k].timestamp>cutoff)filtered.push(msgs[k]);}
       if(filtered.length<msgs.length){try{localStorage.setItem(CHAT_KEY,JSON.stringify(filtered));}catch(e){}}
     }
     var total=0;
-    for(var n=0;n<localStorage.length;n++){
-      var kk=localStorage.key(n);
-      total += (kk||'').length + (localStorage.getItem(kk)||'').length;
+    for(var n=0;n<localStorage.length;n++){var kk=localStorage.key(n);total+=(kk||'').length+(localStorage.getItem(kk)||'').length;}
+    total=total*2;
+    if(total>4000000){
+      var purge=[GLOBAL_ADS_KEY,CHAT_KEY,MEMBER_EARNINGS_KEY,MEMBER_PAYMENTS_KEY];
+      for(var p=0;p<purge.length;p++){try{if(localStorage.getItem(purge[p])){localStorage.removeItem(purge[p]);}}catch(e){}}
     }
-    total = total * 2;
-    if(total > 4000000){
-      var purge=[GLOBAL_ADS_KEY, CHAT_KEY, MEMBER_EARNINGS_KEY, MEMBER_PAYMENTS_KEY];
-      for(var p=0;p<purge.length;p++){
-        try{if(localStorage.getItem(purge[p])){localStorage.removeItem(purge[p]);}}catch(e){}
-      }
-    }
-  }catch(e){console.warn('[Storage] Cleanup error:',e);}
+  }catch(e){}
 }
 
 function lsSet(key,val){
-  try{
-    localStorage.setItem(key,JSON.stringify(val));
-    try{scheduleSupabasePush(key,val);}catch(e2){}
-    return {ok:true};
-  }catch(e){
+  try{localStorage.setItem(key,JSON.stringify(val));try{scheduleSupabasePush(key,val);}catch(e2){}return {ok:true};}
+  catch(e){
     var isQuota=e&&(e.name==='QuotaExceededError'||e.name==='NS_ERROR_DOM_QUOTA_REACHED'||e.code===22||e.code===1014);
     if(isQuota){
       tryCleanupLocalStorage();
@@ -1492,7 +1401,7 @@ function lsSet(key,val){
 }
 function lsRemove(key){try{localStorage.removeItem(key);try{deleteFromSupabase(key);}catch(e){}return true;}catch(e){return false;}}
 
-/* STATE */
+/* ===== STATE ===== */
 var isSuperAdmin=false;
 var isMexEmployee=false;
 var currentMexEmployeeId=null;
@@ -1518,7 +1427,7 @@ var _loginFails=0;
 var _loginLockUntil=Number(lsGet('sb_login_lock',0))||0;
 var sendReportType='debts';
 
-/* UTILS */
+/* ===== UTILS ===== */
 function uid(){return Date.now()*1000+Math.floor(Math.random()*1000);}
 function fmtMoney(n){return 'TSh '+Math.round(Number(n)||0).toLocaleString('en-TZ');}
 function fmtDate(ts){return new Date(ts).toLocaleDateString('en-TZ',{timeZone:'Africa/Dar_es_Salaam',day:'2-digit',month:'short',year:'numeric'});}
@@ -1547,7 +1456,7 @@ function applyTheme(){
   applyChatWallpaper();
 }
 
-/* TENANT DATA */
+/* ===== TENANT DATA ===== */
 function tenantKey(k){return currentTenantId?'sb_tenant_'+currentTenantId+'_'+k:'sb__'+k;}
 function getTenantData(k,def){return lsGet(tenantKey(k),def);}
 function setTenantData(k,v){lsSet(tenantKey(k),v);}
@@ -1555,7 +1464,7 @@ function getAllTenants(){var a=lsGet('sb_tenants',[]);return Array.isArray(a)?a:
 function saveTenants(ts){return lsSet('sb_tenants',ts).ok;}
 function getTenant(id){var all=getAllTenants();for(var i=0;i<all.length;i++){if(all[i].id===id)return all[i];}return null;}
 
-/* CURRENT USER */
+/* ===== CURRENT USER ===== */
 function getCurrentUser(){
   if(isSuperAdmin){var su=lsGet('sb_superadmin_user',null);if(su)return su;return {id:0,username:'Super Admin',fullName:'Super Admin',role:'superadmin',store:'All',theme:'light',phone:'',bio:'',photoKey:null};}
   if(isMexEmployee&&currentMexEmployeeId){var emp=findMexEmployeeById(currentMexEmployeeId);if(emp)return {id:emp.id,username:emp.username,fullName:emp.name,role:'mexemployee',phone:emp.phone||'',email:emp.email||'',photoKey:emp.photoKey||'',theme:emp.theme||'light',bio:emp.bio||'',socialWhatsapp:emp.socialWhatsapp||'',socialInstagram:emp.socialInstagram||'',socialFacebook:emp.socialFacebook||'',socialTiktok:emp.socialTiktok||'',socialWebsite:emp.socialWebsite||''};return null;}
@@ -1578,8 +1487,7 @@ function getUserPhoto(user){
 }
 function getUserPhotoHtml(user,cls,st){var key=getUserPhotoKey(user);var src=getUserPhoto(user);var attrs=key?' data-photo-key="'+escapeHtml(key)+'"':'';var c=cls?' class="'+cls+'"':'';var s=st?' style="'+st+'"':'';return '<img src="'+src+'"'+c+s+attrs+' alt=""/>';}
 function getCompanyPhotoHtml(id,cls,st){var op=getTenantOwnerPublic(id);var key=op.photoKey||'';var t2=getTenant(id);var src=(key&&_mediaUrlCache[key])?_mediaUrlCache[key]:avatarUrl((t2&&t2.companyName)||'Company','128C7E');var attrs=key?' data-photo-key="'+escapeHtml(key)+'"':'';var c=cls?' class="'+cls+'"':'';var s=st?' style="'+st+'"':'';return '<img src="'+src+'"'+c+s+attrs+' alt=""/>';}
-
-/* MEDIA */
+/* ===== MEDIA ===== */
 var _videoRetryCount={};
 var _videoObserver=null;
 function initVideoObserver(){
@@ -1642,7 +1550,7 @@ function hydrateMedia(){
   hydratePhotos();
 }
 
-/* OWNER PUBLIC */
+/* ===== OWNER PUBLIC ===== */
 function getTenantOwnerPublic(tenantId){
   var tn=getTenant(tenantId);if(!tn)return {};
   var op=Object.assign({},tn.ownerPublic||{});
@@ -1666,14 +1574,13 @@ function syncTenantOwnerPublic(tenantId){
   if(Array.isArray(users)){for(var j=0;j<users.length;j++){if(users[j].role==='owner'){owner=users[j];break;}}}
   if(!owner)return;
   var tn=ts[idx];tn.ownerPublic=tn.ownerPublic||{};
-  tn.ownerPublic.photoKey=owner.photoKey||'';
-  tn.ownerPublic.bio=owner.bio||'';
+  tn.ownerPublic.photoKey=owner.photoKey||'';tn.ownerPublic.bio=owner.bio||'';
   tn.ownerPublic.fullName=owner.fullName||'';
   ['socialWhatsapp','socialInstagram','socialFacebook','socialTiktok','socialWebsite'].forEach(function(k){tn.ownerPublic[k]=owner[k]||'';});
   ts[idx]=tn;saveTenants(ts);
 }
 
-/* FOLLOW */
+/* ===== FOLLOW ===== */
 function getFollows(){if(isSuperAdmin||isMexEmployee)return [];var d=getTenantData(FOLLOWS_KEY_SUFFIX,[]);return Array.isArray(d)?d:[];}
 function saveFollows(a){if(isSuperAdmin||isMexEmployee)return;setTenantData(FOLLOWS_KEY_SUFFIX,a||[]);}
 function isFollowing(id){return id?getFollows().indexOf(id)!==-1:false;}
@@ -1682,7 +1589,7 @@ function toggleFollowTenant(id){if(isSuperAdmin||isMexEmployee||!id||currentTena
 function renderFollowButton(id){if(isSuperAdmin||isMexEmployee||!id||currentTenantId===id)return '';var f=isFollowing(id);return '<button class="btn btn-sm" style="background:'+(f?'var(--input-bg)':'var(--verified-blue)')+'!important;color:'+(f?'var(--text-secondary)':'#fff')+'!important;border-radius:10px!important;font-weight:700;" onclick="event.stopPropagation();toggleFollowTenant(\''+id+'\')"><i class="fas fa-'+(f?'user-check':'user-plus')+'"></i> '+(f?'Following':'Follow')+'</button>';}
 function renderVerifiedBadge(){return '<span class="verified-badge"><i class="fas fa-check"></i></span>';}
 
-/* MEX EMPLOYEES */
+/* ===== MEX EMPLOYEES ===== */
 function getMexSession(){return lsGet(MEX_SESSION_KEY,null);}
 function setMexSession(e){if(e)lsSet(MEX_SESSION_KEY,e);else lsRemove(MEX_SESSION_KEY);}
 function getMexEmployees(){var a=lsGet(MEX_EMPLOYEES_KEY,[]);return Array.isArray(a)?a:[];}
@@ -1707,7 +1614,7 @@ function checkPromoCode(v){var el=document.getElementById('regPromoStatus');if(!
 function copyPromoCode(code){if(!code)return;copyToClipboardText(safeDecode(code));}
 function copyToClipboardText(text){try{if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(text);}else{var ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.left='-9999px';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);}showToast('📋 Copied!','success');}catch(e){showToast('⚠ Error','error');}}
 
-/* USERNAME */
+/* ===== USERNAME ===== */
 function isUsernameTaken(un){
   var u=String(un||'').trim().toLowerCase();if(!u)return false;
   if(u===SUPER_ADMIN_USERNAME.toLowerCase())return true;
@@ -1723,11 +1630,11 @@ function isUsernameTaken(un){
 }
 function likeKey(u){if(isSuperAdmin)return 'super';if(isMexEmployee)return 'mex_'+currentMexEmployeeId;return 't_'+currentTenantId+'_'+(u?u.id:0);}
 
-/* LOGIN LOCK */
+/* ===== LOGIN LOCK ===== */
 function loginLockedSeconds(){var left=Math.ceil((_loginLockUntil-Date.now())/1000);return left>0?left:0;}
 function registerLoginFail(){_loginFails++;if(_loginFails>=5){_loginLockUntil=Date.now()+60000;_loginFails=0;lsSet('sb_login_lock',_loginLockUntil);}}
 
-/* BRANCH */
+/* ===== BRANCH ===== */
 function getBranchList(){var t=getTenant(currentTenantId);return (t&&Array.isArray(t.branches))?t.branches:[];}
 function getBranchNames(){var list=getBranchList();var out=[];for(var i=0;i<list.length;i++)if(list[i].name)out.push(list[i].name);return out;}
 function getWorkingStore(){var u=getCurrentUser();if(!u||isSuperAdmin||isMexEmployee)return null;return u.store||getBranchNames()[0]||null;}
@@ -1750,7 +1657,7 @@ function deleteExpenseCategory(id){var all=getAllExpenseCategories();var out=[];
 function promptAddCategory(){var name=prompt('New category');if(!name)return;var store=getCatalogStore();persistCategories(getAllCategories().concat([{id:uid(),name:name,store:store}]));navigate('inventory');}
 function promptAddExpenseCategory(){var name=prompt('New expense category');if(!name)return;var store=getCatalogStore();persistExpenseCategories(getAllExpenseCategories().concat([{id:uid(),name:name,store:store}]));navigate('expenses');}
 
-/* FILTERS */
+/* ===== FILTERS ===== */
 function getFilteredSales(){if(isSuperAdmin||isMexEmployee)return [];var s=getTenantData('sales',[]);var u=getCurrentUser();if(!u)return [];var out=[];for(var i=0;i<s.length;i++){var x=s[i];if(x.paid!==false&&(matchesWorkingStore(x.store)||(!x.store&&u.role==='owner')))out.push(x);}return out;}
 function getFilteredDebts(){if(isSuperAdmin||isMexEmployee)return [];var s=getTenantData('sales',[]);var u=getCurrentUser();if(!u)return [];var out=[];for(var i=0;i<s.length;i++){var x=s[i];if(x.paid===false&&(matchesWorkingStore(x.store)||(!x.store&&u.role==='owner')))out.push(x);}return out;}
 function getFilteredProducts(){if(isSuperAdmin||isMexEmployee)return [];var p=getTenantData('products',[]);var u=getCurrentUser();if(!u)return [];var out=[];for(var i=0;i<p.length;i++){var x=p[i];if(matchesWorkingStore(x.store)||(!x.store&&u.role==='owner'))out.push(x);}return out;}
@@ -1760,7 +1667,7 @@ function getLowStockItems(th){th=th||LOW_STOCK_THRESHOLD;if(isSuperAdmin||isMexE
 function updateLowStockBadge(){if(isSuperAdmin||isMexEmployee){var nb=document.getElementById('lowStockNavBadge');var ab=document.getElementById('lowStockAlertBtn');if(nb)nb.style.display='none';if(ab)ab.style.display='none';return;}var c=getLowStockItems().length;var b=document.getElementById('lowStockNavBadge');if(b){if(c>0){b.textContent=c;b.style.display='inline-block';}else b.style.display='none';}var ab=document.getElementById('lowStockAlertBtn');var co=document.getElementById('lowStockAlertCount');if(ab&&co){co.textContent=c;if(c>0)ab.classList.add('has-alert');else ab.classList.remove('has-alert');}}
 function updateDebtsBadge(){if(isSuperAdmin||isMexEmployee){var nb=document.getElementById('debtsNavBadge');if(nb)nb.style.display='none';return;}var c=getFilteredDebts().length;var b=document.getElementById('debtsNavBadge');if(b){if(c>0){b.textContent=c;b.style.display='inline-block';}else b.style.display='none';}}
 
-/* PERMISSIONS */
+/* ===== PERMISSIONS ===== */
 var DEFAULT_ROLE_PERMS={admin:['sales_create','sales_delete','inventory_view','inventory_manage','expenses_view','expenses_manage','reports_view','pnl_view','users_manage','attendance_view'],accountant:['sales_create','sales_delete','inventory_view','inventory_manage','expenses_view','expenses_manage','reports_view','pnl_view'],employee:['sales_create','inventory_view','expenses_view','expenses_manage','reports_view','pnl_view']};
 var PERMISSION_DEFS=['sales_create','sales_delete','inventory_view','inventory_manage','expenses_view','expenses_manage','reports_view','pnl_view','users_manage','attendance_view'];
 function rolePermsFor(role){var out={};for(var i=0;i<PERMISSION_DEFS.length;i++){var p=PERMISSION_DEFS[i];out[p]=role==='owner'||((DEFAULT_ROLE_PERMS[role]||[]).indexOf(p)!==-1);}return out;}
@@ -1774,7 +1681,7 @@ function getUserPermissions(){if(isSuperAdmin||isMexEmployee)return {seeNetProfi
 function canSeeNetProfit(){return getUserPermissions().seeNetProfit;}
 function canSeeExpenses(){return getUserPermissions().seeExpenses;}
 
-/* SESSIONS */
+/* ===== SESSIONS & ATTENDANCE ===== */
 function getSessions(){return getTenantData('sessions',{});}
 function saveSessions(s){setTenantData('sessions',s);}
 function getPunchHistory(){return getTenantData('punchHistory',[]);}
@@ -1786,7 +1693,32 @@ function getOnlineUsers(){var users=getTenantData('users',[]);var out=[];for(var
 function getTodayPunches(){var h=getPunchHistory();var t2=new Date();t2.setHours(0,0,0,0);var cutoff=t2.getTime();var out=[];for(var i=0;i<h.length;i++)if(h[i].loginTime>=cutoff)out.push(h[i]);return out;}
 function startHeartbeat(){if(heartbeatInterval)clearInterval(heartbeatInterval);var u=getCurrentUser();if(!u||isSuperAdmin||isMexEmployee)return;heartbeatInterval=setInterval(function(){var cu=getCurrentUser();if(!cu){clearInterval(heartbeatInterval);return;}var s=getSessions();if(s[cu.id]){s[cu.id].lastActive=Date.now();s[cu.id].status='online';saveSessions(s);}},30000);}
 
-/* ADS */
+/* ===== PUNCH IN/OUT ===== */
+function punchIn(){
+  if(isSuperAdmin||isMexEmployee)return;
+  var u=getCurrentUser();if(!u){showToast('Not logged in','error');return;}
+  var s=getSessions();var now=Date.now();
+  s[u.id]={loginTime:now,lastActive:now,status:'online',branchName:u.store||'Unknown'};
+  saveSessions(s);
+  var h=getPunchHistory();
+  h.push({id:uid(),userId:u.id,userName:u.fullName||u.username,branchName:u.store||'Unknown',loginTime:now,logoutTime:null});
+  savePunchHistory(h);
+  showToast('✅ Punch In: '+fmtTime(now),'success');
+  navigate('attendance');
+}
+function punchOut(){
+  if(isSuperAdmin||isMexEmployee)return;
+  var u=getCurrentUser();if(!u)return;
+  var s=getSessions();if(s[u.id]){s[u.id].status='offline';s[u.id].lastActive=Date.now();saveSessions(s);}
+  var h=getPunchHistory();
+  for(var i=h.length-1;i>=0;i--){if(h[i].userId===u.id&&!h[i].logoutTime){h[i].logoutTime=Date.now();break;}}
+  savePunchHistory(h);
+  showToast('✅ Punch Out: '+fmtTime(Date.now()),'success');
+  navigate('attendance');
+}
+function isPunchedIn(){var u=getCurrentUser();if(!u||isSuperAdmin||isMexEmployee)return false;var s=getSessions();return s[u.id]&&s[u.id].status==='online';}
+
+/* ===== ADS ===== */
 function getGlobalAds(){var a=lsGet(GLOBAL_ADS_KEY,[]);return Array.isArray(a)?a:[];}
 function saveGlobalAds(a,skipPush){
   if(Array.isArray(a)){
@@ -1840,7 +1772,7 @@ function getCurrentCommenterPhotoKey(u){if(isSuperAdmin)return _superAdminPhotoK
 function resolveCommentPhotoKey(c){if(!c)return '';if(c.photoKey)return c.photoKey;if(c.isSuperAdmin)return _superAdminPhotoKey||'';if(c.isMexEmployee){var emp=findMexEmployeeById(c.mexEmployeeId);if(emp&&emp.photoKey)return emp.photoKey;return '';}if(c.tenantId&&c.userId){var users=lsGet('sb_tenant_'+c.tenantId+'_users',[]);if(Array.isArray(users)){for(var i=0;i<users.length;i++){if(Number(users[i].id)===Number(c.userId)&&users[i].photoKey)return users[i].photoKey;}}}return '';}
 function getCommenterAvatarHtml(c){if(!c)return '<img src="'+avatarUrl('User','128C7E')+'" alt=""/>';var key=resolveCommentPhotoKey(c);var name=c.userName||'User';var bg=c.isSuperAdmin?'f59e0b':(c.isMexEmployee?'f59e0b':'128C7E');var src=(key&&_mediaUrlCache[key])?_mediaUrlCache[key]:avatarUrl(name,bg);var attrs=key?' data-photo-key="'+escapeHtml(key)+'"':'';return '<img src="'+src+'"'+attrs+' alt=""/>';}
 
-/* COMMENTS MODAL */
+/* ===== COMMENTS MODAL ===== */
 function openCommentsModal(adId){var ads=getGlobalAds();var ad=null;for(var i=0;i<ads.length;i++){if(Number(ads[i].id)===Number(adId)){ad=ads[i];break;}}if(!ad)return;currentCommentsAdId=Number(adId);replyToCommentId=null;var inp=document.getElementById('commentsModalInput');if(inp)inp.value='';document.getElementById('commentsModal').classList.add('show');document.body.classList.add('modal-open');renderCommentsModal();}
 function closeCommentsModal(){document.getElementById('commentsModal').classList.remove('show');currentCommentsAdId=null;replyToCommentId=null;var so=document.querySelector('.modal-overlay.show');if(!so)document.body.classList.remove('modal-open');}
 function renderCommentsModal(){var body=document.getElementById('commentsBody');if(!body)return;var ads=getGlobalAds();var ad=null;for(var i=0;i<ads.length;i++){if(Number(ads[i].id)===Number(currentCommentsAdId)){ad=ads[i];break;}}if(!ad){body.innerHTML='<div class="comments-empty">No data</div>';return;}var comments=Array.isArray(ad.comments)?ad.comments:[];if(!comments.length){body.innerHTML='<div class="comments-empty">No comments yet.</div>';return;}var u=getCurrentUser();var html='';var sorted=comments.slice().sort(function(a,b){return a.timestamp-b.timestamp;});for(var j=0;j<sorted.length;j++)html+=renderCommentItemHtml(ad,sorted[j],false,u);body.innerHTML=html;setTimeout(hydratePhotos,20);}
@@ -1893,7 +1825,7 @@ function deleteAdComment(adId,cid,parentId){
 }
 function updateAdCardCommentCount(adId){var ads=getGlobalAds();var ad=null;for(var i=0;i<ads.length;i++){if(Number(ads[i].id)===Number(adId)){ad=ads[i];break;}}if(!ad)return;var total=countAdComments(ad);var el=document.getElementById('comment-count-'+adId);if(el)el.textContent=total>0?total:'';}
 
-/* MEMBER EARNINGS */
+/* ===== MEMBER EARNINGS ===== */
 function getMemberEarnings(){var a=lsGet(MEMBER_EARNINGS_KEY,[]);return Array.isArray(a)?a:[];}
 function saveMemberEarnings(a){lsSet(MEMBER_EARNINGS_KEY,a||[]);}
 function getMemberPayments(){var a=lsGet(MEMBER_PAYMENTS_KEY,[]);return Array.isArray(a)?a:[];}
@@ -1911,10 +1843,9 @@ function getMemberPaidEarnings(id){var arr=getMemberEarningsByEmployee(id);var t
 function getMemberPendingEarnings(id){var arr=getMemberEarningsByEmployee(id);var t=0;for(var i=0;i<arr.length;i++)if(arr[i].paid!==true)t+=Number(arr[i].commissionAmount)||0;return t;}
 function creditMemberEarning(empId,empName,compId,compName,planKey,planPrice,ownerUsername,type,extra){var rate=COMMISSION_RATE;var commission=Math.round(Number(planPrice)*rate);if(type==='branch'){rate=BRANCH_COMMISSION_RATE;commission=Math.round(Number(planPrice)*rate);}var earnings=getMemberEarnings();earnings.push({id:uid(),employeeId:empId,employeeName:empName,companyId:compId,companyName:compName,ownerUsername:ownerUsername||'',planKey:planKey||'monthly',planPrice:Number(planPrice)||0,commissionRate:rate,commissionAmount:commission,earningType:type||'signup',branchName:extra&&extra.branchName?extra.branchName:'',date:Date.now(),paid:false,paidAt:null,approvedBy:null});saveMemberEarnings(earnings);return commission;}
 function creditBranchCommission(tn,branchName,branchFee,adminName){if(!tn||!tn.promoCode)return null;var emp=findMexEmployeeByPromo(tn.promoCode);if(!emp)return null;var comm=Math.round(branchFee*BRANCH_COMMISSION_RATE);var earnings=getMemberEarnings();earnings.push({id:uid(),employeeId:emp.id,employeeName:emp.name,companyId:tn.id,companyName:tn.companyName,ownerUsername:tn.ownerUsername||'',planKey:'branch',planPrice:branchFee,commissionRate:BRANCH_COMMISSION_RATE,commissionAmount:comm,earningType:'branch',branchName:branchName||'',date:Date.now(),paid:false,paidAt:null,approvedBy:adminName||null});saveMemberEarnings(earnings);return comm;}
-function markMemberEarningPaid(eid,adminName){var earnings=getMemberEarnings();for(var i=0;i<earnings.length;i++){if(Number(earnings[i].id)===Number(eid)){earnings[i].paid=true;earnings[i].paidAt=Date.now();earnings[i].approvedBy=adminName||'Super Admin';saveMemberEarnings(earnings);return true;}}return false;}
 function creditTenantCommission(tn){if(!tn||!tn.promoCode||tn.commissionCredited)return;var res=creditPromoCommission(tn.promoCode,tn.id,tn.companyName,tn.ownerUsername);if(!res||!res.employee)return;var planKey=['monthly','quarterly','yearly'].indexOf(tn.planKey)!==-1?tn.planKey:'monthly';var price={monthly:25000,quarterly:70000,yearly:270000}[planKey];creditMemberEarning(res.employee.id,res.employee.name,tn.id,tn.companyName,planKey,price,tn.ownerUsername,'signup',null);tn.commissionCredited=true;}
 
-/* CREATE TENANT */
+/* ===== CREATE TENANT ===== */
 function createTenant(companyName,username,password,phone,promoCode,pendingApproval,planKey){
   if(isUsernameTaken(username))return {success:false,msg:'Username taken.'};
   var id='t'+Date.now()+'_'+Math.random().toString(36).substr(2,6);
@@ -1939,7 +1870,7 @@ function createTenant(companyName,username,password,phone,promoCode,pendingAppro
   return {success:true,tenant:tenant,ownerUser:ownerUser};
 }
 
-/* LANGUAGE */
+/* ===== LANGUAGE ===== */
 var LANG_FLAGS={en:'🇬🇧',sw:'🇹🇿',zh:'🇨🇳',fr:'🇫🇷',ar:'🇸🇦'};
 var LANG_LABELS={en:'EN',sw:'SW',zh:'中文',fr:'FR',ar:'ع'};
 var LANG_NAMES={en:'English',sw:'Kiswahili',zh:'中文',fr:'Français',ar:'العربية'};
@@ -1947,7 +1878,7 @@ var currentLang='en';
 function setLanguage(lang){if(!lang||!LANG_FLAGS[lang])lang='en';currentLang=lang;try{localStorage.setItem(LANG_KEY,lang);}catch(e){}var fe=document.getElementById('langFlag');var le=document.getElementById('langLabel');if(fe)fe.textContent=LANG_FLAGS[lang];if(le)le.textContent=LANG_LABELS[lang];var lm=document.getElementById('langMenu');if(lm)lm.classList.remove('show');var cu=getCurrentUser();if(cu)updateAllUI(cu);var av=document.querySelector('.sidebar-nav .nav-item.active');var v=av&&av.dataset.view?av.dataset.view:'status';navigate(v);showToast('✓ '+LANG_NAMES[lang],'success');}
 function initLanguageMenu(){var tg=document.getElementById('langToggle');var m=document.getElementById('langMenu');if(!tg||!m)return;var newTg=tg.cloneNode(true);tg.parentNode.replaceChild(newTg,tg);newTg.onclick=function(e){e.preventDefault();e.stopPropagation();m.classList.toggle('show');};var btns=m.querySelectorAll('button[data-lang]');for(var i=0;i<btns.length;i++){btns[i].onclick=function(e){e.preventDefault();e.stopPropagation();setLanguage(this.getAttribute('data-lang'));};}if(!window._langDocListener){window._langDocListener=true;document.addEventListener('click',function(e){var lm=document.getElementById('langMenu');if(lm&&!e.target.closest('.lang-wrapper'))lm.classList.remove('show');});}}
 
-/* CHAT */
+/* ===== CHAT ===== */
 function getChatMessages(){return lsGet(CHAT_KEY,[]);}
 function saveChatMessages(list){lsSet(CHAT_KEY,list||[]);}
 function chatUserKey(){var u=getCurrentUser();if(!u)return null;if(isSuperAdmin)return {type:'super',id:'super',tenantId:null,name:'Super Admin',photoKey:_superAdminPhotoKey};if(isMexEmployee){var emp=findMexEmployeeById(currentMexEmployeeId);if(!emp)return null;return {type:'mex',id:'mex_'+emp.id,tenantId:null,name:emp.name,photoKey:emp.photoKey||null};}return {type:'tenant',id:'tenant_'+currentTenantId+'_'+u.id,tenantId:currentTenantId,name:(u.fullName||u.username),photoKey:u.photoKey||null,role:u.role};}
@@ -2003,7 +1934,7 @@ function renderChatMessages(){
 }
 function sendChatMessage(){var me=chatUserKey();if(!me||!chatCurrentContact)return;var inp=document.getElementById('chatInput');if(!inp)return;var tx=inp.value.trim();if(!tx)return;var messages=getChatMessages();messages.push({id:uid(),from:me.id,to:chatCurrentContact.id,text:tx,timestamp:Date.now(),read:false});saveChatMessages(messages);inp.value='';renderChatMessages();}
 
-/* WALLPAPER */
+/* ===== WALLPAPER ===== */
 function getChatWallpaperSvgDataUrl(isDark){var sc=isDark?'#8a9a90':'#7a8a85';var fc=isDark?'#8a9a90':'#7a8a85';var svg="<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'><defs><pattern id='wp' width='60' height='60' patternUnits='userSpaceOnUse'>";svg+="<path d='M5 8 h12 a2 2 0 0 1 2 2 v6 a2 2 0 0 1 -2 2 h-8 l-4 3 v-3 a2 2 0 0 1 -2 -2 v-6 a2 2 0 0 1 2 -2 z' fill='none' stroke='"+sc+"' stroke-width='0.7' opacity='0.12'/>";svg+="<circle cx='35' cy='15' r='1.5' fill='"+fc+"' opacity='0.11'/>";svg+="</pattern></defs><rect width='180' height='180' fill='url(#wp)'/></svg>";return 'data:image/svg+xml;utf8,'+encodeURIComponent(svg);}
 function getCurrentChatWallpaper(){return {type:localStorage.getItem(CHAT_WALLPAPER_TYPE_KEY)||'default',value:localStorage.getItem(CHAT_WALLPAPER_VALUE_KEY)||''};}
 function setCurrentChatWallpaper(type,value){if(type==='default'){localStorage.removeItem(CHAT_WALLPAPER_TYPE_KEY);localStorage.removeItem(CHAT_WALLPAPER_VALUE_KEY);}else{localStorage.setItem(CHAT_WALLPAPER_TYPE_KEY,type);localStorage.setItem(CHAT_WALLPAPER_VALUE_KEY,value||'');}}
@@ -2015,12 +1946,12 @@ function renderChatWallpaperPicker(){var grid=document.getElementById('wpPickerG
 function selectChatWallpaperOption(type,value){if(type==='custom'&&value)_wpPickerTemp={type:'custom',value:value};else if(type==='color')_wpPickerTemp={type:'color',value:value};else _wpPickerTemp={type:'default',value:''};}
 function saveChatWallpaperPicker(){if(!_wpPickerTemp)_wpPickerTemp={type:'default',value:''};setCurrentChatWallpaper(_wpPickerTemp.type,_wpPickerTemp.value);applyChatWallpaper();closeChatWallpaperPicker();showToast('✓ Applied','success');}
 
-/* SIDEBAR */
+/* ===== SIDEBAR ===== */
 function openMobileSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('sidebarBackdrop').classList.add('show');}
 function closeMobileSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarBackdrop').classList.remove('show');}
 function toggleMobileSidebar(){var sb=document.getElementById('sidebar');if(sb.classList.contains('open'))closeMobileSidebar();else openMobileSidebar();}
 
-/* UPDATE UI */
+/* ===== UPDATE UI ===== */
 function updateAllUI(user){
   if(!user)return;
   var photo=getUserPhoto(user);var key=getUserPhotoKey(user);var dn=user.fullName||user.username||'User';
@@ -2034,7 +1965,7 @@ function updateAllUI(user){
   updateLowStockBadge();updateDebtsBadge();updateChatBadge();
 }
 
-/* NAVIGATE */
+/* ===== NAVIGATE ===== */
 function navigate(view){
   if(view==='ads')view='status';
   if(isMexEmployee){var al=['mexEarnings','mexCompanies','mexStatus','status'];if(al.indexOf(view)===-1)view='mexEarnings';}
@@ -2053,7 +1984,7 @@ function navigate(view){
   if(window.innerWidth<=768)closeMobileSidebar();
 }
 
-/* VIEWS */
+/* ===== VIEWS ===== */
 var views={};
 views.status=function(){
   var user=getCurrentUser();
@@ -2072,6 +2003,8 @@ views.status=function(){
   else content=renderCompanyStatusTab(user);
   return tabs+content;
 };
+
+/* ===== DASHBOARD with charts ===== */
 views.dashboard=function(){
   if(isSuperAdmin)return views.superadmin();
   if(isMexEmployee)return views.mexEarnings();
@@ -2105,13 +2038,25 @@ views.dashboard=function(){
   setTimeout(function(){renderDashboardCharts(dayLabels,daySales,expLabels,expValues,bgColors);},100);
   return html;
 };
+
 function renderDashboardCharts(dayLabels,daySales,expLabels,expValues,bgColors){
   var isD=document.body.classList.contains('dark');var gc=isD?'rgba(255,255,255,0.06)':'rgba(0,0,0,0.04)';var tc=isD?'#b0b0c8':'#64748b';
   var c1=document.getElementById('dashChart1');
-  if(c1&&typeof Chart!=='undefined'){destroyChart('dashChart1');var bc=daySales.map(function(v){return v>2000000?'#2c6e2f':v<300000?'rgba(220,38,38,0.85)':'rgba(18,140,126,0.6)';});_reportCharts.dashChart1=new Chart(c1,{type:'bar',data:{labels:dayLabels,datasets:[{label:'Sales',data:daySales,backgroundColor:bc,borderColor:'#128C7E',borderWidth:2,borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:gc},ticks:{color:tc}},x:{grid:{display:false},ticks:{color:tc}}}}});}
+  if(c1&&typeof Chart!=='undefined'){
+    destroyChart('dashChart1');
+    var bc=daySales.map(function(v){return v>2000000?'#2c6e2f':v<300000?'rgba(220,38,38,0.85)':'rgba(18,140,126,0.6)';});
+    _reportCharts.dashChart1=new Chart(c1,{type:'bar',data:{labels:dayLabels,datasets:[{label:'Sales',data:daySales,backgroundColor:bc,borderColor:'#128C7E',borderWidth:2,borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:gc},ticks:{color:tc}},x:{grid:{display:false},ticks:{color:tc}}}}});
+  }
   var c2=document.getElementById('dashChart2');
-  if(c2&&typeof Chart!=='undefined'){if(!expLabels.length)c2.parentElement.innerHTML='<div style="text-align:center;padding:60px;color:var(--text-muted);font-weight:600;">No data</div>';else{destroyChart('dashChart2');_reportCharts.dashChart2=new Chart(c2,{type:'doughnut',data:{labels:expLabels,datasets:[{data:expValues,backgroundColor:bgColors.slice(0,expValues.length),borderColor:bgColors.slice(0,expValues.length),borderWidth:1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:tc,boxWidth:12}}}}});}}
+  if(c2&&typeof Chart!=='undefined'){
+    if(!expLabels.length)c2.parentElement.innerHTML='<div style="text-align:center;padding:60px;color:var(--text-muted);font-weight:600;">No data</div>';
+    else{
+      destroyChart('dashChart2');
+      _reportCharts.dashChart2=new Chart(c2,{type:'doughnut',data:{labels:expLabels,datasets:[{data:expValues,backgroundColor:bgColors.slice(0,expValues.length),borderColor:bgColors.slice(0,expValues.length),borderWidth:1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:tc,boxWidth:12}}}}});
+    }
+  }
 }
+
 views.sales=function(){
   if(isSuperAdmin||isMexEmployee)return '';
   var s=getFilteredSales().slice().reverse();
@@ -2120,14 +2065,16 @@ views.sales=function(){
   for(var i=0;i<s.length;i++){var x=s[i];var p=getProduct(x.productId);var up=(x.unitPrice!=null)?x.unitPrice:(x.totalPrice/x.quantity);rows+='<tr><td>'+(i+1)+'</td><td>'+(p?escapeHtml(p.name):'--')+'</td><td>'+x.quantity+'</td><td>'+fmtMoney(up)+'</td><td><strong>'+fmtMoney(x.totalPrice)+'</strong></td><td>'+escapeHtml(x.customer||'--')+'</td><td>'+fmtDate(x.date)+'</td><td style="display:flex;gap:4px;"><button class="btn btn-danger btn-xs" onclick="deleteSale(\''+x.id+'\')"><i class="fas fa-trash"></i></button><button class="btn btn-primary btn-xs" onclick="shareReceipt(\''+x.id+'\')"><i class="fas fa-receipt"></i></button></td></tr>';}
   return '<div class="section-header"><h2><i class="fas fa-cart-plus"></i> Sales</h2>'+ha+'</div><div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>Product</th><th>Qty</th><th>Price</th><th>Total</th><th>Customer</th><th>Date</th><th></th></tr></thead><tbody>'+(rows||'<tr class="empty-row"><td colspan="8">No sales</td></tr>')+'</tbody></table></div></div></div>';
 };
+
 views.debts=function(){
   if(isSuperAdmin||isMexEmployee)return '';
   var d=getFilteredDebts().slice().sort(function(a,b){return b.date-a.date;});
   var total=0;for(var i=0;i<d.length;i++)total+=d[i].totalPrice||0;
   var canPay=hasPerm('sales_create');var rows='';
   for(var j=0;j<d.length;j++){var x=d[j];var p=getProduct(x.productId);rows+='<tr><td>'+(j+1)+'</td><td><strong>'+escapeHtml(x.customer||'Unknown')+'</strong></td><td>'+(p?escapeHtml(p.name):'--')+'</td><td>'+x.quantity+'</td><td><strong style="color:var(--accent-danger);">'+fmtMoney(x.totalPrice)+'</strong></td><td>'+fmtDate(x.date)+'</td><td style="display:flex;gap:4px;">'+(canPay?'<button class="btn btn-success btn-xs" onclick="markDebtPaid(\''+x.id+'\')"><i class="fas fa-check-circle"></i></button>':'')+'<button class="btn btn-danger btn-xs" onclick="deleteDebt(\''+x.id+'\')"><i class="fas fa-trash"></i></button></td></tr>';}
-  return '<div class="section-header"><h2><i class="fas fa-hand-holding-usd" style="color:var(--accent-danger);"></i> Debts</h2></div><div class="stats-grid"><div class="stat-card"><div class="stat-label">Total Debts</div><div class="stat-value red">'+fmtMoney(total)+'</div></div><div class="stat-card"><div class="stat-label">Debtors</div><div class="stat-value primary">'+d.length+'</div></div></div><div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>Customer</th><th>Product</th><th>Qty</th><th>Amount</th><th>Date</th><th></th></tr></thead><tbody>'+(rows||'<tr class="empty-row"><td colspan="7">No debts</td></tr>')+'</tbody></table></div></div></div>';
+  return '<div class="section-header"><h2><i class="fas fa-hand-holding-usd" style="color:var(--accent-danger);"></i> Debts</h2><div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn btn-whatsapp btn-icon" onclick="openSendReportModal(\'debts\')"><i class="fab fa-whatsapp"></i> Send Report</button></div></div><div class="stats-grid"><div class="stat-card"><div class="stat-label">Total Debts</div><div class="stat-value red">'+fmtMoney(total)+'</div></div><div class="stat-card"><div class="stat-label">Debtors</div><div class="stat-value primary">'+d.length+'</div></div></div><div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>Customer</th><th>Product</th><th>Qty</th><th>Amount</th><th>Date</th><th></th></tr></thead><tbody>'+(rows||'<tr class="empty-row"><td colspan="7">No debts</td></tr>')+'</tbody></table></div></div></div>';
 };
+
 views.inventory=function(){
   if(isSuperAdmin||isMexEmployee)return '';
   var p=getFilteredProducts().slice().sort(function(a,b){return (a.name||'').localeCompare(b.name||'');});
@@ -2144,6 +2091,7 @@ views.inventory=function(){
   ha+='</div>';
   return '<div class="section-header"><h2><i class="fas fa-boxes"></i> Inventory</h2>'+ha+'</div>'+cb+'<div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th></th><th>Product</th><th>Branch</th><th>Category</th><th>Price</th><th>Cost</th><th>Qty</th><th></th><th></th></tr></thead><tbody>'+(rows||'<tr class="empty-row"><td colspan="9">No products</td></tr>')+'</tbody></table></div></div></div>';
 };
+
 views.expenses=function(){
   if(isSuperAdmin||isMexEmployee)return '';
   if(!canSeeExpenses())return '<div class="card"><div class="card-body"><p class="text-muted">🔒</p></div></div>';
@@ -2155,6 +2103,8 @@ views.expenses=function(){
   for(var j=0;j<e.length;j++){var x=e[j];rows+='<tr><td>'+(j+1)+'</td><td>'+escapeHtml(x.description)+'</td><td>'+fmtMoney(x.amount)+'</td><td><span class="badge badge-info">'+escapeHtml(x.category)+'</span></td><td>'+fmtDate(x.date)+'</td><td><button class="btn btn-danger btn-xs" onclick="deleteExpense(\''+x.id+'\')">×</button></td></tr>';}
   return '<div class="section-header"><h2><i class="fas fa-receipt"></i> Expenses</h2><button class="btn btn-primary btn-icon" onclick="openModal(\'expense\')"><i class="fas fa-plus"></i> Add</button></div>'+cb+'<div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>Description</th><th>Amount</th><th>Category</th><th>Date</th><th></th></tr></thead><tbody>'+(rows||'<tr class="empty-row"><td colspan="6">No expenses</td></tr>')+'</tbody></table></div></div></div>';
 };
+
+/* ===== P&L WITH GRAPHS (kama zamani) ===== */
 views.pnl=function(){
   if(isSuperAdmin||isMexEmployee)return '';
   if(!canSeeNetProfit())return '<div class="card"><div class="card-body"><p class="text-muted">🔒</p></div></div>';
@@ -2162,8 +2112,56 @@ views.pnl=function(){
   var cards='<div class="stat-card"><div class="stat-label">Revenue</div><div class="stat-value primary">'+fmtMoney(pnl.totalRevenue)+'</div></div><div class="stat-card"><div class="stat-label">COGS</div><div class="stat-value primary-light">'+fmtMoney(pnl.cogs)+'</div></div>';
   if(perms.seeExpenses)cards+='<div class="stat-card"><div class="stat-label">Expenses</div><div class="stat-value">'+fmtMoney(pnl.totalExpenses)+'</div></div>';
   cards+='<div class="stat-card"><div class="stat-label">Net Profit</div><div class="stat-value '+(pnl.netProfit>=0?'primary':'red')+'">'+fmtMoney(pnl.netProfit)+'</div></div>';
-  return '<div class="section-header"><h2><i class="fas fa-scale-balanced"></i> P&L</h2></div><div class="stats-grid">'+cards+'</div>';
+
+  /* Chart data: last 7 days revenue vs expenses */
+  var sales=getFilteredSales();var exp=getFilteredExpenses();
+  var dayLabels=[];var revData=[];var expData=[];
+  for(var k=6;k>=0;k--){
+    var d=new Date(Date.now()-k*86400000);
+    dayLabels.push(d.toLocaleDateString('en-TZ',{timeZone:'Africa/Dar_es_Salaam',weekday:'short'}));
+    var s0=getDayStart(-k).getTime();var e0=getDayEnd(-k).getTime();
+    var rv=0;for(var m=0;m<sales.length;m++){if(sales[m].date>=s0&&sales[m].date<=e0)rv+=sales[m].totalPrice||0;}
+    var ev=0;for(var n=0;n<exp.length;n++){if(exp[n].date>=s0&&exp[n].date<=e0)ev+=exp[n].amount||0;}
+    revData.push(rv);expData.push(ev);
+  }
+  /* Breakdown for doughnut */
+  var breakdown={revenue:pnl.totalRevenue,cogs:pnl.cogs,expenses:pnl.totalExpenses,profit:pnl.netProfit>0?pnl.netProfit:0};
+
+  var charts='<div class="chart-grid" style="margin-top:20px;">'+
+    '<div class="card"><div class="card-header"><h3><i class="fas fa-chart-line"></i> Revenue vs Expenses (7 Days)</h3></div><div class="card-body"><div class="chart-container" style="height:280px;"><canvas id="pnlChart1"></canvas></div></div></div>'+
+    '<div class="card"><div class="card-header"><h3><i class="fas fa-chart-pie"></i> Breakdown</h3></div><div class="card-body"><div class="chart-container" style="height:280px;"><canvas id="pnlChart2"></canvas></div></div></div>'+
+    '</div>';
+
+  setTimeout(function(){renderPnlCharts(dayLabels,revData,expData,breakdown,perms);},100);
+  return '<div class="section-header"><h2><i class="fas fa-scale-balanced"></i> Profit &amp; Loss</h2></div><div class="stats-grid">'+cards+'</div>'+charts;
 };
+
+function renderPnlCharts(dayLabels,revData,expData,breakdown,perms){
+  if(typeof Chart==='undefined')return;
+  var isD=document.body.classList.contains('dark');
+  var gc=isD?'rgba(255,255,255,0.06)':'rgba(0,0,0,0.04)';
+  var tc=isD?'#b0b0c8':'#64748b';
+  var c1=document.getElementById('pnlChart1');
+  if(c1){
+    destroyChart('pnlChart1');
+    var datasets=[
+      {label:'Revenue',data:revData,backgroundColor:'rgba(18,140,126,0.75)',borderColor:'#128C7E',borderWidth:2,borderRadius:6},
+      {label:'Expenses',data:expData,backgroundColor:'rgba(239,68,68,0.65)',borderColor:'#ef4444',borderWidth:2,borderRadius:6}
+    ];
+    _reportCharts.pnlChart1=new Chart(c1,{type:'bar',data:{labels:dayLabels,datasets:datasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{color:tc,boxWidth:12,font:{weight:'700'}}}},scales:{y:{beginAtZero:true,grid:{color:gc},ticks:{color:tc,callback:function(v){return 'TSh '+Number(v).toLocaleString();}}},x:{grid:{display:false},ticks:{color:tc}}}}});
+  }
+  var c2=document.getElementById('pnlChart2');
+  if(c2){
+    destroyChart('pnlChart2');
+    var labels=['Revenue','COGS'];
+    var values=[breakdown.revenue,breakdown.cogs];
+    var colors=['#128C7E','#0e6b5f'];
+    if(perms.seeExpenses){labels.push('Expenses');values.push(breakdown.expenses);colors.push('#f59e0b');}
+    labels.push('Profit');values.push(breakdown.profit);colors.push('#10b981');
+    _reportCharts.pnlChart2=new Chart(c2,{type:'doughnut',data:{labels:labels,datasets:[{data:values,backgroundColor:colors,borderColor:colors,borderWidth:1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:tc,boxWidth:12,font:{weight:'700'}}}}}});
+  }
+}
+
 views.users=function(){
   if(isSuperAdmin||isMexEmployee)return '';
   if(!canManageUsers())return '';
@@ -2171,6 +2169,7 @@ views.users=function(){
   for(var i=0;i<us.length;i++){var x=us[i];var isO=isUserOnline(x.id);var isS=x.id===u.id;var isOwn=x.role==='owner';var sc=isO?'online':'offline';uh+='<tr><td>'+(i+1)+'</td><td><strong>'+escapeHtml(x.fullName||x.username)+'</strong></td><td>'+escapeHtml(x.username)+'</td><td><span class="badge '+getRoleBadgeClass(x.role)+'">'+getRoleLabel(x.role)+'</span></td><td>'+escapeHtml(x.store||'--')+'</td><td><span class="online-status '+sc+'"><span class="dot '+sc+'"></span>'+(isO?'Online':'Offline')+'</span></td><td>'+(!isOwn&&!isS?'<button class="btn btn-danger btn-xs" onclick="deleteUser(\''+x.id+'\')">×</button>':'—')+'</td></tr>';}
   return '<div class="section-header"><h2>Users</h2><button class="btn btn-primary btn-icon" onclick="openModal(\'user\')"><i class="fas fa-user-plus"></i> Add</button></div><div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>Name</th><th>Username</th><th>Role</th><th>Store</th><th>Status</th><th></th></tr></thead><tbody>'+(uh||'<tr class="empty-row"><td colspan="7">—</td></tr>')+'</tbody></table></div></div></div>';
 };
+
 views.roles=function(){
   if(isSuperAdmin||isMexEmployee)return '';
   if(!canManageRoles())return '';
@@ -2178,6 +2177,7 @@ views.roles=function(){
   for(var i=0;i<us.length;i++){var x=us[i];if(x.role==='owner'){rows+='<tr><td>'+(i+1)+'</td><td><strong>'+escapeHtml(x.fullName||x.username)+'</strong></td><td><span class="badge badge-success">Owner</span></td><td>—</td></tr>';}else{var opts='';for(var k=0;k<roles.length;k++){opts+='<option value="'+roles[k]+'"'+(roles[k]===x.role?' selected':'')+'>'+getRoleLabel(roles[k])+'</option>';}rows+='<tr><td>'+(i+1)+'</td><td><strong>'+escapeHtml(x.fullName||x.username)+'</strong></td><td><span class="badge '+getRoleBadgeClass(x.role)+'">'+getRoleLabel(x.role)+'</span></td><td><select id="role-sel-'+x.id+'">'+opts+'</select> <button class="btn btn-primary btn-xs" onclick="changeUserRole(\''+x.id+'\',document.getElementById(\'role-sel-'+x.id+'\').value)">Save</button></td></tr>';}}
   return '<div class="section-header"><h2>Roles</h2></div><div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>Name</th><th>Role</th><th>Action</th></tr></thead><tbody>'+rows+'</tbody></table></div></div></div>';
 };
+
 views.branches=function(){
   if(isSuperAdmin||isMexEmployee)return '';
   var u=getCurrentUser();if(!u||u.role!=='owner')return '';
@@ -2186,14 +2186,29 @@ views.branches=function(){
   for(var i=0;i<branches.length;i++){var b=branches[i];var bu=null;for(var j=0;j<us.length;j++){if(us[j].store===b.name&&us[j].role==='employee'){bu=us[j];break;}}var isO=bu?isUserOnline(bu.id):false;var sc=isO?'online':'offline';var main=b.name===u.store;bh+='<tr><td><strong>'+escapeHtml(b.name)+'</strong>'+(main?' 🏠':'')+'</td><td>'+escapeHtml(b.address||'—')+'</td><td>'+(bu?escapeHtml(bu.username):'—')+'</td><td><span class="online-status '+sc+'"><span class="dot '+sc+'"></span>'+(isO?'Online':'Offline')+'</span></td><td>'+(bu?'<button class="btn btn-xs btn-secondary" onclick="resetBranchPassword(\''+bu.id+'\')">Reset</button>':'')+'</td></tr>';}
   return '<div class="section-header"><h2>Branches</h2><button class="btn btn-primary btn-icon" onclick="openBranchModal()"><i class="fas fa-plus"></i> Add Branch — TSh 10,000</button></div><div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th>Branch</th><th>Address</th><th>Username</th><th>Status</th><th></th></tr></thead><tbody>'+(bh||'<tr class="empty-row"><td colspan="5">—</td></tr>')+'</tbody></table></div></div></div>';
 };
+
+/* ===== ATTENDANCE with Punch In/Out ===== */
 views.attendance=function(){
   if(isSuperAdmin||isMexEmployee)return '';
   if(!hasPerm('attendance_view'))return '';
-  var h=getPunchHistory();var tp=getTodayPunches();var onu=getOnlineUsers();var hh='';
+  var h=getPunchHistory();var tp=getTodayPunches();var onu=getOnlineUsers();
+  var me=getCurrentUser();var punched=isPunchedIn();
+  var punchBtn=punched
+    ?'<button class="btn btn-danger btn-icon" onclick="punchOut()" style="padding:14px 28px;font-size:1rem;"><i class="fas fa-sign-out-alt"></i> Punch Out</button>'
+    :'<button class="btn btn-success btn-icon" onclick="punchIn()" style="padding:14px 28px;font-size:1rem;"><i class="fas fa-sign-in-alt"></i> Punch In</button>';
+  var hh='';
   var slice=h.slice(-50).reverse();
-  for(var i=0;i<slice.length;i++){var p=slice[i];hh+='<tr><td>'+(i+1)+'</td><td><strong>'+escapeHtml(p.userName)+'</strong></td><td>'+escapeHtml(p.branchName)+'</td><td>'+fmtDateTime(p.loginTime)+'</td></tr>';}
-  return '<div class="section-header"><h2>Attendance</h2><button class="btn btn-danger btn-sm" onclick="clearAttendanceHistory()">Clear</button></div><div class="stats-grid"><div class="stat-card"><div class="stat-label">Online</div><div class="stat-value primary">'+onu.length+'</div></div><div class="stat-card"><div class="stat-label">Today</div><div class="stat-value primary-light">'+tp.length+'</div></div></div><div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>Employee</th><th>Branch</th><th>Date</th></tr></thead><tbody>'+(hh||'<tr class="empty-row"><td colspan="4">—</td></tr>')+'</tbody></table></div></div></div>';
+  for(var i=0;i<slice.length;i++){
+    var p=slice[i];
+    var dur=p.logoutTime?Math.round((p.logoutTime-p.loginTime)/60000)+' min':'—';
+    hh+='<tr><td>'+(i+1)+'</td><td><strong>'+escapeHtml(p.userName)+'</strong></td><td>'+escapeHtml(p.branchName)+'</td><td>'+fmtDateTime(p.loginTime)+'</td><td>'+(p.logoutTime?fmtDateTime(p.logoutTime):'—')+'</td><td>'+dur+'</td></tr>';
+  }
+  return '<div class="section-header"><h2><i class="fas fa-clock"></i> Attendance</h2><div style="display:flex;gap:8px;flex-wrap:wrap;">'+punchBtn+'<button class="btn btn-secondary btn-icon" onclick="clearAttendanceHistory()"><i class="fas fa-trash"></i> Clear</button></div></div>'+
+    '<div class="stats-grid"><div class="stat-card"><div class="stat-label">Online</div><div class="stat-value primary">'+onu.length+'</div></div><div class="stat-card"><div class="stat-label">Today</div><div class="stat-value primary-light">'+tp.length+'</div></div><div class="stat-card"><div class="stat-label">Total Records</div><div class="stat-value gold">'+h.length+'</div></div></div>'+
+    '<div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>Employee</th><th>Branch</th><th>Punch In</th><th>Punch Out</th><th>Duration</th></tr></thead><tbody>'+(hh||'<tr class="empty-row"><td colspan="6">—</td></tr>')+'</tbody></table></div></div></div>';
 };
+
+/* ===== REPORTS with WhatsApp/Email ===== */
 views.reports=function(){
   if(isSuperAdmin||isMexEmployee)return '';
   if(!hasPerm('reports_view'))return '';
@@ -2201,12 +2216,21 @@ views.reports=function(){
   var sum='<div class="report-summary-grid"><div class="report-summary-card"><div class="rs-label">Sales</div><div class="rs-value primary">'+fmtMoney(data.revenue)+'</div></div>';
   if(perms.seeExpenses)sum+='<div class="report-summary-card"><div class="rs-label">Expenses</div><div class="rs-value red">'+fmtMoney(data.expensesTotal)+'</div></div>';
   if(perms.seeNetProfit)sum+='<div class="report-summary-card"><div class="rs-label">Net Profit</div><div class="rs-value '+(data.profit>=0?'green':'red')+'">'+fmtMoney(data.profit)+'</div></div>';
-  sum+='</div>';
-  var periods=['today','week','month','last30','custom'];var tabs='<div class="report-period-tabs">';
-  for(var i=0;i<periods.length;i++){tabs+='<button class="report-period-tab '+(REPORT_PERIOD===periods[i]?'active':'')+'" onclick="setReportPeriod(\''+periods[i]+'\')">'+periods[i]+'</button>';}
+  sum+='<div class="report-summary-card"><div class="rs-label">Transactions</div><div class="rs-value primary">'+data.sales.length+'</div></div></div>';
+  var periods=[{key:'today',label:'Today'},{key:'week',label:'This Week'},{key:'month',label:'This Month'},{key:'last30',label:'Last 30 Days'},{key:'custom',label:'Custom'}];
+  var tabs='<div class="report-period-tabs">';
+  for(var i=0;i<periods.length;i++){tabs+='<button class="report-period-tab '+(REPORT_PERIOD===periods[i].key?'active':'')+'" onclick="setReportPeriod(\''+periods[i].key+'\')">'+periods[i].label+'</button>';}
   tabs+='</div>';
-  return '<div class="section-header"><h2>Reports</h2></div>'+tabs+'<div class="report-period-info"><i class="fas fa-calendar-check"></i> '+data.range.label+'</div>'+sum;
+  var customRange='<div class="report-custom-range'+(REPORT_PERIOD==='custom'?' show':'')+'" id="reportCustomRange"><div><label>From</label><input type="date" id="reportFromDate" value="'+(REPORT_CUSTOM_FROM?fmtDateInput(REPORT_CUSTOM_FROM):'')+'" onchange="setCustomReportRange()"/></div><div><label>To</label><input type="date" id="reportToDate" value="'+(REPORT_CUSTOM_TO?fmtDateInput(REPORT_CUSTOM_TO):'')+'" onchange="setCustomReportRange()"/></div></div>';
+  var sendBtns='<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;">'+
+    '<button class="btn btn-whatsapp btn-icon" onclick="openSendReportModal(\'sales\')" style="padding:14px 22px;"><i class="fab fa-whatsapp"></i> Send Sales via WhatsApp</button>'+
+    '<button class="btn btn-email btn-icon" onclick="openSendReportModal(\'sales\',true)" style="padding:14px 22px;"><i class="fas fa-envelope"></i> Send Sales via Email</button>'+
+    '<button class="btn btn-whatsapp btn-icon" onclick="openSendReportModal(\'debts\')" style="padding:14px 22px;background:#0e6b5f!important;"><i class="fab fa-whatsapp"></i> Send Debts via WhatsApp</button>'+
+    '<button class="btn btn-email btn-icon" onclick="openSendReportModal(\'debts\',true)" style="padding:14px 22px;"><i class="fas fa-envelope"></i> Send Debts via Email</button>'+
+    '</div>';
+  return '<div class="section-header"><h2><i class="fas fa-file-alt"></i> Reports</h2></div>'+tabs+customRange+'<div class="report-period-info"><i class="fas fa-calendar-check"></i> '+data.range.label+'</div>'+sum+sendBtns;
 };
+
 views.superadmin=function(){
   if(!isSuperAdmin)return '';
   var tenants=getAllTenants();var members=getMexEmployees();var pending=[],active=[],blocked=[];
@@ -2237,6 +2261,7 @@ views.superadmin=function(){
   for(var n=0;n<all.length;n++){var t2=all[n];var dl=getTenantDaysLeft(t2.id);var sc,sTxt;if(t2.blocked){sc='tenant-blocked';sTxt='Blocked';}else if(t2.pendingApproval){sc='tenant-pending';sTxt='Pending';}else if(isTenantSuspended(t2.id)){sc='tenant-blocked';sTxt='Suspended';}else if(isTenantOnTrial(t2.id)){sc='tenant-trial';sTxt='Trial '+dl+'d';}else{sc='tenant-active';sTxt='Active '+dl+'d';}compRows+='<tr><td>'+(n+1)+'</td><td><strong>'+escapeHtml(t2.companyName)+'</strong></td><td>'+escapeHtml(t2.ownerUsername)+'</td><td><span class="'+sc+'">'+sTxt+'</span></td><td>'+(t2.blocked?'<button class="btn-super-unblock" onclick="superUnblockTenant(\''+t2.id+'\')">Unblock</button>':'<button class="btn-super-block" onclick="superBlockTenant(\''+t2.id+'\')">Block</button>')+' <button class="btn-super-delete" onclick="superDeleteTenant(\''+t2.id+'\')">Delete</button></td></tr>';}
   return '<div class="section-header"><h2><i class="fas fa-crown" style="color:#f59e0b;"></i> Super Admin</h2><button class="btn btn-primary btn-icon" onclick="openSuperAddCompanyModal()"><i class="fas fa-plus"></i> Add Company</button></div>'+tabs+st+'<div class="card"><div class="card-header"><h3>Companies</h3></div><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>Company</th><th>Username</th><th>Status</th><th>Action</th></tr></thead><tbody>'+(compRows||'<tr class="empty-row"><td colspan="5">—</td></tr>')+'</tbody></table></div></div></div>';
 };
+
 views.mexEarnings=function(){
   if(!isMexEmployee)return '';
   var emp=findMexEmployeeById(currentMexEmployeeId);if(!emp)return '';
@@ -2254,6 +2279,7 @@ views.mexEarnings=function(){
     '<div class="card mb-16" style="background:rgba(245,158,11,.05);border:2px dashed #f59e0b;"><div class="card-body" style="text-align:center;padding:24px 18px;"><div style="font-size:.75rem;text-transform:uppercase;font-weight:800;color:#d97706;margin-bottom:10px;"><i class="fas fa-tag"></i> Your Promo Code</div><div class="mex-emp-code" onclick="copyPromoCode(\''+encArg(emp.promoCode)+'\')" style="font-size:1.5rem;padding:10px 22px;display:inline-flex;letter-spacing:3px;">'+escapeHtml(emp.promoCode)+'</div></div></div>'+
     '<div class="card mb-16"><div class="card-header"><h3>Earnings</h3></div><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>Company</th><th>Price</th><th>Commission</th><th>Status</th></tr></thead><tbody>'+(eRows||'<tr class="empty-row"><td colspan="5">No earnings</td></tr>')+'</tbody></table></div></div></div>';
 };
+
 views.mexCompanies=function(){
   if(!isMexEmployee)return '';
   var emp=findMexEmployeeById(currentMexEmployeeId);if(!emp)return '';
@@ -2261,9 +2287,10 @@ views.mexCompanies=function(){
   for(var i=0;i<regs.length;i++){var r=regs[i];rows+='<tr><td>'+(i+1)+'</td><td><strong>'+escapeHtml(r.companyName||'--')+'</strong></td><td>'+escapeHtml(r.ownerUsername||'--')+'</td><td>'+fmtDate(r.date)+'</td></tr>';}
   return '<div class="section-header"><h2>My Companies</h2></div><div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>Company</th><th>Username</th><th>Date</th></tr></thead><tbody>'+(rows||'<tr class="empty-row"><td colspan="4">—</td></tr>')+'</tbody></table></div></div></div>';
 };
+
 views.mexStatus=function(){if(!isMexEmployee)return '';return renderAdsTab();};
 
-/* STATUS */
+/* ===== STATUS (text only, no images) ===== */
 function getStatuses(){if(isSuperAdmin||isMexEmployee)return [];return getTenantData('statuses',[]);}
 function saveStatuses(s){if(isSuperAdmin||isMexEmployee)return;setTenantData('statuses',s);}
 function deleteStatus(id){if(!confirm('Delete?'))return;var all=getStatuses();var out=[];for(var i=0;i<all.length;i++)if(Number(all[i].id)!==Number(id))out.push(all[i]);saveStatuses(out);navigate('status');}
@@ -2272,18 +2299,25 @@ function addComment(id){var u=getCurrentUser();if(!u)return;var el=document.getE
 function deleteComment(sid,ci){if(!confirm('?'))return;var s=getStatuses();var st=null;for(var i=0;i<s.length;i++){if(Number(s[i].id)===Number(sid)){st=s[i];break;}}if(!st||!st.comments)return;st.comments.splice(ci,1);saveStatuses(s);navigate('status');}
 function toggleCommentInput(id){var d=document.getElementById('comment-input-'+id);if(d)d.style.display=d.style.display==='none'?'block':'none';}
 function switchStatusTab(tab){currentStatusTab=tab;navigate('status');}
-function openPostStatus(){var ov=document.getElementById('modalOverlay');var bx=document.getElementById('modalBox');bx.style.padding='';bx.style.overflow='';bx.style.borderRadius='';bx.style.maxWidth='';bx.innerHTML='<h3><i class="fas fa-pen"></i> Post Status</h3><form onsubmit="submitStatus(event)"><div class="form-group"><label>Content *</label><textarea id="statusText" rows="4" required maxlength="800"></textarea></div><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="btn btn-primary">Post</button></div></form>';ov.classList.add('show');document.body.classList.add('modal-open');}
-function submitStatus(e){e.preventDefault();var text=document.getElementById('statusText').value.trim();if(!text)return;var u=getCurrentUser();if(!u)return;var s=getStatuses();s.push({id:uid(),userId:u.id,text:text,timestamp:Date.now(),likes:[],comments:[]});saveStatuses(s);closeModal();navigate('status');}
+
+/* Post Status = TEXT ONLY (caption) */
+function openPostStatus(){
+  var ov=document.getElementById('modalOverlay');var bx=document.getElementById('modalBox');
+  bx.style.padding='';bx.style.overflow='';bx.style.borderRadius='';bx.style.maxWidth='';
+  bx.innerHTML='<h3><i class="fas fa-pen" style="color:var(--accent-3);"></i> Post Status</h3><form onsubmit="submitStatus(event)"><div class="form-group"><label>Caption *</label><textarea id="statusText" rows="5" required maxlength="800" placeholder="What\'s on your mind?"></textarea></div><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Post</button></div></form>';
+  ov.classList.add('show');document.body.classList.add('modal-open');
+}
+function submitStatus(e){e.preventDefault();var text=document.getElementById('statusText').value.trim();if(!text)return;var u=getCurrentUser();if(!u)return;var s=getStatuses();s.push({id:uid(),userId:u.id,text:text,timestamp:Date.now(),likes:[],comments:[]});saveStatuses(s);closeModal();navigate('status');showToast('✅ Posted','success');}
+
 function renderSingleStatusCard(s,user){
   var author=getUser(s.userId);var an=author?(author.fullName||author.username):'Unknown';var isOwn=s.userId===user.id;
   var lc=s.likes?s.likes.length:0;var isL=s.likes?s.likes.indexOf(user.id)!==-1:false;var comments=s.comments||[];
   var clh='';
   if(!comments.length){clh='<div style="font-size:.75rem;color:var(--text-muted);padding:6px 0;font-weight:500;">No comments</div>';}
   else{var reversed=comments.slice().reverse();for(var i=0;i<reversed.length;i++){var c=reversed[i];var oi=comments.length-1-i;var cm=getUser(c.userId);var cn=cm?(cm.fullName||cm.username):'Unknown';var db=c.userId===user.id?'<button class="comment-delete" onclick="deleteComment(\''+s.id+'\','+oi+')"><i class="fas fa-times"></i></button>':'';clh+='<div class="comment-item"><div class="comment-avatar">'+getUserPhotoHtml(cm)+'</div><div class="comment-body"><span class="comment-author">'+escapeHtml(cn)+'</span><span class="comment-text">'+escapeHtml(c.text)+'</span><span class="comment-time">'+fmtTime(c.timestamp)+'</span>'+db+'</div></div>';}}
-  return '<div class="card" style="margin-bottom:16px;padding:16px;"><div class="status-card"><div class="status-header">'+getUserPhotoHtml(author,'status-avatar')+'<div class="status-meta"><div class="status-name">'+escapeHtml(an)+renderVerifiedBadge()+'</div><div class="status-time">'+fmtDateTime(s.timestamp)+'</div></div>'+(isOwn?'<button class="btn btn-danger btn-xs" onclick="deleteStatus(\''+s.id+'\')" style="margin-left:auto;"><i class="fas fa-trash"></i></button>':'')+'</div><div class="status-body"><div class="status-content"><p class="status-text">'+escapeHtml(s.text||'')+'</p><div style="display:flex;gap:10px;align-items:center;"><button class="btn '+(isL?'btn-primary':'btn-secondary')+' btn-sm" onclick="toggleLike(\''+s.id+'\')"><i class="fas fa-heart"></i> '+lc+'</button><button class="btn btn-secondary btn-sm" onclick="toggleCommentInput(\''+s.id+'\')"><i class="fas fa-comment"></i> '+comments.length+'</button></div><div style="margin-top:8px;"><div id="comment-input-'+s.id+'" style="display:none;margin-bottom:8px;"><div style="display:flex;gap:8px;align-items:center;">'+getUserPhotoHtml(user,'','width:34px;height:34px;border-radius:50%;object-fit:cover;')+'<input type="text" id="comment-text-'+s.id+'" placeholder="Add comment..." style="flex:1;padding:9px 14px;border-radius:20px;font-size:16px;"/><button class="btn btn-sm btn-primary" onclick="addComment(\''+s.id+'\')"><i class="fas fa-paper-plane"></i></button></div></div><div style="max-height:200px;overflow-y:auto;">'+clh+'</div></div></div></div></div></div>';
+  return '<div class="card" style="margin-bottom:16px;padding:16px;"><div class="status-card"><div class="status-header">'+getUserPhotoHtml(author,'status-avatar')+'<div class="status-meta"><div class="status-name">'+escapeHtml(an)+renderVerifiedBadge()+'</div><div class="status-time">'+fmtDateTime(s.timestamp)+'</div></div>'+(isOwn?'<button class="btn btn-danger btn-xs" onclick="deleteStatus(\''+s.id+'\')" style="margin-left:auto;"><i class="fas fa-trash"></i></button>':'')+'</div><div class="status-body"><div class="status-content"><p class="status-text" style="white-space:pre-wrap;">'+escapeHtml(s.text||'')+'</p><div style="display:flex;gap:10px;align-items:center;"><button class="btn '+(isL?'btn-primary':'btn-secondary')+' btn-sm" onclick="toggleLike(\''+s.id+'\')"><i class="fas fa-heart"></i> '+lc+'</button><button class="btn btn-secondary btn-sm" onclick="toggleCommentInput(\''+s.id+'\')"><i class="fas fa-comment"></i> '+comments.length+'</button></div><div style="margin-top:8px;"><div id="comment-input-'+s.id+'" style="display:none;margin-bottom:8px;"><div style="display:flex;gap:8px;align-items:center;">'+getUserPhotoHtml(user,'','width:34px;height:34px;border-radius:50%;object-fit:cover;')+'<input type="text" id="comment-text-'+s.id+'" placeholder="Add comment..." style="flex:1;padding:9px 14px;border-radius:20px;font-size:16px;"/><button class="btn btn-sm btn-primary" onclick="addComment(\''+s.id+'\')"><i class="fas fa-paper-plane"></i></button></div></div><div style="max-height:200px;overflow-y:auto;">'+clh+'</div></div></div></div></div></div>';
 }
-
-/* AD CARDS */
+/* ===== AD CARDS ===== */
 function getAdAuthorPhotoKey(ad){if(!ad)return '';if(ad.postedBy==='super')return _superAdminPhotoKey||'';if(ad.postedBy==='mex'&&ad.posterId){var emp=findMexEmployeeById(ad.posterId);if(emp&&emp.photoKey)return emp.photoKey;return '';}if(ad.tenantId){var op=getTenantOwnerPublic(ad.tenantId);if(op.photoKey)return op.photoKey;}return '';}
 function getAdAuthorPhoto(ad){
   if(!ad)return avatarUrl('Company','128C7E');
@@ -2296,6 +2330,7 @@ function getAdAuthorPhoto(ad){
   return avatarUrl(ad.companyName||'Company','128C7E');
 }
 function getAdAuthorPhotoHtml(ad,cls,st,oc){var key=getAdAuthorPhotoKey(ad);var src=getAdAuthorPhoto(ad);var attrs=key?' data-photo-key="'+escapeHtml(key)+'"':'';var c=cls?' class="'+cls+'"':'';var s=st?' style="'+st+'"':'';var o=oc?' onclick="'+oc+'"':'';return '<img src="'+src+'"'+c+s+attrs+o+' alt=""/>';}
+
 function renderAdsTab(){
   var user=getCurrentUser();cleanupExpiredAds();
   var ads=getAdFeedOrder(getGlobalAds());
@@ -2347,7 +2382,7 @@ function renderAdCard(ad,user,canPost){
   return '<div class="insta-ad" id="ad-card-'+ad.id+'">'+hh+'<div class="insta-ad-media">'+media+'</div>'+ah+capH+inH+'</div>';
 }
 
-/* PROMOTE / AD DETAIL */
+/* ===== PROMOTE / AD DETAIL ===== */
 function openPromoteAdModal(adId){var ads=getGlobalAds();var ad=null;for(var i=0;i<ads.length;i++){if(Number(ads[i].id)===Number(adId)){ad=ads[i];break;}}if(!ad)return;var ov=document.getElementById('modalOverlay');var bx=document.getElementById('modalBox');var opts='';for(var j=0;j<PROMOTE_OPTIONS.length;j++){var o=PROMOTE_OPTIONS[j];opts+='<button type="button" class="plan-card" onclick="applyPromote(\''+adId+'\',\''+o.key+'\')" style="flex:1;min-width:130px;"><span class="plan-name">'+o.label+'</span><span class="plan-price">'+fmtMoney(o.price)+'</span></button>';}bx.innerHTML='<h3><i class="fas fa-rocket" style="color:var(--verified-blue);"></i> Promote MexFace</h3><div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">'+opts+'</div><div class="form-actions"><button class="btn btn-secondary" onclick="closeModal()">Cancel</button></div>';ov.classList.add('show');document.body.classList.add('modal-open');}
 function applyPromote(adId,key){var opt=null;for(var i=0;i<PROMOTE_OPTIONS.length;i++){if(PROMOTE_OPTIONS[i].key===key){opt=PROMOTE_OPTIONS[i];break;}}if(!opt)return;markOwnWrite();var ads=getGlobalAds();var ad=null;for(var j=0;j<ads.length;j++){if(Number(ads[j].id)===Number(adId)){ad=ads[j];break;}}if(!ad)return;var now=Date.now();var base=(ad.promotedUntil&&ad.promotedUntil>now)?ad.promotedUntil:now;ad.promoted=true;ad.promotedUntil=base+opt.days*86400000;ad.promotedAt=now;saveGlobalAds(ads);schedulePostPush(ad);closeModal();showToast('🚀 Promoted!','success');navigate('status');}
 function openAdDetail(adId){var ads=getGlobalAds();var ad=null;for(var i=0;i<ads.length;i++){if(Number(ads[i].id)===Number(adId)){ad=ads[i];break;}}if(!ad)return;incrementAdView(adId);var user=getCurrentUser();var ov=document.getElementById('modalOverlay');var bx=document.getElementById('modalBox');ov.style.zIndex='10005';bx.style.maxWidth='600px';bx.style.padding='0';bx.style.overflow='hidden';var fresh=getGlobalAds();var fr=null;for(var j=0;j<fresh.length;j++){if(Number(fresh[j].id)===Number(adId)){fr=fresh[j];break;}}bx.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border-color);background:var(--bg-card);"><h3 style="margin:0;font-size:.95rem;"><i class="fas fa-bullhorn" style="color:var(--accent-3);"></i> '+escapeHtml(fr.title||'')+'</h3><button class="btn btn-secondary btn-sm" onclick="closeAdDetail()" style="padding:4px 10px!important;"><i class="fas fa-times"></i></button></div><div style="padding:12px;overflow-y:auto;max-height:80vh;">'+renderAdCard(fr,user,false)+'</div>';ov.classList.add('show');document.body.classList.add('modal-open');setTimeout(hydrateMedia,30);}
@@ -2379,13 +2414,14 @@ function openCompanyProfile(tid){
   document.getElementById('adProfileModal').classList.add('show');document.body.classList.add('modal-open');
 }
 function renderAdGridTile(ad){var isV=ad.mediaType==='video'&&ad.mediaKey;var m='';if(isV)m='<video data-media-key="'+ad.mediaKey+'" playsinline preload="metadata" loop muted autoplay></video>';else if(ad.mediaKey)m='<img data-media-key="'+ad.mediaKey+'" alt="" loading="lazy"/>';else m='<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#666;"><i class="fas fa-image"></i></div>';return '<div class="ad-grid-tile" onclick="openAdDetail(\''+ad.id+'\')">'+m+'</div>';}
+
 function openAdModal(){
   var u=getCurrentUser();if(!u)return;
   if(!isSuperAdmin&&!isMexEmployee&&u.role!=='owner'){showToast('Owner only','error');return;}
   adMediaState={type:null,imageKey:null,videoBlob:null,_imageBlob:null,posterBlob:null};
   var ov=document.getElementById('modalOverlay');var bx=document.getElementById('modalBox');
   bx.style.padding='';bx.style.overflow='';bx.style.borderRadius='';bx.style.maxWidth='';
-  bx.innerHTML='<h3><i class="fas fa-bullhorn" style="color:var(--accent-3);"></i> Post MexFace</h3><form onsubmit="submitAd(event)"><div class="form-group"><label>Title *</label><input type="text" name="title" required maxlength="100"/></div><div class="form-group"><label>Content *</label><textarea name="content" rows="4" required maxlength="1500"></textarea></div><div class="form-group"><label>Media</label><input type="file" id="adMediaInput" accept="image/*,video/*" onchange="onAdMediaSelected(this)"/><div class="media-preview" id="adMediaPreview"></div><div class="promo-status" id="adMediaStatus"></div></div><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Post</button></div></form>';
+  bx.innerHTML='<h3><i class="fas fa-bullhorn" style="color:var(--accent-3);"></i> Post MexFace</h3><form onsubmit="submitAd(event)"><div class="form-group"><label>Title *</label><input type="text" name="title" required maxlength="100"/></div><div class="form-group"><label>Content *</label><textarea name="content" rows="4" required maxlength="1500"></textarea></div><div class="form-group"><label>Media (optional)</label><input type="file" id="adMediaInput" accept="image/*,video/*" onchange="onAdMediaSelected(this)"/><div class="media-preview" id="adMediaPreview"></div><div class="promo-status" id="adMediaStatus"></div></div><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Post</button></div></form>';
   ov.classList.add('show');document.body.classList.add('modal-open');
 }
 function onAdMediaSelected(input){
@@ -2426,7 +2462,7 @@ function submitAd(e){
 }
 function deleteGlobalAdConfirm(id){if(!confirm('Delete this?'))return;markOwnWrite();deleteGlobalAd(id);navigate('status');}
 
-/* PROFILE BIO/SOCIAL */
+/* ===== PROFILE BIO/SOCIAL ===== */
 var SOCIAL_FIELDS=[{key:'socialWhatsapp',icon:'fab fa-whatsapp',label:'WhatsApp',ph:'+255 xxx xxx xxx'},{key:'socialInstagram',icon:'fab fa-instagram',label:'Instagram',ph:'https://instagram.com/...'},{key:'socialFacebook',icon:'fab fa-facebook-f',label:'Facebook',ph:'https://facebook.com/...'},{key:'socialTiktok',icon:'fab fa-tiktok',label:'TikTok',ph:'https://tiktok.com/@...'},{key:'socialWebsite',icon:'fas fa-globe',label:'Website',ph:'https://...'}];
 function renderSocialFields(user){var h='<div class="social-header"><i class="fas fa-share-alt"></i> Social Media</div>';for(var i=0;i<SOCIAL_FIELDS.length;i++){var f=SOCIAL_FIELDS[i];var v=(user&&user[f.key])?user[f.key]:'';h+='<div class="form-group"><label style="display:flex;align-items:center;gap:6px;"><i class="'+f.icon+'"></i> '+f.label+'</label><input type="text" id="profile_'+f.key+'" value="'+escapeHtml(v)+'" placeholder="'+f.ph+'"/></div>';}return h;}
 function normalizeWaNumber(num){if(!num)return '';var n=String(num).replace(/\D/g,'');if(!n)return '';if(n.indexOf('0')===0)n='255'+n.substring(1);if(n.indexOf('255')!==0&&n.length<=10)n='255'+n;return n;}
@@ -2446,7 +2482,7 @@ function renderProfileBioAndSocial(source){
   h+='</div>';return h;
 }
 
-/* PROFILE MODAL */
+/* ===== PROFILE MODAL ===== */
 function openProfileModal(){
   var u=getCurrentUser();if(!u)return;
   document.getElementById('profileFullName').value=u.fullName||'';
@@ -2524,23 +2560,37 @@ function saveProfile(){
   closeProfileModal();showToast('✓ Saved','success');setTimeout(function(){softRefreshCurrentView(true);},100);
 }
 
-/* GENERIC MODAL */
+/* ===== GENERIC MODAL ===== */
 function openModal(type,data){
   if(isSuperAdmin||isMexEmployee)return;
   var ov=document.getElementById('modalOverlay');var bx=document.getElementById('modalBox');
   var u=getCurrentUser();var h='';
   bx.style.padding='';bx.style.overflow='';bx.style.borderRadius='';bx.style.maxWidth='';
-  if(type==='sale'){var store=getCatalogStore();var p=getFilteredProducts();var avail=[];for(var i=0;i<p.length;i++)if(p[i].quantity>0)avail.push(p[i]);var opts='';for(var j=0;j<avail.length;j++){opts+='<option value="'+avail[j].id+'" data-price="'+avail[j].price+'">'+escapeHtml(avail[j].name)+' ('+avail[j].quantity+')</option>';}h='<h3>New Sale</h3><form onsubmit="submitSale(event)"><div class="form-group"><label>Product</label><select name="productId" id="saleProductSelect" required onchange="onSaleProductChange()"><option value="">--</option>'+opts+'</select></div><div class="form-row"><div class="form-group"><label>Quantity</label><input type="number" name="quantity" min="1" value="1" required/></div><div class="form-group"><label>Price</label><input type="number" name="unitPrice" id="saleUnitPriceInput" min="0" required/></div></div><div class="form-group"><label>Customer</label><input type="text" name="customer"/></div><div class="form-group" style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--input-bg);border-radius:var(--radius-sm);"><input type="checkbox" name="paid" id="salePaidCheck" checked style="width:22px;height:22px;margin:0;accent-color:var(--accent-1);"/><label for="salePaidCheck" style="margin:0;text-transform:none;font-size:.9rem;cursor:pointer;flex:1;">Paid</label></div><input type="hidden" name="store" value="'+escapeAttr(store)+'"/><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="btn btn-primary">Save</button></div></form>';}
-  else if(type==='product'){var cats=ensureCategories();var catOpts='';for(var k=0;k<cats.length;k++)catOpts+='<option value="'+escapeAttr(cats[k].name)+'">'+escapeHtml(cats[k].name)+'</option>';h='<h3>Add Product</h3><form onsubmit="submitProduct(event)"><div class="form-group"><label>Name *</label><input type="text" name="name" required/></div><div class="form-row"><div class="form-group"><label>Price *</label><input type="number" name="price" min="1" required/></div><div class="form-group"><label>Cost *</label><input type="number" name="cost" min="1" required/></div></div><div class="form-row"><div class="form-group"><label>Category</label><select name="category">'+catOpts+'</select></div><div class="form-group"><label>Quantity</label><input type="number" name="quantity" min="0" value="0"/></div></div><input type="hidden" name="store" value="'+escapeAttr(getCatalogStore())+'"/><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="btn btn-primary">Save</button></div></form>';}
-  else if(type==='expense'){var cats2=ensureExpenseCategories();var catOpts2='';for(var m=0;m<cats2.length;m++)catOpts2+='<option value="'+escapeAttr(cats2[m].name)+'">'+escapeHtml(cats2[m].name)+'</option>';h='<h3>Add Expense</h3><form onsubmit="submitExpense(event)"><div class="form-group"><label>Description *</label><input type="text" name="description" required/></div><div class="form-row"><div class="form-group"><label>Amount *</label><input type="number" name="amount" min="1" required/></div><div class="form-group"><label>Category</label><select name="category">'+catOpts2+'</select></div></div><input type="hidden" name="store" value="'+escapeAttr(getCatalogStore())+'"/><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="btn btn-primary">Save</button></div></form>';}
-  else if(type==='user'){if(!canManageUsers())return;var roles=u.role==='owner'?['admin','accountant','employee']:['accountant','employee'];var tn2=getTenant(currentTenantId);var stores=tn2?tn2.branches.map(function(b){return b.name;}):[];var roleOpts='',storeOpts='';for(var n=0;n<roles.length;n++)roleOpts+='<option value="'+roles[n]+'">'+getRoleLabel(roles[n])+'</option>';for(var p2=0;p2<stores.length;p2++)storeOpts+='<option value="'+escapeAttr(stores[p2])+'">'+escapeHtml(stores[p2])+'</option>';h='<h3>Add User</h3><form onsubmit="submitUser(event)"><div class="form-group"><label>Full Name</label><input type="text" name="fullName"/></div><div class="form-row"><div class="form-group"><label>Username *</label><input type="text" name="username" required/></div><div class="form-group"><label>Password *</label><input type="password" name="password" required/></div></div><div class="form-row"><div class="form-group"><label>Role</label><select name="role" required>'+roleOpts+'</select></div><div class="form-group"><label>Store</label><select name="store">'+storeOpts+'</select></div></div><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="btn btn-primary">Save</button></div></form>';}
-  else if(type==='adjustStock'&&data){var p3=getProduct(parseInt(data));if(!p3){closeModal();return;}h='<h3>'+escapeHtml(p3.name)+'</h3><form onsubmit="submitStockAdjust(event,\''+p3.id+'\')"><div class="form-group"><label>Adjust (+/-)</label><input type="number" name="adjust" required/></div><p class="text-muted text-sm" style="font-weight:600;">Current: <strong>'+p3.quantity+'</strong></p><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="btn btn-primary">Save</button></div></form>';}
-  else{h='<h3>Coming soon</h3><div class="form-actions"><button class="btn btn-secondary" onclick="closeModal()">Close</button></div>';}
+  if(type==='sale'){
+    var store=getCatalogStore();var p=getFilteredProducts();var avail=[];for(var i=0;i<p.length;i++)if(p[i].quantity>0)avail.push(p[i]);
+    var opts='';for(var j=0;j<avail.length;j++){opts+='<option value="'+avail[j].id+'" data-price="'+avail[j].price+'">'+escapeHtml(avail[j].name)+' ('+avail[j].quantity+')</option>';}
+    h='<h3><i class="fas fa-cart-plus"></i> New Sale</h3><form onsubmit="submitSale(event)"><div class="form-group"><label>Product</label><select name="productId" id="saleProductSelect" required onchange="onSaleProductChange()"><option value="">--</option>'+opts+'</select></div><div class="form-row"><div class="form-group"><label>Quantity</label><input type="number" name="quantity" min="1" value="1" required/></div><div class="form-group"><label>Price</label><input type="number" name="unitPrice" id="saleUnitPriceInput" min="0" required/></div></div><div class="form-group"><label>Customer</label><input type="text" name="customer"/></div><div class="form-group" style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--input-bg);border-radius:var(--radius-sm);"><input type="checkbox" name="paid" id="salePaidCheck" checked style="width:22px;height:22px;margin:0;accent-color:var(--accent-1);"/><label for="salePaidCheck" style="margin:0;text-transform:none;font-size:.9rem;cursor:pointer;flex:1;">Paid</label></div><input type="hidden" name="store" value="'+escapeAttr(store)+'"/><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="btn btn-primary">Save</button></div></form>';
+  } else if(type==='product'){
+    var cats=ensureCategories();var catOpts='';for(var k=0;k<cats.length;k++)catOpts+='<option value="'+escapeAttr(cats[k].name)+'">'+escapeHtml(cats[k].name)+'</option>';
+    h='<h3><i class="fas fa-box"></i> Add Product</h3><form onsubmit="submitProduct(event)"><div class="form-group"><label>Name *</label><input type="text" name="name" required/></div><div class="form-row"><div class="form-group"><label>Price *</label><input type="number" name="price" min="1" required/></div><div class="form-group"><label>Cost *</label><input type="number" name="cost" min="1" required/></div></div><div class="form-row"><div class="form-group"><label>Category</label><select name="category">'+catOpts+'</select></div><div class="form-group"><label>Quantity</label><input type="number" name="quantity" min="0" value="0"/></div></div><input type="hidden" name="store" value="'+escapeAttr(getCatalogStore())+'"/><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="btn btn-primary">Save</button></div></form>';
+  } else if(type==='expense'){
+    var cats2=ensureExpenseCategories();var catOpts2='';for(var m=0;m<cats2.length;m++)catOpts2+='<option value="'+escapeAttr(cats2[m].name)+'">'+escapeHtml(cats2[m].name)+'</option>';
+    h='<h3><i class="fas fa-receipt"></i> Add Expense</h3><form onsubmit="submitExpense(event)"><div class="form-group"><label>Description *</label><input type="text" name="description" required/></div><div class="form-row"><div class="form-group"><label>Amount *</label><input type="number" name="amount" min="1" required/></div><div class="form-group"><label>Category</label><select name="category">'+catOpts2+'</select></div></div><input type="hidden" name="store" value="'+escapeAttr(getCatalogStore())+'"/><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="btn btn-primary">Save</button></div></form>';
+  } else if(type==='user'){
+    if(!canManageUsers())return;
+    var roles=u.role==='owner'?['admin','accountant','employee']:['accountant','employee'];
+    var tn2=getTenant(currentTenantId);var stores=tn2?tn2.branches.map(function(b){return b.name;}):[];
+    var roleOpts='',storeOpts='';for(var n=0;n<roles.length;n++)roleOpts+='<option value="'+roles[n]+'">'+getRoleLabel(roles[n])+'</option>';for(var p2=0;p2<stores.length;p2++)storeOpts+='<option value="'+escapeAttr(stores[p2])+'">'+escapeHtml(stores[p2])+'</option>';
+    h='<h3><i class="fas fa-user-plus"></i> Add User</h3><form onsubmit="submitUser(event)"><div class="form-group"><label>Full Name</label><input type="text" name="fullName"/></div><div class="form-row"><div class="form-group"><label>Username *</label><input type="text" name="username" required/></div><div class="form-group"><label>Password *</label><input type="password" name="password" required/></div></div><div class="form-row"><div class="form-group"><label>Role</label><select name="role" required>'+roleOpts+'</select></div><div class="form-group"><label>Store</label><select name="store">'+storeOpts+'</select></div></div><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="btn btn-primary">Save</button></div></form>';
+  } else if(type==='adjustStock'&&data){
+    var p3=getProduct(parseInt(data));if(!p3){closeModal();return;}
+    h='<h3>'+escapeHtml(p3.name)+'</h3><form onsubmit="submitStockAdjust(event,\''+p3.id+'\')"><div class="form-group"><label>Adjust (+/-)</label><input type="number" name="adjust" required/></div><p class="text-muted text-sm" style="font-weight:600;">Current: <strong>'+p3.quantity+'</strong></p><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="btn btn-primary">Save</button></div></form>';
+  } else {h='<h3>Coming soon</h3><div class="form-actions"><button class="btn btn-secondary" onclick="closeModal()">Close</button></div>';}
   bx.innerHTML=h;ov.classList.add('show');document.body.classList.add('modal-open');
 }
 function closeModal(){var ov=document.getElementById('modalOverlay');var bx=document.getElementById('modalBox');ov.classList.remove('show');ov.style.zIndex='';bx.style.padding='';bx.style.overflow='';bx.style.borderRadius='';bx.style.maxWidth='';muteAllVideos();var so=document.querySelector('.modal-overlay.show');if(!so)document.body.classList.remove('modal-open');}
 
-/* CRUD */
+/* ===== CRUD ===== */
 function onSaleProductChange(){var sel=document.getElementById('saleProductSelect');var pi=document.getElementById('saleUnitPriceInput');if(!sel||!pi)return;var o=sel.options[sel.selectedIndex];if(!o||!sel.value){pi.value='';return;}pi.value=parseFloat(o.dataset.price)||0;}
 function submitSale(e){
   e.preventDefault();if(!hasPerm('sales_create'))return;
@@ -2581,7 +2631,7 @@ function deleteDebt(id){if(!hasPerm('sales_create'))return;if(!confirm('Delete?'
 function openLowStockModal(){var m=document.getElementById('lowStockModal');var l=document.getElementById('lowStockList');var items=getLowStockItems();var h='';if(!items.length)h='<div style="text-align:center;padding:30px;font-weight:600;">—</div>';else{for(var i=0;i<items.length;i++){var p=items[i];h+='<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border-color);"><span style="font-weight:600;">'+escapeHtml(p.name)+' <strong style="color:var(--accent-danger);">'+p.quantity+'</strong></span><button class="btn btn-sm btn-success" onclick="adjustStock(\''+p.id+'\');closeLowStockModal();">+</button></div>';}}l.innerHTML=h;m.classList.add('show');document.body.classList.add('modal-open');}
 function closeLowStockModal(){document.getElementById('lowStockModal').classList.remove('show');var so=document.querySelector('.modal-overlay.show');if(!so)document.body.classList.remove('modal-open');}
 
-/* TRANSFER */
+/* ===== TRANSFER ===== */
 function openTransferModal(){if(isSuperAdmin||isMexEmployee){showToast('Not allowed','error');return;}var u=getCurrentUser();if(!u||u.role!=='owner'){showToast('Only OWNER','error');return;}var branches=getBranchNames();if(branches.length<2){showToast('Need 2+ branches','warning');return;}var fromSel=document.getElementById('transferFrom');var toSel=document.getElementById('transferBranch');var prodSel=document.getElementById('transferProduct');var qi=document.getElementById('transferQty');var info=document.getElementById('transferQtyInfo');var opts='';for(var i=0;i<branches.length;i++)opts+='<option value="'+escapeAttr(branches[i])+'">'+escapeHtml(branches[i])+'</option>';if(fromSel)fromSel.innerHTML='<option value="">--</option>'+opts;if(toSel)toSel.innerHTML='<option value="">--</option>'+opts;if(prodSel)prodSel.innerHTML='<option value="">--</option>';if(qi)qi.value=1;if(info)info.textContent='';document.getElementById('transferModal').classList.add('show');document.body.classList.add('modal-open');}
 function closeTransferModal(){document.getElementById('transferModal').classList.remove('show');var so=document.querySelector('.modal-overlay.show');if(!so)document.body.classList.remove('modal-open');}
 function onTransferFromChange(){var fromSel=document.getElementById('transferFrom');var prodSel=document.getElementById('transferProduct');var qi=document.getElementById('transferQty');var info=document.getElementById('transferQtyInfo');if(!fromSel||!prodSel)return;var br=fromSel.value;if(qi)qi.value=1;if(info)info.textContent='';if(!br){prodSel.innerHTML='<option value="">--</option>';return;}var products=getTenantData('products',[]);var filtered=[];for(var i=0;i<products.length;i++){if(normStore(products[i].store)===normStore(br)&&Number(products[i].quantity)>0)filtered.push(products[i]);}if(!filtered.length){prodSel.innerHTML='<option value="">— No products —</option>';return;}var opts='';for(var j=0;j<filtered.length;j++){opts+='<option value="'+filtered[j].id+'" data-qty="'+filtered[j].quantity+'">'+escapeHtml(filtered[j].name)+' (Qty: '+filtered[j].quantity+')</option>';}prodSel.innerHTML='<option value="">--</option>'+opts;}
@@ -2612,7 +2662,7 @@ function submitTransfer(e){
 }
 function viewTransferHistory(){var transfers=getTenantData(TRANSFERS_KEY_SUFFIX,[]);if(!Array.isArray(transfers))transfers=[];transfers=transfers.slice().sort(function(a,b){return b.date-a.date;});var ov=document.getElementById('modalOverlay');var bx=document.getElementById('modalBox');bx.style.padding='';bx.style.overflow='';bx.style.borderRadius='';bx.style.maxWidth='780px';var rows='';for(var i=0;i<transfers.length;i++){var tr=transfers[i];rows+='<tr><td>'+(i+1)+'</td><td><strong>'+escapeHtml(tr.productName)+'</strong></td><td><span class="badge badge-info">'+escapeHtml(tr.fromBranch)+'</span></td><td><span class="badge badge-primary">'+escapeHtml(tr.toBranch)+'</span></td><td><span class="badge badge-warning">'+tr.quantity+'</span></td><td style="font-size:.75rem;">'+escapeHtml(tr.transferredBy||'—')+'</td><td style="font-size:.75rem;">'+fmtDateTime(tr.date)+'</td></tr>';}bx.innerHTML='<h3><i class="fas fa-history" style="color:#8b5cf6;"></i> Transfer History ('+transfers.length+')</h3><div class="table-wrap"><table><thead><tr><th>#</th><th>Product</th><th>From</th><th>To</th><th>Qty</th><th>By</th><th>Date</th></tr></thead><tbody>'+(rows||'<tr class="empty-row"><td colspan="7">No transfers</td></tr>')+'</tbody></table></div><div class="form-actions" style="margin-top:16px;justify-content:flex-end;"><button class="btn btn-secondary" onclick="closeModal()">Close</button></div>';ov.classList.add('show');document.body.classList.add('modal-open');}
 
-/* BRANCH */
+/* ===== BRANCH ===== */
 function openBranchModal(){var ov=document.getElementById('subModal');['newBranchName','newBranchAddress','newBranchTin','newBranchUsername','newBranchPassword'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});ov.classList.add('show');document.body.classList.add('modal-open');}
 function closeSubscriptionModal(){document.getElementById('subModal').classList.remove('show');var so=document.querySelector('.modal-overlay.show');if(!so)document.body.classList.remove('modal-open');}
 function handleSubscriptionPayment(){
@@ -2641,40 +2691,147 @@ function handleSubscriptionPayment(){
 function resetBranchPassword(userId){var cg=getCurrentUser();if(!cg||isSuperAdmin||isMexEmployee||cg.role!=='owner')return;var pw=prompt('New password:');if(pw&&pw.length>=4){var users=getTenantData('users',[]);for(var i=0;i<users.length;i++){if(users[i].id===Number(userId)){users[i].password=hashPw(users[i].username,pw);break;}}setTenantData('users',users);showToast('✓ Saved','success');navigate('branches');}}
 function clearAttendanceHistory(){if(!confirm('Clear?'))return;savePunchHistory([]);saveSessions({});navigate('attendance');}
 
-/* SUPER ADMIN */
+/* ===== SUPER ADMIN ===== */
 function switchSuperAdminTab(tab){currentSuperAdminTab=tab;navigate('superadmin');}
-function openAddMexEmployeeModal(){if(!isSuperAdmin)return;var ov=document.getElementById('modalOverlay');var bx=document.getElementById('modalBox');bx.innerHTML='<h3>Add Member</h3><form onsubmit="submitAddMexEmployee(event)"><div class="form-group"><label>Full Name *</label><input type="text" name="name" required/></div><div class="form-group"><label>Phone</label><input type="text" name="phone"/></div><div class="form-group"><label>Password</label><input type="text" name="password" placeholder="(auto)"/></div><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="btn btn-primary">Save</button></div></form>';ov.classList.add('show');document.body.classList.add('modal-open');}
+function openAddMexEmployeeModal(){if(!isSuperAdmin)return;var ov=document.getElementById('modalOverlay');var bx=document.getElementById('modalBox');bx.innerHTML='<h3><i class="fas fa-user-plus"></i> Add Member</h3><form onsubmit="submitAddMexEmployee(event)"><div class="form-group"><label>Full Name *</label><input type="text" name="name" required/></div><div class="form-group"><label>Phone</label><input type="text" name="phone"/></div><div class="form-group"><label>Password</label><input type="text" name="password" placeholder="(auto)"/></div><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="btn btn-primary">Save</button></div></form>';ov.classList.add('show');document.body.classList.add('modal-open');}
 function submitAddMexEmployee(e){e.preventDefault();if(!isSuperAdmin)return;var fd=new FormData(e.target);var n=(fd.get('name')||'').trim();var p=(fd.get('phone')||'').trim();var pw=(fd.get('password')||'').trim()||genTempPassword();if(!n)return;var emp=addMexEmployee(n,p,pw);closeModal();showMexEmployeeCredentials(emp);}
 function showMexEmployeeCredentials(emp){var ov=document.getElementById('modalOverlay');var bx=document.getElementById('modalBox');bx.innerHTML='<h3 style="color:var(--accent-4);"><i class="fas fa-check-circle"></i> Member Created</h3><div style="background:rgba(245,158,11,.08);border:2px dashed #f59e0b;border-radius:var(--radius-sm);padding:16px 18px;margin:16px 0;"><div style="padding:10px 0;border-bottom:1px dashed rgba(245,158,11,.3);"><div style="font-size:.7rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;margin-bottom:4px;">Username</div><div class="mex-emp-code" onclick="copyPromoCode(\''+encArg(emp.username)+'\')">'+escapeHtml(emp.username)+'</div></div><div style="padding:10px 0;border-bottom:1px dashed rgba(245,158,11,.3);"><div style="font-size:.7rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;margin-bottom:4px;">Password</div><div class="mex-emp-code" onclick="copyPromoCode(\''+encArg(emp.plainPassword)+'\')">'+escapeHtml(emp.plainPassword)+'</div></div><div style="padding:10px 0;"><div style="font-size:.7rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;margin-bottom:4px;">Promo</div><div class="mex-emp-code" onclick="copyPromoCode(\''+encArg(emp.promoCode)+'\')">'+escapeHtml(emp.promoCode)+'</div></div></div><div class="form-actions" style="justify-content:center;"><button class="btn btn-primary" onclick="closeModal();navigate(\'superadmin\')">✓ Close</button></div>';ov.classList.add('show');document.body.classList.add('modal-open');}
 function confirmDeleteMexEmployee(id){if(!isSuperAdmin)return;if(!confirm('Delete?'))return;deleteMexEmployee(id);navigate('superadmin');}
-function openSuperAddCompanyModal(){if(!isSuperAdmin)return;var ov=document.getElementById('modalOverlay');var bx=document.getElementById('modalBox');bx.innerHTML='<h3>Add Company</h3><form onsubmit="submitSuperAddCompany(event)"><div class="form-group"><label>Company Name *</label><input type="text" name="company" required/></div><div class="form-row"><div class="form-group"><label>Username *</label><input type="text" name="username" required/></div><div class="form-group"><label>Password *</label><input type="password" name="password" required/></div></div><div class="form-group"><label>Phone</label><input type="text" name="phone"/></div><div class="form-group"><label>Promo Code</label><input type="text" name="promo" class="promo-code-input"/></div><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="btn btn-primary">Add Company</button></div></form>';ov.classList.add('show');document.body.classList.add('modal-open');}
+function openSuperAddCompanyModal(){if(!isSuperAdmin)return;var ov=document.getElementById('modalOverlay');var bx=document.getElementById('modalBox');bx.innerHTML='<h3><i class="fas fa-plus"></i> Add Company</h3><form onsubmit="submitSuperAddCompany(event)"><div class="form-group"><label>Company Name *</label><input type="text" name="company" required/></div><div class="form-row"><div class="form-group"><label>Username *</label><input type="text" name="username" required/></div><div class="form-group"><label>Password *</label><input type="password" name="password" required/></div></div><div class="form-group"><label>Phone</label><input type="text" name="phone"/></div><div class="form-group"><label>Promo Code</label><input type="text" name="promo" class="promo-code-input"/></div><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="btn btn-primary">Add Company</button></div></form>';ov.classList.add('show');document.body.classList.add('modal-open');}
 function submitSuperAddCompany(e){e.preventDefault();if(!isSuperAdmin)return;var fd=new FormData(e.target);var c=(fd.get('company')||'').trim();var u=(fd.get('username')||'').trim();var pw=(fd.get('password')||'').trim();var ph=(fd.get('phone')||'').trim();var pr=(fd.get('promo')||'').trim().toUpperCase();if(!c||!u||!pw)return;if(isUsernameTaken(u)){showToast('Username taken','error');return;}var vp='';if(pr){var emp=findMexEmployeeByPromo(pr);if(!emp){showToast('Invalid promo','error');return;}vp=emp.promoCode;}var r=createTenant(c,u,pw,ph,vp,false,'monthly');if(!r.success){showToast(r.msg,'error');return;}closeModal();navigate('superadmin');}
 function superApproveTenant(id){if(!isSuperAdmin)return;var ts=getAllTenants();for(var i=0;i<ts.length;i++){if(ts[i].id===id){ts[i].pendingApproval=false;if(!ts[i].trialEndsAt){ts[i].trialEndsAt=Date.now()+FREE_TRIAL_MS;ts[i].trialStartedAt=Date.now();}creditTenantCommission(ts[i]);saveTenants(ts);showToast('✅ Approved','success');navigate('superadmin');return;}}}
 function superBlockTenant(id){if(!isSuperAdmin)return;if(!confirm('Block?'))return;var ts=getAllTenants();for(var i=0;i<ts.length;i++){if(ts[i].id===id){ts[i].blocked=true;break;}}saveTenants(ts);navigate('superadmin');}
 function superUnblockTenant(id){if(!isSuperAdmin)return;var ts=getAllTenants();for(var i=0;i<ts.length;i++){if(ts[i].id===id){ts[i].blocked=false;break;}}saveTenants(ts);navigate('superadmin');}
 function superDeleteTenant(id){if(!isSuperAdmin)return;var ts=getAllTenants();var tn=null;for(var i=0;i<ts.length;i++){if(ts[i].id===id){tn=ts[i];break;}}if(!tn)return;if(!confirm('Delete "'+tn.companyName+'"?'))return;var ads=getGlobalAds();for(var j=0;j<ads.length;j++)if(ads[j].tenantId===id)deleteGlobalAd(ads[j].id);var keys=[];for(var k=0;k<localStorage.length;k++){var key=localStorage.key(k);if(key.indexOf('sb_tenant_'+id+'_')===0)keys.push(key);}for(var m=0;m<keys.length;m++)localStorage.removeItem(keys[m]);var filtered=[];for(var n=0;n<ts.length;n++)if(ts[n].id!==id)filtered.push(ts[n]);saveTenants(filtered);navigate('superadmin');}
 
-/* RECEIPT */
+/* ===== RECEIPT ===== */
 function shareReceipt(id){var sales=getTenantData('sales',[]);var s=null;for(var i=0;i<sales.length;i++){if(Number(sales[i].id)===Number(id)){s=sales[i];break;}}if(!s)return;var p=getProduct(s.productId);var co=getTenantData('company',{});var up=Number(s.unitPrice)||(s.totalPrice/s.quantity);var cn=co.name||'Company';var tin=co.tin||'';var addr=co.address||'';var seller=getUser(s.createdBy);var sellerName=seller?(seller.fullName||seller.username):'--';var c=document.getElementById('receiptContent');var html='<div class="receipt-header"><div class="receipt-brand">'+escapeHtml(cn)+'</div>';if(addr)html+='<div class="receipt-address">'+escapeHtml(addr)+'</div>';if(tin)html+='<div class="receipt-tin">TIN: '+escapeHtml(tin)+'</div>';html+='<div class="receipt-title">RECEIPT</div></div>';html+='<div class="receipt-row"><span class="label">Date:</span><span class="value">'+fmtDateTime(s.date)+'</span></div>';html+='<div class="receipt-row"><span class="label">Receipt #:</span><span class="value">'+String(s.id).slice(-8)+'</span></div>';html+='<div style="border-top:1px dashed var(--border-color);margin:12px 0;"></div>';html+='<div class="receipt-row"><span class="label">Product:</span><span class="value">'+(p?escapeHtml(p.name):'--')+'</span></div>';html+='<div class="receipt-row"><span class="label">Qty:</span><span class="value">'+s.quantity+'</span></div>';html+='<div class="receipt-row"><span class="label">Price:</span><span class="value">'+fmtMoney(up)+'</span></div>';html+='<div class="receipt-total"><span>Total</span><span class="value">'+fmtMoney(s.totalPrice)+'</span></div>';html+='<div style="border-top:1px dashed var(--border-color);margin:12px 0;"></div>';html+='<div class="receipt-row"><span class="label">Sold by:</span><span class="value">'+escapeHtml(sellerName)+'</span></div>';html+='<div class="receipt-row"><span class="label">Buyer:</span><span class="value">'+escapeHtml(s.customer||'Cash Customer')+'</span></div>';html+='<div class="receipt-footer">Thank you!<br>Please come again.</div>';c.innerHTML=html;document.getElementById('receiptModal').classList.add('show');document.body.classList.add('modal-open');currentReceiptData=s;}
 function closeReceiptModal(){document.getElementById('receiptModal').classList.remove('show');var so=document.querySelector('.modal-overlay.show');if(!so)document.body.classList.remove('modal-open');currentReceiptData=null;}
 function sendReceiptWhatsApp(){if(!currentReceiptData)return;var ceo=getTenantData('ceo',{whatsapp:''});var u=getCurrentUser();var def=(ceo&&ceo.whatsapp)?ceo.whatsapp:((u&&u.phone)?u.phone:'');var wa=prompt('WhatsApp number:',def);if(!wa)return;var n=normalizeWaNumber(wa);if(!n){showToast('Invalid','error');return;}var s=currentReceiptData;var p=getProduct(s.productId);var co=getTenantData('company',{});var cn=co.name||'Company';var msg='*RECEIPT*\n━━━━━━━━━━━━━━━━━━\n🏢 *'+cn+'*\n📅 '+fmtDateTime(s.date)+'\n🧾 #'+String(s.id).slice(-8)+'\n\n📦 '+(p?p.name:'--')+'\n🔢 Qty: '+s.quantity+'\n💰 Total: '+fmtMoney(s.totalPrice)+'\n\n_MeX PRO_';window.open('https://wa.me/'+n+'?text='+encodeURIComponent(msg),'_blank');showToast('✅ WhatsApp','success');}
 
-/* REPORTS */
-function buildReportData(){var range=getReportDateRange();var allS=getFilteredSales();var allE=getFilteredExpenses();var s=[],e=[];for(var i=0;i<allS.length;i++)if(allS[i].date>=range.from&&allS[i].date<=range.to)s.push(allS[i]);for(var j=0;j<allE.length;j++)if(allE[j].date>=range.from&&allE[j].date<=range.to)e.push(allE[j]);var rev=0,cogs=0,exp=0;for(var k=0;k<s.length;k++){rev+=s[k].totalPrice||0;cogs+=s[k].totalCost||0;}for(var m=0;m<e.length;m++)exp+=e[m].amount||0;return {range:range,sales:s,revenue:rev,cogs:cogs,expensesTotal:exp,profit:rev-cogs-exp};}
-function getReportDateRange(){var now=new Date();var todayStart=new Date(now.getFullYear(),now.getMonth(),now.getDate(),0,0,0,0);var todayEnd=new Date(now.getFullYear(),now.getMonth(),now.getDate(),23,59,59,999);var from,to,label;if(REPORT_PERIOD==='today'){from=todayStart.getTime();to=todayEnd.getTime();label='Today';}else if(REPORT_PERIOD==='week'){var day=todayStart.getDay();var diff=(day===0?6:day-1);var mon=new Date(todayStart);mon.setDate(todayStart.getDate()-diff);from=mon.getTime();to=todayEnd.getTime();label='This Week';}else if(REPORT_PERIOD==='month'){var first=new Date(now.getFullYear(),now.getMonth(),1);from=first.getTime();to=todayEnd.getTime();label='This Month';}else if(REPORT_PERIOD==='custom'){from=REPORT_CUSTOM_FROM||todayStart.getTime();to=REPORT_CUSTOM_TO||todayEnd.getTime();label='Custom';}else{from=Date.now()-(30*86400000);to=Date.now();label='Last 30 Days';}return {from:from,to:to,label:label};}
-function setReportPeriod(p){REPORT_PERIOD=p;if(p==='custom'){if(!REPORT_CUSTOM_FROM){var d=new Date();d.setDate(d.getDate()-7);REPORT_CUSTOM_FROM=d.getTime();}if(!REPORT_CUSTOM_TO)REPORT_CUSTOM_TO=Date.now();}navigate('reports');}
-function openSendReportModal(type){sendReportType=(type==='sales')?'sales':'debts';var te=document.getElementById('sendReportTitle');if(te)te.textContent=(sendReportType==='sales')?'Send Sales Report':'Send Debts Report';var ceo=getTenantData('ceo',{whatsapp:'',email:''});var wa=document.getElementById('reportWhatsappNumber');var em=document.getElementById('reportEmailAddress');var u=getCurrentUser();if(wa)wa.value=(ceo&&ceo.whatsapp)?ceo.whatsapp:((u&&u.phone)?u.phone:'');if(em)em.value=(ceo&&ceo.email)?ceo.email:((u&&u.email)?u.email:'');document.getElementById('sendReportModal').classList.add('show');document.body.classList.add('modal-open');}
+/* ===== REPORTS (buildReportData, date range, send modal) ===== */
+function buildReportData(){
+  var range=getReportDateRange();var allS=getFilteredSales();var allE=getFilteredExpenses();
+  var s=[],e=[];
+  for(var i=0;i<allS.length;i++)if(allS[i].date>=range.from&&allS[i].date<=range.to)s.push(allS[i]);
+  for(var j=0;j<allE.length;j++)if(allE[j].date>=range.from&&allE[j].date<=range.to)e.push(allE[j]);
+  var rev=0,cogs=0,exp=0;
+  for(var k=0;k<s.length;k++){rev+=s[k].totalPrice||0;cogs+=s[k].totalCost||0;}
+  for(var m=0;m<e.length;m++)exp+=e[m].amount||0;
+  return {range:range,sales:s,expenses:e,revenue:rev,cogs:cogs,expensesTotal:exp,profit:rev-cogs-exp};
+}
+function getReportDateRange(){
+  var now=new Date();
+  var todayStart=new Date(now.getFullYear(),now.getMonth(),now.getDate(),0,0,0,0);
+  var todayEnd=new Date(now.getFullYear(),now.getMonth(),now.getDate(),23,59,59,999);
+  var from,to,label;
+  if(REPORT_PERIOD==='today'){from=todayStart.getTime();to=todayEnd.getTime();label='Today';}
+  else if(REPORT_PERIOD==='week'){var day=todayStart.getDay();var diff=(day===0?6:day-1);var mon=new Date(todayStart);mon.setDate(todayStart.getDate()-diff);from=mon.getTime();to=todayEnd.getTime();label='This Week';}
+  else if(REPORT_PERIOD==='month'){var first=new Date(now.getFullYear(),now.getMonth(),1);from=first.getTime();to=todayEnd.getTime();label='This Month';}
+  else if(REPORT_PERIOD==='custom'){from=REPORT_CUSTOM_FROM||todayStart.getTime();to=REPORT_CUSTOM_TO||todayEnd.getTime();label='Custom: '+fmtDate(from)+' → '+fmtDate(to);}
+  else{from=Date.now()-(30*86400000);to=Date.now();label='Last 30 Days';}
+  return {from:from,to:to,label:label};
+}
+function setReportPeriod(p){
+  REPORT_PERIOD=p;
+  if(p==='custom'){if(!REPORT_CUSTOM_FROM){var d=new Date();d.setDate(d.getDate()-7);REPORT_CUSTOM_FROM=d.getTime();}if(!REPORT_CUSTOM_TO)REPORT_CUSTOM_TO=Date.now();}
+  navigate('reports');
+}
+function setCustomReportRange(){
+  var f=document.getElementById('reportFromDate');var t=document.getElementById('reportToDate');
+  if(f&&f.value)REPORT_CUSTOM_FROM=new Date(f.value).getTime();
+  if(t&&t.value)REPORT_CUSTOM_TO=new Date(t.value).getTime()+86399999;
+  REPORT_PERIOD='custom';
+  navigate('reports');
+}
+function openSendReportModal(type,forceEmail){
+  sendReportType=(type==='sales')?'sales':'debts';
+  var te=document.getElementById('sendReportTitle');
+  if(te)te.textContent=(sendReportType==='sales')?'Send Sales Report':'Send Debts Report';
+  var ceo=getTenantData('ceo',{whatsapp:'',email:''});var u=getCurrentUser();
+  var wa=document.getElementById('reportWhatsappNumber');var em=document.getElementById('reportEmailAddress');
+  if(wa)wa.value=(ceo&&ceo.whatsapp)?ceo.whatsapp:((u&&u.phone)?u.phone:'');
+  if(em)em.value=(ceo&&ceo.email)?ceo.email:((u&&u.email)?u.email:'');
+  document.getElementById('sendReportModal').classList.add('show');
+  document.body.classList.add('modal-open');
+  setTimeout(function(){if(forceEmail&&em)em.focus();else if(wa&&!forceEmail)wa.focus();},200);
+}
 function closeSendReportModal(){document.getElementById('sendReportModal').classList.remove('show');var so=document.querySelector('.modal-overlay.show');if(!so)document.body.classList.remove('modal-open');}
-function executeSendReport(channel){var waI=document.getElementById('reportWhatsappNumber');var emI=document.getElementById('reportEmailAddress');var wa=(waI?waI.value:'').trim();var em=(emI?emI.value:'').trim();var ceo=getTenantData('ceo',{whatsapp:'',email:''});ceo.whatsapp=wa;ceo.email=em;setTenantData('ceo',ceo);if(channel==='whatsapp'){if(!wa){showToast('Enter WhatsApp','error');return;}var n=normalizeWaNumber(wa);if(!n){showToast('Invalid','error');return;}var msg=buildReportMessage(sendReportType);if(!msg)return;window.open('https://wa.me/'+n+'?text='+encodeURIComponent(msg),'_blank');closeSendReportModal();}else if(channel==='email'){if(!em){showToast('Enter email','error');return;}var msg2=buildReportMessage(sendReportType);if(!msg2)return;var subj=(sendReportType==='sales')?'Sales Report':'Debts Report';window.location.href='mailto:'+encodeURIComponent(em)+'?subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(msg2);closeSendReportModal();}}
-function buildReportMessage(type){var tn=getTenant(currentTenantId);var cN=tn?(tn.companyName||'Company'):'Company';var lines=[];if(type==='sales'){var sales=buildReportData().sales.slice().sort(function(a,b){return b.date-a.date;});if(!sales.length){showToast('No sales','warning');return '';}var tr=0,tc=0;for(var i=0;i<sales.length;i++){tr+=sales[i].totalPrice||0;tc+=sales[i].totalCost||0;}lines.push('*SALES REPORT*');lines.push('━━━━━━━━━━━━━━━━━━');lines.push('🏢 *'+cN+'*');lines.push('📅 '+fmtDateTime(Date.now()));lines.push('');lines.push('💰 Total: '+fmtMoney(tr));lines.push('📊 COGS: '+fmtMoney(tc));lines.push('📈 Profit: '+fmtMoney(tr-tc));}else{var debts=getFilteredDebts().slice().sort(function(a,b){return b.date-a.date;});if(!debts.length){showToast('No debts','warning');return '';}var td=0;for(var j=0;j<debts.length;j++)td+=debts[j].totalPrice||0;lines.push('*DEBTS REPORT*');lines.push('━━━━━━━━━━━━━━━━━━');lines.push('🏢 *'+cN+'*');lines.push('💰 Total: '+fmtMoney(td));lines.push('👥 Count: '+debts.length);}lines.push('');lines.push('_MeX PRO_');return lines.join('\n');}
-
+function executeSendReport(channel){
+  var waI=document.getElementById('reportWhatsappNumber');var emI=document.getElementById('reportEmailAddress');
+  var wa=(waI?waI.value:'').trim();var em=(emI?emI.value:'').trim();
+  var ceo=getTenantData('ceo',{whatsapp:'',email:''});
+  ceo.whatsapp=wa;ceo.email=em;setTenantData('ceo',ceo);
+  if(channel==='whatsapp'){
+    if(!wa){showToast('Enter WhatsApp','error');return;}
+    var n=normalizeWaNumber(wa);
+    if(!n){showToast('Invalid','error');return;}
+    var msg=buildReportMessage(sendReportType);
+    if(!msg)return;
+    window.open('https://wa.me/'+n+'?text='+encodeURIComponent(msg),'_blank');
+    closeSendReportModal();showToast('✅ WhatsApp opened','success');
+  } else if(channel==='email'){
+    if(!em){showToast('Enter email','error');return;}
+    var msg2=buildReportMessage(sendReportType);
+    if(!msg2)return;
+    var subj=(sendReportType==='sales')?'Sales Report':'Debts Report';
+    window.location.href='mailto:'+encodeURIComponent(em)+'?subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(msg2);
+    closeSendReportModal();showToast('✅ Email opened','success');
+  }
+}
+function buildReportMessage(type){
+  var tn=getTenant(currentTenantId);var cN=tn?(tn.companyName||'Company'):'Company';
+  var lines=[];
+  if(type==='sales'){
+    var data=buildReportData();var sales=data.sales.slice().sort(function(a,b){return b.date-a.date;});
+    if(!sales.length){showToast('No sales','warning');return '';}
+    lines.push('*SALES REPORT*');
+    lines.push('━━━━━━━━━━━━━━━━━━');
+    lines.push('🏢 *'+cN+'*');
+    lines.push('📅 '+data.range.label);
+    lines.push('🕐 '+fmtDateTime(Date.now()));
+    lines.push('');
+    lines.push('💰 Revenue: '+fmtMoney(data.revenue));
+    lines.push('📊 COGS: '+fmtMoney(data.cogs));
+    lines.push('🧾 Expenses: '+fmtMoney(data.expensesTotal));
+    lines.push('📈 *NET PROFIT: '+fmtMoney(data.profit)+'*');
+    lines.push('');
+    lines.push('*Recent Sales:*');
+    var top=sales.slice(0,10);
+    for(var i=0;i<top.length;i++){
+      var s=top[i];var p=getProduct(s.productId);
+      lines.push((i+1)+'. '+(p?p.name:'--')+' × '+s.quantity+' — '+fmtMoney(s.totalPrice));
+    }
+    if(sales.length>10)lines.push('... +'+(sales.length-10)+' more');
+  } else {
+    var debts=getFilteredDebts().slice().sort(function(a,b){return b.date-a.date;});
+    if(!debts.length){showToast('No debts','warning');return '';}
+    var total=0;for(var j=0;j<debts.length;j++)total+=debts[j].totalPrice||0;
+    lines.push('*DEBTS REPORT*');
+    lines.push('━━━━━━━━━━━━━━━━━━');
+    lines.push('🏢 *'+cN+'*');
+    lines.push('🕐 '+fmtDateTime(Date.now()));
+    lines.push('');
+    lines.push('💰 *Total: '+fmtMoney(total)+'*');
+    lines.push('👥 Count: '+debts.length);
+    lines.push('');
+    lines.push('*Debtors:*');
+    for(var k=0;k<debts.length;k++){
+      var d=debts[k];var pp=getProduct(d.productId);
+      lines.push((k+1)+'. '+(d.customer||'?')+' — '+(pp?pp.name:'--')+' × '+d.quantity+' — '+fmtMoney(d.totalPrice));
+    }
+  }
+  lines.push('');
+  lines.push('_MeX PRO — Multi-Tenant Business System_');
+  return lines.join('\n');
+}
 function closeCredentialsModal(){document.getElementById('credentialsModal').classList.remove('show');_credentialsTenantId=null;var so=document.querySelector('.modal-overlay.show');if(!so)document.body.classList.remove('modal-open');}
 
-/* CHARTS */
+/* ===== CHARTS HELPER ===== */
 var _reportCharts={};
 function destroyChart(id){if(_reportCharts[id]){try{_reportCharts[id].destroy();}catch(e){}delete _reportCharts[id];}}
 
-/* LOGOUT */
+/* ===== LOGOUT ===== */
 function logout(){
   var u=getCurrentUser();
   try{localStorage.removeItem(SUPER_ADMIN_SESSION_KEY);}catch(e){}
@@ -2692,7 +2849,7 @@ function logout(){
   closeMobileSidebar();
 }
 
-/* BIND */
+/* ===== BIND ===== */
 function bindGlobalEvents(){
   var lb=document.getElementById('sideLogoutBtn');if(lb)lb.onclick=logout;
   initLanguageMenu();
@@ -2721,14 +2878,14 @@ function toggleTheme(){
   applyTheme();
 }
 
-/* INIT APP */
+/* ===== INIT APP ===== */
 function initApp(user){
   if(!isSuperAdmin&&!isMexEmployee){ensureCategories();ensureExpenseCategories();}
   initVideoObserver();applyTheme();
   try{var sl=localStorage.getItem(LANG_KEY);if(sl&&LANG_FLAGS[sl]){currentLang=sl;var fe=document.getElementById('langFlag');var le=document.getElementById('langLabel');if(fe)fe.textContent=LANG_FLAGS[currentLang];if(le)le.textContent=LANG_LABELS[currentLang];}}catch(e){}
   updateAllUI(user);cleanupExpiredAds();
-  try{setupRealtimeSync();}catch(e){console.warn('[Init] realtime err:',e);}
-  try{startPeriodicRefresh();}catch(e){console.warn('[Init] periodic err:',e);}
+  try{setupRealtimeSync();}catch(e){}
+  try{startPeriodicRefresh();}catch(e){}
   if(promotedTickerInterval)clearInterval(promotedTickerInterval);
   promotedTickerInterval=setInterval(function(){cleanupExpiredAds();},60000);
   var navItems=document.querySelectorAll('.sidebar-nav .nav-item');
@@ -2756,111 +2913,71 @@ function initApp(user){
   showSyncButton();
 }
 
-/* LOGIN */
+/* ===== LOGIN ===== */
 async function handleLogin(){
   var un=document.getElementById('loginUsername').value.trim();
   var pw=document.getElementById('loginPassword').value.trim();
   var er=document.getElementById('loginError');
   var btn=document.getElementById('loginBtn');
-  er.textContent='';
-  er.style.color='';
+  er.textContent='';er.style.color='';
   if(!un||!pw){er.textContent='Fill username and password';return;}
-
   var lock=loginLockedSeconds();
   if(lock>0){er.textContent='⏳ Wait '+lock+'s';return;}
-
-  if(!supabaseClient){
-    er.textContent='⚠ Hakuna muunganisho wa server (Supabase haijapakia). Jaribu mtandao mwingine.';
-    return;
-  }
+  if(!supabaseClient){er.textContent='⚠ Hakuna muunganisho wa server. Jaribu mtandao mwingine.';return;}
 
   var isSuperAttempt=(un===SUPER_ADMIN_USERNAME);
-
-  er.textContent='⏳ Verifying...';
-  er.style.color='var(--text-muted)';
+  er.textContent='⏳ Verifying...';er.style.color='var(--text-muted)';
   if(btn)btn.disabled=true;
 
-  /* ★ FIX: Super admin anasoma safu moja tu (sb_super_hash) */
   var sync;
   if(isSuperAttempt){
     try{
       var rr=await supabaseClient.from(TBL_KV).select('value').eq('key','sb_super_hash').maybeSingle();
       if(rr.error)throw rr.error;
-      if(rr.data&&rr.data.value){
-        localStorage.setItem('sb_super_hash',JSON.stringify(rr.data.value));
-      }else{
+      if(rr.data&&rr.data.value){localStorage.setItem('sb_super_hash',JSON.stringify(rr.data.value));}
+      else{
         var lh=localStorage.getItem('sb_super_hash');
-        if(lh){
-          supabaseClient.from(TBL_KV).upsert({key:'sb_super_hash',value:JSON.parse(lh),updated_at:new Date().toISOString()},{onConflict:'key'}).then(function(){});
-        }
+        if(lh){supabaseClient.from(TBL_KV).upsert({key:'sb_super_hash',value:JSON.parse(lh),updated_at:new Date().toISOString()},{onConflict:'key'}).then(function(){});}
       }
       sync={ok:true};
-    }catch(e){
-      sync={ok:false,error:(e&&e.message)||'Sync failed'};
-    }
-  }else{
+    }catch(e){sync={ok:false,error:(e&&e.message)||'Sync failed'};}
+  } else {
     sync=await pullLoginCredentialsFromCloud();
   }
-
-  er.textContent='';
-  er.style.color='';
+  er.textContent='';er.style.color='';
   if(btn)btn.disabled=false;
-
-  if(!sync.ok){
-    er.textContent='⚠ Server: '+(sync.error||'Cannot reach Supabase')+' — jaribu tena';
-    console.warn('[Login] Sync failed:',sync);
-    return;
-  }
+  if(!sync.ok){er.textContent='⚠ Server: '+(sync.error||'Cannot reach server')+' — jaribu tena';return;}
 
   if(!isSuperAttempt){
     var tenantsStr=localStorage.getItem('sb_tenants');
-    if(!tenantsStr){
-      er.textContent='⚠ Data ya companies haikupatikana. Jaribu tena.';
-      return;
-    }
-    try{
-      var tj=JSON.parse(tenantsStr);
-      if(!Array.isArray(tj)||tj.length===0){
-        er.textContent='⚠ Hakuna company iliyosajiliwa. Wasiliana na admin.';
-        return;
-      }
-    }catch(e){console.warn('[Login] sb_tenants parse error:',e);}
+    if(!tenantsStr){er.textContent='⚠ Data ya companies haikupatikana. Jaribu tena.';return;}
+    try{var tj=JSON.parse(tenantsStr);if(!Array.isArray(tj)||tj.length===0){er.textContent='⚠ Hakuna company iliyosajiliwa.';return;}}catch(e){}
   }
 
   /* Super Admin */
   if(isSuperAttempt&&hashPw(un,pw)===getSuperHash()){
     _loginFails=0;
-    isSuperAdmin=true;
-    isMexEmployee=false;
-    currentMexEmployeeId=null;
-    currentTenantId=null;
+    isSuperAdmin=true;isMexEmployee=false;currentMexEmployeeId=null;currentTenantId=null;
     var su=lsGet('sb_superadmin_user',null)||{id:0,username:'Super Admin',fullName:'Super Admin',role:'superadmin',store:'All',theme:'light'};
     setCurrentUser(su);
     try{localStorage.setItem(SUPER_ADMIN_SESSION_KEY,superSessionToken());}catch(e){}
     document.getElementById('loginPage').classList.add('hidden');
     document.getElementById('appContainer').classList.add('active');
     initApp(su);
-    /* ★ Leta orodha ya companies na data nyingine baada ya kuingia */
     pullFromCloudOnly().then(function(){softRefreshCurrentView(true);});
     return;
   }
 
   /* MEX Employee */
-  var mex=getMexEmployees();
-  var uL=normalizeUsername(un);
+  var mex=getMexEmployees();var uL=normalizeUsername(un);
   for(var j=0;j<mex.length;j++){
-    var emp=mex[j];
-    var eu=normalizeUsername(emp.username);
+    var emp=mex[j];var eu=normalizeUsername(emp.username);
     if(eu&&eu===uL&&verifyPw(emp,pw)){
       _loginFails=0;
       if(!isHashed(emp.password)){updateMexEmployee(emp.id,{password:hashPw(emp.username,pw)});}
-      isSuperAdmin=false;
-      isMexEmployee=true;
-      currentMexEmployeeId=emp.id;
-      currentTenantId=null;
+      isSuperAdmin=false;isMexEmployee=true;currentMexEmployeeId=emp.id;currentTenantId=null;
       var eo={id:emp.id,username:emp.username,fullName:emp.name,role:'mexemployee',phone:emp.phone||'',photoKey:emp.photoKey||'',theme:emp.theme||'light',bio:emp.bio||''};
-      setMexSession(eo);
-      setCurrentUser(null);
+      setMexSession(eo);setCurrentUser(null);
       document.getElementById('loginPage').classList.add('hidden');
       document.getElementById('appContainer').classList.add('active');
       initApp(eo);
@@ -2872,47 +2989,28 @@ async function handleLogin(){
   /* Tenant user */
   var ts=getAllTenants();
   for(var k=0;k<ts.length;k++){
-    var tn=ts[k];
-    var oldTid=currentTenantId;
-    currentTenantId=tn.id;
-    var users=getTenantData('users',[]);
-    currentTenantId=oldTid;
-
+    var tn=ts[k];var oldTid=currentTenantId;currentTenantId=tn.id;
+    var users=getTenantData('users',[]);currentTenantId=oldTid;
     var found=null;
-    for(var m=0;m<users.length;m++){
-      if(normalizeUsername(users[m].username)===normalizeUsername(un)){found=users[m];break;}
-    }
+    for(var m=0;m<users.length;m++){if(normalizeUsername(users[m].username)===normalizeUsername(un)){found=users[m];break;}}
     if(found&&verifyPw(found,pw)){
       if(tn.pendingApproval){er.textContent='⏳ Account pending approval';return;}
       if(tn.blocked){er.textContent='🚫 Account blocked';return;}
       if(isTenantSuspended(tn.id)){er.textContent='🔒 Subscription expired';return;}
-
       _loginFails=0;
-      isSuperAdmin=false;
-      isMexEmployee=false;
-      currentMexEmployeeId=null;
-      currentTenantId=tn.id;
-
+      isSuperAdmin=false;isMexEmployee=false;currentMexEmployeeId=null;currentTenantId=tn.id;
       if(!isHashed(found.password)){
         var allU=getTenantData('users',[]);
-        for(var n=0;n<allU.length;n++){
-          if(Number(allU[n].id)===Number(found.id)){allU[n].password=hashPw(allU[n].username,pw);found=allU[n];break;}
-        }
+        for(var n=0;n<allU.length;n++){if(Number(allU[n].id)===Number(found.id)){allU[n].password=hashPw(allU[n].username,pw);found=allU[n];break;}}
         setTenantData('users',allU);
       }
-
       setCurrentUser(found);
       lsSet('sb_session',{tid:tn.id,uid:found.id});
-
-      /* ★ FIX: pakua data ya kampuni kabla ya initApp (kifaa kipya) */
-      er.style.color='var(--text-muted)';
-      er.textContent='⏳ Loading data...';
+      er.style.color='var(--text-muted)';er.textContent='⏳ Loading data...';
       if(btn)btn.disabled=true;
-      try{await pullFromCloudOnly();}catch(e){console.warn('[Login] tenant pull err:',e);}
+      try{await pullFromCloudOnly();}catch(e){}
       if(btn)btn.disabled=false;
-      er.textContent='';
-      er.style.color='';
-
+      er.textContent='';er.style.color='';
       recordUserLogin(found.id,found.store);
       document.getElementById('loginPage').classList.add('hidden');
       document.getElementById('appContainer').classList.add('active');
@@ -2925,32 +3023,20 @@ async function handleLogin(){
   er.textContent='⚠ Invalid credentials';
 }
 
-/* DIAGNOSTIC */
+/* ===== DIAGNOSTIC ===== */
 function checkStorageUsage(){
   var sizes={};var total=0;
-  for(var i=0;i<localStorage.length;i++){
-    var k=localStorage.key(i);
-    var v=localStorage.getItem(k)||'';
-    var size=(k.length+v.length)*2;
-    sizes[k]=size;total+=size;
-  }
-  var sorted=Object.keys(sizes).sort(function(a,b){return sizes[b]-sizes[a];});
-  console.log('=== STORAGE USAGE ===');
-  console.log('Total: '+(total/1024/1024).toFixed(2)+' MB / ~5 MB ('+((total/5242880)*100).toFixed(1)+'%)');
-  for(var j=0;j<Math.min(sorted.length,15);j++){
-    var key=sorted[j];
-    console.log('  '+(sizes[key]/1024).toFixed(1).padStart(8)+' KB  '+key);
-  }
+  for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);var v=localStorage.getItem(k)||'';var size=(k.length+v.length)*2;sizes[k]=size;total+=size;}
   return {total:total,breakdown:sizes};
 }
 
-/* PAYMENT PLAN */
+/* ===== PAYMENT PLAN ===== */
 function openPaymentPlanModal(){selectedPaymentPlan=null;var cards=document.querySelectorAll('#planCardsRow .plan-card');for(var i=0;i<cards.length;i++)cards[i].classList.remove('selected');var btn=document.getElementById('payAndRegisterBtn');if(btn){btn.disabled=true;btn.style.opacity='.5';}document.getElementById('paymentPlanModal').classList.add('show');document.body.classList.add('modal-open');}
-function selectPaymentPlan(plan){selectedPaymentPlan=plan;var cards=document.querySelectorAll('#planCardsRow .plan-card');for(var i=0;i<cards.length;i++){cards[i].classList.toggle('selected',cards[i].dataset.plan===plan);}var btn=document.getElementById('payAndRegisterBtn');if(btn){btn.disabled=false;btn.style.opacity='1';}document.getElementById('paymentPlanInfo').textContent='✓ Plan selected';}
+function selectPaymentPlan(plan){selectedPaymentPlan=plan;var cards=document.querySelectorAll('#planCardsRow .plan-card');for(var i=0;i<cards.length;i++){cards[i].classList.toggle('selected',cards[i].dataset.plan===plan);}var btn=document.getElementById('payAndRegisterBtn');if(btn){btn.disabled=false;btn.style.opacity='1';}var info=document.getElementById('paymentPlanInfo');if(info)info.textContent='✓ Plan selected';}
 function closePaymentPlanModal(){document.getElementById('paymentPlanModal').classList.remove('show');var so=document.querySelector('.modal-overlay.show');if(!so)document.body.classList.remove('modal-open');}
 function confirmPaymentAndRegister(){if(!selectedPaymentPlan)return;if(!pendingRegistrationData)return;var er=document.getElementById('registerError');closePaymentPlanModal();var d=pendingRegistrationData;var r=createTenant(d.company,d.username,d.password,d.phone,d.promo,true,selectedPaymentPlan);if(!r||!r.success){er.textContent=r?r.msg:'Failed';return;}document.getElementById('registerSuccess').innerHTML='🎁 FREE TRIAL ACTIVATED<br>✅ Account pending approval';pendingRegistrationData=null;setTimeout(function(){document.getElementById('registerPage').classList.add('hidden');document.getElementById('loginPage').classList.remove('hidden');},4000);}
 
-/* SYNC BUTTON */
+/* ===== SYNC BUTTON ===== */
 function showSyncButton(){var btn=document.getElementById('syncNowBtn');if(!btn)return;btn.classList.add('visible');setTimeout(function(){btn.classList.remove('visible');},15000);}
 function forceSyncAll(){
   if(!supabaseClient){alert('Supabase not connected. Refresh.');return;}
@@ -2970,13 +3056,14 @@ function forceSyncAll(){
   },800);
 }
 
-/* LOGIN EVENTS */
+/* ===== LOGIN EVENTS ===== */
 document.getElementById('loginBtn').addEventListener('click',handleLogin);
 document.getElementById('loginPassword').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('loginBtn').click();});
 document.getElementById('goToRegisterLink').addEventListener('click',function(){document.getElementById('loginPage').classList.add('hidden');document.getElementById('memberRegisterPage').classList.add('hidden');document.getElementById('registerPage').classList.remove('hidden');});
 document.getElementById('goToLoginLink').addEventListener('click',function(){document.getElementById('registerPage').classList.add('hidden');document.getElementById('memberRegisterPage').classList.add('hidden');document.getElementById('loginPage').classList.remove('hidden');});
 document.getElementById('goToMemberRegisterLink').addEventListener('click',function(){document.getElementById('loginPage').classList.add('hidden');document.getElementById('registerPage').classList.add('hidden');document.getElementById('memberRegisterPage').classList.remove('hidden');});
 document.getElementById('memberGoToLogin').addEventListener('click',function(){document.getElementById('memberRegisterPage').classList.add('hidden');document.getElementById('registerPage').classList.add('hidden');document.getElementById('loginPage').classList.remove('hidden');});
+
 document.getElementById('memberRegisterBtn').addEventListener('click',function(){
   var n=document.getElementById('memberName').value.trim();
   var p=document.getElementById('memberPhone').value.trim();
@@ -2989,6 +3076,7 @@ document.getElementById('memberRegisterBtn').addEventListener('click',function()
   sE.innerHTML='✅ Promo: <strong>'+escapeHtml(emp.promoCode)+'</strong> · Username: <strong>'+escapeHtml(emp.username)+'</strong>';
   setTimeout(function(){document.getElementById('memberRegisterPage').classList.add('hidden');document.getElementById('loginPage').classList.remove('hidden');document.getElementById('loginUsername').value=emp.username;},2600);
 });
+
 document.getElementById('registerBtn').addEventListener('click',function(){
   var company=document.getElementById('regCompany').value.trim();
   var un=document.getElementById('regUsername').value.trim();
@@ -3013,13 +3101,13 @@ document.addEventListener('keydown',function(e){
   }
 });
 
-/* BOOT */
+/* ===== BOOT ===== */
 (function boot(){
   var splashStart=Date.now();
   function bootHideSplash(){var bs=document.getElementById('bootSplash');if(!bs)return;bs.classList.add('hide');setTimeout(function(){try{bs.remove();}catch(e){}},900);}
   function scheduleHide(){var elapsed=Date.now()-splashStart;setTimeout(bootHideSplash,Math.max(0,BOOT_DURATION-elapsed));}
   try{var sl=localStorage.getItem(LANG_KEY);if(sl&&LANG_FLAGS[sl]){currentLang=sl;var fe=document.getElementById('langFlag');var le=document.getElementById('langLabel');if(fe)fe.textContent=LANG_FLAGS[currentLang];if(le)le.textContent=LANG_LABELS[currentLang];}}catch(e){}
-  try{tryCleanupLocalStorage();}catch(e){console.warn('[Boot] cleanup err:',e);}
+  try{tryCleanupLocalStorage();}catch(e){}
   try{initLanguageMenu();}catch(e){}
   try{initVideoObserver();}catch(e){}
   try{initSupabase();}catch(e){}
@@ -3065,13 +3153,11 @@ document.addEventListener('keydown',function(e){
     setCurrentUser(null);scheduleHide();
   }
 
-  /* ★ FIX: app ifunguke mara moja kwa data ya kifaa; pull inaendelea nyuma */
   bootContinue();
   pullAllFromSupabase().then(function(result){
-    if(result&&result.ok===false)console.warn('[Boot] initial pull not ok:',result.reason);
     try{preloadAllMedia();}catch(e){}
     try{softRefreshCurrentView(true);}catch(e){}
-  }).catch(function(e){console.warn('[Boot] pull failed:',e);});
+  }).catch(function(e){});
 })();
 </script>
 </body>
