@@ -49,7 +49,6 @@ label{display:block;font-size:.78rem;font-weight:600;color:var(--text-secondary)
 .badge-role-employee{background:rgba(16,185,129,.15);color:#10b981}
 .badge-role-accountant{background:rgba(245,158,11,.15);color:#f59e0b}
 .badge-role-owner{background:rgba(139,92,246,.15);color:#8b5cf6}
-.badge-branch{background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:#fff}
 .verified-badge{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;background:var(--verified-blue);border-radius:50%;color:#fff;font-size:8px;margin-left:5px;vertical-align:middle}
 .verified-badge i{color:#fff;font-size:8px;font-weight:900}
 .table-wrap{overflow-x:auto}
@@ -58,7 +57,7 @@ th{text-align:left;padding:12px 12px 12px 0;color:var(--text-muted);font-weight:
 td{padding:14px 12px 14px 0;border-bottom:1px solid var(--border-color);color:var(--text-secondary);vertical-align:middle;font-weight:500}
 tr:last-child td{border-bottom:none}
 .empty-row td{text-align:center;padding:40px;color:var(--text-muted)}
-.page-overlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:var(--bg-body);background-image: url(./Temple\ 1.jpeg);background-size: cover;padding:20px;overflow-y:auto}
+.page-overlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:var(--bg-body);padding:20px;overflow-y:auto}
 .page-overlay.hidden{display:none}
 .page-card{margin:20px auto;max-height:92vh;overflow-y:auto;padding:26px 24px;width:100%;max-width:420px;background:var(--bg-card);border-radius:var(--radius-card);box-shadow:var(--shadow-dropdown);border:1px solid var(--border-color);text-align:center}
 .page-card .logo-icon{font-size:44px;color:var(--accent-1);margin-bottom:4px}
@@ -101,12 +100,6 @@ tr:last-child td{border-bottom:none}
 .topbar .topbar-actions .profile-trigger{display:flex;align-items:center;gap:10px;cursor:pointer;padding:6px 16px 6px 6px;border-radius:34px;background:var(--input-bg);border:1px solid var(--border-color)!important;max-width:200px;flex-shrink:0}
 .topbar .topbar-actions .profile-trigger img{width:34px;height:34px;border-radius:50%;object-fit:cover}
 .topbar .topbar-actions .profile-trigger .profile-name{font-size:.85rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.lang-wrapper{position:relative;z-index:1000}
-.lang-toggle{background:var(--input-bg);border:1.5px solid var(--border-color)!important;border-radius:14px!important;padding:12px 18px!important;font-weight:700;font-size:.85rem;color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;gap:8px;min-width:82px;justify-content:center;min-height:48px}
-.lang-menu{position:absolute;top:calc(100% + 10px);right:0;background:var(--bg-card);border:1px solid var(--border-color);border-radius:14px;box-shadow:0 20px 50px rgba(0,0,0,.35);min-width:220px;padding:6px;display:none;z-index:100001}
-.lang-menu.show{display:block}
-.lang-menu button{display:flex;align-items:center;gap:10px;width:100%;padding:11px 14px;border-radius:10px!important;background:transparent!important;color:var(--text-secondary)!important;font-size:.88rem;font-weight:600;text-align:left;min-height:44px;cursor:pointer}
-.lang-menu button:hover{background:var(--input-bg)!important;color:var(--accent-1)!important}
 .content-area{flex:1;overflow-y:auto;padding:24px 28px 32px;overscroll-behavior:contain}
 .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-bottom:18px}
 .stat-card{background:var(--bg-card);border-radius:16px;padding:12px 16px;border:1px solid var(--border-color);box-shadow:var(--shadow-card);position:relative;overflow:hidden;min-height:66px;display:flex;flex-direction:column;justify-content:center}
@@ -128,7 +121,7 @@ tr:last-child td{border-bottom:none}
 .modal-box .form-actions{display:flex;gap:12px;margin-top:20px;justify-content:flex-end;flex-wrap:wrap}
 .chart-container{position:relative;height:240px}
 .chart-grid{display:grid;grid-template-columns:2fr 1fr;gap:20px;margin-bottom:24px}
-.insta-ad{background:var(--bg-card);border-radius:14px;border:1px solid var(--border-color);box-shadow:var(--shadow-card);margin-bottom:16px;overflow:hidden;max-width:540px;margin-left:auto;margin-right:auto;width:100%}
+.insta-ad{background:var(--bg-card);border-radius:14px;border:1px solid var(--border-color);box-shadow:var(--shadow-card);margin-bottom:16px;overflow:hidden;max-width:540px;margin-left:auto;margin-right:auto;width:100%;content-visibility:auto;contain-intrinsic-size:auto 700px}
 .insta-ad-header{display:flex;align-items:center;gap:10px;padding:10px 12px}
 .insta-ad-header .insta-avatar{width:38px;height:38px;border-radius:50%;object-fit:cover;flex-shrink:0;cursor:pointer;border:2px solid transparent;background:linear-gradient(var(--bg-card),var(--bg-card)) padding-box,linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888) border-box;padding:1px}
 .insta-ad-header .insta-meta{flex:1;min-width:0;cursor:pointer;line-height:1.2}
@@ -242,7 +235,6 @@ tr:last-child td{border-bottom:none}
 .btn-super-block{background:#f59e0b!important;color:#fff!important;padding:5px 12px!important;font-size:.7rem!important}
 .btn-super-unblock{background:var(--accent-4)!important;color:#fff!important;padding:5px 12px!important;font-size:.7rem!important}
 .btn-super-approve{background:var(--accent-1)!important;color:#fff!important;padding:5px 12px!important;font-size:.7rem!important}
-.btn-super-view{background:#8b5cf6!important;color:#fff!important;padding:5px 12px!important;font-size:.7rem!important}
 .super-dash-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:18px}
 .super-stat-card{background:var(--bg-card);padding:14px 16px;border-radius:16px;border:1px solid var(--border-color);text-align:center;min-height:72px;display:flex;flex-direction:column;justify-content:center}
 .super-stat-card .number{font-size:clamp(1.05rem,1.8vw + .7rem,1.6rem);font-weight:800;color:var(--accent-1)}
@@ -252,8 +244,6 @@ tr:last-child td{border-bottom:none}
 .super-tab.active{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border-color:#d97706!important}
 .super-tab .tab-count{background:rgba(255,255,255,.25);padding:1px 9px;border-radius:20px;font-size:.7rem}
 .mex-emp-code{font-family:'Courier New',monospace;font-weight:700;letter-spacing:1.5px;color:#d97706;background:rgba(245,158,11,.12);padding:3px 10px;border-radius:8px;display:inline-flex;align-items:center;gap:6px;font-size:.82rem;cursor:pointer;border:1px solid rgba(245,158,11,.3)}
-.mex-emp-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;flex-shrink:0;overflow:hidden}
-.mex-emp-avatar img{width:100%;height:100%;object-fit:cover}
 .promo-code-input{text-transform:uppercase;letter-spacing:2px;font-weight:800;font-family:'Courier New',monospace;font-size:16px;color:#d97706;background:rgba(245,158,11,.05);border-color:rgba(245,158,11,.4)}
 .promo-status{font-size:.75rem;font-weight:700;margin-top:5px}
 .promo-status.ok{color:var(--accent-4)}
@@ -338,7 +328,6 @@ body.dark .chat-modal .modal-box .chat-messages{background-color:#0b141a}
 .wp-option .wp-check{position:absolute;top:6px;right:6px;width:22px;height:22px;border-radius:50%;background:var(--accent-1);color:#fff;display:none;align-items:center;justify-content:center;font-size:.65rem}
 .wp-option.selected .wp-check{display:flex}
 .wp-upload-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;border-radius:12px!important;background:var(--accent-1)!important;color:#fff!important;font-weight:700;cursor:pointer;width:100%;margin-top:6px;font-size:.88rem}
-.pnl-breakdown-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px}
 @media(max-width:768px){
   .app-container{padding:0;gap:0;height:100dvh}
   .main-content{border-radius:0;box-shadow:none;height:100dvh;min-width:0}
@@ -351,7 +340,6 @@ body.dark .chat-modal .modal-box .chat-messages{background-color:#0b141a}
   .topbar .topbar-actions .date-display{display:none}
   .topbar .topbar-actions .low-stock-alert-btn{padding:0 12px!important;width:auto;min-width:auto;height:38px;min-height:38px;border-radius:12px!important;justify-content:center;gap:6px;font-size:.76rem;font-weight:700;white-space:nowrap}
   .topbar .topbar-actions .theme-toggle,.topbar .topbar-actions .chat-topbar-btn{width:38px;height:38px;min-width:38px;font-size:.9rem}
-  .topbar .topbar-actions .lang-wrapper .lang-toggle{padding:6px 10px!important;font-size:.72rem;min-width:52px;min-height:38px;gap:4px}
   .topbar .topbar-actions .profile-trigger{padding:2px!important;gap:0;width:38px;height:38px;min-width:38px;max-width:38px;border-radius:50%;flex-shrink:0;overflow:hidden;justify-content:center}
   .topbar .topbar-actions .profile-trigger img{width:32px;height:32px;border-radius:50%}
   .topbar .topbar-actions .profile-trigger .profile-name{display:none}
@@ -369,8 +357,6 @@ body.dark .chat-modal .modal-box .chat-messages{background-color:#0b141a}
   .mobile-menu-btn{display:inline-flex!important;width:36px;height:36px;min-width:36px;font-size:.95rem}
   .topbar .page-title{font-size:.85rem}
   .topbar .topbar-actions{gap:5px}
-  .topbar .topbar-actions .lang-wrapper .lang-toggle{min-width:46px;padding:6px 9px!important}
-  .topbar .topbar-actions .lang-wrapper .lang-toggle #langLabel{display:none}
   .topbar .topbar-actions .theme-toggle,.topbar .topbar-actions .chat-topbar-btn{width:36px;height:36px;min-width:36px;font-size:.85rem}
   .topbar .topbar-actions .low-stock-alert-btn{height:36px;min-height:36px;padding:0 10px!important;font-size:.72rem}
   .topbar .topbar-actions .profile-trigger{width:36px;height:36px;min-width:36px;max-width:36px}
@@ -391,16 +377,16 @@ body.dark .chat-modal .modal-box .chat-messages{background-color:#0b141a}
   <div class="page-card">
     <div class="logo-icon"><i class="fas fa-store-alt"></i></div>
     <h2>MeX <span style="font-size:.75rem;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;padding:2px 10px;border-radius:12px;">Face</span></h2>
-    <p class="subtitle" data-i18n="login_title">Login to your account</p>
-    <div class="input-group"><label data-i18n="username">Username</label><input type="text" id="loginUsername" placeholder="username" autocomplete="username" autofocus/></div>
-    <div class="input-group"><label data-i18n="password">Password</label><input type="password" id="loginPassword" placeholder="••••••" autocomplete="current-password"/></div>
-    <button id="loginBtn" class="btn btn-primary btn-block"><i class="fas fa-sign-in-alt"></i> <span data-i18n="login_btn">Login</span></button>
+    <p class="subtitle">Login to your account</p>
+    <div class="input-group"><label>Username</label><input type="text" id="loginUsername" placeholder="username" autocomplete="username" autofocus/></div>
+    <div class="input-group"><label>Password</label><input type="password" id="loginPassword" placeholder="••••••" autocomplete="current-password"/></div>
+    <button id="loginBtn" class="btn btn-primary btn-block"><i class="fas fa-sign-in-alt"></i> Login</button>
     <div id="loginError" class="error-msg"></div>
     <div class="divider"></div>
-    <p style="font-size:.85rem;" data-i18n="no_account">Don't have an account?</p>
+    <p style="font-size:.85rem;">Don't have an account?</p>
     <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
-      <button id="goToRegisterLink" class="btn btn-primary btn-sm" style="flex:1;min-width:120px;"><i class="fas fa-building"></i> <span data-i18n="register_company">Register Company</span></button>
-      <button id="goToMemberRegisterLink" class="btn btn-sm" style="flex:1;min-width:120px;background:linear-gradient(135deg,#f59e0b,#d97706)!important;color:#fff!important;"><i class="fas fa-user-tie"></i> <span data-i18n="register_member">Register as Member</span></button>
+      <button id="goToRegisterLink" class="btn btn-primary btn-sm" style="flex:1;min-width:120px;"><i class="fas fa-building"></i> Register Company</button>
+      <button id="goToMemberRegisterLink" class="btn btn-sm" style="flex:1;min-width:120px;background:linear-gradient(135deg,#f59e0b,#d97706)!important;color:#fff!important;"><i class="fas fa-user-tie"></i> Register as Member</button>
     </div>
   </div>
 </div>
@@ -408,41 +394,41 @@ body.dark .chat-modal .modal-box .chat-messages{background-color:#0b141a}
 <div id="registerPage" class="page-overlay hidden">
   <div class="page-card" style="max-width:440px;padding:22px 20px;">
     <div class="logo-icon" style="font-size:38px;"><i class="fas fa-user-plus"></i></div>
-    <h2 style="font-size:1.3rem;" data-i18n="register_company_title">Register Company</h2>
+    <h2 style="font-size:1.3rem;">Register Company</h2>
     <div style="background:rgba(16,185,129,.1);border:2px solid var(--accent-4);border-radius:12px;padding:12px 16px;margin-bottom:14px;font-size:.82rem;font-weight:700;color:var(--accent-4);text-align:center;">🎁 <strong>FREE 7-DAY TRIAL</strong></div>
-    <div class="input-group"><label data-i18n="company_name">Company Name</label><input type="text" id="regCompany" placeholder="e.g. ABC Chemicals"/></div>
-    <div class="input-group"><label data-i18n="username">Username</label><input type="text" id="regUsername" placeholder="Choose a username"/></div>
-    <div class="input-group"><label data-i18n="phone">Phone Number</label><input type="tel" id="regPhone" placeholder="+255 xxx xxx xxx"/></div>
+    <div class="input-group"><label>Company Name</label><input type="text" id="regCompany" placeholder="e.g. ABC Chemicals"/></div>
+    <div class="input-group"><label>Username</label><input type="text" id="regUsername" placeholder="Choose a username"/></div>
+    <div class="input-group"><label>Phone Number</label><input type="tel" id="regPhone" placeholder="+255 xxx xxx xxx"/></div>
     <div class="form-row">
-      <div class="input-group" style="margin-bottom:0;"><label data-i18n="password">Password</label><input type="password" id="regPassword" placeholder="••••••"/></div>
-      <div class="input-group" style="margin-bottom:0;"><label data-i18n="confirm_password">Confirm Password</label><input type="password" id="regConfirm" placeholder="••••••"/></div>
+      <div class="input-group" style="margin-bottom:0;"><label>Password</label><input type="password" id="regPassword" placeholder="••••••"/></div>
+      <div class="input-group" style="margin-bottom:0;"><label>Confirm Password</label><input type="password" id="regConfirm" placeholder="••••••"/></div>
     </div>
     <div class="input-group" style="margin-top:10px;">
-      <label><i class="fas fa-tag" style="color:#f59e0b;"></i> <span data-i18n="promo_optional">Promo Code (Optional)</span></label>
+      <label><i class="fas fa-tag" style="color:#f59e0b;"></i> Promo Code (Optional)</label>
       <input type="text" id="regPromoCode" class="promo-code-input" placeholder="MEX-XXXXXX" maxlength="20" oninput="checkPromoCode(this.value)"/>
       <div id="regPromoStatus" class="promo-status"></div>
     </div>
-    <button id="registerBtn" class="btn btn-primary btn-block" style="padding:12px 20px;font-weight:700;"><i class="fas fa-arrow-right"></i> <span data-i18n="btn_continue">Continue to Payment</span></button>
+    <button id="registerBtn" class="btn btn-primary btn-block" style="padding:12px 20px;font-weight:700;"><i class="fas fa-arrow-right"></i> Continue to Payment</button>
     <div id="registerError" class="error-msg"></div>
     <div id="registerSuccess" class="success-msg"></div>
     <div class="divider"></div>
-    <p style="font-size:.8rem;"><span data-i18n="already_registered">Already registered?</span> <span id="goToLoginLink" class="link-text" data-i18n="login_link">Login</span></p>
+    <p style="font-size:.8rem;">Already registered? <span id="goToLoginLink" class="link-text">Login</span></p>
   </div>
 </div>
 
 <div id="memberRegisterPage" class="page-overlay hidden">
   <div class="page-card" style="max-width:400px;">
     <div class="logo-icon" style="color:#f59e0b;"><i class="fas fa-user-tie"></i></div>
-    <h2 style="color:#d97706;font-size:1.4rem;" data-i18n="register_member_title">Register as Member</h2>
+    <h2 style="color:#d97706;font-size:1.4rem;">Register as Member</h2>
     <p class="subtitle">Free registration</p>
-    <div class="input-group"><label data-i18n="full_name">Full Name</label><input type="text" id="memberName" placeholder="e.g. John Doe"/></div>
-    <div class="input-group"><label data-i18n="phone">Phone Number</label><input type="tel" id="memberPhone" placeholder="+255 xxx xxx xxx"/></div>
-    <div class="input-group"><label data-i18n="password">Password</label><input type="password" id="memberPassword" placeholder="Min 4 characters"/></div>
-    <button id="memberRegisterBtn" class="btn btn-block" style="padding:12px 20px;font-weight:700;background:linear-gradient(135deg,#f59e0b,#d97706)!important;color:#fff!important;"><i class="fas fa-user-plus"></i> <span data-i18n="btn_create_member">Create Member Account</span></button>
+    <div class="input-group"><label>Full Name</label><input type="text" id="memberName" placeholder="e.g. John Doe"/></div>
+    <div class="input-group"><label>Phone Number</label><input type="tel" id="memberPhone" placeholder="+255 xxx xxx xxx"/></div>
+    <div class="input-group"><label>Password</label><input type="password" id="memberPassword" placeholder="Min 4 characters"/></div>
+    <button id="memberRegisterBtn" class="btn btn-block" style="padding:12px 20px;font-weight:700;background:linear-gradient(135deg,#f59e0b,#d97706)!important;color:#fff!important;"><i class="fas fa-user-plus"></i> Create Member Account</button>
     <div id="memberRegError" class="error-msg"></div>
     <div id="memberRegSuccess" class="success-msg"></div>
     <div class="divider"></div>
-    <p style="font-size:.8rem;"><span data-i18n="already_member">Already a member?</span> <span id="memberGoToLogin" class="link-text" data-i18n="login_link">Login</span></p>
+    <p style="font-size:.8rem;">Already a member? <span id="memberGoToLogin" class="link-text">Login</span></p>
   </div>
 </div>
 
@@ -471,22 +457,22 @@ body.dark .chat-modal .modal-box .chat-messages{background-color:#0b141a}
       <span class="brand-ver">PRO</span>
     </div>
     <nav class="sidebar-nav" id="sidebarNav">
-      <button class="nav-item active" data-view="status" data-i18n="nav_face"><i class="fas fa-bullhorn"></i><span>MexFace</span></button>
-      <button class="nav-item" data-view="dashboard" data-i18n="nav_data"><i class="fas fa-chart-pie"></i><span>MexData</span></button>
-      <button class="nav-item" data-view="sales" data-i18n="nav_sales"><i class="fas fa-cart-plus"></i><span>Sales</span></button>
-      <button class="nav-item" data-view="debts" id="navDebts" data-i18n="nav_debts"><i class="fas fa-hand-holding-usd"></i><span>Debts</span><span class="badge" id="debtsNavBadge" style="display:none;">0</span></button>
-      <button class="nav-item" data-view="inventory" id="navInventory" data-i18n="nav_inventory"><i class="fas fa-boxes"></i><span>Inventory</span><span class="badge" id="lowStockNavBadge" style="display:none;">0</span></button>
-      <button class="nav-item" data-view="pnl" data-i18n="nav_pnl"><i class="fas fa-scale-balanced"></i><span>Profit &amp; Loss</span></button>
-      <button class="nav-item" data-view="expenses" data-i18n="nav_expenses"><i class="fas fa-receipt"></i><span>Expenses</span></button>
-      <button class="nav-item" data-view="branches" data-i18n="nav_branches"><i class="fas fa-store"></i><span>Branches</span></button>
-      <button class="nav-item" data-view="users" data-i18n="nav_users"><i class="fas fa-users-cog"></i><span>Users</span></button>
-      <button class="nav-item" data-view="roles" data-i18n="nav_roles"><i class="fas fa-user-tag"></i><span>Roles</span></button>
-      <button class="nav-item" data-view="reports" data-i18n="nav_reports"><i class="fas fa-file-alt"></i><span>Reports</span></button>
-      <button class="nav-item" data-view="attendance" style="display:none;" data-i18n="nav_attendance"><i class="fas fa-clock"></i><span>Attendance</span></button>
-      <button class="nav-item" data-view="superadmin" id="navSuperAdmin" style="display:none;" data-i18n="nav_superadmin"><i class="fas fa-crown"></i><span>Super Admin</span></button>
-      <button class="nav-item" data-view="mexEarnings" id="navMexEarnings" style="display:none;" data-i18n="nav_earnings"><i class="fas fa-coins"></i><span>My Earnings</span></button>
-      <button class="nav-item" data-view="mexCompanies" id="navMexCompanies" style="display:none;" data-i18n="nav_companies"><i class="fas fa-building"></i><span>My Companies</span></button>
-      <button class="nav-item" data-view="mexStatus" id="navMexStatus" style="display:none;" data-i18n="nav_face"><i class="fas fa-bullhorn"></i><span>MexFace</span></button>
+      <button class="nav-item active" data-view="status"><i class="fas fa-bullhorn"></i><span>MexFace</span></button>
+      <button class="nav-item" data-view="dashboard"><i class="fas fa-chart-pie"></i><span>MexData</span></button>
+      <button class="nav-item" data-view="sales"><i class="fas fa-cart-plus"></i><span>Sales</span></button>
+      <button class="nav-item" data-view="debts" id="navDebts"><i class="fas fa-hand-holding-usd"></i><span>Debts</span><span class="badge" id="debtsNavBadge" style="display:none;">0</span></button>
+      <button class="nav-item" data-view="inventory" id="navInventory"><i class="fas fa-boxes"></i><span>Inventory</span><span class="badge" id="lowStockNavBadge" style="display:none;">0</span></button>
+      <button class="nav-item" data-view="pnl"><i class="fas fa-scale-balanced"></i><span>Profit &amp; Loss</span></button>
+      <button class="nav-item" data-view="expenses"><i class="fas fa-receipt"></i><span>Expenses</span></button>
+      <button class="nav-item" data-view="branches"><i class="fas fa-store"></i><span>Branches</span></button>
+      <button class="nav-item" data-view="users"><i class="fas fa-users-cog"></i><span>Users</span></button>
+      <button class="nav-item" data-view="roles"><i class="fas fa-user-tag"></i><span>Roles</span></button>
+      <button class="nav-item" data-view="reports"><i class="fas fa-file-alt"></i><span>Reports</span></button>
+      <button class="nav-item" data-view="attendance" style="display:none;"><i class="fas fa-clock"></i><span>Attendance</span></button>
+      <button class="nav-item" data-view="superadmin" id="navSuperAdmin" style="display:none;"><i class="fas fa-crown"></i><span>Super Admin</span></button>
+      <button class="nav-item" data-view="mexEarnings" id="navMexEarnings" style="display:none;"><i class="fas fa-coins"></i><span>My Earnings</span></button>
+      <button class="nav-item" data-view="mexCompanies" id="navMexCompanies" style="display:none;"><i class="fas fa-building"></i><span>My Companies</span></button>
+      <button class="nav-item" data-view="mexStatus" id="navMexStatus" style="display:none;"><i class="fas fa-bullhorn"></i><span>MexFace</span></button>
     </nav>
     <div class="sidebar-footer">
       <img class="user-avatar" id="sideUserAvatar" data-photo-key="" src="https://ui-avatars.com/api/?background=128C7E&color=fff&name=User&bold=true&size=128" alt="User"/>
@@ -504,16 +490,6 @@ body.dark .chat-modal .modal-box .chat-messages{background-color:#0b141a}
       <div class="topbar-actions">
         <span class="date-display"><i class="far fa-calendar-alt"></i><span id="currentDate"></span></span>
         <button class="low-stock-alert-btn" id="lowStockAlertBtn"><i class="fas fa-exclamation-triangle"></i><span class="alert-text">Low Stock</span><span class="alert-count" id="lowStockAlertCount">0</span></button>
-        <div class="lang-wrapper">
-          <button class="lang-toggle" id="langToggle" type="button"><span class="lang-flag" id="langFlag">🇬🇧</span><span id="langLabel">EN</span></button>
-          <div class="lang-menu" id="langMenu">
-            <button type="button" data-lang="en" onclick="setLanguage('en')"><span class="lang-flag">🇬🇧</span> English</button>
-            <button type="button" data-lang="sw" onclick="setLanguage('sw')"><span class="lang-flag">🇹🇿</span> Kiswahili</button>
-            <button type="button" data-lang="zh" onclick="setLanguage('zh')"><span class="lang-flag">🇨🇳</span> 中文</button>
-            <button type="button" data-lang="fr" onclick="setLanguage('fr')"><span class="lang-flag">🇫🇷</span> Français</button>
-            <button type="button" data-lang="ar" onclick="setLanguage('ar')"><span class="lang-flag">🇸🇦</span> العربية</button>
-          </div>
-        </div>
         <button class="theme-toggle" id="themeToggle" title="Theme"><i class="fas fa-moon"></i></button>
         <button class="chat-topbar-btn" id="chatTopbarBtn" title="Chat"><i class="fas fa-comments"></i><span class="chat-badge" id="chatBadge">0</span></button>
         <div class="profile-trigger" id="profileTrigger"><img id="topProfileImg" data-photo-key="" src="https://ui-avatars.com/api/?background=128C7E&color=fff&name=User" alt="Profile"/><span class="profile-name" id="topProfileName">User</span></div>
@@ -679,9 +655,8 @@ var CHAT_KEY='sb_chat_messages';
 var CHAT_WALLPAPER_TYPE_KEY='sb_chat_wallpaper_type';
 var CHAT_WALLPAPER_VALUE_KEY='sb_chat_wallpaper_value';
 var TRANSFERS_KEY_SUFFIX='transfers';
-var LANG_KEY='sb_lang';
 var MAX_VIDEO_MB=200;
-var BOOT_DURATION=1400;
+var BOOT_DURATION=1200;
 var _superAdminPhotoKey=null;
 var MEMBER_EARNINGS_KEY='sb_member_earnings';
 var MEMBER_PAYMENTS_KEY='sb_member_payments';
@@ -692,56 +667,13 @@ var BRANCH_FEE=10000;
 var BRANCH_COMMISSION_RATE=0.20;
 var FREE_TRIAL_MS=7*24*60*60*1000;
 var CHAT_WALLPAPER_COLORS=[
-  {key:'beige',color:'#efeae2',label:'Beige'},
-  {key:'white',color:'#ffffff',label:'White'},
-  {key:'gray',color:'#e5e7eb',label:'Gray'},
-  {key:'teal',color:'#d1f2e8',label:'Teal'},
-  {key:'pink',color:'#fce4ec',label:'Pink'},
-  {key:'dark',color:'#0b141a',label:'Dark'}
+  {key:'beige',color:'#efeae2',label:'Beige'},{key:'white',color:'#ffffff',label:'White'},
+  {key:'gray',color:'#e5e7eb',label:'Gray'},{key:'teal',color:'#d1f2e8',label:'Teal'},
+  {key:'pink',color:'#fce4ec',label:'Pink'},{key:'dark',color:'#0b141a',label:'Dark'}
 ];
 var PROMOTE_OPTIONS=[
-  {key:'3d',label:'3 Days',days:3,price:5000},
-  {key:'7d',label:'7 Days',days:7,price:10000},
-  {key:'30d',label:'30 Days',days:30,price:35000}
+  {key:'3d',label:'3 Days',days:3,price:5000},{key:'7d',label:'7 Days',days:7,price:10000},{key:'30d',label:'30 Days',days:30,price:35000}
 ];
-
-/* ===== I18N ===== */
-var LANG_FLAGS={en:'🇬🇧',sw:'🇹🇿',zh:'🇨🇳',fr:'🇫🇷',ar:'🇸🇦'};
-var LANG_LABELS={en:'EN',sw:'SW',zh:'中文',fr:'FR',ar:'ع'};
-var LANG_NAMES={en:'English',sw:'Kiswahili',zh:'中文',fr:'Français',ar:'العربية'};
-var TRANSLATIONS={
-  en:{login_title:'Login to your account',username:'Username',password:'Password',full_name:'Full Name',login_btn:'Login',no_account:"Don't have an account?",register_company:'Register Company',register_member:'Register as Member',register_company_title:'Register Company',register_member_title:'Register as Member',company_name:'Company Name',phone:'Phone Number',confirm_password:'Confirm Password',promo_optional:'Promo Code (Optional)',btn_continue:'Continue to Payment',btn_create_member:'Create Member Account',already_registered:'Already registered?',already_member:'Already a member?',login_link:'Login',nav_face:'MexFace',nav_data:'MexData',nav_sales:'Sales',nav_debts:'Debts',nav_inventory:'Inventory',nav_pnl:'Profit & Loss',nav_expenses:'Expenses',nav_branches:'Branches',nav_users:'Users',nav_roles:'Roles',nav_reports:'Reports',nav_attendance:'Attendance',nav_superadmin:'Super Admin',nav_earnings:'My Earnings',nav_companies:'My Companies',page_status:'MexFace',page_dashboard:'MexData',page_sales:'Sales',page_debts:'Debts',page_inventory:'Inventory',page_pnl:'Profit & Loss',page_expenses:'Expenses',page_branches:'Branches',page_users:'Users',page_roles:'Roles',page_reports:'Reports',page_attendance:'Attendance',page_superadmin:'Super Admin',page_earnings:'My Earnings',page_companies:'My Companies',logout:'Logout',save:'Save',cancel:'Cancel',close:'Close',delete:'Delete',add:'Add',search:'Search',total:'Total',quantity:'Quantity',price:'Price',status:'Status',date:'Date',branch:'Branch',user:'User',role:'Role',name:'Name',amount:'Amount',description:'Description',payouts:'Payouts',approve:'Approve',approved:'Approved',pending:'Pending',paid:'Paid',members:'Members',companies:'Companies'},
-  sw:{login_title:'Ingia kwenye akaunti yako',username:'Jina la mtumiaji',password:'Nenosiri',full_name:'Jina Kamili',login_btn:'Ingia',no_account:'Hauna akaunti?',register_company:'Sajili Kampuni',register_member:'Sajili kama Mwanachama',register_company_title:'Sajili Kampuni',register_member_title:'Sajili kama Mwanachama',company_name:'Jina la Kampuni',phone:'Namba ya Simu',confirm_password:'Rudia Nenosiri',promo_optional:'Namba ya Promo (Hiari)',btn_continue:'Endelea na Malipo',btn_create_member:'Tengeneza Akaunti ya Mwanachama',already_registered:'Tayari umesajiliwa?',already_member:'Tayari wewe ni mwanachama?',login_link:'Ingia',nav_face:'MexFace',nav_data:'MexData',nav_sales:'Mauzo',nav_debts:'Madeni',nav_inventory:'Bidhaa',nav_pnl:'Faida & Hasara',nav_expenses:'Matumizi',nav_branches:'Matawi',nav_users:'Watumiaji',nav_roles:'Majukumu',nav_reports:'Ripoti',nav_attendance:'Mahudhurio',nav_superadmin:'Msimamizi Mkuu',nav_earnings:'Mapato Yangu',nav_companies:'Kampuni Zangu',page_status:'MexFace',page_dashboard:'MexData',page_sales:'Mauzo',page_debts:'Madeni',page_inventory:'Bidhaa',page_pnl:'Faida & Hasara',page_expenses:'Matumizi',page_branches:'Matawi',page_users:'Watumiaji',page_roles:'Majukumu',page_reports:'Ripoti',page_attendance:'Mahudhurio',page_superadmin:'Msimamizi Mkuu',page_earnings:'Mapato Yangu',page_companies:'Kampuni Zangu',logout:'Toka',save:'Hifadhi',cancel:'Ghairi',close:'Funga',delete:'Futa',add:'Ongeza',search:'Tafuta',total:'Jumla',quantity:'Idadi',price:'Bei',status:'Hali',date:'Tarehe',branch:'Tawi',user:'Mtumiaji',role:'Jukumu',name:'Jina',amount:'Kiasi',description:'Maelezo',payouts:'Malipo',approve:'Idhinisha',approved:'Imeidhinishwa',pending:'Inasubiri',paid:'Imelipwa',members:'Wanachama',companies:'Kampuni'},
-  zh:{login_title:'登录您的账户',username:'用户名',password:'密码',full_name:'全名',login_btn:'登录',no_account:'没有账户？',register_company:'注册公司',register_member:'注册为会员',register_company_title:'注册公司',register_member_title:'注册为会员',company_name:'公司名称',phone:'电话号码',confirm_password:'确认密码',promo_optional:'优惠码（可选）',btn_continue:'继续付款',btn_create_member:'创建会员账户',already_registered:'已经注册了？',already_member:'已经是会员？',login_link:'登录',nav_face:'MexFace',nav_data:'MexData',nav_sales:'销售',nav_debts:'债务',nav_inventory:'库存',nav_pnl:'损益',nav_expenses:'费用',nav_branches:'分支机构',nav_users:'用户',nav_roles:'角色',nav_reports:'报告',nav_attendance:'考勤',nav_superadmin:'超级管理员',nav_earnings:'我的收益',nav_companies:'我的公司',page_status:'MexFace',page_dashboard:'MexData',page_sales:'销售',page_debts:'债务',page_inventory:'库存',page_pnl:'损益',page_expenses:'费用',page_branches:'分支机构',page_users:'用户',page_roles:'角色',page_reports:'报告',page_attendance:'考勤',page_superadmin:'超级管理员',page_earnings:'我的收益',page_companies:'我的公司',logout:'退出',save:'保存',cancel:'取消',close:'关闭',delete:'删除',add:'添加',search:'搜索',total:'总计',quantity:'数量',price:'价格',status:'状态',date:'日期',branch:'分支机构',user:'用户',role:'角色',name:'名称',amount:'金额',description:'描述',payouts:'付款',approve:'批准',approved:'已批准',pending:'待定',paid:'已付款',members:'会员',companies:'公司'},
-  fr:{login_title:'Connectez-vous à votre compte',username:"Nom d'utilisateur",password:'Mot de passe',full_name:'Nom complet',login_btn:'Connexion',no_account:"Vous n'avez pas de compte ?",register_company:'Enregistrer une entreprise',register_member:'Enregistrer en tant que membre',register_company_title:'Enregistrer une entreprise',register_member_title:'Enregistrer en tant que membre',company_name:"Nom de l'entreprise",phone:'Numéro de téléphone',confirm_password:'Confirmer le mot de passe',promo_optional:'Code promo (facultatif)',btn_continue:'Continuer vers le paiement',btn_create_member:'Créer un compte membre',already_registered:'Déjà inscrit ?',already_member:'Déjà membre ?',login_link:'Connexion',nav_face:'MexFace',nav_data:'MexData',nav_sales:'Ventes',nav_debts:'Dettes',nav_inventory:'Inventaire',nav_pnl:'Profit & Perte',nav_expenses:'Dépenses',nav_branches:'Succursales',nav_users:'Utilisateurs',nav_roles:'Rôles',nav_reports:'Rapports',nav_attendance:'Présence',nav_superadmin:'Super Admin',nav_earnings:'Mes gains',nav_companies:'Mes entreprises',page_status:'MexFace',page_dashboard:'MexData',page_sales:'Ventes',page_debts:'Dettes',page_inventory:'Inventaire',page_pnl:'Profit & Perte',page_expenses:'Dépenses',page_branches:'Succursales',page_users:'Utilisateurs',page_roles:'Rôles',page_reports:'Rapports',page_attendance:'Présence',page_superadmin:'Super Admin',page_earnings:'Mes gains',page_companies:'Mes entreprises',logout:'Déconnexion',save:'Enregistrer',cancel:'Annuler',close:'Fermer',delete:'Supprimer',add:'Ajouter',search:'Rechercher',total:'Total',quantity:'Quantité',price:'Prix',status:'Statut',date:'Date',branch:'Succursale',user:'Utilisateur',role:'Rôle',name:'Nom',amount:'Montant',description:'Description',payouts:'Paiements',approve:'Approuver',approved:'Approuvé',pending:'En attente',paid:'Payé',members:'Membres',companies:'Entreprises'},
-  ar:{login_title:'تسجيل الدخول إلى حسابك',username:'اسم المستخدم',password:'كلمة المرور',full_name:'الاسم الكامل',login_btn:'تسجيل الدخول',no_account:'ليس لديك حساب؟',register_company:'تسجيل شركة',register_member:'التسجيل كعضو',register_company_title:'تسجيل شركة',register_member_title:'التسجيل كعضو',company_name:'اسم الشركة',phone:'رقم الهاتف',confirm_password:'تأكيد كلمة المرور',promo_optional:'رمز العرض (اختياري)',btn_continue:'متابعة الدفع',btn_create_member:'إنشاء حساب عضو',already_registered:'مسجل بالفعل؟',already_member:'عضو بالفعل؟',login_link:'تسجيل الدخول',nav_face:'MexFace',nav_data:'MexData',nav_sales:'المبيعات',nav_debts:'الديون',nav_inventory:'المخزون',nav_pnl:'الربح والخسارة',nav_expenses:'المصروفات',nav_branches:'الفروع',nav_users:'المستخدمون',nav_roles:'الأدوار',nav_reports:'التقارير',nav_attendance:'الحضور',nav_superadmin:'المشرف العام',nav_earnings:'أرباحي',nav_companies:'شركاتي',page_status:'MexFace',page_dashboard:'MexData',page_sales:'المبيعات',page_debts:'الديون',page_inventory:'المخزون',page_pnl:'الربح والخسارة',page_expenses:'المصروفات',page_branches:'الفروع',page_users:'المستخدمون',page_roles:'الأدوار',page_reports:'التقارير',page_attendance:'الحضور',page_superadmin:'المشرف العام',page_earnings:'أرباحي',page_companies:'شركاتي',logout:'تسجيل الخروج',save:'حفظ',cancel:'إلغاء',close:'إغلاق',delete:'حذف',add:'إضافة',search:'بحث',total:'المجموع',quantity:'الكمية',price:'السعر',status:'الحالة',date:'التاريخ',branch:'الفرع',user:'المستخدم',role:'الدور',name:'الاسم',amount:'المبلغ',description:'الوصف',payouts:'المدفوعات',approve:'موافقة',approved:'موافق عليه',pending:'قيد الانتظار',paid:'مدفوع',members:'الأعضاء',companies:'الشركات'}
-};
-var currentLang='en';
-function t(key){if(TRANSLATIONS[currentLang]&&TRANSLATIONS[currentLang][key])return TRANSLATIONS[currentLang][key];if(TRANSLATIONS.en[key])return TRANSLATIONS.en[key];return key;}
-function applyTranslations(){
-  var els=document.querySelectorAll('[data-i18n]');
-  for(var i=0;i<els.length;i++){var key=els[i].getAttribute('data-i18n');var txt=t(key);if(!txt)continue;var span=els[i].querySelector('span:not(.badge):not(.chat-badge):not(.alert-count):not(.tab-count):not(.lang-flag):not(.plan-check):not(.plan-badge)');if(span)span.textContent=txt;else els[i].textContent=txt;}
-  try{document.documentElement.dir=(currentLang==='ar')?'rtl':'ltr';document.documentElement.lang=currentLang;}catch(e){}
-}
-function setLanguage(lang){
-  if(!lang||!LANG_FLAGS[lang])lang='en';currentLang=lang;
-  try{localStorage.setItem(LANG_KEY,lang);}catch(e){}
-  var fe=document.getElementById('langFlag');var le=document.getElementById('langLabel');if(fe)fe.textContent=LANG_FLAGS[lang];if(le)le.textContent=LANG_LABELS[lang];
-  var lm=document.getElementById('langMenu');if(lm)lm.classList.remove('show');
-  applyTranslations();
-  var cu=getCurrentUser();if(cu)updateAllUI(cu);
-  var av=document.querySelector('.sidebar-nav .nav-item.active');var v=av&&av.dataset.view?av.dataset.view:'status';
-  navigate(v);
-  showToast('✓ '+LANG_NAMES[lang],'success');
-}
-function initLanguageMenu(){
-  var tg=document.getElementById('langToggle');var m=document.getElementById('langMenu');if(!tg||!m)return;
-  var newTg=tg.cloneNode(true);tg.parentNode.replaceChild(newTg,tg);
-  newTg.onclick=function(e){e.preventDefault();e.stopPropagation();m.classList.toggle('show');};
-  var btns=m.querySelectorAll('button[data-lang]');
-  for(var i=0;i<btns.length;i++){btns[i].onclick=function(e){e.preventDefault();e.stopPropagation();setLanguage(this.getAttribute('data-lang'));};}
-  if(!window._langDocListener){window._langDocListener=true;document.addEventListener('click',function(e){var lm=document.getElementById('langMenu');if(lm&&!e.target.closest('.lang-wrapper'))lm.classList.remove('show');});}
-}
 
 /* ===== STORAGE LIMITS ===== */
 var STORAGE_LIMITS={sales:300,punchHistory:200,expenses:300,statuses:50,transfers:200,branch_payments:100,member_earnings:200,categories:100,expense_categories:100,products:500};
@@ -764,11 +696,16 @@ var _pendingCommentUpserts={};var _pendingCommentDeletes=[];
 var _pendingProfileUpserts={};var _relWriteTimer=null;
 var _lastProfilePullTime=0;
 var _lastCloudPullTime=0;
-var SUPABASE_SYNC_EXCLUDE=['sb_session','sb_login_lock','sb_superadmin_logged_in','sb_mex_current_employee','sb_chat_wallpaper_type','sb_chat_wallpaper_value','sb_lang'];
+var SUPABASE_SYNC_EXCLUDE=['sb_session','sb_login_lock','sb_superadmin_logged_in','sb_mex_current_employee','sb_chat_wallpaper_type','sb_chat_wallpaper_value'];
 
-function shouldSyncKey(key){if(!key)return false;for(var i=0;i<SUPABASE_SYNC_EXCLUDE.length;i++){if(key.indexOf(SUPABASE_SYNC_EXCLUDE[i])===0)return false;}if(/_currentUser$/.test(key))return false;return true;}
+function shouldSyncKey(key){
+  if(!key)return false;
+  for(var i=0;i<SUPABASE_SYNC_EXCLUDE.length;i++){if(key.indexOf(SUPABASE_SYNC_EXCLUDE[i])===0)return false;}
+  if(/_currentUser$/.test(key))return false;
+  return true;
+}
 function patchBuilderCatch(){try{if(!supabaseClient) return;var p=supabaseClient.from(TBL_KV).select('key');while(p && !Object.prototype.hasOwnProperty.call(p,'then')) p=Object.getPrototypeOf(p);if(p && typeof p.catch!=='function'){Object.defineProperty(p,'catch',{value:function(f){return this.then(undefined,f);},configurable:true,writable:true});}}catch(e){}}
-function initSupabase(){try{if(window.supabase && typeof window.supabase.createClient==='function'){supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);patchBuilderCatch();}}catch(e){console.warn('[Supabase] init failed:',e);}}
+function initSupabase(){try{if(window.supabase && typeof window.supabase.createClient==='function'){supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);patchBuilderCatch();}}catch(e){}}
 function getSessionTenantId(){var s=lsGet('sb_session',null);return (s&&s.tid)?s.tid:null;}
 
 async function fetchCloudSnapshot(tid){
@@ -781,7 +718,7 @@ async function fetchCloudSnapshot(tid){
   var profQuery=sb.from(TBL_PROFILES).select('*');
   if(_lastProfilePullTime>0){try{profQuery=profQuery.gte('updated_at',new Date(_lastProfilePullTime).toISOString());}catch(e){}}
   var r=await Promise.all([
-    sb.from(TBL_KV).select('key,value').in('key',['sb_tenants','sb_mex_employees','sb_super_hash','sb_superadmin_user']),
+    sb.from(TBL_KV).select('key,value').in('key',['sb_tenants','sb_mex_employees','sb_super_hash','sb_superadmin_user','sb_member_earnings','sb_member_payments']),
     sb.from(TBL_KV).select('key,value').like('key','sb_tenant_%_users'),
     sb.from(TBL_KV).select('key,value').like('key','sb_tenant_%_subscription_expiry'),
     sb.from(TBL_KV).select('key,value').like('key','sb_tenant_%_follows'),
@@ -791,7 +728,10 @@ async function fetchCloudSnapshot(tid){
     ids.length?sb.from(TBL_COMMENTS).select('*').in('post_id',ids):empty
   ]);
   _lastProfilePullTime=Date.now();
-  return [{data:[].concat(r[0].data||[],r[1].data||[],r[2].data||[],r[3].data||[],r[4].data||[]),error:r[0].error||r[1].error||r[2].error||r[3].error||r[4].error||null},r[5],posts,r[6],r[7]];
+  return [
+    {data:[].concat(r[0].data||[],r[1].data||[],r[2].data||[],r[3].data||[],r[4].data||[]),error:r[0].error||r[1].error||r[2].error||r[3].error||r[4].error||null},
+    r[5],posts,r[6],r[7]
+  ];
 }
 
 function _trimArrayForKey(key,arr){
@@ -802,7 +742,7 @@ function _trimArrayForKey(key,arr){
   if(key.indexOf('_statuses')!==-1&&arr.length>STORAGE_LIMITS.statuses)return arr.slice(-STORAGE_LIMITS.statuses);
   if(key.indexOf('_transfers')!==-1&&arr.length>STORAGE_LIMITS.transfers)return arr.slice(-STORAGE_LIMITS.transfers);
   if(key.indexOf('_branch_payments')!==-1&&arr.length>STORAGE_LIMITS.branch_payments)return arr.slice(-STORAGE_LIMITS.branch_payments);
-  if(key==='sb_member_earnings'&&arr.length>STORAGE_LIMITS.member_earnings)return arr.slice(-STORAGE_LIMITS.member_earnings);
+  if(key===MEMBER_EARNINGS_KEY&&arr.length>STORAGE_LIMITS.member_earnings)return arr.slice(-STORAGE_LIMITS.member_earnings);
   if(key.indexOf('_categories')!==-1&&arr.length>STORAGE_LIMITS.categories)return arr.slice(-STORAGE_LIMITS.categories);
   if(key.indexOf('_products')!==-1&&arr.length>STORAGE_LIMITS.products)return arr.slice(-STORAGE_LIMITS.products);
   return arr;
@@ -813,27 +753,45 @@ function pullAllFromSupabase(){
   return fetchCloudSnapshot().then(function(results){
     var hadError=false;for(var i=0;i<results.length;i++){if(results[i]&&results[i].error){hadError=true;}}
     var kvRes=results[0],profRes=results[1],postRes=results[2],likeRes=results[3],cmtRes=results[4];
-    if(kvRes&&!kvRes.error&&kvRes.data){var SKIP_KEYS={'sb_global_ads':1,'sb_chat_messages':1,'sb_member_earnings':1,'sb_member_payments':1};kvRes.data.forEach(function(row){if(!shouldSyncKey(row.key))return;if(SKIP_KEYS[row.key])return;if(_pendingKVWrites[row.key])return;try{if(row.value!==null&&row.value!==undefined){var val=_trimArrayForKey(row.key,row.value);localStorage.setItem(row.key,JSON.stringify(val));}}catch(e){tryCleanupLocalStorage();try{localStorage.setItem(row.key,JSON.stringify(row.value));}catch(e2){}}});}
+    if(kvRes&&!kvRes.error&&kvRes.data){
+      var SKIP_KEYS={'sb_global_ads':1,'sb_chat_messages':1};
+      kvRes.data.forEach(function(row){
+        if(!shouldSyncKey(row.key))return;
+        if(SKIP_KEYS[row.key])return;
+        if(_pendingKVWrites[row.key])return;
+        try{if(row.value!==null&&row.value!==undefined){var val=_trimArrayForKey(row.key,row.value);localStorage.setItem(row.key,JSON.stringify(val));}}
+        catch(e){tryCleanupLocalStorage();try{localStorage.setItem(row.key,JSON.stringify(row.value));}catch(e2){}}
+      });
+    }
     if(profRes&&!profRes.error&&profRes.data){profRes.data.forEach(applyProfileFromCloud);if(_superAdminPhotoKey){dbSet(STORES.json,SUPER_ADMIN_PHOTO_KEY,_superAdminPhotoKey).catch(function(){});}}
     if(postRes&&!postRes.error&&postRes.data){mergePostsFromCloud(postRes.data,likeRes&&likeRes.data||[],cmtRes&&cmtRes.data||[]);}
     return {ok:!hadError};
-  }).catch(function(e){return {ok:false, reason:(e&&e.message)||'pull-failed'};});
+  }).catch(function(e){return {ok:false,reason:(e&&e.message)||'pull-failed'};});
 }
 
 async function pullLoginCredentialsFromCloud(){
-  if(!supabaseClient) return {ok:false, error:'No Supabase client'};
-  var heavyKeys=['sb_global_ads','sb_chat_messages','sb_member_earnings','sb_member_payments','sb_superadmin_user'];
+  if(!supabaseClient) return {ok:false,error:'No Supabase client'};
+  var heavyKeys=['sb_global_ads','sb_chat_messages','sb_superadmin_user'];
   for(var h=0;h<heavyKeys.length;h++){try{if(localStorage.getItem(heavyKeys[h])){localStorage.removeItem(heavyKeys[h]);}}catch(e){}}
   try{var sessions=lsGet('sb_session',null);var currentTid=sessions&&sessions.tid?sessions.tid:null;if(currentTid){var keysToDelete=[];for(var kk=0;kk<localStorage.length;kk++){var key=localStorage.key(kk);if(!key)continue;if(key.indexOf('sb_tenant_')===0&&key.indexOf('sb_tenant_'+currentTid+'_')!==0){keysToDelete.push(key);}}for(var kd=0;kd<keysToDelete.length;kd++){try{localStorage.removeItem(keysToDelete[kd]);}catch(e){}}}}catch(e){}
   try{tryCleanupLocalStorage();}catch(e){}
   try{
     var results=await Promise.all([
-      supabaseClient.from(TBL_KV).select('key,value').in('key',['sb_super_hash','sb_tenants','sb_mex_employees']),
+      supabaseClient.from(TBL_KV).select('key,value').in('key',['sb_super_hash','sb_tenants','sb_mex_employees','sb_member_earnings','sb_member_payments']),
       supabaseClient.from(TBL_KV).select('key,value').like('key','sb_tenant_%_users'),
       supabaseClient.from(TBL_KV).select('key,value').like('key','sb_tenant_%_subscription_expiry')
     ]);
     var total=0;var failed=[];
-    for(var i=0;i<results.length;i++){var res=results[i];if(res&&res.error){throw res.error;}var rows=(res&&res.data)||[];for(var j=0;j<rows.length;j++){var key=rows[j].key;if(key==='sb_global_ads'||key==='sb_chat_messages'||key==='sb_member_earnings'||key==='sb_member_payments')continue;try{if(rows[j].value!==null&&rows[j].value!==undefined){var jsonStr=JSON.stringify(rows[j].value);if(jsonStr.length>SKIP_KEY_SIZE_LOGIN)continue;localStorage.setItem(key,jsonStr);total++;}}catch(e){failed.push(key);}}}
+    for(var i=0;i<results.length;i++){
+      var res=results[i];if(res&&res.error){throw res.error;}
+      var rows=(res&&res.data)||[];
+      for(var j=0;j<rows.length;j++){
+        var key=rows[j].key;
+        if(key==='sb_global_ads'||key==='sb_chat_messages')continue;
+        try{if(rows[j].value!==null&&rows[j].value!==undefined){var jsonStr=JSON.stringify(rows[j].value);if(jsonStr.length>SKIP_KEY_SIZE_LOGIN)continue;localStorage.setItem(key,jsonStr);total++;}}
+        catch(e){failed.push(key);}
+      }
+    }
     return {ok:true,count:total,failed:failed};
   }catch(e){return {ok:false,error:(e&&e.message)||'Sync failed'};}
 }
@@ -872,7 +830,7 @@ function mergePostsFromCloud(posts,likes,comments){
   } catch(e){}
 }
 
-function scheduleSupabasePush(key,value){if(!supabaseClient)return;if(!shouldSyncKey(key))return;_pendingKVWrites[key]=value;if(_kvWriteTimer)clearTimeout(_kvWriteTimer);_kvWriteTimer=setTimeout(flushKVWrites,700);}
+function scheduleSupabasePush(key,value){if(!supabaseClient)return;if(!shouldSyncKey(key))return;_pendingKVWrites[key]=value;if(_kvWriteTimer)clearTimeout(_kvWriteTimer);_kvWriteTimer=setTimeout(flushKVWrites,600);}
 function flushKVWrites(){
   if(!supabaseClient)return;var keys=Object.keys(_pendingKVWrites);if(!keys.length)return;
   var writes=_pendingKVWrites;_pendingKVWrites={};var rows=[];
@@ -910,15 +868,10 @@ var _cloudPullTimer=null;
 var _periodicRefreshTimer=null;
 var _ownWriteCooldown=0;
 
-function markOwnWrite(){_ownWriteCooldown=Date.now()+3000;}
+function markOwnWrite(){_ownWriteCooldown=Date.now()+2500;}
 function isInOwnWriteCooldown(){return Date.now()<_ownWriteCooldown;}
-
-/* No-op sync indicator + button */
-function setSyncIndicator(on){/* removed UI */}
-function showSyncButton(){/* removed UI */}
-
 function quickHash(str){var h=0;for(var i=0;i<str.length;i++){h=((h<<5)-h+str.charCodeAt(i))|0;}return h;}
-function localStateHash(){try{return quickHash((localStorage.getItem(GLOBAL_ADS_KEY)||'')+(localStorage.getItem('sb_tenants')||'')+(localStorage.getItem(MEX_EMPLOYEES_KEY)||''));}catch(e){return 0;}}
+function localStateHash(){try{return quickHash((localStorage.getItem(GLOBAL_ADS_KEY)||'')+(localStorage.getItem('sb_tenants')||'')+(localStorage.getItem(MEX_EMPLOYEES_KEY)||'')+(localStorage.getItem(MEMBER_EARNINGS_KEY)||''));}catch(e){return 0;}}
 
 function setupRealtimeSync(){
   if(!supabaseClient){return;}
@@ -931,14 +884,9 @@ function setupRealtimeSync(){
   try{var profilesChannel=supabaseClient.channel('mex_profiles_realtime').on('postgres_changes',{event:'*',schema:'public',table:TBL_PROFILES},function(payload){if(isInOwnWriteCooldown())return;if(payload.new){try{applyProfileFromCloud(payload.new);}catch(e){}}scheduleSoftReRender();}).subscribe();_realtimeChannels.push(profilesChannel);}catch(e){}
 }
 
-function scheduleCloudPullAndRender(){
-  if(_cloudPullTimer)clearTimeout(_cloudPullTimer);
-  _cloudPullTimer=setTimeout(function(){pullFromCloudOnly().then(function(changed){if(changed){softRefreshCurrentView(true);}});},800);
-}
-function scheduleSoftReRender(){
-  if(_realtimeDebounceTimer)clearTimeout(_realtimeDebounceTimer);
-  _realtimeDebounceTimer=setTimeout(function(){softRefreshCurrentView(false);},400);
-}
+function scheduleCloudPullAndRender(){if(_cloudPullTimer)clearTimeout(_cloudPullTimer);_cloudPullTimer=setTimeout(function(){pullFromCloudOnly().then(function(changed){if(changed){softRefreshCurrentView(true);}});},800);}
+function scheduleSoftReRender(){if(_realtimeDebounceTimer)clearTimeout(_realtimeDebounceTimer);_realtimeDebounceTimer=setTimeout(function(){softRefreshCurrentView(false);},400);}
+
 function softRefreshCurrentView(force){
   var active=document.activeElement;
   if(active){var tag=active.tagName;if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT')return;}
@@ -951,15 +899,9 @@ function softRefreshCurrentView(force){
   if(activeNav)currentView=activeNav.dataset.view;
   var reRenderable=['status','mexStatus','dashboard','sales','debts','inventory','expenses','users','branches','reports','pnl','superadmin','mexEarnings','mexCompanies','roles'];
   if(reRenderable.indexOf(currentView)===-1)return;
-  try{
-    var area=document.getElementById('contentArea');
-    if(area&&typeof views[currentView]==='function'){var sp=area.scrollTop;area.innerHTML=views[currentView]();area.scrollTop=sp;setTimeout(hydrateMedia,20);}
-  }catch(e){}
+  try{var area=document.getElementById('contentArea');if(area&&typeof views[currentView]==='function'){var sp=area.scrollTop;area.innerHTML=views[currentView]();area.scrollTop=sp;setTimeout(hydrateMedia,20);}}catch(e){}
 }
-function startPeriodicRefresh(){
-  if(_periodicRefreshTimer)clearInterval(_periodicRefreshTimer);
-  _periodicRefreshTimer=setInterval(function(){if(!supabaseClient)return;pullFromCloudOnly().then(function(changed){if(changed){softRefreshCurrentView(false);}});},30000);
-}
+function startPeriodicRefresh(){if(_periodicRefreshTimer)clearInterval(_periodicRefreshTimer);_periodicRefreshTimer=setInterval(function(){if(!supabaseClient)return;pullFromCloudOnly().then(function(changed){if(changed){softRefreshCurrentView(false);}});},30000);}
 
 function pullFromCloudOnly(){
   if(!supabaseClient)return Promise.resolve(false);
@@ -982,14 +924,8 @@ function pullFromCloudOnly(){
     return beforeHash!==afterHash;
   }).catch(function(e){return false;});
 }
-function cleanupRealtimeSync(){
-  _realtimeChannels.forEach(function(ch){try{if(supabaseClient)supabaseClient.removeChannel(ch);}catch(e){}});
-  _realtimeChannels=[];
-  if(_periodicRefreshTimer){clearInterval(_periodicRefreshTimer);_periodicRefreshTimer=null;}
-}
-document.addEventListener('visibilitychange',function(){
-  if(document.visibilityState==='visible'&&supabaseClient){_lastCloudPullTime=0;pullFromCloudOnly().then(function(changed){if(changed){softRefreshCurrentView(true);}});}
-});
+function cleanupRealtimeSync(){_realtimeChannels.forEach(function(ch){try{if(supabaseClient)supabaseClient.removeChannel(ch);}catch(e){}});_realtimeChannels=[];if(_periodicRefreshTimer){clearInterval(_periodicRefreshTimer);_periodicRefreshTimer=null;}}
+document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible'&&supabaseClient){_lastCloudPullTime=0;pullFromCloudOnly().then(function(changed){if(changed){softRefreshCurrentView(true);}});}});
 
 /* ===== SHA-256 ===== */
 var _sha={K:null,H:null};
@@ -1023,7 +959,7 @@ function encArg(s){return encodeURIComponent(String(s==null?'':s)).replace(/'/g,
 function safeDecode(s){try{return decodeURIComponent(String(s));}catch(e){return String(s);}}
 
 /* ===== INDEXEDDB ===== */
-var DB_NAME='mex_pro_db_v13';var DB_VERSION=1;
+var DB_NAME='mex_pro_db_v15';var DB_VERSION=1;
 var STORES={media:'media',json:'json'};
 var _dbPromise=null;var _mediaUrlCache={};
 function openDB(){if(_dbPromise)return _dbPromise;_dbPromise=new Promise(function(resolve,reject){if(!window.indexedDB){reject(new Error('No IDB'));return;}var req=indexedDB.open(DB_NAME,DB_VERSION);req.onupgradeneeded=function(){var db=req.result;if(!db.objectStoreNames.contains(STORES.media))db.createObjectStore(STORES.media);if(!db.objectStoreNames.contains(STORES.json))db.createObjectStore(STORES.json);};req.onsuccess=function(){resolve(req.result);};req.onerror=function(){reject(req.error);};});return _dbPromise;}
@@ -1031,10 +967,14 @@ function dbSet(store,key,val){return openDB().then(function(db){return new Promi
 function dbGet(store,key){return openDB().then(function(db){return new Promise(function(resolve,reject){var tx=db.transaction(store,'readonly');var req=tx.objectStore(store).get(key);req.onsuccess=function(){resolve(req.result==null?null:req.result);};req.onerror=function(){reject(req.error);};});});}
 function dbDel(store,key){if(!key)return Promise.resolve(true);return openDB().then(function(db){return new Promise(function(resolve){var tx=db.transaction(store,'readwrite');tx.objectStore(store).delete(key);tx.oncomplete=function(){resolve(true);};tx.onerror=function(){resolve(false);};});});}
 function saveMediaBlob(blob,prefix){var key=(prefix||'media_')+Date.now()+'_'+Math.floor(Math.random()*100000);return dbSet(STORES.media,key,blob).then(function(){uploadMediaToSupabase(key,blob);return key;});}
+
 function getMediaUrl(key){
   if(!key)return Promise.resolve(null);
   if(_mediaUrlCache[key])return Promise.resolve(_mediaUrlCache[key]);
-  return dbGet(STORES.media,key).then(function(blob){if(blob){var url=URL.createObjectURL(blob);_mediaUrlCache[key]=url;return url;}var sbUrl=getSupabaseMediaUrl(key);if(sbUrl){_mediaUrlCache[key]=sbUrl;return sbUrl;}return null;}).catch(function(){var sbUrl=getSupabaseMediaUrl(key);if(sbUrl){_mediaUrlCache[key]=sbUrl;return sbUrl;}return null;});
+  return dbGet(STORES.media,key).then(function(blob){
+    if(blob){var url=URL.createObjectURL(blob);_mediaUrlCache[key]=url;return url;}
+    var sbUrl=getSupabaseMediaUrl(key);if(sbUrl){_mediaUrlCache[key]=sbUrl;return sbUrl;}return null;
+  }).catch(function(){var sbUrl=getSupabaseMediaUrl(key);if(sbUrl){_mediaUrlCache[key]=sbUrl;return sbUrl;}return null;});
 }
 function deleteMediaKey(key){if(!key)return Promise.resolve();delete _mediaUrlCache[key];return dbDel(STORES.media,key);}
 
@@ -1100,7 +1040,6 @@ var REPORT_CUSTOM_FROM=null;
 var REPORT_CUSTOM_TO=null;
 var currentCommentsAdId=null;
 var replyToCommentId=null;
-var _credentialsTenantId=null;
 var _loginFails=0;
 var _loginLockUntil=Number(lsGet('sb_login_lock',0))||0;
 var sendReportType='debts';
@@ -1122,9 +1061,8 @@ function escapeHtml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace
 function escapeAttr(s){return escapeHtml(s);}
 function normStore(s){return String(s==null?'':s).trim();}
 function normName(s){return String(s==null?'':s).trim().toLowerCase();}
-function avatarUrl(name,bg){var n=String(name||'User').trim()||'User';var b=(bg||'128C7E').replace('#','');return 'https://ui-avatars.com/api/?background='+b+'&color=fff&name='+encodeURIComponent(n)+'&bold=true&size=128';}
+function avatarUrl(name,bg){var n=String(name||'User').trim()||'User';var b=(bg||'128C7E').replace('#','');return 'https://ui-avatars.com/api/?background='+b+'&color=fff&name='+encodeURIComponent(n)+'&bold=true&size=96';}
 function showToast(msg,type){type=type||'info';try{var c=document.getElementById('toastContainer');if(!c)return;var d=document.createElement('div');d.className='toast '+type;d.textContent=String(msg==null?'':msg);c.appendChild(d);setTimeout(function(){try{d.remove();}catch(e){}},3800);}catch(e){}}
-
 function applyTheme(){var u=getCurrentUser();var isDark=u?u.theme==='dark':false;document.body.classList.toggle('dark',isDark);var i=document.querySelector('#themeToggle i');if(i)i.className=isDark?'fas fa-sun':'fas fa-moon';applyChatWallpaper();}
 
 /* ===== TENANT DATA ===== */
@@ -1141,54 +1079,67 @@ function getCurrentUser(){
   if(isMexEmployee&&currentMexEmployeeId){var emp=findMexEmployeeById(currentMexEmployeeId);if(emp)return {id:emp.id,username:emp.username,fullName:emp.name,role:'mexemployee',phone:emp.phone||'',email:emp.email||'',photoKey:emp.photoKey||'',theme:emp.theme||'light',bio:emp.bio||'',socialWhatsapp:emp.socialWhatsapp||'',socialInstagram:emp.socialInstagram||'',socialFacebook:emp.socialFacebook||'',socialTiktok:emp.socialTiktok||'',socialWebsite:emp.socialWebsite||''};return null;}
   return getTenantData('_currentUser',null);
 }
-function setCurrentUser(u){
-  if(isSuperAdmin){if(u)lsSet('sb_superadmin_user',u);else{try{localStorage.removeItem('sb_superadmin_user');}catch(e){}}return;}
-  if(u){var safe=Object.assign({},u);delete safe.password;setTenantData('_currentUser',safe);}else setTenantData('_currentUser',null);
-}
+function setCurrentUser(u){if(isSuperAdmin){if(u)lsSet('sb_superadmin_user',u);else{try{localStorage.removeItem('sb_superadmin_user');}catch(e){}}return;}if(u){var safe=Object.assign({},u);delete safe.password;setTenantData('_currentUser',safe);}else setTenantData('_currentUser',null);}
 function getUser(id){var all=getTenantData('users',[]);for(var i=0;i<all.length;i++){if(all[i].id===id)return all[i];}return null;}
 function getUserPhotoKey(user){if(!user)return '';return user.photoKey||'';}
 function getUserPhoto(user){if(!user)return avatarUrl('User','128C7E');var key=getUserPhotoKey(user);if(key&&_mediaUrlCache[key])return _mediaUrlCache[key];var name=user.fullName||user.username||'User';if(isMexEmployee)return avatarUrl(name,'f59e0b');return avatarUrl(name,'128C7E');}
-function getUserPhotoHtml(user,cls,st){var key=getUserPhotoKey(user);var src=getUserPhoto(user);var attrs=key?' data-photo-key="'+escapeHtml(key)+'"':'';var c=cls?' class="'+cls+'"':'';var s=st?' style="'+st+'"':'';return '<img src="'+src+'"'+c+s+attrs+' alt=""/>';}
-function getCompanyPhotoHtml(id,cls,st){var op=getTenantOwnerPublic(id);var key=op.photoKey||'';var t2=getTenant(id);var src=(key&&_mediaUrlCache[key])?_mediaUrlCache[key]:avatarUrl((t2&&t2.companyName)||'Company','128C7E');var attrs=key?' data-photo-key="'+escapeHtml(key)+'"':'';var c=cls?' class="'+cls+'"':'';var s=st?' style="'+st+'"':'';return '<img src="'+src+'"'+c+s+attrs+' alt=""/>';}
+function getUserPhotoHtml(user,cls,st){var key=getUserPhotoKey(user);var src=getUserPhoto(user);var attrs=key?' data-photo-key="'+escapeHtml(key)+'"':'';var c=cls?' class="'+cls+'"':'';var s=st?' style="'+st+'"':'';return '<img src="'+src+'"'+c+s+attrs+' alt="" loading="lazy" decoding="async"/>';}
+function getCompanyPhotoHtml(id,cls,st){var op=getTenantOwnerPublic(id);var key=op.photoKey||'';var t2=getTenant(id);var src=(key&&_mediaUrlCache[key])?_mediaUrlCache[key]:avatarUrl((t2&&t2.companyName)||'Company','128C7E');var attrs=key?' data-photo-key="'+escapeHtml(key)+'"':'';var c=cls?' class="'+cls+'"':'';var s=st?' style="'+st+'"':'';return '<img src="'+src+'"'+c+s+attrs+' alt="" loading="lazy" decoding="async"/>';}
 
-/* ===== MEDIA ===== */
+/* ===== MEDIA (LAZY LOAD) ===== */
 var _videoRetryCount={};
 var _videoObserver=null;
+var _imageObserver=null;
 
 function initVideoObserver(){
-  if(_videoObserver)return;
-  if(!('IntersectionObserver' in window))return;
+  if(_videoObserver)return;if(!('IntersectionObserver' in window))return;
   _videoObserver=new IntersectionObserver(function(entries){
     entries.forEach(function(entry){
       var el=entry.target;
       if(!el||el.tagName!=='VIDEO')return;
       if(entry.isIntersecting&&entry.intersectionRatio>=0.55){
-        /* Pause all OTHER videos (only one plays) */
         var allVids=document.querySelectorAll('video');
         for(var k=0;k<allVids.length;k++){if(allVids[k]!==el&&!allVids[k].paused){try{allVids[k].pause();}catch(e){}}}
-        /* Load if not loaded */
         if(!el.src||el.src===''){loadVideo(el);}
         else if(el.paused){
           if(el.dataset.userMuted!=='1')el.muted=false;
           var p=el.play();
-          if(p&&p.catch)p.catch(function(){
-            if(el.dataset.userMuted!=='1'){el.muted=true;var btn=el.parentElement&&el.parentElement.querySelector('.video-mute-btn i');if(btn)btn.className='fas fa-volume-mute';}
-            el.play().catch(function(){});
-          });
+          if(p&&p.catch)p.catch(function(){if(el.dataset.userMuted!=='1'){el.muted=true;var btn=el.parentElement&&el.parentElement.querySelector('.video-mute-btn i');if(btn)btn.className='fas fa-volume-mute';}el.play().catch(function(){});});
         }
-      } else {
-        if(!el.paused){try{el.pause();}catch(e){}}
-      }
+      } else {if(!el.paused){try{el.pause();}catch(e){}}}
     });
   },{threshold:[0,0.35,0.55,0.75,1]});
 }
-
+function initImageObserver(){
+  if(_imageObserver)return;if(!('IntersectionObserver' in window))return;
+  _imageObserver=new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      var el=entry.target;
+      if(!el||el.tagName!=='IMG')return;
+      if(!entry.isIntersecting)return;
+      try{_imageObserver.unobserve(el);}catch(e){}
+      _loadImageElement(el);
+    });
+  },{rootMargin:'250px'});
+}
+function _loadImageElement(el){
+  if(!el)return;
+  var key=el.dataset.photoKey||el.dataset.mediaKey;
+  if(!key)return;
+  if(_mediaUrlCache[key]){el.src=_mediaUrlCache[key];return;}
+  getMediaUrl(key).then(function(url){if(url)el.src=url;});
+}
+function observeImageElement(el){
+  if(!el)return;
+  if(el.dataset.imgObserved==='1')return;
+  el.dataset.imgObserved='1';
+  if(!_imageObserver){_loadImageElement(el);return;}
+  try{_imageObserver.observe(el);}catch(e){_loadImageElement(el);}
+}
 function observeVideo(el){if(!el||!_videoObserver)return;if(el.dataset.observed==='1')return;el.dataset.observed='1';try{_videoObserver.observe(el);}catch(e){}}
 
 function loadVideo(el){
-  if(!el)return;
-  var key=el.dataset.mediaKey;
-  if(!key)return;
+  if(!el)return;var key=el.dataset.mediaKey;if(!key)return;
   if(el.dataset.mediaLoaded==='1'&&el.src){
     if(el.paused){
       if(el.dataset.userMuted!=='1')el.muted=false;
@@ -1199,31 +1150,12 @@ function loadVideo(el){
   }
   el.dataset.mediaLoaded='1';
   getMediaUrl(key).then(function(url){
-    if(!url){
-      var attempts=_videoRetryCount[key]||0;
-      if(attempts<3){_videoRetryCount[key]=attempts+1;el.dataset.mediaLoaded='0';setTimeout(function(){loadVideo(el);},500*(attempts+1));}
-      return;
-    }
+    if(!url){var attempts=_videoRetryCount[key]||0;if(attempts<3){_videoRetryCount[key]=attempts+1;el.dataset.mediaLoaded='0';setTimeout(function(){loadVideo(el);},500*(attempts+1));}return;}
     _videoRetryCount[key]=0;
-    el.src=url;
-    el.playsInline=true;
-    el.setAttribute('playsinline','');
-    el.setAttribute('webkit-playsinline','');
-    el.loop=true;
-    el.preload='auto';
-    /* Try to play WITH SOUND by default */
-    if(el.dataset.userMuted!=='1')el.muted=false;
-    else el.muted=true;
+    el.src=url;el.playsInline=true;el.setAttribute('playsinline','');el.setAttribute('webkit-playsinline','');el.loop=true;el.preload='auto';
+    if(el.dataset.userMuted!=='1')el.muted=false;else el.muted=true;
     var p=el.play();
-    if(p&&p.catch)p.catch(function(){
-      /* Browser blocked autoplay with sound. Fall back to muted. */
-      if(el.dataset.userMuted!=='1'){
-        el.muted=true;
-        var btn=el.parentElement&&el.parentElement.querySelector('.video-mute-btn i');
-        if(btn)btn.className='fas fa-volume-mute';
-      }
-      el.play().catch(function(){});
-    });
+    if(p&&p.catch)p.catch(function(){if(el.dataset.userMuted!=='1'){el.muted=true;var btn=el.parentElement&&el.parentElement.querySelector('.video-mute-btn i');if(btn)btn.className='fas fa-volume-mute';}el.play().catch(function(){});});
     observeVideo(el);
   });
 }
@@ -1231,26 +1163,17 @@ function loadVideo(el){
 function muteAllVideos(){var vids=document.querySelectorAll('video');for(var i=0;i<vids.length;i++)vids[i].muted=true;}
 
 function toggleVideoMute(btn){
-  var wrap=btn.closest('.insta-ad-media');
-  var v=wrap?wrap.querySelector('video'):null;
-  if(!v)return;
+  var wrap=btn.closest('.insta-ad-media');var v=wrap?wrap.querySelector('video'):null;if(!v)return;
   var i=btn.querySelector('i');
   if(v.muted){
-    /* Unmute this one, mute all others */
     v.dataset.userMuted='0';
     var allVids=document.querySelectorAll('video');
     for(var k=0;k<allVids.length;k++){if(allVids[k]!==v)allVids[k].muted=true;}
-    v.muted=false;
-    if(i)i.className='fas fa-volume-up';
-  } else {
-    v.dataset.userMuted='1';
-    v.muted=true;
-    if(i)i.className='fas fa-volume-mute';
-  }
+    v.muted=false;if(i)i.className='fas fa-volume-up';
+  } else {v.dataset.userMuted='1';v.muted=true;if(i)i.className='fas fa-volume-mute';}
   if(v.paused){var p=v.play();if(p&&p.catch)p.catch(function(){});}
 }
 
-/* Global one-time unmute on user interaction (Chrome policy workaround) */
 (function(){
   var handler=function(e){
     if(e&&e.target&&e.target.closest&&e.target.closest('.video-mute-btn'))return;
@@ -1258,11 +1181,7 @@ function toggleVideoMute(btn){
     for(var i=0;i<vids.length;i++){
       var v=vids[i];
       if(v.dataset.userMuted==='1')continue;
-      if(v.muted&&!v.paused){
-        v.muted=false;
-        var btn=v.parentElement&&v.parentElement.querySelector('.video-mute-btn i');
-        if(btn)btn.className='fas fa-volume-up';
-      }
+      if(v.muted&&!v.paused){v.muted=false;var btn=v.parentElement&&v.parentElement.querySelector('.video-mute-btn i');if(btn)btn.className='fas fa-volume-up';}
     }
   };
   document.addEventListener('click',handler,true);
@@ -1271,22 +1190,20 @@ function toggleVideoMute(btn){
 })();
 
 function hydratePhotos(){
-  var imgs=document.querySelectorAll('img[data-photo-key]:not([data-photo-bound])');
-  for(var i=0;i<imgs.length;i++){(function(el){el.setAttribute('data-photo-bound','1');var key=el.dataset.photoKey;if(!key)return;if(_mediaUrlCache[key]){el.src=_mediaUrlCache[key];return;}getMediaUrl(key).then(function(url){if(url)el.src=url;});})(imgs[i]);}
+  initImageObserver();
+  var imgs=document.querySelectorAll('img[data-photo-key]:not([data-img-observed])');
+  for(var i=0;i<imgs.length;i++){observeImageElement(imgs[i]);}
 }
-
 function hydrateMedia(){
-  initVideoObserver();
-  /* Do NOT load videos immediately - wait for observer */
+  initVideoObserver();initImageObserver();
   var vids=document.querySelectorAll('video[data-media-key]:not([data-media-bound])');
   for(var i=0;i<vids.length;i++){
     vids[i].setAttribute('data-media-bound','1');
     try{vids[i].preload='none';}catch(e){}
-    if(!('IntersectionObserver' in window)){loadVideo(vids[i]);}
-    else{observeVideo(vids[i]);}
+    if(!('IntersectionObserver' in window)){loadVideo(vids[i]);}else{observeVideo(vids[i]);}
   }
-  var imgs=document.querySelectorAll('img[data-media-key]:not([data-media-bound])');
-  for(var j=0;j<imgs.length;j++){(function(el){el.setAttribute('data-media-bound','1');var key=el.dataset.mediaKey;if(_mediaUrlCache[key]){el.src=_mediaUrlCache[key];return;}getMediaUrl(key).then(function(url){if(url)el.src=url;});})(imgs[j]);}
+  var imgs=document.querySelectorAll('img[data-media-key]:not([data-img-observed])');
+  for(var j=0;j<imgs.length;j++){observeImageElement(imgs[j]);}
   hydratePhotos();
 }
 
@@ -1409,7 +1326,6 @@ function hasPerm(perm){if(isSuperAdmin)return true;if(isMexEmployee)return false
 function canManageUsers(){if(isSuperAdmin)return true;if(isMexEmployee)return false;return hasPerm('users_manage');}
 function canManageRoles(){if(isSuperAdmin)return true;if(isMexEmployee)return false;var u=getCurrentUser();return u&&(u.role==='owner'||u.role==='admin');}
 function canRecordSales(){if(isSuperAdmin)return true;if(isMexEmployee)return false;return hasPerm('sales_create');}
-function canTransferStock(){if(isSuperAdmin||isMexEmployee)return false;return hasPerm('inventory_manage');}
 function getRoleLabel(r){var m={owner:'Owner',admin:'Admin',accountant:'Accountant',employee:'Employee',superadmin:'Super Admin',mexemployee:'Member'};return m[r]||r;}
 function getRoleBadgeClass(r){var m={owner:'badge-role-owner',admin:'badge-role-admin',accountant:'badge-role-accountant',employee:'badge-role-employee'};return m[r]||'badge-primary';}
 function getUserPermissions(){if(isSuperAdmin||isMexEmployee)return {seeNetProfit:true,seeExpenses:true};var u=getCurrentUser();if(!u)return {seeNetProfit:false,seeExpenses:false};if(u.role==='owner')return {seeNetProfit:true,seeExpenses:true};return {seeNetProfit:hasPerm('pnl_view'),seeExpenses:hasPerm('expenses_view')};}
@@ -1460,7 +1376,7 @@ function quickAddComment(adId){
 }
 function getCurrentCommenterPhotoKey(u){if(isSuperAdmin)return _superAdminPhotoKey||'';if(isMexEmployee){var emp=findMexEmployeeById(currentMexEmployeeId);return emp?(emp.photoKey||''):'';}return (u&&u.photoKey)?u.photoKey:'';}
 function resolveCommentPhotoKey(c){if(!c)return '';if(c.photoKey)return c.photoKey;if(c.isSuperAdmin)return _superAdminPhotoKey||'';if(c.isMexEmployee){var emp=findMexEmployeeById(c.mexEmployeeId);if(emp&&emp.photoKey)return emp.photoKey;return '';}if(c.tenantId&&c.userId){var users=lsGet('sb_tenant_'+c.tenantId+'_users',[]);if(Array.isArray(users)){for(var i=0;i<users.length;i++){if(Number(users[i].id)===Number(c.userId)&&users[i].photoKey)return users[i].photoKey;}}}return '';}
-function getCommenterAvatarHtml(c){if(!c)return '<img src="'+avatarUrl('User','128C7E')+'" alt=""/>';var key=resolveCommentPhotoKey(c);var name=c.userName||'User';var bg=c.isSuperAdmin?'f59e0b':(c.isMexEmployee?'f59e0b':'128C7E');var src=(key&&_mediaUrlCache[key])?_mediaUrlCache[key]:avatarUrl(name,bg);var attrs=key?' data-photo-key="'+escapeHtml(key)+'"':'';return '<img src="'+src+'"'+attrs+' alt=""/>';}
+function getCommenterAvatarHtml(c){if(!c)return '<img src="'+avatarUrl('User','128C7E')+'" alt=""/>';var key=resolveCommentPhotoKey(c);var name=c.userName||'User';var bg=c.isSuperAdmin?'f59e0b':(c.isMexEmployee?'f59e0b':'128C7E');var src=(key&&_mediaUrlCache[key])?_mediaUrlCache[key]:avatarUrl(name,bg);var attrs=key?' data-photo-key="'+escapeHtml(key)+'"':'';return '<img src="'+src+'"'+attrs+' alt="" loading="lazy" decoding="async"/>';}
 
 /* ===== COMMENTS MODAL ===== */
 function openCommentsModal(adId){var ads=getGlobalAds();var ad=null;for(var i=0;i<ads.length;i++){if(Number(ads[i].id)===Number(adId)){ad=ads[i];break;}}if(!ad)return;currentCommentsAdId=Number(adId);replyToCommentId=null;var inp=document.getElementById('commentsModalInput');if(inp)inp.value='';document.getElementById('commentsModal').classList.add('show');document.body.classList.add('modal-open');renderCommentsModal();}
@@ -1576,7 +1492,7 @@ function renderChatContacts(){
   var contacts=getChatContacts();var me=chatUserKey();var messages=getChatMessages();
   if(!contacts.length){list.innerHTML='<div style="padding:30px 14px;text-align:center;color:var(--text-muted);">No data</div>';return;}
   var html='';
-  for(var i=0;i<contacts.length;i++){var c=contacts[i];var unread=0;var lastMsg=null;var lastTime=0;for(var j=0;j<messages.length;j++){var m=messages[j];if(m.from===c.id&&m.to===me.id&&!m.read)unread++;if((m.from===c.id&&m.to===me.id)||(m.from===me.id&&m.to===c.id)){if(m.timestamp>lastTime){lastTime=m.timestamp;lastMsg=m;}}}var sub=lastMsg?(lastMsg.text||'').substring(0,30):'';var active=chatCurrentContact&&chatCurrentContact.id===c.id?' active':'';var bg=c.type==='mex'?'f59e0b':(c.type==='super'?'f59e0b':'128C7E');var av=(c.photoKey&&_mediaUrlCache[c.photoKey])?_mediaUrlCache[c.photoKey]:avatarUrl(c.name,bg);var attrs=c.photoKey?' data-photo-key="'+escapeHtml(c.photoKey)+'"':'';html+='<div class="contact-item'+active+'" onclick="selectChatContact(\''+encArg(c.id)+'\')"><div class="contact-avatar"><img src="'+av+'"'+attrs+' alt=""/></div><div class="contact-info"><div class="contact-name">'+escapeHtml(c.name)+(unread>0?' <span class="badge badge-danger" style="font-size:.58rem;padding:1px 6px;">'+unread+'</span>':'')+'</div><div class="contact-sub">'+escapeHtml(sub||c.role)+'</div></div></div>';}
+  for(var i=0;i<contacts.length;i++){var c=contacts[i];var unread=0;var lastMsg=null;var lastTime=0;for(var j=0;j<messages.length;j++){var m=messages[j];if(m.from===c.id&&m.to===me.id&&!m.read)unread++;if((m.from===c.id&&m.to===me.id)||(m.from===me.id&&m.to===c.id)){if(m.timestamp>lastTime){lastTime=m.timestamp;lastMsg=m;}}}var sub=lastMsg?(lastMsg.text||'').substring(0,30):'';var active=chatCurrentContact&&chatCurrentContact.id===c.id?' active':'';var bg=c.type==='mex'?'f59e0b':(c.type==='super'?'f59e0b':'128C7E');var av=(c.photoKey&&_mediaUrlCache[c.photoKey])?_mediaUrlCache[c.photoKey]:avatarUrl(c.name,bg);var attrs=c.photoKey?' data-photo-key="'+escapeHtml(c.photoKey)+'"':'';html+='<div class="contact-item'+active+'" onclick="selectChatContact(\''+encArg(c.id)+'\')"><div class="contact-avatar"><img src="'+av+'"'+attrs+' alt="" loading="lazy" decoding="async"/></div><div class="contact-info"><div class="contact-name">'+escapeHtml(c.name)+(unread>0?' <span class="badge badge-danger" style="font-size:.58rem;padding:1px 6px;">'+unread+'</span>':'')+'</div><div class="contact-sub">'+escapeHtml(sub||c.role)+'</div></div></div>';}
   list.innerHTML=html;setTimeout(hydratePhotos,20);
 }
 function selectChatContact(id){var cid=safeDecode(id);var contacts=getChatContacts();var c=null;for(var i=0;i<contacts.length;i++){if(contacts[i].id===cid){c=contacts[i];break;}}if(!c)return;chatCurrentContact=c;var me=chatUserKey();var messages=getChatMessages();var changed=false;for(var j=0;j<messages.length;j++){if(messages[j].from===c.id&&messages[j].to===me.id&&!messages[j].read){messages[j].read=true;changed=true;}}if(changed){saveChatMessages(messages);updateChatBadge();}renderChatContacts();renderChatMessages();var inp=document.getElementById('chatInputArea');if(inp)inp.style.display='flex';}
@@ -1622,7 +1538,6 @@ function updateAllUI(user){
   else if(isMexEmployee){var sur2=document.getElementById('sideUserRole');if(sur2)sur2.textContent='Member';var cnd2=document.getElementById('companyNameDisplay');if(cnd2)cnd2.textContent='MeX Team';}
   else{var sur3=document.getElementById('sideUserRole');if(sur3)sur3.textContent=getRoleLabel(user.role);var tx=getTenant(currentTenantId);var cnd3=document.getElementById('companyNameDisplay');if(cnd3&&tx)cnd3.textContent=tx.companyName||'MeX';}
   updateLowStockBadge();updateDebtsBadge();updateChatBadge();
-  applyTranslations();
 }
 
 /* ===== NAVIGATE ===== */
@@ -1635,10 +1550,10 @@ function navigate(view){
   for(var i=0;i<navItems.length;i++)navItems[i].classList.remove('active');
   var b=document.querySelector('.sidebar-nav .nav-item[data-view="'+view+'"]');if(b)b.classList.add('active');
   var pt=document.getElementById('pageTitle');
-  if(pt){var titleKeyMap={status:'page_status',superadmin:'page_superadmin',mexEarnings:'page_earnings',mexCompanies:'page_companies',mexStatus:'page_status',dashboard:'page_dashboard',sales:'page_sales',debts:'page_debts',inventory:'page_inventory',pnl:'page_pnl',expenses:'page_expenses',branches:'page_branches',users:'page_users',roles:'page_roles',reports:'page_reports',attendance:'page_attendance'};pt.textContent=t(titleKeyMap[view]||view);}
+  if(pt){var titleMap={status:'MexFace',superadmin:'Super Admin',mexEarnings:'My Earnings',mexCompanies:'My Companies',mexStatus:'MexFace',dashboard:'MexData',sales:'Sales',debts:'Debts',inventory:'Inventory',pnl:'Profit & Loss',expenses:'Expenses',branches:'Branches',users:'Users',roles:'Roles',reports:'Reports',attendance:'Attendance'};pt.textContent=titleMap[view]||view;}
   var area=document.getElementById('contentArea');muteAllVideos();
   try{if(typeof views[view]==='function')area.innerHTML=views[view]();else area.innerHTML='<div class="card"><div class="card-body"><p>Coming soon</p></div></div>';}
-  catch(err){console.error('View error ('+view+'):',err);area.innerHTML='<div class="card"><div class="card-body"><p style="color:var(--accent-danger);">Error loading view: '+escapeHtml(String(err&&err.message||err))+'</p></div></div>';}
+  catch(err){area.innerHTML='<div class="card"><div class="card-body"><p style="color:var(--accent-danger);">Error: '+escapeHtml(String(err&&err.message||err))+'</p></div></div>';}
   setTimeout(hydrateMedia,20);
   updateLowStockBadge();updateDebtsBadge();
   if(window.innerWidth<=768)closeMobileSidebar();
@@ -1737,7 +1652,7 @@ views.inventory=function(){
   for(var i=0;i<cats.length;i++){cb+='<span class="inv-cat-chip">'+escapeHtml(cats[i].name)+(ce?'<button type="button" onclick="deleteInventoryCategory(\''+cats[i].id+'\')">×</button>':'')+'</span>';}
   if(ce)cb+='<button class="btn btn-secondary btn-xs" onclick="promptAddCategory()">+ Add</button>';cb+='</div>';
   var rows='';
-  for(var j=0;j<p.length;j++){var x=p[j];var dot='<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:'+(x.quantity<=0?'var(--accent-danger)':x.quantity<=LOW_STOCK_THRESHOLD?'var(--accent-3)':'var(--accent-4)')+';"></span>';rows+='<tr><td>'+(x.image?'<img class="inv-thumb" src="'+x.image+'" alt=""/>':'<div class="inv-thumb-empty"><i class="fas fa-box"></i></div>')+'</td><td><strong>'+escapeHtml(x.name)+'</strong></td><td><span class="badge badge-info" style="font-size:.68rem;">'+escapeHtml(x.store||'--')+'</span></td><td>'+escapeHtml(x.category||'General')+'</td><td>'+fmtMoney(x.price)+'</td><td>'+fmtMoney(x.cost)+'</td><td><strong>'+x.quantity+'</strong></td><td>'+dot+'</td><td>'+(ce?'<button class="btn btn-success btn-xs" onclick="adjustStock(\''+x.id+'\')">+</button> <button class="btn btn-danger btn-xs" onclick="deleteProduct(\''+x.id+'\')">×</button>':'—')+'</td></tr>';}
+  for(var j=0;j<p.length;j++){var x=p[j];var dot='<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:'+(x.quantity<=0?'var(--accent-danger)':x.quantity<=LOW_STOCK_THRESHOLD?'var(--accent-3)':'var(--accent-4)')+';"></span>';rows+='<tr><td>'+(x.image?'<img class="inv-thumb" src="'+x.image+'" alt="" loading="lazy" decoding="async"/>':'<div class="inv-thumb-empty"><i class="fas fa-box"></i></div>')+'</td><td><strong>'+escapeHtml(x.name)+'</strong></td><td><span class="badge badge-info" style="font-size:.68rem;">'+escapeHtml(x.store||'--')+'</span></td><td>'+escapeHtml(x.category||'General')+'</td><td>'+fmtMoney(x.price)+'</td><td>'+fmtMoney(x.cost)+'</td><td><strong>'+x.quantity+'</strong></td><td>'+dot+'</td><td>'+(ce?'<button class="btn btn-success btn-xs" onclick="adjustStock(\''+x.id+'\')">+</button> <button class="btn btn-danger btn-xs" onclick="deleteProduct(\''+x.id+'\')">×</button>':'—')+'</td></tr>';}
   var ha='<div style="display:flex;gap:8px;flex-wrap:wrap;">';
   if(canT)ha+='<button class="btn btn-primary btn-icon" onclick="openTransferModal()" style="background:#8b5cf6!important;"><i class="fas fa-exchange-alt"></i> Transfer</button>';
   if(canT)ha+='<button class="btn btn-secondary btn-icon" onclick="viewTransferHistory()"><i class="fas fa-history"></i> History</button>';
@@ -1918,7 +1833,7 @@ function renderSingleStatusCard(s,user){
 }
 function getAdAuthorPhotoKey(ad){if(!ad)return '';if(ad.postedBy==='super')return _superAdminPhotoKey||'';if(ad.postedBy==='mex'&&ad.posterId){var emp=findMexEmployeeById(ad.posterId);if(emp&&emp.photoKey)return emp.photoKey;return '';}if(ad.tenantId){var op=getTenantOwnerPublic(ad.tenantId);if(op.photoKey)return op.photoKey;}return '';}
 function getAdAuthorPhoto(ad){if(!ad)return avatarUrl('Company','128C7E');if(ad.postedBy==='super')return _mediaUrlCache[SUPER_ADMIN_PHOTO_KEY]||avatarUrl(ad.companyName||'MeX Admin','f59e0b');if(ad.postedBy==='mex'&&ad.posterId){var emp=findMexEmployeeById(ad.posterId);if(emp&&emp.photoKey&&_mediaUrlCache[emp.photoKey])return _mediaUrlCache[emp.photoKey];return avatarUrl(ad.companyName||'Member','f59e0b');}var key=getAdAuthorPhotoKey(ad);if(key&&_mediaUrlCache[key])return _mediaUrlCache[key];var t2=ad.tenantId?getTenant(ad.tenantId):null;if(t2)return avatarUrl(t2.companyName||ad.companyName||'Company','128C7E');return avatarUrl(ad.companyName||'Company','128C7E');}
-function getAdAuthorPhotoHtml(ad,cls,st,oc){var key=getAdAuthorPhotoKey(ad);var src=getAdAuthorPhoto(ad);var attrs=key?' data-photo-key="'+escapeHtml(key)+'"':'';var c=cls?' class="'+cls+'"':'';var s=st?' style="'+st+'"':'';var o=oc?' onclick="'+oc+'"':'';return '<img src="'+src+'"'+c+s+attrs+o+' alt=""/>';}
+function getAdAuthorPhotoHtml(ad,cls,st,oc){var key=getAdAuthorPhotoKey(ad);var src=getAdAuthorPhoto(ad);var attrs=key?' data-photo-key="'+escapeHtml(key)+'"':'';var c=cls?' class="'+cls+'"':'';var s=st?' style="'+st+'"':'';var o=oc?' onclick="'+oc+'"':'';return '<img src="'+src+'"'+c+s+attrs+o+' alt="" loading="lazy" decoding="async"/>';}
 
 function renderAdsTab(){
   var user=getCurrentUser();cleanupExpiredAds();
@@ -1954,8 +1869,8 @@ function renderAdCard(ad,user,canPost){
   var exp=AD_LIFETIME_MS-(Date.now()-(ad.timestamp||0));
   var media='';
   if(isV)media='<video data-media-key="'+ad.mediaKey+'" playsinline webkit-playsinline preload="none" loop></video><button type="button" class="video-mute-btn" onclick="event.stopPropagation();toggleVideoMute(this)"><i class="fas fa-volume-up"></i></button>';
-  else if(ad.mediaKey)media='<img data-media-key="'+ad.mediaKey+'" alt="Ad" loading="lazy"/>';
-  else if(ad.image&&ad.image.length)media='<img src="'+ad.image+'" alt="Ad" loading="lazy"/>';
+  else if(ad.mediaKey)media='<img data-media-key="'+ad.mediaKey+'" alt="Ad" loading="lazy" decoding="async"/>';
+  else if(ad.image&&ad.image.length)media='<img src="'+ad.image+'" alt="Ad" loading="lazy" decoding="async"/>';
   else media='<div style="width:100%;height:100%;min-height:220px;display:flex;align-items:center;justify-content:center;color:#666;background:var(--media-bg);"><i class="fas fa-image" style="font-size:3rem;opacity:.4;"></i></div>';
   var pb=isP?'<span class="insta-promoted"><i class="fas fa-rocket"></i> SPONSORED</span>':'';
   var ri=isSuper?'crown':(isMex?'user-tie':'building');var rc=isSuper?'#f59e0b':(isMex?'#f59e0b':'var(--accent-1)');
@@ -2001,7 +1916,7 @@ function openCompanyProfile(tid){
   document.getElementById('adProfileBox').innerHTML='<div class="ad-profile-header"><button class="ad-profile-close" onclick="closeAdProfileModal()"><i class="fas fa-times"></i></button>'+getCompanyPhotoHtml(tid,'ad-profile-avatar')+'<div class="ad-profile-info"><div class="ad-profile-name">'+escapeHtml(tn.companyName)+renderVerifiedBadge()+'</div></div></div><div class="ad-profile-stats"><div><div class="num">0</div><div class="lbl">Posts</div></div><div><div class="num">'+getFollowerCount(tid)+'</div><div class="lbl">Followers</div></div></div><div class="ad-profile-feed"></div>';
   document.getElementById('adProfileModal').classList.add('show');document.body.classList.add('modal-open');
 }
-function renderAdGridTile(ad){var isV=ad.mediaType==='video'&&ad.mediaKey;var m='';if(isV)m='<video data-media-key="'+ad.mediaKey+'" playsinline preload="metadata" loop muted autoplay></video>';else if(ad.mediaKey)m='<img data-media-key="'+ad.mediaKey+'" alt="" loading="lazy"/>';else m='<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#666;"><i class="fas fa-image"></i></div>';return '<div class="ad-grid-tile" onclick="openAdDetail(\''+ad.id+'\')">'+m+'</div>';}
+function renderAdGridTile(ad){var isV=ad.mediaType==='video'&&ad.mediaKey;var m='';if(isV)m='<video data-media-key="'+ad.mediaKey+'" playsinline preload="none" loop muted></video>';else if(ad.mediaKey)m='<img data-media-key="'+ad.mediaKey+'" alt="" loading="lazy" decoding="async"/>';else m='<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#666;"><i class="fas fa-image"></i></div>';return '<div class="ad-grid-tile" onclick="openAdDetail(\''+ad.id+'\')">'+m+'</div>';}
 function openAdModal(){
   var u=getCurrentUser();if(!u)return;
   if(!isSuperAdmin&&!isMexEmployee&&u.role!=='owner'){showToast('Owner only','error');return;}
@@ -2015,7 +1930,7 @@ function onAdMediaSelected(input){
   var file=input.files&&input.files[0];var sE=document.getElementById('adMediaStatus');var pE=document.getElementById('adMediaPreview');
   adMediaState={type:null,imageKey:null,videoBlob:null,_imageBlob:null,posterBlob:null};
   if(pE)pE.innerHTML='';if(!file)return;
-  if(file.type.indexOf('image/')===0){if(file.size>10*1024*1024){sE.textContent='✗ Max 10MB';sE.className='promo-status bad';return;}adMediaState.type='image';adMediaState._imageBlob=file;var r=new FileReader();r.onload=function(e){pE.innerHTML='<img src="'+e.target.result+'"/>';sE.textContent='✓ '+(file.size/(1024*1024)).toFixed(2)+' MB';sE.className='promo-status ok';};r.readAsDataURL(file);return;}
+  if(file.type.indexOf('image/')===0){if(file.size>10*1024*1024){sE.textContent='✗ Max 10MB';sE.className='promo-status bad';return;}adMediaState.type='image';adMediaState._imageBlob=file;var r=new FileReader();r.onload=function(e){pE.innerHTML='<img src="'+e.target.result+'" loading="lazy" decoding="async"/>';sE.textContent='✓ '+(file.size/(1024*1024)).toFixed(2)+' MB';sE.className='promo-status ok';};r.readAsDataURL(file);return;}
   if(file.type.indexOf('video/')===0){if(file.size>MAX_VIDEO_MB*1024*1024){sE.textContent='✗ Max '+MAX_VIDEO_MB+'MB';sE.className='promo-status bad';return;}adMediaState.type='video';adMediaState.videoBlob=file;var url=URL.createObjectURL(file);pE.innerHTML='<video src="'+url+'" playsinline preload="metadata" muted autoplay loop style="width:100%;"></video>';sE.textContent='✓ '+(file.size/(1024*1024)).toFixed(2)+' MB';sE.className='promo-status ok';return;}
   sE.textContent='✗ Unsupported';sE.className='promo-status bad';
 }
@@ -2274,7 +2189,6 @@ function logout(){
 /* ===== BIND ===== */
 function bindGlobalEvents(){
   var lb=document.getElementById('sideLogoutBtn');if(lb)lb.onclick=logout;
-  initLanguageMenu();
   var navItems=document.querySelectorAll('.sidebar-nav .nav-item');
   for(var i=0;i<navItems.length;i++){navItems[i].onclick=function(){var v=this.dataset.view;if(v)navigate(v);};}
   var pt=document.getElementById('profileTrigger');if(pt)pt.onclick=openProfileModal;
@@ -2295,8 +2209,7 @@ function toggleTheme(){var u=getCurrentUser();if(!u)return;var nt=(u.theme==='da
 /* ===== INIT APP ===== */
 function initApp(user){
   if(!isSuperAdmin&&!isMexEmployee){ensureCategories();ensureExpenseCategories();}
-  initVideoObserver();applyTheme();
-  try{var sl=localStorage.getItem(LANG_KEY);if(sl&&LANG_FLAGS[sl]){currentLang=sl;var fe=document.getElementById('langFlag');var le=document.getElementById('langLabel');if(fe)fe.textContent=LANG_FLAGS[currentLang];if(le)le.textContent=LANG_LABELS[currentLang];}}catch(e){}
+  initVideoObserver();initImageObserver();applyTheme();
   updateAllUI(user);cleanupExpiredAds();
   try{setupRealtimeSync();}catch(e){}
   try{startPeriodicRefresh();}catch(e){}
@@ -2336,7 +2249,7 @@ async function handleLogin(){
   if(!un||!pw){er.textContent='Fill username and password';return;}
   var lock=loginLockedSeconds();
   if(lock>0){er.textContent='⏳ Wait '+lock+'s';return;}
-  if(!supabaseClient){er.textContent='⚠ Hakuna muunganisho wa server. Jaribu mtandao mwingine.';return;}
+  if(!supabaseClient){er.textContent='⚠ No server connection. Try another network.';return;}
   var isSuperAttempt=(un===SUPER_ADMIN_USERNAME);
   er.textContent='⏳ Verifying...';er.style.color='var(--text-muted)';
   if(btn)btn.disabled=true;
@@ -2346,8 +2259,8 @@ async function handleLogin(){
   }else{sync=await pullLoginCredentialsFromCloud();}
   er.textContent='';er.style.color='';
   if(btn)btn.disabled=false;
-  if(!sync.ok){er.textContent='⚠ Server: '+(sync.error||'Cannot reach server')+' — jaribu tena';return;}
-  if(!isSuperAttempt){var tenantsStr=localStorage.getItem('sb_tenants');if(!tenantsStr){er.textContent='⚠ Data ya companies haikupatikana. Jaribu tena.';return;}try{var tj=JSON.parse(tenantsStr);if(!Array.isArray(tj)||tj.length===0){er.textContent='⚠ Hakuna company iliyosajiliwa.';return;}}catch(e){}}
+  if(!sync.ok){er.textContent='⚠ Server: '+(sync.error||'Cannot reach server')+' — try again';return;}
+  if(!isSuperAttempt){var tenantsStr=localStorage.getItem('sb_tenants');if(!tenantsStr){er.textContent='⚠ Company data not found. Try again.';return;}try{var tj=JSON.parse(tenantsStr);if(!Array.isArray(tj)||tj.length===0){er.textContent='⚠ No companies registered.';return;}}catch(e){}}
   if(isSuperAttempt&&hashPw(un,pw)===getSuperHash()){
     _loginFails=0;isSuperAdmin=true;isMexEmployee=false;currentMexEmployeeId=null;currentTenantId=null;
     var su=lsGet('sb_superadmin_user',null)||{id:0,username:'Super Admin',fullName:'Super Admin',role:'superadmin',store:'All',theme:'light'};
@@ -2425,7 +2338,7 @@ document.getElementById('registerBtn').addEventListener('click',function(){
 });
 
 document.addEventListener('keydown',function(e){
-  if(e.key==='Escape'){closeModal();closeProfileModal();closeSubscriptionModal();closeReceiptModal();closeLowStockModal();closeTransferModal();closeMobileSidebar();closePaymentPlanModal();closeChatModal();closeChatWallpaperPicker();closeAdProfileModal();closeAdDetail();closeCommentsModal();closeSendReportModal();closeCredentialsModal();var lm=document.getElementById('langMenu');if(lm)lm.classList.remove('show');}
+  if(e.key==='Escape'){closeModal();closeProfileModal();closeSubscriptionModal();closeReceiptModal();closeLowStockModal();closeTransferModal();closeMobileSidebar();closePaymentPlanModal();closeChatModal();closeChatWallpaperPicker();closeAdProfileModal();closeAdDetail();closeCommentsModal();closeSendReportModal();closeCredentialsModal();}
 });
 
 /* ===== BOOT ===== */
@@ -2433,12 +2346,10 @@ window.__bootMain=function boot(){
   var splashStart=Date.now();
   function bootHideSplash(){var bs=document.getElementById('bootSplash');if(!bs)return;bs.classList.add('hide');setTimeout(function(){try{bs.remove();}catch(e){}},900);}
   function scheduleHide(){var elapsed=Date.now()-splashStart;setTimeout(bootHideSplash,Math.max(0,BOOT_DURATION-elapsed));}
-  try{var sl=localStorage.getItem(LANG_KEY);if(sl&&LANG_FLAGS[sl]){currentLang=sl;var fe=document.getElementById('langFlag');var le=document.getElementById('langLabel');if(fe)fe.textContent=LANG_FLAGS[currentLang];if(le)le.textContent=LANG_LABELS[currentLang];}}catch(e){}
   try{tryCleanupLocalStorage();}catch(e){}
-  try{initLanguageMenu();}catch(e){}
   try{initVideoObserver();}catch(e){}
+  try{initImageObserver();}catch(e){}
   try{initSupabase();}catch(e){}
-  try{applyTranslations();}catch(e){}
   function preloadAllMedia(){var pr=[];pr.push(dbGet(STORES.json,SUPER_ADMIN_PHOTO_KEY).then(function(k){if(k){_superAdminPhotoKey=k;if(!_mediaUrlCache[k])return getMediaUrl(k);}}).catch(function(){}));var allT=getAllTenants();for(var i=0;i<allT.length;i++){var op=allT[i].ownerPublic||{};if(op.photoKey&&!_mediaUrlCache[op.photoKey])pr.push(getMediaUrl(op.photoKey).catch(function(){}));}var mex=getMexEmployees();for(var j=0;j<mex.length;j++){if(mex[j].photoKey&&!_mediaUrlCache[mex[j].photoKey])pr.push(getMediaUrl(mex[j].photoKey).catch(function(){}));}return Promise.all(pr);}
   function bootContinue(){
     try{if(localStorage.getItem(SUPER_ADMIN_SESSION_KEY)===superSessionToken()){isSuperAdmin=true;currentTenantId=null;var su=lsGet('sb_superadmin_user',null)||{id:0,username:'Super Admin',fullName:'Super Admin',role:'superadmin',store:'All',theme:'light'};setCurrentUser(su);document.getElementById('loginPage').classList.add('hidden');document.getElementById('appContainer').classList.add('active');initApp(su);scheduleHide();return;}}catch(e){}
