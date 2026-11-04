@@ -57,7 +57,7 @@ th{text-align:left;padding:12px 12px 12px 0;color:var(--text-muted);font-weight:
 td{padding:14px 12px 14px 0;border-bottom:1px solid var(--border-color);color:var(--text-secondary);vertical-align:middle;font-weight:500}
 tr:last-child td{border-bottom:none}
 .empty-row td{text-align:center;padding:40px;color:var(--text-muted)}
-.page-overlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;background-image: url(./Temple\ 1.jpeg);background-size: cover;justify-content:center;background:var(--bg-body);padding:20px;overflow-y:auto}
+.page-overlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:var(--bg-body);padding:20px;overflow-y:auto}
 .page-overlay.hidden{display:none}
 .page-card{margin:20px auto;max-height:92vh;overflow-y:auto;padding:26px 24px;width:100%;max-width:420px;background:var(--bg-card);border-radius:var(--radius-card);box-shadow:var(--shadow-dropdown);border:1px solid var(--border-color);text-align:center}
 .page-card .logo-icon{font-size:44px;color:var(--accent-1);margin-bottom:4px}
@@ -665,6 +665,8 @@ var VIEW_INCREMENT=30;
 var BRANCH_FEE=10000;
 var BRANCH_COMMISSION_RATE=0.20;
 var FREE_TRIAL_MS=7*24*60*60*1000;
+/* NEW: audio preference key - "on" by default */
+var VIDEO_AUDIO_PREF_KEY='sb_video_audio_pref';
 var CHAT_WALLPAPER_COLORS=[
   {key:'beige',color:'#efeae2',label:'Beige'},{key:'white',color:'#ffffff',label:'White'},
   {key:'gray',color:'#e5e7eb',label:'Gray'},{key:'teal',color:'#d1f2e8',label:'Teal'},
@@ -677,6 +679,17 @@ var PROMOTE_OPTIONS=[
 var STORAGE_LIMITS={sales:300,punchHistory:200,expenses:300,statuses:50,transfers:200,branch_payments:100,member_earnings:200,categories:100,expense_categories:100,products:500};
 var SKIP_KEY_SIZE_LIMIT=800000;
 var SKIP_KEY_SIZE_LOGIN=500000;
+
+/* NEW: global audio preference helpers */
+function getVideoAudioPref(){
+  try{
+    var v=localStorage.getItem(VIDEO_AUDIO_PREF_KEY);
+    return v===null?true:(v==='1');
+  }catch(e){return true;}
+}
+function setVideoAudioPref(val){
+  try{localStorage.setItem(VIDEO_AUDIO_PREF_KEY,val?'1':'0');}catch(e){}
+}
 
 /* ===== SUPABASE ===== */
 var SUPABASE_URL='https://snswbfohhxianhgdaenv.supabase.co';
@@ -694,7 +707,7 @@ var _pendingCommentUpserts={};var _pendingCommentDeletes=[];
 var _pendingProfileUpserts={};var _relWriteTimer=null;
 var _lastProfilePullTime=0;
 var _lastCloudPullTime=0;
-var SUPABASE_SYNC_EXCLUDE=['sb_session','sb_login_lock','sb_superadmin_logged_in','sb_mex_current_employee','sb_chat_wallpaper_type','sb_chat_wallpaper_value'];
+var SUPABASE_SYNC_EXCLUDE=['sb_session','sb_login_lock','sb_superadmin_logged_in','sb_mex_current_employee','sb_chat_wallpaper_type','sb_chat_wallpaper_value','sb_video_audio_pref'];
 
 function shouldSyncKey(key){
   if(!key)return false;
@@ -902,34 +915,28 @@ function setupRealtimeSync(){
 function scheduleCloudPullAndRender(){if(_cloudPullTimer)clearTimeout(_cloudPullTimer);_cloudPullTimer=setTimeout(function(){pullFromCloudOnly().then(function(changed){if(changed){softRefreshCurrentView(true);}});},800);}
 function scheduleSoftReRender(){if(_realtimeDebounceTimer)clearTimeout(_realtimeDebounceTimer);_realtimeDebounceTimer=setTimeout(function(){softRefreshCurrentView(false);},400);}
 
+/* Save/restore video playback position across re-renders (mute handled by global preference) */
 function capturePlayingVideoState(){
-  var states = {};
+  var states={};
   try{
-    var vids = document.querySelectorAll('video[data-media-key]');
+    var vids=document.querySelectorAll('video[data-media-key]');
     for(var i=0;i<vids.length;i++){
-      var v = vids[i];
-      var k = v.dataset.mediaKey;
-      if(!k) continue;
-      if(v.currentTime > 0.3){
-        states[k] = { time: v.currentTime, playing: (!v.paused && !v.ended), userMuted: v.dataset.userMuted || '0' };
-      }
+      var v=vids[i];var k=v.dataset.mediaKey;if(!k)continue;
+      if(v.currentTime>0.3){states[k]={time:v.currentTime,playing:(!v.paused&&!v.ended)};}
     }
   }catch(e){}
   return states;
 }
 function applyPlayingVideoState(states){
-  if(!states) return;
-  var keys = Object.keys(states);
-  if(!keys.length) return;
+  if(!states)return;
+  var keys=Object.keys(states);if(!keys.length)return;
   try{
-    var vids = document.querySelectorAll('video[data-media-key]');
+    var vids=document.querySelectorAll('video[data-media-key]');
     for(var i=0;i<vids.length;i++){
-      var v = vids[i];
-      var k = v.dataset.mediaKey;
-      if(k && states[k]){
-        v.dataset.lastTime = String(states[k].time);
-        v.dataset.userMuted = states[k].userMuted;
-        if(states[k].playing) v.dataset.wasPlaying = '1';
+      var v=vids[i];var k=v.dataset.mediaKey;
+      if(k&&states[k]){
+        v.dataset.lastTime=String(states[k].time);
+        if(states[k].playing)v.dataset.wasPlaying='1';
       }
     }
   }catch(e){}
@@ -947,14 +954,14 @@ function softRefreshCurrentView(force){
   if(activeNav)currentView=activeNav.dataset.view;
   var reRenderable=['status','mexStatus','dashboard','sales','debts','inventory','expenses','users','branches','reports','pnl','superadmin','mexEarnings','mexCompanies','roles','attendance'];
   if(reRenderable.indexOf(currentView)===-1)return;
-  var savedVideoState = capturePlayingVideoState();
+  var savedVideoState=capturePlayingVideoState();
   try{
     var area=document.getElementById('contentArea');
     if(area&&typeof views[currentView]==='function'){
       var sp=area.scrollTop;
       area.innerHTML=views[currentView]();
       area.scrollTop=sp;
-      if(savedVideoState) applyPlayingVideoState(savedVideoState);
+      if(savedVideoState)applyPlayingVideoState(savedVideoState);
       setTimeout(hydrateMedia,20);
     }
   }catch(e){}
@@ -987,7 +994,7 @@ document.addEventListener('visibilitychange',function(){
   if(document.visibilityState==='visible'&&supabaseClient){
     _lastCloudPullTime=0;
     pullFromCloudOnly().then(function(changed){
-      if(changed){ softRefreshCurrentView(true); }
+      if(changed){softRefreshCurrentView(true);}
     });
   }
 });
@@ -1192,9 +1199,18 @@ function initVideoObserver(){
         for(var k=0;k<allVids.length;k++){if(allVids[k]!==el&&!allVids[k].paused){try{allVids[k].pause();}catch(e){}}}
         if(!el.src||el.src===''){loadVideo(el);}
         else if(el.paused){
-          if(el.dataset.userMuted!=='1')el.muted=false;
+          /* FIX: respect global audio preference instead of forcing unmute/mute */
+          if(getVideoAudioPref())el.muted=false;else el.muted=true;
           var p=el.play();
-          if(p&&p.catch)p.catch(function(){if(el.dataset.userMuted!=='1'){el.muted=true;var btn=el.parentElement&&el.parentElement.querySelector('.video-mute-btn i');if(btn)btn.className='fas fa-volume-mute';}el.play().catch(function(){});});
+          if(p&&p.catch)p.catch(function(){
+            /* Autoplay policy blocked unmuted play - fall back to muted playback (preference unchanged) */
+            if(!el.muted){
+              el.muted=true;
+              el.play().catch(function(){});
+              var btn=el.parentElement&&el.parentElement.querySelector('.video-mute-btn i');
+              if(btn)btn.className='fas fa-volume-mute';
+            }
+          });
         }
       } else {if(!el.paused){try{el.pause();}catch(e){}}}
     });
@@ -1228,7 +1244,7 @@ function observeImageElement(el){
 }
 function observeVideo(el){if(!el||!_videoObserver)return;if(el.dataset.observed==='1')return;el.dataset.observed='1';try{_videoObserver.observe(el);}catch(e){}}
 
-/* ===== POSTER EXTRACTION (the actual fix for white/black flash) ===== */
+/* ===== POSTER EXTRACTION ===== */
 function captureVideoPosterFromBlob(blob){
   return new Promise(function(resolve){
     try{
@@ -1241,8 +1257,8 @@ function captureVideoPosterFromBlob(blob){
       function finish(){
         if(done)return;done=true;
         try{
-          var w=v.videoWidth||720, h=v.videoHeight||1280;
-          var maxW=720; var scale=Math.min(1,maxW/w);
+          var w=v.videoWidth||720,h=v.videoHeight||1280;
+          var maxW=720;var scale=Math.min(1,maxW/w);
           var canvas=document.createElement('canvas');
           canvas.width=Math.max(2,Math.round(w*scale));
           canvas.height=Math.max(2,Math.round(h*scale));
@@ -1253,11 +1269,11 @@ function captureVideoPosterFromBlob(blob){
       }
       v.addEventListener('loadeddata',function(){
         try{
-          if(v.duration && v.currentTime===0){
-            v.currentTime=Math.min(0.15, v.duration*0.1);
+          if(v.duration&&v.currentTime===0){
+            v.currentTime=Math.min(0.15,v.duration*0.1);
             v.addEventListener('seeked',finish,{once:true});
             setTimeout(finish,1200);
-          } else { finish(); }
+          }else{finish();}
         }catch(e){finish();}
       },{once:true});
       v.addEventListener('error',function(){cleanup();resolve(null);},{once:true});
@@ -1266,31 +1282,28 @@ function captureVideoPosterFromBlob(blob){
   });
 }
 
-function ensureVideoPoster(el, adId){
-  if(!el) return;
-  if(el.dataset.posterGenerated==='1') return;
-  if(el.getAttribute('poster')) { el.dataset.posterGenerated='1'; return; }
-  if(!el.videoWidth || !el.videoHeight) return;
+function ensureVideoPoster(el,adId){
+  if(!el)return;
+  if(el.dataset.posterGenerated==='1')return;
+  if(el.getAttribute('poster')){el.dataset.posterGenerated='1';return;}
+  if(!el.videoWidth||!el.videoHeight)return;
   el.dataset.posterGenerated='1';
   try{
     var canvas=document.createElement('canvas');
-    canvas.width=el.videoWidth;
-    canvas.height=el.videoHeight;
+    canvas.width=el.videoWidth;canvas.height=el.videoHeight;
     var ctx=canvas.getContext('2d');
     ctx.drawImage(el,0,0,canvas.width,canvas.height);
     canvas.toBlob(function(blob){
-      if(!blob) return;
+      if(!blob)return;
       var dataUrl=URL.createObjectURL(blob);
-      try{ el.setAttribute('poster',dataUrl); }catch(e){}
+      try{el.setAttribute('poster',dataUrl);}catch(e){}
       if(adId){
         saveMediaBlob(blob,'adpos_').then(function(posterKey){
           try{
             var ads=getGlobalAds();
-            for(var i=0;i<ads.length;i++){
-              if(Number(ads[i].id)===Number(adId)){ ads[i].posterKey=posterKey; break; }
-            }
+            for(var i=0;i<ads.length;i++){if(Number(ads[i].id)===Number(adId)){ads[i].posterKey=posterKey;break;}}
             saveGlobalAds(ads,true);
-            if(supabaseClient) supabaseClient.from(TBL_POSTS).update({poster_key:posterKey}).eq('id',Number(adId)).catch(function(){});
+            if(supabaseClient)supabaseClient.from(TBL_POSTS).update({poster_key:posterKey}).eq('id',Number(adId)).catch(function(){});
           }catch(e){}
         }).catch(function(){});
       }
@@ -1298,14 +1311,16 @@ function ensureVideoPoster(el, adId){
   }catch(e){}
 }
 
-/* ===== VIDEO LOADER ===== */
+/* ===== VIDEO LOADER — respects user's audio preference ===== */
 function loadVideo(el){
   if(!el)return;var key=el.dataset.mediaKey;if(!key)return;
   if(el.dataset.mediaLoaded==='1'&&el.src){
     if(el.paused){
-      if(el.dataset.userMuted!=='1')el.muted=false;
+      if(getVideoAudioPref())el.muted=false;else el.muted=true;
       var p0=el.play();
-      if(p0&&p0.catch)p0.catch(function(){if(el.dataset.userMuted!=='1'){el.muted=true;var b0=el.parentElement&&el.parentElement.querySelector('.video-mute-btn i');if(b0)b0.className='fas fa-volume-mute';}el.play().catch(function(){});});
+      if(p0&&p0.catch)p0.catch(function(){
+        if(!el.muted){el.muted=true;el.play().catch(function(){});}
+      });
     }
     return;
   }
@@ -1313,9 +1328,11 @@ function loadVideo(el){
   getMediaUrl(key).then(function(url){
     if(!url){var attempts=_videoRetryCount[key]||0;if(attempts<3){_videoRetryCount[key]=attempts+1;el.dataset.mediaLoaded='0';setTimeout(function(){loadVideo(el);},500*(attempts+1));}return;}
     _videoRetryCount[key]=0;
-    var restoreTime = parseFloat(el.dataset.lastTime || '0') || 0;
+    var wantsSound=getVideoAudioPref();
+    var restoreTime=parseFloat(el.dataset.lastTime||'0')||0;
     el.playsInline=true;el.setAttribute('playsinline','');el.setAttribute('webkit-playsinline','');el.loop=true;el.preload='auto';
-    if(el.dataset.userMuted!=='1')el.muted=false;else el.muted=true;
+    /* MUST start muted so autoplay is allowed - we unmute right after play() succeeds */
+    el.muted=true;
     if(restoreTime>0){
       el.addEventListener('loadedmetadata',function onMeta(){
         el.removeEventListener('loadedmetadata',onMeta);
@@ -1324,40 +1341,82 @@ function loadVideo(el){
     }
     if(!el.dataset.posterListenerAdded){
       el.dataset.posterListenerAdded='1';
-      el.addEventListener('loadeddata',function(){
-        ensureVideoPoster(el, el.dataset.adId);
-      },{once:true});
+      el.addEventListener('loadeddata',function(){ensureVideoPoster(el,el.dataset.adId);},{once:true});
     }
     el.src=url;
     var p=el.play();
-    if(p&&p.catch)p.catch(function(){if(el.dataset.userMuted!=='1'){el.muted=true;var btn=el.parentElement&&el.parentElement.querySelector('.video-mute-btn i');if(btn)btn.className='fas fa-volume-mute';}el.play().catch(function(){});});
+    if(p&&p.then){
+      p.then(function(){
+        /* Autoplay succeeded (muted). Now try to apply user's audio preference. */
+        if(wantsSound){
+          try{
+            el.muted=false;
+            if(el.paused){
+              /* Unmuting paused the video (rare) - revert to muted play */
+              el.muted=true;
+              el.play().catch(function(){});
+              var btn=el.parentElement&&el.parentElement.querySelector('.video-mute-btn i');
+              if(btn)btn.className='fas fa-volume-mute';
+            }else{
+              var btn2=el.parentElement&&el.parentElement.querySelector('.video-mute-btn i');
+              if(btn2)btn2.className='fas fa-volume-up';
+            }
+          }catch(e){}
+        }
+      }).catch(function(){
+        /* Autoplay blocked even muted - leave for user tap */
+        el.play().catch(function(){});
+      });
+    }else if(p&&p.catch){
+      p.catch(function(){});
+    }
     observeVideo(el);
-    if(el.readyState>=2){ ensureVideoPoster(el, el.dataset.adId); }
+    if(el.readyState>=2){ensureVideoPoster(el,el.dataset.adId);}
   });
 }
 
 function muteAllVideos(){var vids=document.querySelectorAll('video');for(var i=0;i<vids.length;i++)vids[i].muted=true;}
 
+/* ===== USER MUTE BUTTON — saves preference permanently ===== */
 function toggleVideoMute(btn){
   var wrap=btn.closest('.insta-ad-media');var v=wrap?wrap.querySelector('video'):null;if(!v)return;
   var i=btn.querySelector('i');
   if(v.muted){
-    v.dataset.userMuted='0';
+    /* User wants sound ON - save preference */
+    v.muted=false;
+    setVideoAudioPref(true);
+    if(i)i.className='fas fa-volume-up';
+    /* Mute every other video */
     var allVids=document.querySelectorAll('video');
-    for(var k=0;k<allVids.length;k++){if(allVids[k]!==v)allVids[k].muted=true;}
-    v.muted=false;if(i)i.className='fas fa-volume-up';
-  } else {v.dataset.userMuted='1';v.muted=true;if(i)i.className='fas fa-volume-mute';}
+    for(var k=0;k<allVids.length;k++){
+      if(allVids[k]!==v){
+        allVids[k].muted=true;
+        var otherBtn=allVids[k].parentElement&&allVids[k].parentElement.querySelector('.video-mute-btn i');
+        if(otherBtn)otherBtn.className='fas fa-volume-mute';
+      }
+    }
+  }else{
+    /* User wants sound OFF - save preference */
+    v.muted=true;
+    setVideoAudioPref(false);
+    if(i)i.className='fas fa-volume-mute';
+  }
   if(v.paused){var p=v.play();if(p&&p.catch)p.catch(function(){});}
 }
 
 (function(){
   var handler=function(e){
     if(e&&e.target&&e.target.closest&&e.target.closest('.video-mute-btn'))return;
+    /* Don't auto-unmute on random taps - respect saved preference */
+    if(!getVideoAudioPref())return;
     var vids=document.querySelectorAll('video');
     for(var i=0;i<vids.length;i++){
       var v=vids[i];
-      if(v.dataset.userMuted==='1')continue;
-      if(v.muted&&!v.paused){v.muted=false;var btn=v.parentElement&&v.parentElement.querySelector('.video-mute-btn i');if(btn)btn.className='fas fa-volume-up';}
+      if(v.muted&&!v.paused){
+        v.muted=false;
+        var btn=v.parentElement&&v.parentElement.querySelector('.video-mute-btn i');
+        if(btn)btn.className='fas fa-volume-up';
+      }
     }
   };
   document.addEventListener('click',handler,true);
@@ -1375,22 +1434,13 @@ function hydrateMedia(){
   var vids=document.querySelectorAll('video[data-media-key]');
   for(var i=0;i<vids.length;i++){
     var v=vids[i];
-    if(!v.dataset.mediaBound){
-      v.dataset.mediaBound='1';
-      try{v.preload='auto';}catch(e){}
-    }
-    // Sync-load poster if cached
+    if(!v.dataset.mediaBound){v.dataset.mediaBound='1';try{v.preload='auto';}catch(e){}}
     if(v.dataset.posterKey && !v.getAttribute('poster') && _mediaUrlCache[v.dataset.posterKey]){
-      try{ v.setAttribute('poster', _mediaUrlCache[v.dataset.posterKey]); }catch(e){}
+      try{v.setAttribute('poster',_mediaUrlCache[v.dataset.posterKey]);}catch(e){}
     }
-    // Async-load poster for videos that have a key but no cached URL yet
     if(v.dataset.posterKey && !v.getAttribute('poster') && !v.dataset.posterLoading){
       v.dataset.posterLoading='1';
-      (function(el,key){
-        getMediaUrl(key).then(function(url){
-          if(url && !el.getAttribute('poster')) { try{ el.setAttribute('poster', url); }catch(e){} }
-        });
-      })(v, v.dataset.posterKey);
+      (function(el,key){getMediaUrl(key).then(function(url){if(url&&!el.getAttribute('poster')){try{el.setAttribute('poster',url);}catch(e){}}});})(v,v.dataset.posterKey);
     }
     if(!('IntersectionObserver' in window)){loadVideo(v);}else{observeVideo(v);}
   }
@@ -1748,7 +1798,7 @@ function navigate(view){
   var b=document.querySelector('.sidebar-nav .nav-item[data-view="'+view+'"]');if(b)b.classList.add('active');
   var pt=document.getElementById('pageTitle');
   if(pt){var titleMap={status:'MexFace',superadmin:'Super Admin',mexEarnings:'My Earnings',mexCompanies:'My Companies',mexStatus:'MexFace',dashboard:'MexData',sales:'Sales',debts:'Debts',inventory:'Inventory',pnl:'Profit & Loss',expenses:'Expenses',branches:'Branches',users:'Users',roles:'Roles',reports:'Reports',attendance:'Attendance'};pt.textContent=titleMap[view]||view;}
-  var area=document.getElementById('contentArea');muteAllVideos();
+  var area=document.getElementById('contentArea');
   try{if(typeof views[view]==='function')area.innerHTML=views[view]();else area.innerHTML='<div class="card"><div class="card-body"><p>Coming soon</p></div></div>';}
   catch(err){area.innerHTML='<div class="card"><div class="card-body"><p style="color:var(--accent-danger);">Error: '+escapeHtml(String(err&&err.message||err))+'</p></div></div>';}
   setTimeout(hydrateMedia,20);
@@ -2082,7 +2132,7 @@ function renderCompanyStatusTab(user){
   return '<div class="section-header"><h2><i class="fas fa-pen"></i> Status</h2><button class="btn btn-primary btn-icon" onclick="openPostStatus()"><i class="fas fa-plus"></i> Post</button></div>'+(sH||'<div class="card"><div class="card-body"><div class="empty-state"><i class="fas fa-pen"></i></div></div></div>');
 }
 
-/* ===== FIX: video HTML now includes poster + data-poster-key + data-ad-id + autoplay muted ===== */
+/* ===== FIX: video HTML uses preference for initial muted + icon ===== */
 function renderAdCard(ad,user,canPost){
   if(!Array.isArray(ad.likes))ad.likes=[];
   var isSuper=ad.postedBy==='super';var isMex=ad.postedBy==='mex';var cn=ad.companyName||'Company';
@@ -2096,7 +2146,10 @@ function renderAdCard(ad,user,canPost){
     var posterAttr='';
     if(ad.posterKey && _mediaUrlCache[ad.posterKey]) posterAttr=' poster="'+escapeHtml(_mediaUrlCache[ad.posterKey])+'"';
     var posterKeyAttr = ad.posterKey ? ' data-poster-key="'+escapeHtml(ad.posterKey)+'"' : '';
-    media='<video data-media-key="'+ad.mediaKey+'" data-ad-id="'+ad.id+'"'+posterKeyAttr+posterAttr+' playsinline webkit-playsinline preload="auto" autoplay muted loop></video><button type="button" class="video-mute-btn" onclick="event.stopPropagation();toggleVideoMute(this)"><i class="fas fa-volume-up"></i></button>';
+    /* FIX: use saved preference for icon (video starts muted for autoplay but loadVideo will unmute) */
+    var wantsSound = getVideoAudioPref();
+    var iconClass = wantsSound ? 'fas fa-volume-up' : 'fas fa-volume-mute';
+    media='<video data-media-key="'+ad.mediaKey+'" data-ad-id="'+ad.id+'"'+posterKeyAttr+posterAttr+' playsinline webkit-playsinline preload="auto" autoplay muted loop></video><button type="button" class="video-mute-btn" onclick="event.stopPropagation();toggleVideoMute(this)"><i class="'+iconClass+'"></i></button>';
   }
   else if(ad.mediaKey)media='<img data-media-key="'+ad.mediaKey+'" alt="Ad" loading="lazy" decoding="async"/>';
   else if(ad.image&&ad.image.length)media='<img src="'+ad.image+'" alt="Ad" loading="lazy" decoding="async"/>';
@@ -2117,7 +2170,7 @@ function renderAdCard(ad,user,canPost){
 function openPromoteAdModal(adId){var ads=getGlobalAds();var ad=null;for(var i=0;i<ads.length;i++){if(Number(ads[i].id)===Number(adId)){ad=ads[i];break;}}if(!ad)return;var ov=document.getElementById('modalOverlay');var bx=document.getElementById('modalBox');var opts='';for(var j=0;j<PROMOTE_OPTIONS.length;j++){var o=PROMOTE_OPTIONS[j];opts+='<button type="button" class="plan-card" onclick="applyPromote(\''+adId+'\',\''+o.key+'\')" style="flex:1;min-width:130px;"><span class="plan-name">'+o.label+'</span><span class="plan-price">'+fmtMoney(o.price)+'</span></button>';}bx.innerHTML='<h3><i class="fas fa-rocket" style="color:var(--verified-blue);"></i> Promote MexFace</h3><div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">'+opts+'</div><div class="form-actions"><button class="btn btn-secondary" onclick="closeModal()">Cancel</button></div>';ov.classList.add('show');document.body.classList.add('modal-open');}
 function applyPromote(adId,key){var opt=null;for(var i=0;i<PROMOTE_OPTIONS.length;i++){if(PROMOTE_OPTIONS[i].key===key){opt=PROMOTE_OPTIONS[i];break;}}if(!opt)return;markOwnWrite();var ads=getGlobalAds();var ad=null;for(var j=0;j<ads.length;j++){if(Number(ads[j].id)===Number(adId)){ad=ads[j];break;}}if(!ad)return;var now=Date.now();var base=(ad.promotedUntil&&ad.promotedUntil>now)?ad.promotedUntil:now;ad.promoted=true;ad.promotedUntil=base+opt.days*86400000;ad.promotedAt=now;saveGlobalAds(ads);schedulePostPush(ad);closeModal();showToast('🚀 Promoted!','success');navigate('status');}
 function openAdDetail(adId){var ads=getGlobalAds();var ad=null;for(var i=0;i<ads.length;i++){if(Number(ads[i].id)===Number(adId)){ad=ads[i];break;}}if(!ad)return;incrementAdView(adId);var user=getCurrentUser();var ov=document.getElementById('modalOverlay');var bx=document.getElementById('modalBox');ov.style.zIndex='10005';bx.style.maxWidth='600px';bx.style.padding='0';bx.style.overflow='hidden';var fresh=getGlobalAds();var fr=null;for(var j=0;j<fresh.length;j++){if(Number(fresh[j].id)===Number(adId)){fr=fresh[j];break;}}bx.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border-color);background:var(--bg-card);"><h3 style="margin:0;font-size:.95rem;"><i class="fas fa-bullhorn" style="color:var(--accent-3);"></i> '+escapeHtml(fr.title||'')+'</h3><button class="btn btn-secondary btn-sm" onclick="closeAdDetail()" style="padding:4px 10px!important;"><i class="fas fa-times"></i></button></div><div style="padding:12px;overflow-y:auto;max-height:80vh;">'+renderAdCard(fr,user,false)+'</div>';ov.classList.add('show');document.body.classList.add('modal-open');setTimeout(hydrateMedia,30);}
-function closeAdDetail(){var ov=document.getElementById('modalOverlay');var bx=document.getElementById('modalBox');ov.classList.remove('show');ov.style.zIndex='';bx.style.padding='';bx.style.overflow='';bx.style.borderRadius='';bx.style.maxWidth='';muteAllVideos();var so=document.querySelector('.modal-overlay.show');if(!so)document.body.classList.remove('modal-open');}
+function closeAdDetail(){var ov=document.getElementById('modalOverlay');var bx=document.getElementById('modalBox');ov.classList.remove('show');ov.style.zIndex='';bx.style.padding='';bx.style.overflow='';bx.style.borderRadius='';bx.style.maxWidth='';var so=document.querySelector('.modal-overlay.show');if(!so)document.body.classList.remove('modal-open');}
 function openAdAuthorProfile(adId){
   var ads=getGlobalAds();var clicked=null;
   for(var i=0;i<ads.length;i++){if(Number(ads[i].id)===Number(adId)){clicked=ads[i];break;}}
@@ -2136,7 +2189,7 @@ function openAdAuthorProfile(adId){
   document.getElementById('adProfileModal').classList.add('show');document.body.classList.add('modal-open');
   setTimeout(hydrateMedia,30);
 }
-function closeAdProfileModal(){document.getElementById('adProfileModal').classList.remove('show');muteAllVideos();var so=document.querySelector('.modal-overlay.show');if(!so)document.body.classList.remove('modal-open');}
+function closeAdProfileModal(){document.getElementById('adProfileModal').classList.remove('show');var so=document.querySelector('.modal-overlay.show');if(!so)document.body.classList.remove('modal-open');}
 
 function openCompanyProfile(tid){
   var ads=getGlobalAds();var companyAds=[];
@@ -2148,13 +2201,13 @@ function openCompanyProfile(tid){
   document.getElementById('adProfileModal').classList.add('show');document.body.classList.add('modal-open');
 }
 
-/* ===== FIX: grid tile includes poster + data-poster-key + data-ad-id ===== */
 function renderAdGridTile(ad){
   var isV=ad.mediaType==='video'&&ad.mediaKey;var m='';
   if(isV){
     var posterAttr='';
     if(ad.posterKey && _mediaUrlCache[ad.posterKey]) posterAttr=' poster="'+escapeHtml(_mediaUrlCache[ad.posterKey])+'"';
     var posterKeyAttr = ad.posterKey ? ' data-poster-key="'+escapeHtml(ad.posterKey)+'"' : '';
+    /* Grid thumbnails stay muted always (small tiles) */
     m='<video data-media-key="'+ad.mediaKey+'" data-ad-id="'+ad.id+'"'+posterKeyAttr+posterAttr+' playsinline preload="auto" autoplay muted loop></video>';
   }
   else if(ad.mediaKey)m='<img data-media-key="'+ad.mediaKey+'" alt="" loading="lazy" decoding="async"/>';
@@ -2162,7 +2215,6 @@ function renderAdGridTile(ad){
   return '<div class="ad-grid-tile" onclick="openAdDetail(\''+ad.id+'\')">'+m+'</div>';
 }
 
-/* ===== FIX: capture poster at upload time ===== */
 function openAdModal(){
   var u=getCurrentUser();if(!u)return;
   if(!isSuperAdmin&&!isMexEmployee&&u.role!=='owner'){showToast('Owner only','error');return;}
@@ -2183,12 +2235,9 @@ function onAdMediaSelected(input){
     var url=URL.createObjectURL(file);
     pE.innerHTML='<video src="'+url+'" playsinline preload="auto" muted autoplay loop style="width:100%;"></video>';
     sE.textContent='✓ '+(file.size/(1024*1024)).toFixed(2)+' MB · generating poster…';sE.className='promo-status ok';
-    // Capture poster now so the video shows its own frame from the very first render later
     captureVideoPosterFromBlob(file).then(function(pb){
-      if(pb){
-        adMediaState.posterBlob=pb;
-        if(sE){sE.textContent='✓ '+(file.size/(1024*1024)).toFixed(2)+' MB · poster ready';}
-      } else if(sE){sE.textContent='✓ '+(file.size/(1024*1024)).toFixed(2)+' MB';}
+      if(pb){adMediaState.posterBlob=pb;if(sE){sE.textContent='✓ '+(file.size/(1024*1024)).toFixed(2)+' MB · poster ready';}}
+      else if(sE){sE.textContent='✓ '+(file.size/(1024*1024)).toFixed(2)+' MB';}
     });
     return;
   }
@@ -2312,7 +2361,7 @@ function openModal(type,data){
   bx.innerHTML=h;ov.classList.add('show');document.body.classList.add('modal-open');
 }
 function filterSaleProducts(q){var sel=document.getElementById('saleProductSelect');if(!sel)return;var priceInput=document.getElementById('saleUnitPriceInput');var query=String(q||'').trim().toLowerCase();var products=getFilteredProducts();var avail=[];for(var i=0;i<products.length;i++){if(products[i].quantity>0)avail.push(products[i]);}var opts='<option value="">--</option>';for(var j=0;j<avail.length;j++){var p=avail[j];if(!query||String(p.name).toLowerCase().indexOf(query)!==-1){opts+='<option value="'+p.id+'" data-price="'+p.price+'">'+escapeHtml(p.name)+' ('+p.quantity+')</option>';}}sel.innerHTML=opts;if(sel.options.length===2){sel.selectedIndex=1;onSaleProductChange();}else{sel.selectedIndex=0;if(priceInput)priceInput.value='';}}
-function closeModal(){var ov=document.getElementById('modalOverlay');var bx=document.getElementById('modalBox');ov.classList.remove('show');ov.style.zIndex='';bx.style.padding='';bx.style.overflow='';bx.style.borderRadius='';bx.style.maxWidth='';muteAllVideos();var so=document.querySelector('.modal-overlay.show');if(!so)document.body.classList.remove('modal-open');}
+function closeModal(){var ov=document.getElementById('modalOverlay');var bx=document.getElementById('modalBox');ov.classList.remove('show');ov.style.zIndex='';bx.style.padding='';bx.style.overflow='';bx.style.borderRadius='';bx.style.maxWidth='';var so=document.querySelector('.modal-overlay.show');if(!so)document.body.classList.remove('modal-open');}
 
 /* ===== CRUD ===== */
 function onSaleProductChange(){var sel=document.getElementById('saleProductSelect');var pi=document.getElementById('saleUnitPriceInput');if(!sel||!pi)return;var o=sel.options[sel.selectedIndex];if(!o||!sel.value){pi.value='';return;}pi.value=parseFloat(o.dataset.price)||0;}
