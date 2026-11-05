@@ -363,29 +363,16 @@ body.dark .chat-modal .modal-box .chat-messages{background-color:#0b141a}
   .topbar .topbar-actions .profile-trigger{width:36px;height:36px;min-width:36px;max-width:36px}
   .topbar .topbar-actions .profile-trigger img{width:30px;height:30px}
 }
-/* ===== SCANNER STYLES ===== */
+/* ===== SCANNER STYLES (SIMPLIFIED) ===== */
 .scanner-modal .modal-box{max-width:560px;padding:22px}
 .scanner-modal .scanner-view{border-radius:14px;overflow:hidden;background:#000;position:relative;min-height:260px;display:flex;align-items:center;justify-content:center}
 .scanner-modal .scanner-view video,.scanner-modal .scanner-view canvas{width:100%!important;height:auto!important;display:block}
-.scanner-modal .scanner-hint{background:rgba(18,140,126,.08);border:1px dashed var(--accent-1);border-radius:10px;padding:10px 14px;margin:10px 0;font-size:.8rem;color:var(--accent-1);font-weight:600;text-align:center}
-.scanner-modal.phone-mode .modal-box{max-width:100%;height:100vh;max-height:100vh;border-radius:0;padding:16px;display:flex;flex-direction:column}
-.scanner-modal.phone-mode .scanner-view{flex:1;min-height:200px}
-.scan-banner{position:fixed;top:78px;right:20px;z-index:99999;background:var(--bg-card);border:2px solid var(--accent-4);border-radius:14px;padding:14px 18px;box-shadow:0 8px 30px rgba(0,0,0,.18);min-width:260px;max-width:340px;animation:scanSlideIn .3s ease}
-@keyframes scanSlideIn{from{transform:translateX(120%);opacity:0}to{transform:translateX(0);opacity:1}}
-.scan-banner .scan-title{font-weight:800;color:var(--accent-4);font-size:.9rem;margin-bottom:6px;display:flex;align-items:center;gap:6px}
-.scan-banner .scan-code{font-family:'Courier New',monospace;font-weight:700;color:var(--text-primary);font-size:1rem;margin-bottom:4px;word-break:break-all}
-.scan-banner .scan-product{font-size:.82rem;color:var(--text-secondary);margin-bottom:10px;font-weight:600}
-.scan-banner .scan-actions{display:flex;gap:6px;flex-wrap:wrap}
-.scan-queue-list{max-height:280px;overflow-y:auto;margin-top:10px}
-.scan-queue-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--border-color);font-size:.85rem}
-.scan-queue-item .sq-code{font-family:'Courier New',monospace;font-weight:700;color:var(--accent-1)}
-.scan-queue-item .sq-time{font-size:.7rem;color:var(--text-muted);margin-left:auto}
-.scan-queue-item.processed{opacity:.5}
-.phone-scan-hero{background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:#fff;border-radius:16px;padding:22px 20px;margin-bottom:16px;display:flex;align-items:center;gap:16px;cursor:pointer;box-shadow:0 8px 24px rgba(139,92,246,.25)}
-.phone-scan-hero:hover{transform:translateY(-2px);transition:transform .15s}
-.phone-scan-hero .ps-icon{font-size:2.4rem;flex-shrink:0}
-.phone-scan-hero .ps-title{font-size:1.05rem;font-weight:800;margin-bottom:4px}
-.phone-scan-hero .ps-sub{font-size:.78rem;opacity:.9;font-weight:500}
+.scanner-modal .scanner-hint{background:rgba(18,140,126,.08);border:1px dashed var(--accent-1);border-radius:10px;padding:10px 14px;margin:10px 0;font-size:.82rem;color:var(--accent-1);font-weight:700;text-align:center}
+.scanner-modal .scanner-stats{background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-radius:12px;padding:14px 18px;margin-top:10px;display:flex;justify-content:space-between;align-items:center;font-weight:700}
+.scanner-modal .scanner-stats .ss-item{text-align:center;flex:1}
+.scanner-modal .scanner-stats .ss-num{font-size:1.4rem;font-weight:900;line-height:1.1}
+.scanner-modal .scanner-stats .ss-label{font-size:.65rem;opacity:.85;text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+.scanner-modal .scanner-stats .ss-div{width:1px;background:rgba(255,255,255,.3);height:36px}
 </style>
 </head>
 <body>
@@ -516,7 +503,7 @@ body.dark .chat-modal .modal-box .chat-messages{background-color:#0b141a}
         <button class="low-stock-alert-btn" id="lowStockAlertBtn"><i class="fas fa-exclamation-triangle"></i><span class="alert-text">Low Stock</span><span class="alert-count" id="lowStockAlertCount">0</span></button>
         <button class="theme-toggle" id="themeToggle" title="Theme"><i class="fas fa-moon"></i></button>
         <button class="chat-topbar-btn" id="chatTopbarBtn" title="Chat"><i class="fas fa-comments"></i><span class="chat-badge" id="chatBadge">0</span></button>
-        <button class="chat-topbar-btn" id="scanTopbarBtn" title="Scan Barcode" style="display:none;" onclick="openScannerModal('sale')"><i class="fas fa-barcode"></i></button>
+        <button class="chat-topbar-btn" id="scanTopbarBtn" title="Scan" style="display:none;" onclick="smartOpenScanner()"><i class="fas fa-barcode"></i></button>
         <div class="profile-trigger" id="profileTrigger"><img id="topProfileImg" data-photo-key="" src="https://ui-avatars.com/api/?background=128C7E&color=fff&name=User" alt="Profile"/><span class="profile-name" id="topProfileName">User</span></div>
       </div>
     </header>
@@ -661,16 +648,21 @@ body.dark .chat-modal .modal-box .chat-messages{background-color:#0b141a}
   </div>
 </div>
 
-<!-- ===== BARCODE SCANNER MODAL ===== -->
+<!-- ===== SIMPLIFIED SCANNER MODAL ===== -->
 <div class="modal-overlay scanner-modal" id="scannerModal">
   <div class="modal-box">
     <h3><i class="fas fa-barcode" style="color:var(--accent-1);"></i> <span id="scannerTitle">Scan Barcode</span></h3>
     <div class="scanner-view" id="scannerReader"></div>
     <div class="scanner-hint" id="scannerHint"><i class="fas fa-info-circle"></i> Point camera at barcode</div>
     <div class="promo-status" id="scannerStatus"></div>
+    <div class="scanner-stats" id="scannerStats" style="display:none;">
+      <div class="ss-item"><div class="ss-num" id="scanSessionCount">0</div><div class="ss-label">Items</div></div>
+      <div class="ss-div"></div>
+      <div class="ss-item"><div class="ss-num" id="scanSessionTotal">TSh 0</div><div class="ss-label">Total</div></div>
+    </div>
     <div class="form-group" style="margin-top:14px;">
       <label><i class="fas fa-keyboard"></i> Or enter barcode manually</label>
-      <input type="text" id="scannerManualInput" placeholder="Type / paste barcode then Enter..." onkeydown="if(event.key==='Enter'){event.preventDefault();handleManualBarcode();}"/>
+      <input type="text" id="scannerManualInput" placeholder="Type barcode then Enter..." onkeydown="if(event.key==='Enter'){event.preventDefault();handleManualBarcode();}"/>
     </div>
     <div class="form-actions" style="justify-content:space-between;">
       <button class="btn btn-secondary" onclick="closeScannerModal()">Close</button>
@@ -797,7 +789,6 @@ function _trimArrayForKey(key,arr){
   if(key===MEMBER_EARNINGS_KEY&&arr.length>STORAGE_LIMITS.member_earnings)return arr.slice(-STORAGE_LIMITS.member_earnings);
   if(key.indexOf('_categories')!==-1&&arr.length>STORAGE_LIMITS.categories)return arr.slice(-STORAGE_LIMITS.categories);
   if(key.indexOf('_products')!==-1&&arr.length>STORAGE_LIMITS.products)return arr.slice(-STORAGE_LIMITS.products);
-  if(key.indexOf('_scan_queue')!==-1&&arr.length>200)return arr.slice(-200);
   return arr;
 }
 
@@ -937,7 +928,6 @@ function localStateHash(){
       keys.push('sb_tenant_'+currentTenantId+'_statuses');
       keys.push('sb_tenant_'+currentTenantId+'_punchHistory');
       keys.push('sb_tenant_'+currentTenantId+'_transfers');
-      keys.push('sb_tenant_'+currentTenantId+'_scan_queue');
     }
     for(var i=0;i<keys.length;i++){h=(h^quickHash(localStorage.getItem(keys[i])||''))|0;}
     return h;
@@ -948,7 +938,7 @@ function setupRealtimeSync(){
   if(!supabaseClient){return;}
   _realtimeChannels.forEach(function(ch){try{supabaseClient.removeChannel(ch);}catch(e){}});
   _realtimeChannels=[];
-  try{var kvChannel=supabaseClient.channel('mex_kv_realtime').on('postgres_changes',{event:'*',schema:'public',table:TBL_KV},function(payload){if(isInOwnWriteCooldown())return;if(!payload.new||!payload.new.key)return;if(!shouldSyncKey(payload.new.key))return;if(_pendingKVWrites[payload.new.key])return;try{var val=_trimArrayForKey(payload.new.key,payload.new.value);localStorage.setItem(payload.new.key,JSON.stringify(val));}catch(e){tryCleanupLocalStorage();try{localStorage.setItem(payload.new.key,JSON.stringify(payload.new.value));}catch(e2){}}if(payload.new.key.indexOf('_'+SCAN_QUEUE_KEY_SUFFIX)!==-1){setTimeout(processIncomingScans,300);}scheduleSoftReRender();}).subscribe();_realtimeChannels.push(kvChannel);}catch(e){}
+  try{var kvChannel=supabaseClient.channel('mex_kv_realtime').on('postgres_changes',{event:'*',schema:'public',table:TBL_KV},function(payload){if(isInOwnWriteCooldown())return;if(!payload.new||!payload.new.key)return;if(!shouldSyncKey(payload.new.key))return;if(_pendingKVWrites[payload.new.key])return;try{var val=_trimArrayForKey(payload.new.key,payload.new.value);localStorage.setItem(payload.new.key,JSON.stringify(val));}catch(e){tryCleanupLocalStorage();try{localStorage.setItem(payload.new.key,JSON.stringify(payload.new.value));}catch(e2){}}scheduleSoftReRender();}).subscribe();_realtimeChannels.push(kvChannel);}catch(e){}
   try{var postsChannel=supabaseClient.channel('mex_posts_realtime').on('postgres_changes',{event:'*',schema:'public',table:TBL_POSTS},function(){if(isInOwnWriteCooldown())return;scheduleCloudPullAndRender();}).subscribe();_realtimeChannels.push(postsChannel);}catch(e){}
   try{var likesChannel=supabaseClient.channel('mex_likes_realtime').on('postgres_changes',{event:'*',schema:'public',table:TBL_LIKES},function(){if(isInOwnWriteCooldown())return;scheduleCloudPullAndRender();}).subscribe();_realtimeChannels.push(likesChannel);}catch(e){}
   try{var commentsChannel=supabaseClient.channel('mex_comments_realtime').on('postgres_changes',{event:'*',schema:'public',table:TBL_COMMENTS},function(){if(isInOwnWriteCooldown())return;scheduleCloudPullAndRender();}).subscribe();_realtimeChannels.push(commentsChannel);}catch(e){}
@@ -1028,7 +1018,6 @@ function pullFromCloudOnly(){
     if(profRes&&!profRes.error&&profRes.data){profRes.data.forEach(function(p){try{applyProfileFromCloud(p);}catch(e){}});}
     if(postRes&&!postRes.error&&postRes.data){try{mergePostsFromCloud(postRes.data,likeRes&&likeRes.data||[],cmtRes&&cmtRes.data||[]);}catch(e){}}
     var afterHash=localStateHash();
-    setTimeout(processIncomingScans,100);
     return beforeHash!==afterHash;
   }).catch(function(e){return false;});
 }
@@ -1038,7 +1027,6 @@ document.addEventListener('visibilitychange',function(){
     _lastCloudPullTime=0;
     pullFromCloudOnly().then(function(changed){
       if(changed){softRefreshCurrentView(true);}
-      setTimeout(processIncomingScans,200);
     });
   }
 });
@@ -1133,7 +1121,6 @@ function tryCleanupLocalStorage(){
         var stk='sb_tenant_'+tid+'_statuses';var st=lsGet(stk,null);
         if(Array.isArray(st)){var trimSt=st.slice(-STORAGE_LIMITS.statuses);var stChanged=st.length>STORAGE_LIMITS.statuses;for(var s=0;s<trimSt.length;s++){if(trimSt[s].image&&typeof trimSt[s].image==='string'&&trimSt[s].image.indexOf('data:')===0){trimSt[s].image='';stChanged=true;}}if(stChanged){try{localStorage.setItem(stk,JSON.stringify(trimSt));}catch(e){}}}
         var bpk='sb_tenant_'+tid+'_branch_payments';var bp=lsGet(bpk,null);if(Array.isArray(bp)&&bp.length>STORAGE_LIMITS.branch_payments){try{localStorage.setItem(bpk,JSON.stringify(bp.slice(-STORAGE_LIMITS.branch_payments)));}catch(e){}}
-        var sqk='sb_tenant_'+tid+'_scan_queue';var sq=lsGet(sqk,null);if(Array.isArray(sq)&&sq.length>200){try{localStorage.setItem(sqk,JSON.stringify(sq.slice(-200)));}catch(e){}}
       }
       var mek=MEMBER_EARNINGS_KEY;var me=lsGet(mek,null);if(Array.isArray(me)&&me.length>STORAGE_LIMITS.member_earnings){try{localStorage.setItem(mek,JSON.stringify(me.slice(-STORAGE_LIMITS.member_earnings)));}catch(e){}}
     }catch(trimErr){}
@@ -1746,7 +1733,7 @@ function createTenant(companyName,username,password,phone,promoCode,pendingAppro
   if(!saveTenants(ts))return {success:false,msg:'Storage full.'};
   var ownerUser={id:1,username:username,password:hashPw(username,password),role:'owner',store:companyName,fullName:companyName,createdBy:null,photoKey:'',tenantId:id,theme:'light'};
   var old=currentTenantId;currentTenantId=id;
-  try{setTenantData('users',[ownerUser]);persistProducts([]);persistCategories([{id:1,name:'General',store:companyName}]);persistSales([]);persistExpenses([]);var ecs=[];for(var i=0;i<DEFAULT_EXPENSE_CATEGORIES.length;i++){ecs.push({id:i+1,name:DEFAULT_EXPENSE_CATEGORIES[i],store:companyName});}persistExpenseCategories(ecs);setTenantData('statuses',[]);setTenantData('ceo',{whatsapp:'',email:''});setTenantData('company',{name:companyName,tin:'',address:''});setTenantData('sessions',{});setTenantData('punchHistory',[]);setTenantData(FOLLOWS_KEY_SUFFIX,[]);setTenantData(TRANSFERS_KEY_SUFFIX,[]);setTenantData('scan_queue',[]);}finally{currentTenantId=old;}
+  try{setTenantData('users',[ownerUser]);persistProducts([]);persistCategories([{id:1,name:'General',store:companyName}]);persistSales([]);persistExpenses([]);var ecs=[];for(var i=0;i<DEFAULT_EXPENSE_CATEGORIES.length;i++){ecs.push({id:i+1,name:DEFAULT_EXPENSE_CATEGORIES[i],store:companyName});}persistExpenseCategories(ecs);setTenantData('statuses',[]);setTenantData('ceo',{whatsapp:'',email:''});setTenantData('company',{name:companyName,tin:'',address:''});setTenantData('sessions',{});setTenantData('punchHistory',[]);setTenantData(FOLLOWS_KEY_SUFFIX,[]);setTenantData(TRANSFERS_KEY_SUFFIX,[]);}finally{currentTenantId=old;}
   markOwnWrite();
   scheduleProfilePush({userKey:'t_'+id+'_1',userType:'tenant',tenantId:id,userId:1,username:username,fullName:companyName,photoKey:null,bio:'',phone:phone||'',email:'',socialWhatsapp:'',socialInstagram:'',socialFacebook:'',socialTiktok:'',socialWebsite:'',theme:'light'});
   if(!pendingApproval){var fresh=getAllTenants();var created=null;for(var j=0;j<fresh.length;j++){if(fresh[j].id===id){created=fresh[j];break;}}if(created){creditTenantCommission(created);saveTenants(fresh);}}
@@ -1922,7 +1909,10 @@ function onSalesSearch(v){
 
 views.sales=function(){
   if(isSuperAdmin||isMexEmployee)return '';
-  var ha=canRecordSales()?'<div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn btn-primary btn-icon" onclick="openModal(\'sale\')"><i class="fas fa-plus"></i> New Sale</button><button class="btn btn-secondary btn-icon" onclick="openScannerModal(\'sale\')" style="background:#8b5cf6!important;color:#fff!important;"><i class="fas fa-barcode"></i> Scan</button><button class="btn btn-secondary btn-icon" onclick="openScannerModal(\'phone\')"><i class="fas fa-mobile-alt"></i> Phone Scan</button></div>':'';
+  var ha='<div style="display:flex;gap:8px;flex-wrap:wrap;">';
+  ha+='<button class="btn btn-icon" onclick="openScannerModal(\'sale\')" style="background:#8b5cf6!important;color:#fff!important;padding:12px 22px;font-size:.95rem;font-weight:700;"><i class="fas fa-barcode"></i> Scan &amp; Sell</button>';
+  if(canRecordSales())ha+='<button class="btn btn-secondary btn-icon" onclick="openModal(\'sale\')"><i class="fas fa-plus"></i> Manual Sale</button>';
+  ha+='</div>';
   var searchBar='<div class="inventory-search-wrap" style="margin-bottom:12px;"><i class="fas fa-search inventory-search-icon"></i><input type="text" class="inventory-search-input" id="salesSearchInput" placeholder="Search sales by product or customer..." value="'+escapeHtml(salesSearchTerm)+'" oninput="onSalesSearch(this.value)" autocomplete="off"/></div>';
   return '<div class="section-header"><h2><i class="fas fa-cart-plus"></i> Sales</h2>'+ha+'</div>'+searchBar+'<div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>Product</th><th>Qty</th><th>Price</th><th>Total</th><th>Customer</th><th>Date</th><th></th></tr></thead><tbody id="salesTableBody">'+buildSalesRowsHtml()+'</tbody></table></div></div></div>';
 };
@@ -1938,14 +1928,6 @@ views.debts=function(){
 
 views.inventory=function(){
   if(isSuperAdmin||isMexEmployee)return '';
-  var phoneScannerHero='<div class="phone-scan-hero" onclick="openScannerModal(\'phone\')">'+
-    '<i class="fas fa-mobile-alt ps-icon"></i>'+
-    '<div style="flex:1;min-width:0;">'+
-    '<div class="ps-title">📱 Use Phone as Scanner</div>'+
-    '<div class="ps-sub">Scan barcodes on your phone — they appear instantly on this laptop</div>'+
-    '</div>'+
-    '<i class="fas fa-chevron-right" style="font-size:1.2rem;opacity:.8;"></i>'+
-    '</div>';
   var p=getFilteredProducts().slice().sort(function(a,b){return (a.name||'').localeCompare(b.name||'');});
   var ce=hasPerm('inventory_manage');var u=getCurrentUser();var bns=getBranchNames();var canT=u&&hasPerm('inventory_manage')&&bns.length>1;
   var cats=ensureCategories();var cb='<div class="inv-cat-bar">';
@@ -1954,11 +1936,12 @@ views.inventory=function(){
   var rows='';
   for(var j=0;j<p.length;j++){var x=p[j];var dot='<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:'+(x.quantity<=0?'var(--accent-danger)':x.quantity<=LOW_STOCK_THRESHOLD?'var(--accent-3)':'var(--accent-4)')+';"></span>';rows+='<tr><td>'+(x.image?'<img class="inv-thumb" src="'+x.image+'" alt="" loading="lazy" decoding="async"/>':'<div class="inv-thumb-empty"><i class="fas fa-box"></i></div>')+'</td><td><strong>'+escapeHtml(x.name)+'</strong>'+(x.barcode?'<div style="font-size:.68rem;color:var(--text-muted);font-family:monospace;margin-top:2px;"><i class="fas fa-barcode"></i> '+escapeHtml(x.barcode)+'</div>':'')+'</td><td><span class="badge badge-info" style="font-size:.68rem;">'+escapeHtml(x.store||'--')+'</span></td><td>'+escapeHtml(x.category||'General')+'</td><td>'+fmtMoney(x.price)+'</td><td>'+fmtMoney(x.cost)+'</td><td><strong>'+x.quantity+'</strong></td><td>'+dot+'</td><td>'+(ce?'<button class="btn btn-success btn-xs" onclick="adjustStock(\''+x.id+'\')">+</button> <button class="btn btn-danger btn-xs" onclick="deleteProduct(\''+x.id+'\')">×</button>':'—')+'</td></tr>';}
   var ha='<div style="display:flex;gap:8px;flex-wrap:wrap;">';
-  if(canT)ha+='<button class="btn btn-primary btn-icon" onclick="openTransferModal()" style="background:#8b5cf6!important;"><i class="fas fa-exchange-alt"></i> Transfer</button>';
+  if(ce)ha+='<button class="btn btn-icon" onclick="openScannerModal(\'inventory\')" style="background:#8b5cf6!important;color:#fff!important;padding:12px 22px;font-size:.95rem;font-weight:700;"><i class="fas fa-barcode"></i> Scan to Add</button>';
+  if(canT)ha+='<button class="btn btn-primary btn-icon" onclick="openTransferModal()" style="background:#0ea5e9!important;"><i class="fas fa-exchange-alt"></i> Transfer</button>';
   if(canT)ha+='<button class="btn btn-secondary btn-icon" onclick="viewTransferHistory()"><i class="fas fa-history"></i> History</button>';
-  if(ce)ha+='<button class="btn btn-primary btn-icon" onclick="openModal(\'product\')"><i class="fas fa-plus"></i> Add Product</button>';
+  if(ce)ha+='<button class="btn btn-primary btn-icon" onclick="openModal(\'product\')"><i class="fas fa-plus"></i> Add Manually</button>';
   ha+='</div>';
-  return phoneScannerHero+'<div class="section-header"><h2><i class="fas fa-boxes"></i> Inventory</h2>'+ha+'</div>'+cb+'<div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th></th><th>Product</th><th>Branch</th><th>Category</th><th>Price</th><th>Cost</th><th>Qty</th><th></th><th></th></tr></thead><tbody>'+(rows||'<tr class="empty-row"><td colspan="9">No products</td></tr>')+'</tbody></table></div></div></div>';
+  return '<div class="section-header"><h2><i class="fas fa-boxes"></i> Inventory</h2>'+ha+'</div>'+cb+'<div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th></th><th>Product</th><th>Branch</th><th>Category</th><th>Price</th><th>Cost</th><th>Qty</th><th></th><th></th></tr></thead><tbody>'+(rows||'<tr class="empty-row"><td colspan="9">No products</td></tr>')+'</tbody></table></div></div></div>';
 };
 
 views.expenses=function(){
@@ -2384,14 +2367,15 @@ function saveProfile(){
   scheduleProfilePush({userKey:'t_'+currentTenantId+'_'+tg.id,userType:'tenant',tenantId:currentTenantId,userId:tg.id,username:tg.username,fullName:tg.fullName||tg.username,photoKey:tg.photoKey||null,bio:bio,phone:tg.phone||'',email:tg.email||'',socialWhatsapp:sd.socialWhatsapp||'',socialInstagram:sd.socialInstagram||'',socialFacebook:sd.socialFacebook||'',socialTiktok:sd.socialTiktok||'',socialWebsite:sd.socialWebsite||'',theme:tg.theme||'light'});
   closeProfileModal();showToast('✓ Saved','success');setTimeout(function(){softRefreshCurrentView(true);},100);
 }
+
 /* ===== GENERIC MODAL ===== */
 function openModal(type,data){
   if(isSuperAdmin||isMexEmployee)return;
   var ov=document.getElementById('modalOverlay');var bx=document.getElementById('modalBox');
   var u=getCurrentUser();var h='';
   bx.style.padding='';bx.style.overflow='';bx.style.borderRadius='';bx.style.maxWidth='';
-  if(type==='sale'){var store=getCatalogStore();var p=getFilteredProducts();var avail=[];for(var i=0;i<p.length;i++)if(p[i].quantity>0)avail.push(p[i]);var opts='';for(var j=0;j<avail.length;j++){opts+='<option value="'+avail[j].id+'" data-price="'+avail[j].price+'">'+escapeHtml(avail[j].name)+' ('+avail[j].quantity+')</option>';}h='<h3><i class="fas fa-cart-plus"></i> New Sale</h3><form onsubmit="submitSale(event)"><div class="form-group"><label><i class="fas fa-barcode"></i> Scan Barcode</label><div style="display:flex;gap:8px;"><input type="text" id="saleBarcodeInput" placeholder="Scan or type barcode..." onkeydown="if(event.key===\'Enter\'){event.preventDefault();quickScanForSale();}"/><button type="button" class="btn btn-secondary btn-sm" onclick="closeModal();openScannerModal(\'sale\')" style="white-space:nowrap;"><i class="fas fa-camera"></i> Scan</button></div></div><div class="form-group"><label><i class="fas fa-search"></i> Search Product</label><input type="text" id="saleProductSearch" placeholder="Type to filter products..." oninput="filterSaleProducts(this.value)" autocomplete="off"/></div><div class="form-group"><label>Product</label><select name="productId" id="saleProductSelect" required onchange="onSaleProductChange()"><option value="">--</option>'+opts+'</select></div><div class="form-row"><div class="form-group"><label>Quantity</label><input type="number" name="quantity" min="1" value="1" required/></div><div class="form-group"><label>Price</label><input type="number" name="unitPrice" id="saleUnitPriceInput" min="0" required/></div></div><div class="form-group"><label>Customer</label><input type="text" name="customer"/></div><div class="form-group" style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--input-bg);border-radius:var(--radius-sm);"><input type="checkbox" name="paid" id="salePaidCheck" checked style="width:22px;height:22px;margin:0;accent-color:var(--accent-1);"/><label for="salePaidCheck" style="margin:0;text-transform:none;font-size:.9rem;cursor:pointer;flex:1;">Paid</label></div><input type="hidden" name="store" value="'+escapeAttr(store)+'"/><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="btn btn-primary">Save</button></div></form>';}
-  else if(type==='product'){var cats=ensureCategories();var catOpts='';for(var k=0;k<cats.length;k++)catOpts+='<option value="'+escapeAttr(cats[k].name)+'">'+escapeHtml(cats[k].name)+'</option>';h='<h3><i class="fas fa-box"></i> Add Product</h3><form onsubmit="submitProduct(event)"><div class="form-group"><label>Name *</label><input type="text" name="name" required/></div><div class="form-group"><label><i class="fas fa-barcode"></i> Barcode</label><div style="display:flex;gap:8px;"><input type="text" name="barcode" id="productBarcodeInput" placeholder="Scan or type barcode" style="flex:1;"/><button type="button" class="btn btn-secondary btn-sm" onclick="openScannerModalForProduct()" style="white-space:nowrap;"><i class="fas fa-camera"></i> Scan</button></div></div><div class="form-row"><div class="form-group"><label>Price *</label><input type="number" name="price" min="1" required/></div><div class="form-group"><label>Cost *</label><input type="number" name="cost" min="1" required/></div></div><div class="form-row"><div class="form-group"><label>Category</label><select name="category">'+catOpts+'</select></div><div class="form-group"><label>Quantity</label><input type="number" name="quantity" min="0" value="0"/></div></div><input type="hidden" name="store" value="'+escapeAttr(getCatalogStore())+'"/><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="btn btn-primary">Save</button></div></form>';}
+  if(type==='sale'){var store=getCatalogStore();var p=getFilteredProducts();var avail=[];for(var i=0;i<p.length;i++)if(p[i].quantity>0)avail.push(p[i]);var opts='';for(var j=0;j<avail.length;j++){opts+='<option value="'+avail[j].id+'" data-price="'+avail[j].price+'">'+escapeHtml(avail[j].name)+' ('+avail[j].quantity+')</option>';}h='<h3><i class="fas fa-cart-plus"></i> Manual Sale</h3><form onsubmit="submitSale(event)"><div class="form-group"><label><i class="fas fa-search"></i> Search Product</label><input type="text" id="saleProductSearch" placeholder="Type to filter products..." oninput="filterSaleProducts(this.value)" autocomplete="off"/></div><div class="form-group"><label>Product</label><select name="productId" id="saleProductSelect" required onchange="onSaleProductChange()"><option value="">--</option>'+opts+'</select></div><div class="form-row"><div class="form-group"><label>Quantity</label><input type="number" name="quantity" min="1" value="1" required/></div><div class="form-group"><label>Price</label><input type="number" name="unitPrice" id="saleUnitPriceInput" min="0" required/></div></div><div class="form-group"><label>Customer</label><input type="text" name="customer"/></div><div class="form-group" style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--input-bg);border-radius:var(--radius-sm);"><input type="checkbox" name="paid" id="salePaidCheck" checked style="width:22px;height:22px;margin:0;accent-color:var(--accent-1);"/><label for="salePaidCheck" style="margin:0;text-transform:none;font-size:.9rem;cursor:pointer;flex:1;">Paid</label></div><input type="hidden" name="store" value="'+escapeAttr(store)+'"/><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="btn btn-primary">Save</button></div></form>';}
+  else if(type==='product'){var cats=ensureCategories();var catOpts='';for(var k=0;k<cats.length;k++)catOpts+='<option value="'+escapeAttr(cats[k].name)+'">'+escapeHtml(cats[k].name)+'</option>';var preBarcode=(data&&data.barcode)?data.barcode:'';h='<h3><i class="fas fa-box"></i> Add Product</h3><form onsubmit="submitProduct(event)"><div class="form-group"><label>Name *</label><input type="text" name="name" required '+(preBarcode?'autofocus':'')+'/></div><div class="form-group"><label><i class="fas fa-barcode"></i> Barcode</label><div style="display:flex;gap:8px;"><input type="text" name="barcode" id="productBarcodeInput" value="'+escapeAttr(preBarcode)+'" placeholder="Scan or type barcode" style="flex:1;"/><button type="button" class="btn btn-secondary btn-sm" onclick="openScannerModal(\'inventory\')" style="white-space:nowrap;"><i class="fas fa-camera"></i> Scan</button></div></div><div class="form-row"><div class="form-group"><label>Price *</label><input type="number" name="price" min="1" required/></div><div class="form-group"><label>Cost *</label><input type="number" name="cost" min="1" required/></div></div><div class="form-row"><div class="form-group"><label>Category</label><select name="category">'+catOpts+'</select></div><div class="form-group"><label>Quantity</label><input type="number" name="quantity" min="0" value="0"/></div></div><input type="hidden" name="store" value="'+escapeAttr(getCatalogStore())+'"/><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="btn btn-primary">Save</button></div></form>';}
   else if(type==='expense'){var cats2=ensureExpenseCategories();var catOpts2='';for(var m=0;m<cats2.length;m++)catOpts2+='<option value="'+escapeAttr(cats2[m].name)+'">'+escapeHtml(cats2[m].name)+'</option>';h='<h3><i class="fas fa-receipt"></i> Add Expense</h3><form onsubmit="submitExpense(event)"><div class="form-group"><label>Description *</label><input type="text" name="description" required/></div><div class="form-row"><div class="form-group"><label>Amount *</label><input type="number" name="amount" min="1" required/></div><div class="form-group"><label>Category</label><select name="category">'+catOpts2+'</select></div></div><input type="hidden" name="store" value="'+escapeAttr(getCatalogStore())+'"/><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="btn btn-primary">Save</button></div></form>';}
   else if(type==='user'){if(!canManageUsers())return;var roles=u.role==='owner'?['admin','accountant','employee']:['accountant','employee'];var tn2=getTenant(currentTenantId);var stores=tn2?tn2.branches.map(function(b){return b.name;}):[];var roleOpts='',storeOpts='';for(var n=0;n<roles.length;n++)roleOpts+='<option value="'+roles[n]+'">'+getRoleLabel(roles[n])+'</option>';for(var p2=0;p2<stores.length;p2++)storeOpts+='<option value="'+escapeAttr(stores[p2])+'">'+escapeHtml(stores[p2])+'</option>';h='<h3><i class="fas fa-user-plus"></i> Add User</h3><form onsubmit="submitUser(event)"><div class="form-group"><label>Full Name</label><input type="text" name="fullName"/></div><div class="form-row"><div class="form-group"><label>Username *</label><input type="text" name="username" required/></div><div class="form-group"><label>Password *</label><input type="password" name="password" required/></div></div><div class="form-row"><div class="form-group"><label>Role</label><select name="role" required>'+roleOpts+'</select></div><div class="form-group"><label>Store</label><select name="store">'+storeOpts+'</select></div></div><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="btn btn-primary">Save</button></div></form>';}
   else if(type==='adjustStock'&&data){var p3=getProduct(parseInt(data));if(!p3){closeModal();return;}h='<h3>'+escapeHtml(p3.name)+'</h3><form onsubmit="submitStockAdjust(event,\''+p3.id+'\')"><div class="form-group"><label>Adjust (+/-)</label><input type="number" name="adjust" required/></div><p class="text-muted text-sm" style="font-weight:600;">Current: <strong>'+p3.quantity+'</strong></p><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="btn btn-primary">Save</button></div></form>';}
@@ -2399,13 +2383,12 @@ function openModal(type,data){
   bx.innerHTML=h;ov.classList.add('show');document.body.classList.add('modal-open');
 }
 function filterSaleProducts(q){var sel=document.getElementById('saleProductSelect');if(!sel)return;var priceInput=document.getElementById('saleUnitPriceInput');var query=String(q||'').trim().toLowerCase();var products=getFilteredProducts();var avail=[];for(var i=0;i<products.length;i++){if(products[i].quantity>0)avail.push(products[i]);}var opts='<option value="">--</option>';for(var j=0;j<avail.length;j++){var p=avail[j];if(!query||String(p.name).toLowerCase().indexOf(query)!==-1){opts+='<option value="'+p.id+'" data-price="'+p.price+'">'+escapeHtml(p.name)+' ('+p.quantity+')</option>';}}sel.innerHTML=opts;if(sel.options.length===2){sel.selectedIndex=1;onSaleProductChange();}else{sel.selectedIndex=0;if(priceInput)priceInput.value='';}}
-function quickScanForSale(){var inp=document.getElementById('saleBarcodeInput');if(!inp)return;var bc=inp.value.trim();if(!bc)return;var prod=findProductByBarcode(bc);if(!prod){showToast('Product not found: '+bc,'warning');inp.select();return;}var sel=document.getElementById('saleProductSelect');if(sel){for(var i=0;i<sel.options.length;i++){if(Number(sel.options[i].value)===Number(prod.id)){sel.selectedIndex=i;onSaleProductChange();break;}}}inp.value='';showToast('✅ '+prod.name,'success');inp.focus();}
 function closeModal(){var ov=document.getElementById('modalOverlay');var bx=document.getElementById('modalBox');ov.classList.remove('show');ov.style.zIndex='';bx.style.padding='';bx.style.overflow='';bx.style.borderRadius='';bx.style.maxWidth='';var so=document.querySelector('.modal-overlay.show');if(!so)document.body.classList.remove('modal-open');}
 
 /* ===== CRUD ===== */
 function onSaleProductChange(){var sel=document.getElementById('saleProductSelect');var pi=document.getElementById('saleUnitPriceInput');if(!sel||!pi)return;var o=sel.options[sel.selectedIndex];if(!o||!sel.value){pi.value='';return;}pi.value=parseFloat(o.dataset.price)||0;}
 function submitSale(e){e.preventDefault();if(!hasPerm('sales_create'))return;var fd=new FormData(e.target);var pid=parseInt(fd.get('productId'));var q=parseInt(fd.get('quantity'));var c=(fd.get('customer')||'').trim();var st=(fd.get('store')||'').trim()||getCatalogStore();var isPaid=fd.get('paid')==='on';if(!pid||!q||q<1)return;if(!isPaid&&!c){showToast('Customer required for debt','error');return;}var ps=getTenantData('products',[]);var p=null;for(var i=0;i<ps.length;i++){if(ps[i].id===pid){p=ps[i];break;}}if(!p||p.quantity<q)return;var up=parseFloat(fd.get('unitPrice'))||Number(p.price);var tp=up*q;var tc=(Number(p.cost)||0)*q;var u=getCurrentUser();var sales=getTenantData('sales',[]);sales.push({id:uid(),productId:pid,quantity:q,totalPrice:tp,totalCost:tc,date:Date.now(),customer:c,store:st,createdBy:u.id,unitPrice:up,unitCost:Number(p.cost)||0,paid:isPaid});persistSales(sales);p.quantity-=q;persistProducts(ps);closeModal();if(isPaid){showToast('✓ Sale recorded','success');navigate('sales');}else{showToast('📝 Debt recorded','warning');navigate('debts');}updateDebtsBadge();}
-function submitProduct(e){e.preventDefault();if(!hasPerm('inventory_manage'))return;var fd=new FormData(e.target);var n=(fd.get('name')||'').trim();var bc=(fd.get('barcode')||'').trim();var pr=parseFloat(fd.get('price'));var co=parseFloat(fd.get('cost'));var q=parseInt(fd.get('quantity'))||0;var cat=(fd.get('category')||'').trim()||'General';var st=(fd.get('store')||'').trim()||getCatalogStore();if(!n||!pr||!co)return;var ps=getTenantData('products',[]);if(bc){var tbc=bc.toLowerCase();for(var ck=0;ck<ps.length;ck++){if(ps[ck].barcode&&String(ps[ck].barcode).toLowerCase()===tbc){showToast('⚠ Barcode already exists: '+ps[ck].name,'error');return;}}}ps.push({id:uid(),name:n,barcode:bc,price:pr,cost:co,category:cat,quantity:q,store:st,image:''});persistProducts(ps);closeModal();navigate('inventory');}
+function submitProduct(e){e.preventDefault();if(!hasPerm('inventory_manage'))return;var fd=new FormData(e.target);var n=(fd.get('name')||'').trim();var bc=(fd.get('barcode')||'').trim();var pr=parseFloat(fd.get('price'));var co=parseFloat(fd.get('cost'));var q=parseInt(fd.get('quantity'))||0;var cat=(fd.get('category')||'').trim()||'General';var st=(fd.get('store')||'').trim()||getCatalogStore();if(!n||!pr||!co)return;var ps=getTenantData('products',[]);if(bc){var tbc=bc.toLowerCase();for(var ck=0;ck<ps.length;ck++){if(ps[ck].barcode&&String(ps[ck].barcode).toLowerCase()===tbc){showToast('⚠ Barcode already exists: '+ps[ck].name,'error');return;}}}ps.push({id:uid(),name:n,barcode:bc,price:pr,cost:co,category:cat,quantity:q,store:st,image:''});persistProducts(ps);closeModal();showToast('✅ Product added: '+n,'success');navigate('inventory');}
 function submitExpense(e){e.preventDefault();if(!hasPerm('expenses_manage'))return;var fd=new FormData(e.target);var d=(fd.get('description')||'').trim();var a=parseFloat(fd.get('amount'));var c=fd.get('category')||'Other';var st=(fd.get('store')||'').trim()||getCatalogStore();if(!d||!a||a<1)return;var u=getCurrentUser();var ex=getTenantData('expenses',[]);ex.push({id:uid(),description:d,amount:a,category:c,date:Date.now(),store:st,createdBy:u.id});persistExpenses(ex);closeModal();navigate('expenses');}
 function submitUser(e){e.preventDefault();if(!canManageUsers())return;var fd=new FormData(e.target);var un=(fd.get('username')||'').trim();var pw=fd.get('password');var role=fd.get('role');var fn=(fd.get('fullName')||'').trim()||un;var st=(fd.get('store')||'').trim()||getStoreName();if(!un||!pw||!role)return;var us=getTenantData('users',[]);if(isUsernameTaken(un)){showToast('Username taken','error');return;}var u=getCurrentUser();var newUser={id:uid(),username:un,password:hashPw(un,pw),role:role,store:st,fullName:fn,createdBy:u.id,photoKey:'',tenantId:currentTenantId,theme:'light'};us.push(newUser);setTenantData('users',us);markOwnWrite();scheduleProfilePush({userKey:'t_'+currentTenantId+'_'+newUser.id,userType:'tenant',tenantId:currentTenantId,userId:newUser.id,username:un,fullName:fn,photoKey:null,bio:'',phone:'',email:'',socialWhatsapp:'',socialInstagram:'',socialFacebook:'',socialTiktok:'',socialWebsite:'',theme:'light'});closeModal();navigate('users');}
 function submitStockAdjust(e,pid){e.preventDefault();if(!hasPerm('inventory_manage'))return;var fd=new FormData(e.target);var adj=parseInt(fd.get('adjust'));if(isNaN(adj)||adj===0)return;var ps=getTenantData('products',[]);for(var i=0;i<ps.length;i++){if(ps[i].id===parseInt(pid)){ps[i].quantity=Math.max(0,ps[i].quantity+adj);break;}}persistProducts(ps);closeModal();navigate('inventory');}
@@ -2731,308 +2714,195 @@ document.addEventListener('keydown',function(e){
   if(e.key==='Escape'){closeModal();closeProfileModal();closeSubscriptionModal();closeReceiptModal();closeLowStockModal();closeTransferModal();closeMobileSidebar();closePaymentPlanModal();closeChatModal();closeChatWallpaperPicker();closeAdProfileModal();closeAdDetail();closeCommentsModal();closeSendReportModal();closeCredentialsModal();closeScannerModal();}
 });
 
-/* ===== BARCODE SCANNER (PHONE AS SCANNER) ===== */
-var SCAN_QUEUE_KEY_SUFFIX = 'scan_queue';
-var _scannerInstance = null;
-var _scannerMode = null;
-var _phoneScanMode = false;
-var _lastScanValue = '';
-var _lastScanTime = 0;
-var _scanBannerTimer = null;
+/* ===== SIMPLIFIED BARCODE SCANNER ===== */
+var _scannerInstance=null;
+var _scannerMode=null;
+var _lastScanValue='';
+var _lastScanTime=0;
+var _SCAN_COOLDOWN=900;
+var _scanSessionCount=0;
+var _scanSessionTotal=0;
 
-function getScanQueue() {
-  if (isSuperAdmin || isMexEmployee) return [];
-  var q = getTenantData(SCAN_QUEUE_KEY_SUFFIX, []);
-  return Array.isArray(q) ? q : [];
-}
-
-function saveScanQueue(q) {
-  if (isSuperAdmin || isMexEmployee) return;
-  var trimmed = Array.isArray(q) ? q.slice(-200) : [];
-  setTenantData(SCAN_QUEUE_KEY_SUFFIX, trimmed);
-}
-
-function pushScanToQueue(barcode, source) {
-  if (!barcode) return null;
-  var q = getScanQueue();
-  var scan = {
-    id: uid(),
-    barcode: String(barcode).trim(),
-    source: source || 'phone',
-    ts: Date.now(),
-    processed: false,
-    processedAt: null
-  };
-  q.push(scan);
-  saveScanQueue(q);
-  return scan;
-}
-
-function getUnprocessedScans() {
-  return getScanQueue().filter(function(s){ return s && !s.processed; });
-}
-
-function markScanProcessed(scanId) {
-  var q = getScanQueue();
-  for (var i = 0; i < q.length; i++) {
-    if (Number(q[i].id) === Number(scanId)) {
-      q[i].processed = true;
-      q[i].processedAt = Date.now();
-      break;
-    }
-  }
-  saveScanQueue(q);
-}
-
-function findProductByBarcode(barcode) {
-  if (!barcode) return null;
-  var target = String(barcode).trim().toLowerCase();
-  var products = getTenantData('products', []);
-  if (!Array.isArray(products)) return null;
-  for (var i = 0; i < products.length; i++) {
-    if (products[i] && products[i].barcode && String(products[i].barcode).trim().toLowerCase() === target) {
-      return products[i];
-    }
+function findProductByBarcode(barcode){
+  if(!barcode)return null;
+  var target=String(barcode).trim().toLowerCase();
+  var products=getTenantData('products',[]);
+  if(!Array.isArray(products))return null;
+  for(var i=0;i<products.length;i++){
+    if(products[i]&&products[i].barcode&&String(products[i].barcode).trim().toLowerCase()===target)return products[i];
   }
   return null;
 }
 
-function openScannerModal(mode) {
-  if (isSuperAdmin || isMexEmployee) { showToast('Not allowed', 'error'); return; }
-  _scannerMode = mode || 'sale';
-  _phoneScanMode = (mode === 'phone');
-  var ov = document.getElementById('scannerModal');
-  if (!ov) return;
-  var titleEl = document.getElementById('scannerTitle');
-  if (titleEl) titleEl.textContent = _phoneScanMode ? 'Phone Scanner (Send to System)' : 'Scan Barcode';
-  ov.classList.toggle('phone-mode', _phoneScanMode);
-  var statusEl = document.getElementById('scannerStatus');
-  if (statusEl) { statusEl.textContent = ''; statusEl.className = 'promo-status'; }
-  var hintEl = document.getElementById('scannerHint');
-  if (hintEl) hintEl.innerHTML = _phoneScanMode
-    ? '<i class="fas fa-mobile-alt"></i> Scans will be sent to system on laptop in real-time'
-    : '<i class="fas fa-info-circle"></i> Point camera at barcode';
-  var manual = document.getElementById('scannerManualInput');
-  if (manual) manual.value = '';
-  ov.classList.add('show');
-  document.body.classList.add('modal-open');
-  setTimeout(startCameraScanner, 250);
+function smartOpenScanner(){
+  var activeNav=document.querySelector('.sidebar-nav .nav-item.active');
+  var view=activeNav?activeNav.dataset.view:'sales';
+  if(view==='inventory')openScannerModal('inventory');
+  else openScannerModal('sale');
 }
 
-function closeScannerModal() {
+function openScannerModal(mode){
+  if(isSuperAdmin||isMexEmployee){showToast('Not allowed','error');return;}
+  _scannerMode=mode||'sale';
+  _scanSessionCount=0;_scanSessionTotal=0;
+  var ov=document.getElementById('scannerModal');
+  if(!ov)return;
+  var titleEl=document.getElementById('scannerTitle');
+  if(titleEl)titleEl.textContent=(_scannerMode==='inventory')?'Scan to Add Product':'Scan & Sell';
+  var hintEl=document.getElementById('scannerHint');
+  if(hintEl)hintEl.innerHTML=(_scannerMode==='inventory')
+    ?'<i class="fas fa-info-circle"></i> Scan a new barcode — add form opens automatically'
+    :'<i class="fas fa-barcode"></i> Scan product — records sale instantly. Keep scanning!';
+  var statusEl=document.getElementById('scannerStatus');
+  if(statusEl){statusEl.textContent='';statusEl.className='promo-status';}
+  var manual=document.getElementById('scannerManualInput');
+  if(manual)manual.value='';
+  var stats=document.getElementById('scannerStats');
+  if(stats)stats.style.display=(_scannerMode==='sale')?'flex':'none';
+  updateScanStats();
+  ov.classList.add('show');document.body.classList.add('modal-open');
+  setTimeout(startCameraScanner,200);
+}
+
+function updateScanStats(){
+  var cEl=document.getElementById('scanSessionCount');
+  var tEl=document.getElementById('scanSessionTotal');
+  if(cEl)cEl.textContent=_scanSessionCount;
+  if(tEl)tEl.textContent=fmtMoney(_scanSessionTotal);
+}
+
+function closeScannerModal(){
   stopCameraScanner();
-  var ov = document.getElementById('scannerModal');
-  if (ov) { ov.classList.remove('show'); ov.classList.remove('phone-mode'); }
-  var so = document.querySelector('.modal-overlay.show');
-  if (!so) document.body.classList.remove('modal-open');
-  _scannerMode = null;
-  _phoneScanMode = false;
+  var ov=document.getElementById('scannerModal');
+  if(ov)ov.classList.remove('show');
+  var so=document.querySelector('.modal-overlay.show');
+  if(!so)document.body.classList.remove('modal-open');
+  _scannerMode=null;
 }
 
-function startCameraScanner() {
-  var statusEl = document.getElementById('scannerStatus');
-  if (typeof Html5Qrcode === 'undefined') {
-    if (statusEl) { statusEl.textContent = '⚠ Camera library not loaded. Use manual entry below.'; statusEl.className = 'promo-status bad'; }
+function startCameraScanner(){
+  var statusEl=document.getElementById('scannerStatus');
+  if(typeof Html5Qrcode==='undefined'){
+    if(statusEl){statusEl.textContent='⚠ Camera library not loaded. Use manual entry below.';statusEl.className='promo-status bad';}
     return;
   }
-  if (_scannerInstance) { stopCameraScanner(); }
-  var readerEl = document.getElementById('scannerReader');
-  if (!readerEl) return;
-  readerEl.innerHTML = '';
-  try {
-    _scannerInstance = new Html5Qrcode('scannerReader');
-    var config = { fps: 10, qrbox: { width: 260, height: 160 }, aspectRatio: 1.777 };
+  if(_scannerInstance)stopCameraScanner();
+  var readerEl=document.getElementById('scannerReader');
+  if(!readerEl)return;
+  readerEl.innerHTML='';
+  try{
+    _scannerInstance=new Html5Qrcode('scannerReader');
+    var config={fps:15,qrbox:{width:280,height:180},aspectRatio:1.777};
     _scannerInstance.start(
-      { facingMode: 'environment' },
+      {facingMode:'environment'},
       config,
-      function(decodedText) { onBarcodeScanned(decodedText); },
-      function() { /* ignore per-frame errors */ }
-    ).catch(function(err) {
-      if (statusEl) {
-        var msg = (err && err.message) || String(err);
-        if (msg.indexOf('NotAllowed') !== -1 || msg.indexOf('Permission') !== -1) {
-          statusEl.textContent = '⚠ Camera permission denied. Use manual entry.';
-        } else if (msg.indexOf('NotFound') !== -1) {
-          statusEl.textContent = '⚠ No camera found. Use manual entry.';
-        } else {
-          statusEl.textContent = '⚠ ' + msg + ' — use manual entry.';
-        }
-        statusEl.className = 'promo-status bad';
+      function(decodedText){onBarcodeScanned(decodedText);},
+      function(){}
+    ).catch(function(err){
+      if(statusEl){
+        var msg=(err&&err.message)||String(err);
+        if(msg.indexOf('NotAllowed')!==-1||msg.indexOf('Permission')!==-1)statusEl.textContent='⚠ Camera permission denied — use manual entry';
+        else if(msg.indexOf('NotFound')!==-1)statusEl.textContent='⚠ No camera found — use manual entry';
+        else statusEl.textContent='⚠ '+(msg.length>60?msg.slice(0,60)+'…':msg);
+        statusEl.className='promo-status bad';
       }
     });
-  } catch (e) {
-    if (statusEl) { statusEl.textContent = '⚠ ' + ((e && e.message) || 'Camera error'); statusEl.className = 'promo-status bad'; }
+  }catch(e){
+    if(statusEl){statusEl.textContent='⚠ Camera error — use manual entry';statusEl.className='promo-status bad';}
   }
 }
 
-function stopCameraScanner() {
-  if (!_scannerInstance) return;
-  var inst = _scannerInstance;
-  _scannerInstance = null;
-  try {
-    inst.stop().then(function() { try { inst.clear(); } catch(e){} }).catch(function(){ try { inst.clear(); } catch(e){} });
-  } catch (e) { try { inst.clear(); } catch(e2){} }
+function stopCameraScanner(){
+  if(!_scannerInstance)return;
+  var inst=_scannerInstance;
+  _scannerInstance=null;
+  try{
+    inst.stop().then(function(){try{inst.clear();}catch(e){}}).catch(function(){try{inst.clear();}catch(e){}});
+  }catch(e){try{inst.clear();}catch(e2){}}
 }
 
-function onBarcodeScanned(text) {
-  if (!text) return;
-  var now = Date.now();
-  if (text === _lastScanValue && (now - _lastScanTime) < 1500) return;
-  _lastScanValue = text;
-  _lastScanTime = now;
-  processBarcodeScan(text, 'camera');
+function onBarcodeScanned(text){
+  if(!text)return;
+  var now=Date.now();
+  if(text===_lastScanValue&&(now-_lastScanTime)<_SCAN_COOLDOWN)return;
+  _lastScanValue=text;
+  _lastScanTime=now;
+  processBarcodeScan(text);
 }
 
-function handleManualBarcode() {
-  var inp = document.getElementById('scannerManualInput');
-  if (!inp) return;
-  var v = inp.value.trim();
-  if (!v) { showToast('Enter barcode', 'error'); return; }
-  processBarcodeScan(v, 'manual');
-  inp.value = '';
+function handleManualBarcode(){
+  var inp=document.getElementById('scannerManualInput');
+  if(!inp)return;
+  var v=inp.value.trim();
+  if(!v){showToast('Enter barcode','error');return;}
+  processBarcodeScan(v);
+  inp.value='';
   inp.focus();
 }
 
-function processBarcodeScan(barcode, method) {
-  var statusEl = document.getElementById('scannerStatus');
-  var product = findProductByBarcode(barcode);
+function processBarcodeScan(barcode){
+  var statusEl=document.getElementById('scannerStatus');
+  var product=findProductByBarcode(barcode);
 
-  if (_phoneScanMode) {
-    pushScanToQueue(barcode, 'phone');
-    if (statusEl) {
-      statusEl.innerHTML = '✅ Sent: <strong>' + escapeHtml(barcode) + '</strong>' +
-        (product ? ' — ' + escapeHtml(product.name) : ' (product not found)');
-      statusEl.className = 'promo-status ok';
+  if(_scannerMode==='inventory'){
+    if(product){
+      if(statusEl){statusEl.innerHTML='ℹ️ Already exists: <strong>'+escapeHtml(product.name)+'</strong> — '+fmtMoney(product.price)+' (Stock: '+product.quantity+')';statusEl.className='promo-status ok';}
+      showToast('Product already exists','warning');
+      if(navigator.vibrate){try{navigator.vibrate(60);}catch(e){}}
+      return;
     }
-    showToast('📱 Scan sent to system', 'success');
-    if (navigator.vibrate) { try { navigator.vibrate(60); } catch(e){} }
+    closeScannerModal();
+    setTimeout(function(){openModal('product',{barcode:barcode});},100);
     return;
   }
 
-  if (_scannerMode === 'product' && typeof window._scannerCallback === 'function') {
-    window._scannerCallback(barcode);
-    if (statusEl) { statusEl.innerHTML = '✅ Barcode: <strong>' + escapeHtml(barcode) + '</strong>'; statusEl.className = 'promo-status ok'; }
-    setTimeout(function(){ closeScannerModal(); }, 500);
+  if(!product){
+    if(statusEl){statusEl.innerHTML='⚠ Product not found: <strong>'+escapeHtml(barcode)+'</strong>';statusEl.className='promo-status bad';}
+    showToast('⚠ Not found: '+barcode,'warning');
+    if(navigator.vibrate){try{navigator.vibrate([60,40,60]);}catch(e){}}
+    return;
+  }
+  if(Number(product.quantity)<=0){
+    if(statusEl){statusEl.innerHTML='⚠ Out of stock: <strong>'+escapeHtml(product.name)+'</strong>';statusEl.className='promo-status bad';}
+    showToast('Out of stock: '+product.name,'error');
+    if(navigator.vibrate){try{navigator.vibrate([60,40,60]);}catch(e){}}
     return;
   }
 
-  if (_scannerMode === 'sale') {
-    if (product) {
-      if (statusEl) {
-        statusEl.innerHTML = '✅ <strong>' + escapeHtml(product.name) + '</strong> — ' + fmtMoney(product.price) + ' (Stock: ' + product.quantity + ')';
-        statusEl.className = 'promo-status ok';
-      }
-      var sel = document.getElementById('saleProductSelect');
-      if (sel) {
-        var found = false;
-        for (var i = 0; i < sel.options.length; i++) {
-          if (Number(sel.options[i].value) === Number(product.id)) { sel.selectedIndex = i; found = true; break; }
-        }
-        if (found) { onSaleProductChange(); showToast('✅ Added: ' + product.name, 'success'); closeScannerModal(); return; }
-      }
-      showToast('✅ ' + product.name, 'success');
-    } else {
-      if (statusEl) { statusEl.innerHTML = '⚠ Product not found: <strong>' + escapeHtml(barcode) + '</strong>'; statusEl.className = 'promo-status bad'; }
-      showToast('⚠ Not found: ' + barcode, 'warning');
-    }
+  var ok=recordQuickSale(product);
+  if(ok){
+    _scanSessionCount++;
+    _scanSessionTotal+=Number(product.price)||0;
+    updateScanStats();
+    if(statusEl){statusEl.innerHTML='✅ Sold: <strong>'+escapeHtml(product.name)+'</strong> — '+fmtMoney(product.price);statusEl.className='promo-status ok';}
+    if(navigator.vibrate){try{navigator.vibrate(80);}catch(e){}}
+    updateLowStockBadge();
+    updateDebtsBadge();
+    setTimeout(softRefreshCurrentView,1500);
   }
 }
 
-function processIncomingScans() {
-  if (_phoneScanMode) return;
-  if (isSuperAdmin || isMexEmployee) return;
-  var scans = getUnprocessedScans();
-  if (!scans.length) return;
-  var latest = scans[scans.length - 1];
-  if (latest && latest.source === 'phone') {
-    showIncomingScanBanner(latest);
-  }
-}
-
-function showIncomingScanBanner(scan) {
-  var existing = document.getElementById('scanBanner');
-  if (existing) existing.remove();
-  if (_scanBannerTimer) { clearTimeout(_scanBannerTimer); _scanBannerTimer = null; }
-  var product = findProductByBarcode(scan.barcode);
-  var banner = document.createElement('div');
-  banner.id = 'scanBanner';
-  banner.className = 'scan-banner';
-  banner.innerHTML =
-    '<div class="scan-title"><i class="fas fa-barcode"></i> Scan Received (Phone)</div>' +
-    '<div class="scan-code">' + escapeHtml(scan.barcode) + '</div>' +
-    (product
-      ? '<div class="scan-product"><i class="fas fa-check-circle" style="color:var(--accent-4);"></i> ' + escapeHtml(product.name) + ' — ' + fmtMoney(product.price) + '</div>'
-      : '<div class="scan-product" style="color:var(--accent-danger);"><i class="fas fa-exclamation-triangle"></i> Product not found</div>') +
-    '<div class="scan-actions">' +
-      (product ? '<button class="btn btn-primary btn-sm" onclick="handleScanAction(\'' + scan.id + '\',\'' + escapeAttr(scan.barcode) + '\')"><i class="fas fa-cart-plus"></i> Add to Sale</button>' : '') +
-      '<button class="btn btn-secondary btn-sm" onclick="dismissScanBanner(\'' + scan.id + '\')">Dismiss</button>' +
-    '</div>';
-  document.body.appendChild(banner);
-  _scanBannerTimer = setTimeout(function() {
-    if (banner.parentNode) banner.remove();
-  }, 45000);
-}
-
-function dismissScanBanner(scanId) {
-  var banner = document.getElementById('scanBanner');
-  if (banner) banner.remove();
-  markScanProcessed(scanId);
-  if (_scanBannerTimer) { clearTimeout(_scanBannerTimer); _scanBannerTimer = null; }
-}
-
-function handleScanAction(scanId, barcode) {
-  var banner = document.getElementById('scanBanner');
-  if (banner) banner.remove();
-  markScanProcessed(scanId);
-  var product = findProductByBarcode(barcode);
-  if (!product) { showToast('Product not found', 'error'); return; }
-  if (product.quantity <= 0) { showToast('Out of stock', 'warning'); return; }
-  openModal('sale');
-  setTimeout(function() {
-    var sel = document.getElementById('saleProductSelect');
-    if (sel) {
-      for (var i = 0; i < sel.options.length; i++) {
-        if (Number(sel.options[i].value) === Number(product.id)) {
-          sel.selectedIndex = i;
-          onSaleProductChange();
-          break;
-        }
-      }
-    }
-  }, 150);
-}
-
-function openScannerModalForProduct() {
-  window._scannerCallback = function(barcode) {
-    var inp = document.getElementById('productBarcodeInput');
-    if (inp) inp.value = barcode;
-    showToast('✅ Barcode: ' + barcode, 'success');
-  };
-  openScannerModal('product');
-}
-
-function viewScanQueue() {
-  var q = getScanQueue().slice().sort(function(a,b){ return b.ts - a.ts; });
-  var ov = document.getElementById('modalOverlay');
-  var bx = document.getElementById('modalBox');
-  if (!ov || !bx) return;
-  bx.style.maxWidth = '560px';
-  bx.style.padding = '';
-  var rows = '';
-  for (var i = 0; i < q.length && i < 50; i++) {
-    var s = q[i];
-    var p = findProductByBarcode(s.barcode);
-    rows += '<div class="scan-queue-item ' + (s.processed ? 'processed' : '') + '">' +
-      '<i class="fas fa-barcode" style="color:var(--accent-1);"></i>' +
-      '<div style="flex:1;min-width:0;"><div class="sq-code">' + escapeHtml(s.barcode) + '</div>' +
-      '<div style="font-size:.7rem;color:var(--text-muted);">' + (p ? '✓ ' + escapeHtml(p.name) : '⚠ Not found') + (s.processed ? ' · processed' : ' · pending') + '</div></div>' +
-      '<div class="sq-time">' + fmtRelative(s.ts) + '</div></div>';
-  }
-  bx.innerHTML = '<h3><i class="fas fa-list" style="color:var(--accent-1);"></i> Scan Queue (' + q.length + ')</h3>' +
-    '<div class="scan-queue-list">' + (rows || '<div style="text-align:center;padding:30px;color:var(--text-muted);font-weight:600;">No scans yet</div>') + '</div>' +
-    '<div class="form-actions" style="margin-top:16px;justify-content:flex-end;"><button class="btn btn-secondary" onclick="closeModal()">Close</button></div>';
-  ov.classList.add('show');
-  document.body.classList.add('modal-open');
+function recordQuickSale(product){
+  if(!product)return false;
+  var ps=getTenantData('products',[]);
+  var liveProduct=null;
+  for(var i=0;i<ps.length;i++){if(Number(ps[i].id)===Number(product.id)){liveProduct=ps[i];break;}}
+  if(!liveProduct){showToast('Product removed','error');return false;}
+  if(Number(liveProduct.quantity)<=0){showToast('Out of stock','error');return false;}
+  var u=getCurrentUser();if(!u)return false;
+  var store=getCatalogStore();
+  var sales=getTenantData('sales',[]);
+  var price=Number(liveProduct.price)||0;
+  var cost=Number(liveProduct.cost)||0;
+  sales.push({
+    id:uid(),productId:liveProduct.id,quantity:1,totalPrice:price,totalCost:cost,
+    date:Date.now(),customer:'',store:store,createdBy:u.id,
+    unitPrice:price,unitCost:cost,paid:true
+  });
+  persistSales(sales);
+  liveProduct.quantity=Number(liveProduct.quantity)-1;
+  persistProducts(ps);
+  return true;
 }
 
 /* ===== BOOT ===== */
