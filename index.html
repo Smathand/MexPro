@@ -1535,6 +1535,9 @@ views.debts=function(){
   return '<div class="section-header"><h2><i class="fas fa-hand-holding-usd" style="color:var(--accent-danger);"></i> Debts</h2><div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn btn-whatsapp btn-icon" onclick="openSendReportModal(\'debts\')"><i class="fab fa-whatsapp"></i> Send Report</button></div></div><div class="stats-grid"><div class="stat-card"><div class="stat-label">Total Debts</div><div class="stat-value red">'+fmtMoney(total)+'</div></div><div class="stat-card"><div class="stat-label">Debtors</div><div class="stat-value primary">'+d.length+'</div></div></div><div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>Customer</th><th>Product</th><th>Qty</th><th>Amount</th><th>Date</th><th></th></tr></thead><tbody>'+(rows||'<tr class="empty-row"><td colspan="7">No debts</td></tr>')+'</tbody></table></div></div></div>';
 };
 
+/* =====================================================
+   ===== UPDATED: views.inventory with Edit + Add Barcode =====
+   ===================================================== */
 views.inventory=function(){
   if(isSuperAdmin||isMexEmployee)return '';
   var p=getFilteredProducts().slice().sort(function(a,b){return (a.name||'').localeCompare(b.name||'');});
@@ -1543,7 +1546,31 @@ views.inventory=function(){
   for(var i=0;i<cats.length;i++){cb+='<span class="inv-cat-chip">'+escapeHtml(cats[i].name)+(ce?'<button type="button" onclick="deleteInventoryCategory(\''+cats[i].id+'\')">×</button>':'')+'</span>';}
   if(ce)cb+='<button class="btn btn-secondary btn-xs" onclick="promptAddCategory()">+ Add</button>';cb+='</div>';
   var rows='';
-  for(var j=0;j<p.length;j++){var x=p[j];var dot='<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:'+(x.quantity<=0?'var(--accent-danger)':x.quantity<=LOW_STOCK_THRESHOLD?'var(--accent-3)':'var(--accent-4)')+';"></span>';rows+='<tr><td>'+(x.image?'<img class="inv-thumb" src="'+x.image+'" alt="" loading="lazy" decoding="async"/>':'<div class="inv-thumb-empty"><i class="fas fa-box"></i></div>')+'</td><td><strong>'+escapeHtml(x.name)+'</strong>'+(x.barcode?'<div style="font-size:.68rem;color:var(--text-muted);font-family:monospace;margin-top:2px;"><i class="fas fa-barcode"></i> '+escapeHtml(x.barcode)+'</div>':'')+'</td><td><span class="badge badge-info" style="font-size:.68rem;">'+escapeHtml(x.store||'--')+'</span></td><td>'+escapeHtml(x.category||'General')+'</td><td>'+fmtMoney(x.price)+'</td><td>'+fmtMoney(x.cost)+'</td><td><strong>'+x.quantity+'</strong></td><td>'+dot+'</td><td>'+(ce?'<button class="btn btn-success btn-xs" onclick="adjustStock(\''+x.id+'\')">+</button> <button class="btn btn-danger btn-xs" onclick="deleteProduct(\''+x.id+'\')">×</button>':'—')+'</td></tr>';}
+  for(var j=0;j<p.length;j++){
+    var x=p[j];
+    var dot='<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:'+(x.quantity<=0?'var(--accent-danger)':x.quantity<=LOW_STOCK_THRESHOLD?'var(--accent-3)':'var(--accent-4)')+';"></span>';
+    var barcodeHtml = x.barcode
+      ? '<div style="font-size:.68rem;color:var(--text-muted);font-family:monospace;margin-top:2px;"><i class="fas fa-barcode"></i> '+escapeHtml(x.barcode)+'</div>'
+      : (ce
+          ? '<div style="font-size:.68rem;color:var(--accent-3);font-weight:700;margin-top:3px;cursor:pointer;" onclick="quickAddBarcode(\''+x.id+'\')"><i class="fas fa-plus-circle"></i> Add Barcode</div>'
+          : '<div style="font-size:.68rem;color:var(--text-muted);margin-top:2px;">—</div>');
+    var actionsHtml = ce
+      ? '<button class="btn btn-primary btn-xs" onclick="openEditProductModal(\''+x.id+'\')" title="Edit"><i class="fas fa-edit"></i></button> '
+        +'<button class="btn btn-success btn-xs" onclick="adjustStock(\''+x.id+'\')" title="Adjust Stock">+</button> '
+        +'<button class="btn btn-danger btn-xs" onclick="deleteProduct(\''+x.id+'\')" title="Delete">×</button>'
+      : '—';
+    rows+='<tr>'
+      +'<td>'+(x.image?'<img class="inv-thumb" src="'+x.image+'" alt="" loading="lazy" decoding="async"/>':'<div class="inv-thumb-empty"><i class="fas fa-box"></i></div>')+'</td>'
+      +'<td><strong>'+escapeHtml(x.name)+'</strong>'+barcodeHtml+'</td>'
+      +'<td><span class="badge badge-info" style="font-size:.68rem;">'+escapeHtml(x.store||'--')+'</span></td>'
+      +'<td>'+escapeHtml(x.category||'General')+'</td>'
+      +'<td>'+fmtMoney(x.price)+'</td>'
+      +'<td>'+fmtMoney(x.cost)+'</td>'
+      +'<td><strong>'+x.quantity+'</strong></td>'
+      +'<td>'+dot+'</td>'
+      +'<td>'+actionsHtml+'</td>'
+      +'</tr>';
+  }
   var ha='<div style="display:flex;gap:8px;flex-wrap:wrap;">';
   if(ce)ha+='<button class="btn btn-icon" onclick="openScannerModal(\'inventory\')" style="background:#8b5cf6!important;color:#fff!important;padding:12px 22px;font-size:.95rem;font-weight:700;"><i class="fas fa-barcode"></i> Scan to Add</button>';
   if(canT)ha+='<button class="btn btn-primary btn-icon" onclick="openTransferModal()" style="background:#0ea5e9!important;"><i class="fas fa-exchange-alt"></i> Transfer</button>';
@@ -1710,6 +1737,169 @@ function closeModal(){var ov=document.getElementById('modalOverlay');var bx=docu
 function onSaleProductChange(){var sel=document.getElementById('saleProductSelect');var pi=document.getElementById('saleUnitPriceInput');if(!sel||!pi)return;var o=sel.options[sel.selectedIndex];if(!o||!sel.value){pi.value='';return;}pi.value=parseFloat(o.dataset.price)||0;}
 function submitSale(e){e.preventDefault();if(!hasPerm('sales_create'))return;var fd=new FormData(e.target);var pid=parseInt(fd.get('productId'));var q=parseInt(fd.get('quantity'));var c=(fd.get('customer')||'').trim();var st=(fd.get('store')||'').trim()||getCatalogStore();var isPaid=fd.get('paid')==='on';if(!pid||!q||q<1)return;if(!isPaid&&!c){showToast('Customer required for debt','error');return;}var ps=getTenantData('products',[]);var p=null;for(var i=0;i<ps.length;i++){if(ps[i].id===pid){p=ps[i];break;}}if(!p||p.quantity<q)return;var up=parseFloat(fd.get('unitPrice'))||Number(p.price);var tp=up*q;var tc=(Number(p.cost)||0)*q;var u=getCurrentUser();var sales=getTenantData('sales',[]);sales.push({id:uid(),productId:pid,quantity:q,totalPrice:tp,totalCost:tc,date:Date.now(),customer:c,store:st,createdBy:u.id,unitPrice:up,unitCost:Number(p.cost)||0,paid:isPaid});persistSales(sales);p.quantity-=q;persistProducts(ps);closeModal();if(isPaid){showToast('✓ Sale recorded','success');navigate('sales');}else{showToast('📝 Debt recorded','warning');navigate('debts');}updateDebtsBadge();}
 function submitProduct(e){e.preventDefault();if(!hasPerm('inventory_manage'))return;var fd=new FormData(e.target);var n=(fd.get('name')||'').trim();var bc=(fd.get('barcode')||'').trim();var pr=parseFloat(fd.get('price'));var co=parseFloat(fd.get('cost'));var q=parseInt(fd.get('quantity'))||0;var cat=(fd.get('category')||'').trim()||'General';var st=(fd.get('store')||'').trim()||getCatalogStore();if(!n||!pr||!co)return;var ps=getTenantData('products',[]);if(bc){var tbc=bc.toLowerCase();for(var ck=0;ck<ps.length;ck++){if(ps[ck].barcode&&String(ps[ck].barcode).toLowerCase()===tbc){showToast('⚠ Barcode already exists: '+ps[ck].name,'error');return;}}}ps.push({id:uid(),name:n,barcode:bc,price:pr,cost:co,category:cat,quantity:q,store:st,image:''});persistProducts(ps);closeModal();showToast('✅ Product added: '+n,'success');navigate('inventory');}
+
+/* ===== NEW: Edit Product & Barcode functions ===== */
+function openEditProductModal(id){
+  if(!hasPerm('inventory_manage'))return;
+  var ps=getTenantData('products',[]);
+  var p=null;
+  for(var i=0;i<ps.length;i++){if(Number(ps[i].id)===Number(id)){p=ps[i];break;}}
+  if(!p){showToast('Product not found','error');return;}
+  var cats=ensureCategories();
+  var catOpts='';
+  var catFound=false;
+  for(var k=0;k<cats.length;k++){
+    var sel=(cats[k].name===p.category)?' selected':'';
+    if(cats[k].name===p.category)catFound=true;
+    catOpts+='<option value="'+escapeAttr(cats[k].name)+'"'+sel+'>'+escapeHtml(cats[k].name)+'</option>';
+  }
+  if(!catFound&&p.category){catOpts+='<option value="'+escapeAttr(p.category)+'" selected>'+escapeHtml(p.category)+'</option>';}
+  var ov=document.getElementById('modalOverlay');
+  var bx=document.getElementById('modalBox');
+  bx.style.padding='';bx.style.overflow='';bx.style.borderRadius='';bx.style.maxWidth='';
+  bx.innerHTML='<h3><i class="fas fa-edit" style="color:var(--accent-1);"></i> Edit Product</h3>'
+    +'<form onsubmit="submitEditProduct(event,\''+p.id+'\')">'
+    +'<div class="form-group"><label>Name *</label><input type="text" name="name" required value="'+escapeAttr(p.name)+'"/></div>'
+    +'<div class="form-group"><label><i class="fas fa-barcode"></i> Barcode</label>'
+    +'<div style="display:flex;gap:8px;">'
+    +'<input type="text" name="barcode" id="editProductBarcodeInput" value="'+escapeAttr(p.barcode||'')+'" placeholder="Scan or type barcode" style="flex:1;"/>'
+    +'<button type="button" class="btn btn-secondary btn-sm" onclick="scanBarcodeForEdit(\''+p.id+'\')" style="white-space:nowrap;" title="Scan barcode"><i class="fas fa-camera"></i> Scan</button>'
+    +'</div>'
+    +'<div class="promo-status" id="editBarcodeStatus" style="margin-top:4px;"></div>'
+    +'</div>'
+    +'<div class="form-row">'
+    +'<div class="form-group"><label>Price *</label><input type="number" name="price" min="1" step="any" required value="'+escapeAttr(p.price)+'"/></div>'
+    +'<div class="form-group"><label>Cost *</label><input type="number" name="cost" min="1" step="any" required value="'+escapeAttr(p.cost)+'"/></div>'
+    +'</div>'
+    +'<div class="form-row">'
+    +'<div class="form-group"><label>Category</label><select name="category">'+catOpts+'</select></div>'
+    +'<div class="form-group"><label>Quantity</label><input type="number" name="quantity" min="0" value="'+escapeAttr(p.quantity)+'"/></div>'
+    +'</div>'
+    +'<div style="background:var(--input-bg);border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:.78rem;color:var(--text-muted);"><i class="fas fa-info-circle"></i> Branch: <strong>'+escapeHtml(p.store||'--')+'</strong> (cannot be changed here — use Transfer)</div>'
+    +'<div class="form-actions">'
+    +'<button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>'
+    +'<button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Changes</button>'
+    +'</div>'
+    +'</form>';
+  ov.classList.add('show');
+  document.body.classList.add('modal-open');
+}
+
+function submitEditProduct(e, productId){
+  e.preventDefault();
+  if(!hasPerm('inventory_manage'))return;
+  var fd=new FormData(e.target);
+  var n=(fd.get('name')||'').trim();
+  var bc=(fd.get('barcode')||'').trim();
+  var pr=parseFloat(fd.get('price'));
+  var co=parseFloat(fd.get('cost'));
+  var q=parseInt(fd.get('quantity'));
+  var cat=(fd.get('category')||'').trim()||'General';
+  if(!n||!pr||!co||isNaN(q)||q<0){showToast('Fill all fields correctly','error');return;}
+  var ps=getTenantData('products',[]);
+  if(bc){
+    var tbc=bc.toLowerCase();
+    for(var ck=0;ck<ps.length;ck++){
+      if(Number(ps[ck].id)!==Number(productId) && ps[ck].barcode && String(ps[ck].barcode).toLowerCase()===tbc){
+        showToast('⚠ Barcode already used by: '+ps[ck].name,'error');
+        return;
+      }
+    }
+  }
+  var updated=false;
+  for(var i=0;i<ps.length;i++){
+    if(Number(ps[i].id)===Number(productId)){
+      ps[i].name=n;
+      ps[i].barcode=bc;
+      ps[i].price=pr;
+      ps[i].cost=co;
+      ps[i].quantity=q;
+      ps[i].category=cat;
+      updated=true;
+      break;
+    }
+  }
+  if(!updated){showToast('Product not found','error');return;}
+  persistProducts(ps);
+  closeModal();
+  showToast('✅ Product updated','success');
+  navigate('inventory');
+}
+
+function scanBarcodeForEdit(productId, quickMode){
+  _editBarcodeTargetId = productId;
+  _editBarcodeQuickMode = !!quickMode;
+  _pendingBarcodeValue = null;
+  openScannerModal('edit_barcode');
+}
+
+function quickAddBarcode(productId){
+  if(!hasPerm('inventory_manage')){showToast('Permission denied','error');return;}
+  var ps=getTenantData('products',[]);
+  var p=null;
+  for(var i=0;i<ps.length;i++){if(Number(ps[i].id)===Number(productId)){p=ps[i];break;}}
+  if(!p){showToast('Product not found','error');return;}
+  _quickBarcodeTargetId=productId;
+  var ov=document.getElementById('modalOverlay');
+  var bx=document.getElementById('modalBox');
+  bx.style.padding='';bx.style.overflow='';bx.style.borderRadius='';bx.style.maxWidth='440px';
+  bx.innerHTML=
+     '<h3><i class="fas fa-barcode" style="color:var(--accent-1);"></i> Add Barcode</h3>'
+    +'<div style="background:var(--input-bg);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:.85rem;">'
+    +'<strong>'+escapeHtml(p.name)+'</strong>'
+    +'<div style="color:var(--text-muted);margin-top:4px;font-size:.78rem;"><i class="fas fa-store"></i> '+escapeHtml(p.store||'--')+' · '+fmtMoney(p.price)+'</div>'
+    +'</div>'
+    +'<form onsubmit="submitQuickBarcode(event,\''+p.id+'\')">'
+    +'<div class="form-group"><label><i class="fas fa-barcode"></i> Barcode *</label>'
+    +'<div style="display:flex;gap:8px;">'
+    +'<input type="text" name="barcode" id="quickBarcodeInput" placeholder="Scan or type barcode" required autofocus style="flex:1;"/>'
+    +'<button type="button" class="btn btn-secondary btn-sm" onclick="scanBarcodeForQuickAdd(\''+p.id+'\')" style="white-space:nowrap;"><i class="fas fa-camera"></i> Scan</button>'
+    +'</div>'
+    +'<div class="promo-status" id="quickBarcodeStatus" style="margin-top:6px;"></div>'
+    +'</div>'
+    +'<div class="form-actions">'
+    +'<button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>'
+    +'<button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Barcode</button>'
+    +'</div>'
+    +'</form>';
+  ov.classList.add('show');
+  document.body.classList.add('modal-open');
+  setTimeout(function(){var i=document.getElementById('quickBarcodeInput');if(i)i.focus();},200);
+}
+
+function submitQuickBarcode(e, productId){
+  e.preventDefault();
+  if(!hasPerm('inventory_manage'))return;
+  var fd=new FormData(e.target);
+  var bc=(fd.get('barcode')||'').trim();
+  if(!bc){showToast('Enter barcode','error');return;}
+  var ps=getTenantData('products',[]);
+  var tbc=bc.toLowerCase();
+  for(var i=0;i<ps.length;i++){
+    if(Number(ps[i].id)!==Number(productId) && ps[i].barcode && String(ps[i].barcode).toLowerCase()===tbc){
+      showToast('⚠ Barcode already used by: '+ps[i].name,'error');
+      return;
+    }
+  }
+  for(var j=0;j<ps.length;j++){
+    if(Number(ps[j].id)===Number(productId)){ps[j].barcode=bc;break;}
+  }
+  persistProducts(ps);
+  _quickBarcodeTargetId=null;
+  _pendingBarcodeValue=null;
+  closeModal();
+  showToast('✅ Barcode added','success');
+  navigate('inventory');
+}
+
+function scanBarcodeForQuickAdd(productId){
+  _quickBarcodeTargetId=productId;
+  _editBarcodeTargetId=productId;
+  _editBarcodeQuickMode=true;
+  _pendingBarcodeValue=null;
+  openScannerModal('edit_barcode');
+}
+
 function submitExpense(e){e.preventDefault();if(!hasPerm('expenses_manage'))return;var fd=new FormData(e.target);var d=(fd.get('description')||'').trim();var a=parseFloat(fd.get('amount'));var c=fd.get('category')||'Other';var st=(fd.get('store')||'').trim()||getCatalogStore();if(!d||!a||a<1)return;var u=getCurrentUser();var ex=getTenantData('expenses',[]);ex.push({id:uid(),description:d,amount:a,category:c,date:Date.now(),store:st,createdBy:u.id});persistExpenses(ex);closeModal();navigate('expenses');}
 function submitUser(e){e.preventDefault();if(!canManageUsers())return;var fd=new FormData(e.target);var un=(fd.get('username')||'').trim();var pw=fd.get('password');var role=fd.get('role');var fn=(fd.get('fullName')||'').trim()||un;var st=(fd.get('store')||'').trim()||getStoreName();if(!un||!pw||!role)return;var us=getTenantData('users',[]);if(isUsernameTaken(un)){showToast('Username taken','error');return;}var u=getCurrentUser();var newUser={id:uid(),username:un,password:hashPw(un,pw),plainPassword:pw,role:role,store:st,fullName:fn,createdBy:u.id,photoKey:'',tenantId:currentTenantId,theme:'light'};us.push(newUser);setTenantData('users',us);markOwnWrite();scheduleProfilePush({userKey:'t_'+currentTenantId+'_'+newUser.id,userType:'tenant',tenantId:currentTenantId,userId:newUser.id,username:un,fullName:fn,photoKey:null,bio:'',phone:'',email:'',socialWhatsapp:'',socialInstagram:'',socialFacebook:'',socialTiktok:'',socialWebsite:'',theme:'light'});closeModal();navigate('users');}
 function submitStockAdjust(e,pid){e.preventDefault();if(!hasPerm('inventory_manage'))return;var fd=new FormData(e.target);var adj=parseInt(fd.get('adjust'));if(isNaN(adj)||adj===0)return;var ps=getTenantData('products',[]);for(var i=0;i<ps.length;i++){if(ps[i].id===parseInt(pid)){ps[i].quantity=Math.max(0,ps[i].quantity+adj);break;}}persistProducts(ps);closeModal();navigate('inventory');}
@@ -1749,7 +1939,6 @@ function superBlockTenant(id){if(!isSuperAdmin)return;if(!confirm('Block?'))retu
 function superUnblockTenant(id){if(!isSuperAdmin)return;var ts=getAllTenants();for(var i=0;i<ts.length;i++){if(ts[i].id===id){ts[i].blocked=false;break;}}saveTenants(ts);navigate('superadmin');}
 function superDeleteTenant(id){if(!isSuperAdmin)return;var ts=getAllTenants();var tn=null;for(var i=0;i<ts.length;i++){if(ts[i].id===id){tn=ts[i];break;}}if(!tn)return;if(!confirm('Delete "'+tn.companyName+'"?'))return;var ads=getGlobalAds();for(var j=0;j<ads.length;j++)if(ads[j].tenantId===id)deleteGlobalAd(ads[j].id);var keys=[];for(var k=0;k<localStorage.length;k++){var key=localStorage.key(k);if(key.indexOf('sb_tenant_'+id+'_')===0)keys.push(key);}for(var m=0;m<keys.length;m++)localStorage.removeItem(keys[m]);var filtered=[];for(var n=0;n<ts.length;n++)if(ts[n].id!==id)filtered.push(ts[n]);saveTenants(filtered);navigate('superadmin');}
 
-/* ===== SUPER ADMIN: RENEW SUBSCRIPTION ===== */
 function openRenewSubscriptionModal(tenantId){
   if(!isSuperAdmin)return;
   var tn=getTenant(tenantId);
@@ -1812,7 +2001,6 @@ function superRenewSubscription(tenantId,planKey){
   navigate('superadmin');
 }
 
-/* ===== SUPER ADMIN: VIEW / RESET PASSWORDS ===== */
 function openTenantCredentials(tenantId){
   if(!isSuperAdmin)return;
   var tn=getTenant(tenantId);
@@ -2046,6 +2234,11 @@ var _scanLocked=false;
 var _scanSessionCount=0;
 var _scanSessionTotal=0;
 var _audioCtx=null;
+/* ===== Edit Product / Barcode globals ===== */
+var _editBarcodeTargetId=null;
+var _editBarcodeQuickMode=false;
+var _pendingBarcodeValue=null;
+var _quickBarcodeTargetId=null;
 
 function playBeep(freq,duration,type){
   try{
@@ -2094,16 +2287,22 @@ function openScannerModal(mode){
   var ov=document.getElementById('scannerModal');
   if(!ov)return;
   var titleEl=document.getElementById('scannerTitle');
-  if(titleEl)titleEl.textContent=(_scannerMode==='inventory')?'Scan to Add Product':'Scan & Sell';
   var hintEl=document.getElementById('scannerHint');
-  if(hintEl)hintEl.innerHTML=(_scannerMode==='inventory')
-    ?'<i class="fas fa-info-circle"></i> Scan a new barcode — add form opens automatically'
-    :'<i class="fas fa-barcode"></i> Scan one item. Click "Scan Next" for next item';
+  var stats=document.getElementById('scannerStats');
+  if(titleEl){
+    if(_scannerMode==='inventory') titleEl.textContent='Scan to Add Product';
+    else if(_scannerMode==='edit_barcode') titleEl.textContent='Scan Barcode for Edit';
+    else titleEl.textContent='Scan & Sell';
+  }
+  if(hintEl){
+    if(_scannerMode==='inventory') hintEl.innerHTML='<i class="fas fa-info-circle"></i> Scan a new barcode — add form opens automatically';
+    else if(_scannerMode==='edit_barcode') hintEl.innerHTML='<i class="fas fa-barcode"></i> Scan barcode to fill into edit form';
+    else hintEl.innerHTML='<i class="fas fa-barcode"></i> Scan one item. Click "Scan Next" for next item';
+  }
   var statusEl=document.getElementById('scannerStatus');
   if(statusEl){statusEl.textContent='';statusEl.className='promo-status';}
   var manual=document.getElementById('scannerManualInput');
   if(manual)manual.value='';
-  var stats=document.getElementById('scannerStats');
   if(stats)stats.style.display=(_scannerMode==='sale')?'flex':'none';
   var nextBtn=document.getElementById('scanNextBtn');
   if(nextBtn)nextBtn.style.display='none';
@@ -2127,8 +2326,49 @@ function closeScannerModal(){
   if(ov)ov.classList.remove('show');
   var so=document.querySelector('.modal-overlay.show');
   if(!so)document.body.classList.remove('modal-open');
+
+  var wasEditMode = (_scannerMode==='edit_barcode' && _editBarcodeTargetId);
+  var wasQuick = _editBarcodeQuickMode;
+  var pendingVal = _pendingBarcodeValue;
+  var targetId = _editBarcodeTargetId;
+
   _scannerMode=null;
   _scanLocked=false;
+  _pendingBarcodeValue=null;
+
+  if(wasEditMode){
+    setTimeout(function(){
+      if(wasQuick){
+        quickAddBarcode(targetId);
+        setTimeout(function(){
+          var inp=document.getElementById('quickBarcodeInput');
+          var st=document.getElementById('quickBarcodeStatus');
+          if(inp && pendingVal){
+            inp.value=pendingVal;
+            inp.style.background='rgba(16,185,129,.12)';
+            inp.style.borderColor='var(--accent-4)';
+            setTimeout(function(){inp.style.background='';inp.style.borderColor='';},1500);
+          }
+          if(st && pendingVal){st.innerHTML='✅ Barcode imewekwa — bonyeza Save Barcode';st.className='promo-status ok';}
+        },250);
+      } else {
+        openEditProductModal(targetId);
+        setTimeout(function(){
+          var inp=document.getElementById('editProductBarcodeInput');
+          var st=document.getElementById('editBarcodeStatus');
+          if(inp && pendingVal){
+            inp.value=pendingVal;
+            inp.style.background='rgba(16,185,129,.12)';
+            inp.style.borderColor='var(--accent-4)';
+            setTimeout(function(){inp.style.background='';inp.style.borderColor='';},1500);
+          }
+          if(st && pendingVal){st.innerHTML='✅ Barcode imewekwa — bonyeza Save Changes';st.className='promo-status ok';}
+        },250);
+      }
+      _editBarcodeTargetId=null;
+      _editBarcodeQuickMode=false;
+    },100);
+  }
 }
 
 function startCameraScanner(){
@@ -2221,10 +2461,27 @@ function processBarcodeScan(barcode){
   var statusEl=document.getElementById('scannerStatus');
   var product=findProductByBarcode(barcode);
 
+  /* ===== EDIT BARCODE MODE ===== */
+  if(_scannerMode==='edit_barcode'){
+    if(product && Number(product.id)!==Number(_editBarcodeTargetId)){
+      playErrorBeep();
+      if(statusEl){statusEl.innerHTML='⚠ Barcode inatumika na: <strong>'+escapeHtml(product.name)+'</strong>';statusEl.className='promo-status bad';}
+      showToast('Barcode already used','warning');
+      stopCameraScanner();
+      showScanNextButton();
+      return;
+    }
+    playSuccessBeep();
+    _pendingBarcodeValue = barcode;
+    closeScannerModal();
+    return;
+  }
+
+  /* ===== INVENTORY MODE ===== */
   if(_scannerMode==='inventory'){
     if(product){
       playErrorBeep();
-      if(statusEl){statusEl.innerHTML='ℹ️ Already exists: <strong>'+escapeHtml(product.name)+'</strong> — '+fmtMoney(product.price)+' (Stock: '+product.quantity+')';statusEl.className='promo-status ok';}
+      if(statusEl){statusEl.innerHTML='ℹ️ Already exists: <strong>'+escapeHtml(product.name)+'</strong> — '+fmtMoney(product.price)+' (Stock: '+product.quantity+') <button class="btn btn-primary btn-xs" style="margin-left:8px;" onclick="closeScannerModal();setTimeout(function(){openEditProductModal(\''+product.id+'\');},200);"><i class="fas fa-edit"></i> Edit</button>';statusEl.className='promo-status ok';}
       showToast('Product already exists','warning');
       stopCameraScanner();
       showScanNextButton();
@@ -2236,6 +2493,7 @@ function processBarcodeScan(barcode){
     return;
   }
 
+  /* ===== SALE MODE ===== */
   if(!product){
     playErrorBeep();
     if(statusEl){statusEl.innerHTML='⚠ Product not found: <strong>'+escapeHtml(barcode)+'</strong>';statusEl.className='promo-status bad';}
@@ -2252,7 +2510,6 @@ function processBarcodeScan(barcode){
     showScanNextButton();
     return;
   }
-
   var ok=recordQuickSale(product);
   if(ok){
     playSuccessBeep();
@@ -2328,6 +2585,5 @@ window.__bootMain=function boot(){
 };
 (function tryAutoBoot(){setTimeout(function(){if(typeof window.__bootMain === 'function' && !window.__bootCalled){window.__bootCalled = true;try{ window.__bootMain(); }catch(e){ console.error('[AutoBoot] Error:', e); }}}, 300);})();
 </script>
-<script src="mex-optimize.js"></script>
 </body>
 </html>
