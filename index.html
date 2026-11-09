@@ -679,6 +679,23 @@ body.dark .chat-modal .modal-box .chat-messages{background-color:#0b141a}
   </div>
 </div>
 
+<!-- NEW: Scan Quantity Modal -->
+<div class="modal-overlay" id="scanQtyModal">
+  <div class="modal-box" style="max-width:420px;">
+    <h3><i class="fas fa-cart-plus" style="color:var(--accent-1);"></i> Scan &amp; Sell</h3>
+    <div id="scanQtyProductInfo"></div>
+    <div class="form-group">
+      <label><i class="fas fa-hashtag"></i> Quantity *</label>
+      <input type="number" id="scanQtyInput" min="1" value="1" style="font-size:1.5rem;font-weight:800;text-align:center;"/>
+      <div class="text-muted text-sm" id="scanQtyHint" style="margin-top:6px;text-align:center;"></div>
+    </div>
+    <div class="form-actions" style="justify-content:space-between;">
+      <button type="button" class="btn btn-secondary" onclick="cancelScanQty()">Cancel</button>
+      <button type="button" class="btn btn-primary" onclick="confirmScanQty()" style="min-width:120px;"><i class="fas fa-check"></i> Sell</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast-container" id="toastContainer"></div>
 <script>
 'use strict';
@@ -720,7 +737,6 @@ var PROMOTE_OPTIONS=[
   {key:'3d',label:'3 Days',days:3,price:5000},{key:'7d',label:'7 Days',days:7,price:10000},{key:'30d',label:'30 Days',days:30,price:35000}
 ];
 
-/* No limits — unlimited storage */
 var STORAGE_LIMITS={sales:Infinity,punchHistory:Infinity,expenses:Infinity,statuses:Infinity,transfers:Infinity,branch_payments:Infinity,member_earnings:Infinity,categories:Infinity,expense_categories:Infinity,products:Infinity};
 var LARGE_DATA_KEYS=['sales','products','expenses','punchHistory','transfers','statuses'];
 
@@ -797,7 +813,6 @@ async function preloadLargeDataFromIDB(){
   }
 }
 
-/* PAGINATED LOAD — fetches ALL rows regardless of Supabase row limit */
 async function loadLargeDataFromSupabase(){
   if(!supabaseClient||!currentTenantId)return;
   if(_largeDataLoading)return;
@@ -1208,7 +1223,7 @@ function encArg(s){return encodeURIComponent(String(s==null?'':s)).replace(/'/g,
 function safeDecode(s){try{return decodeURIComponent(String(s));}catch(e){return String(s);}}
 
 /* ===== INDEXEDDB ===== */
-var DB_NAME='mex_pro_db_v17';var DB_VERSION=1;
+var DB_NAME='mex_pro_db_v18';var DB_VERSION=1;
 var STORES={media:'media',json:'json'};
 var _dbPromise=null;var _mediaUrlCache={};
 function openDB(){if(_dbPromise)return _dbPromise;_dbPromise=new Promise(function(resolve,reject){if(!window.indexedDB){reject(new Error('No IDB'));return;}var req=indexedDB.open(DB_NAME,DB_VERSION);req.onupgradeneeded=function(){var db=req.result;if(!db.objectStoreNames.contains(STORES.media))db.createObjectStore(STORES.media);if(!db.objectStoreNames.contains(STORES.json))db.createObjectStore(STORES.json);};req.onsuccess=function(){resolve(req.result);};req.onerror=function(){reject(req.error);};});return _dbPromise;}
@@ -1605,14 +1620,7 @@ views.dashboard=function(){
   var sales=getFilteredSales();var expenses=getFilteredExpenses();var pnl=calculatePnL();
   var tot=0,sv=0;for(var j=0;j<op.length;j++){tot+=Number(op[j].quantity)||0;sv+=(Number(op[j].cost)||0)*(Number(op[j].quantity)||0);}
   var dayLabels=[];var daySales=[];
-  for(var k=6;k>=0;k--){
-    var d=new Date(Date.now()-k*86400000);
-    dayLabels.push(d.toLocaleDateString('en-TZ',{timeZone:'Africa/Dar_es_Salaam',weekday:'short'}));
-    var s0=getDayStart(-k).getTime();var e0=getDayEnd(-k).getTime();
-    var ds=0;
-    for(var m=0;m<sales.length;m++){if(sales[m].date>=s0&&sales[m].date<=e0)ds+=sales[m].totalPrice||0;}
-    daySales.push(ds);
-  }
+  for(var k=6;k>=0;k--){var d=new Date(Date.now()-k*86400000);dayLabels.push(d.toLocaleDateString('en-TZ',{timeZone:'Africa/Dar_es_Salaam',weekday:'short'}));var s0=getDayStart(-k).getTime();var e0=getDayEnd(-k).getTime();var ds=0;for(var m=0;m<sales.length;m++){if(sales[m].date>=s0&&sales[m].date<=e0)ds+=sales[m].totalPrice||0;}daySales.push(ds);}
   var expCat={};for(var n=0;n<expenses.length;n++){var cat=expenses[n].category||'Other';expCat[cat]=(expCat[cat]||0)+(expenses[n].amount||0);}
   var expLabels=Object.keys(expCat);var expValues=[];for(var p=0;p<expLabels.length;p++)expValues.push(expCat[expLabels[p]]);
   var bgColors=['#128C7E','#0e6b5f','#1a9b8c','#2aab9c','#3abbac','#f59e0b'];
@@ -1652,11 +1660,7 @@ function renderDashboardCharts(dayLabels,daySales,expLabels,expValues,bgColors,p
 function buildSalesRowsHtml(){
   var allSales=getFilteredSales().slice().reverse();
   var s=allSales;
-  if(salesSearchTerm&&salesSearchTerm.trim()){
-    var q=salesSearchTerm.trim().toLowerCase();var filtered=[];
-    for(var k=0;k<allSales.length;k++){var xs=allSales[k];var ps=getProduct(xs.productId);var pn=ps?String(ps.name).toLowerCase():'';var cn=String(xs.customer||'').toLowerCase();if(pn.indexOf(q)!==-1||cn.indexOf(q)!==-1)filtered.push(xs);}
-    s=filtered;
-  }
+  if(salesSearchTerm&&salesSearchTerm.trim()){var q=salesSearchTerm.trim().toLowerCase();var filtered=[];for(var k=0;k<allSales.length;k++){var xs=allSales[k];var ps=getProduct(xs.productId);var pn=ps?String(ps.name).toLowerCase():'';var cn=String(xs.customer||'').toLowerCase();if(pn.indexOf(q)!==-1||cn.indexOf(q)!==-1)filtered.push(xs);}s=filtered;}
   var paged=getPagedItems(s,'sales');
   var canDel=canDeleteSales();
   var rows='';
@@ -1696,11 +1700,7 @@ function buildInventoryRowsHtml(){
   if(isSuperAdmin||isMexEmployee)return '';
   var p=getFilteredProducts().slice().sort(function(a,b){return (a.name||'').localeCompare(b.name||'');});
   var ce=hasPerm('inventory_manage');
-  if(inventorySearchTerm&&inventorySearchTerm.trim()){
-    var q=inventorySearchTerm.trim().toLowerCase();var filtered=[];
-    for(var f=0;f<p.length;f++){var xp=p[f];if(String(xp.name||'').toLowerCase().indexOf(q)!==-1||String(xp.barcode||'').toLowerCase().indexOf(q)!==-1||String(xp.category||'').toLowerCase().indexOf(q)!==-1||String(xp.store||'').toLowerCase().indexOf(q)!==-1)filtered.push(xp);}
-    p=filtered;
-  }
+  if(inventorySearchTerm&&inventorySearchTerm.trim()){var q=inventorySearchTerm.trim().toLowerCase();var filtered=[];for(var f=0;f<p.length;f++){var xp=p[f];if(String(xp.name||'').toLowerCase().indexOf(q)!==-1||String(xp.barcode||'').toLowerCase().indexOf(q)!==-1||String(xp.category||'').toLowerCase().indexOf(q)!==-1||String(xp.store||'').toLowerCase().indexOf(q)!==-1)filtered.push(xp);}p=filtered;}
   var paged=getPagedItems(p,'inventory');
   var rows='';
   for(var j=0;j<paged.items.length;j++){
@@ -1791,7 +1791,7 @@ views.branches=function(){
     var bp=b.permissions||getDefaultBranchPermissions();var allowCount=0,totalCount=0;
     for(var pk in bp){totalCount++;if(bp[pk]===true)allowCount++;}
     var permBadge='<span class="badge badge-info" style="font-size:.7rem;">'+allowCount+'/'+totalCount+'</span>';
-    bh+='<tr><td><strong>'+escapeHtml(b.name)+'</strong>'+(main?' 🏠':'')+'</td><td>'+escapeHtml(b.address||'—')+'</td><td>'+(bu?escapeHtml(bu.username):'—')+'</td><td><span class="online-status '+sc+'"><span class="dot '+sc+'"></span>'+(isO?'Online':'Offline')+'</span></td><td>'+permBadge+'</td><td><div style="display:flex;gap:4px;flex-wrap:wrap;"><button class="btn btn-xs" onclick="openBranchPermissionsModal(\''+encArg(b.name)+'\')" style="background:#8b5cf6!important;color:#fff!important;" title="Manage Permissions"><i class="fas fa-shield-alt"></i> Perms</button>'+(bu?'<button class="btn btn-xs btn-secondary" onclick="resetBranchPassword(\''+bu.id+'\')">Reset</button>':'')+'</div></td></tr>';
+    bh+='<tr><td><strong>'+escapeHtml(b.name)+'</strong>'+(main?' 🏠':'')+'</td><td>'+escapeHtml(b.address||'—')+'</td><td>'+(bu?escapeHtml(bu.username):'—')+'</td><td><span class="online-status '+sc+'"><span class="dot '+sc+'"></span>'+(isO?'Online':'Offline')+'</span></td><td>'+permBadge+'</td><td><div style="display:flex;gap:4px;flex-wrap:wrap;"><button class="btn btn-xs" onclick="openBranchPermissionsModal(\''+encArg(b.name)+'\')" style="background:#8b5cf6!important;color:#fff!important;"><i class="fas fa-shield-alt"></i> Perms</button>'+(bu?'<button class="btn btn-xs btn-secondary" onclick="resetBranchPassword(\''+bu.id+'\')">Reset</button>':'')+'</div></td></tr>';
   }
   return '<div class="section-header"><h2>'+t('branches_title')+'<span class="record-badge">'+branches.length+'</span></h2><button class="btn btn-primary btn-icon" onclick="openBranchModal()"><i class="fas fa-plus"></i> Add Branch — TSh 10,000</button></div><div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th>'+t('inv_branch')+'</th><th>Address</th><th>'+t('login_username')+'</th><th>Status</th><th>Perms</th><th></th></tr></thead><tbody>'+(bh||'<tr class="empty-row"><td colspan="6">—</td></tr>')+'</tbody></table></div></div></div>';
 };
@@ -2201,7 +2201,7 @@ document.getElementById('goToMemberRegisterLink').addEventListener('click',funct
 document.getElementById('memberGoToLogin').addEventListener('click',function(){document.getElementById('memberRegisterPage').classList.add('hidden');document.getElementById('registerPage').classList.add('hidden');document.getElementById('loginPage').classList.remove('hidden');});
 document.getElementById('memberRegisterBtn').addEventListener('click',function(){var n=document.getElementById('memberName').value.trim();var p=document.getElementById('memberPhone').value.trim();var pw=document.getElementById('memberPassword').value;var eE=document.getElementById('memberRegError');var sE=document.getElementById('memberRegSuccess');eE.textContent='';sE.textContent='';if(!n||!pw){eE.textContent='Fill fields';return;}if(pw.length<4){eE.textContent='Password too short';return;}var emp=addMexEmployee(n,p,pw);sE.innerHTML='✅ Promo: <strong>'+escapeHtml(emp.promoCode)+'</strong> · Username: <strong>'+escapeHtml(emp.username)+'</strong>';setTimeout(function(){document.getElementById('memberRegisterPage').classList.add('hidden');document.getElementById('loginPage').classList.remove('hidden');document.getElementById('loginUsername').value=emp.username;},2600);});
 document.getElementById('registerBtn').addEventListener('click',function(){var company=document.getElementById('regCompany').value.trim();var un=document.getElementById('regUsername').value.trim();var pw=document.getElementById('regPassword').value.trim();var cf=document.getElementById('regConfirm').value.trim();var ph=document.getElementById('regPhone').value.trim();var pe=document.getElementById('regPromoCode');var promo=pe?pe.value.trim().toUpperCase():'';var er=document.getElementById('registerError');er.textContent='';if(!company||!un||!pw||!cf||!ph){er.textContent='Fill fields';return;}if(pw.length<4){er.textContent='Password too short';return;}if(pw!==cf){er.textContent='Passwords do not match';return;}if(promo){var emp=findMexEmployeeByPromo(promo);if(!emp){er.textContent='Invalid promo';return;}}if(isUsernameTaken(un)){er.textContent='Username taken';return;}pendingRegistrationData={company:company,username:un,password:pw,phone:ph,promo:promo};openPaymentPlanModal();});
-document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeModal();closeProfileModal();closeSubscriptionModal();closeReceiptModal();closeLowStockModal();closeTransferModal();closeMobileSidebar();closePaymentPlanModal();closeChatModal();closeChatWallpaperPicker();closeAdProfileModal();closeAdDetail();closeCommentsModal();closeSendReportModal();closeCredentialsModal();closeScannerModal();}});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeModal();closeProfileModal();closeSubscriptionModal();closeReceiptModal();closeLowStockModal();closeTransferModal();closeMobileSidebar();closePaymentPlanModal();closeChatModal();closeChatWallpaperPicker();closeAdProfileModal();closeAdDetail();closeCommentsModal();closeSendReportModal();closeCredentialsModal();closeScannerModal();closeScanQtyModal();}});
 
 /* ===== SCANNER ===== */
 var _scannerInstance=null;
@@ -2214,6 +2214,7 @@ var _editBarcodeTargetId=null;
 var _editBarcodeQuickMode=false;
 var _pendingBarcodeValue=null;
 var _quickBarcodeTargetId=null;
+var _pendingScanProduct=null;
 function playBeep(freq,duration,type){try{var AudioContext=window.AudioContext||window.webkitAudioContext;if(!AudioContext)return;if(!_audioCtx)_audioCtx=new AudioContext();if(_audioCtx.state==='suspended')_audioCtx.resume();var osc=_audioCtx.createOscillator();var gain=_audioCtx.createGain();osc.connect(gain);gain.connect(_audioCtx.destination);osc.frequency.value=freq||1800;osc.type=type||'sine';var t0=_audioCtx.currentTime;var dur=duration||0.15;gain.gain.setValueAtTime(0.0001,t0);gain.gain.exponentialRampToValueAtTime(0.35,t0+0.01);gain.gain.exponentialRampToValueAtTime(0.0001,t0+dur);osc.start(t0);osc.stop(t0+dur+0.05);}catch(e){}}
 function playSuccessBeep(){playBeep(1800,0.14,'sine');setTimeout(function(){playBeep(2400,0.10,'sine');},80);}
 function playErrorBeep(){playBeep(400,0.28,'square');}
@@ -2224,7 +2225,7 @@ function openScannerModal(mode){
   var ov=document.getElementById('scannerModal');if(!ov)return;
   var titleEl=document.getElementById('scannerTitle');var hintEl=document.getElementById('scannerHint');var stats=document.getElementById('scannerStats');
   if(titleEl){if(_scannerMode==='inventory')titleEl.textContent='Scan to Add Product';else if(_scannerMode==='edit_barcode')titleEl.textContent='Scan Barcode';else titleEl.textContent='Scan & Sell';}
-  if(hintEl){if(_scannerMode==='inventory')hintEl.innerHTML='<i class="fas fa-info-circle"></i> Scan new barcode — add form opens';else if(_scannerMode==='edit_barcode')hintEl.innerHTML='<i class="fas fa-barcode"></i> Scan barcode for edit form';else hintEl.innerHTML='<i class="fas fa-barcode"></i> Scan one item. Click "Scan Next" for next';}
+  if(hintEl){if(_scannerMode==='inventory')hintEl.innerHTML='<i class="fas fa-info-circle"></i> Scan new barcode — add form opens';else if(_scannerMode==='edit_barcode')hintEl.innerHTML='<i class="fas fa-barcode"></i> Scan barcode for edit form';else hintEl.innerHTML='<i class="fas fa-barcode"></i> Scan product — enter quantity next';}
   var statusEl=document.getElementById('scannerStatus');if(statusEl){statusEl.textContent='';statusEl.className='promo-status';}
   var manual=document.getElementById('scannerManualInput');if(manual)manual.value='';
   if(stats)stats.style.display=(_scannerMode==='sale')?'flex':'none';
@@ -2259,39 +2260,223 @@ function startCameraScanner(){
 function stopCameraScanner(){if(!_scannerInstance)return;var inst=_scannerInstance;_scannerInstance=null;try{inst.stop().then(function(){try{inst.clear();}catch(e){}}).catch(function(){try{inst.clear();}catch(e){}});}catch(e){try{inst.clear();}catch(e2){}}}
 function onBarcodeScanned(text){if(!text)return;if(_scanLocked)return;processBarcodeScan(text);}
 function handleManualBarcode(){if(_scanLocked)return;var inp=document.getElementById('scannerManualInput');if(!inp)return;var v=inp.value.trim();if(!v){showToast('Enter barcode','error');return;}processBarcodeScan(v);inp.value='';}
-function showScanNextButton(){var btn=document.getElementById('scanNextBtn');if(btn)btn.style.display='block';var readerEl=document.getElementById('scannerReader');if(readerEl)readerEl.style.display='none';var hintEl=document.getElementById('scannerHint');if(hintEl)hintEl.innerHTML='<i class="fas fa-check-circle" style="color:var(--accent-4);"></i> Scan complete. Tap "Scan Next" to continue.';}
-function armScannerNext(){_scanLocked=false;var btn=document.getElementById('scanNextBtn');if(btn)btn.style.display='none';var readerEl=document.getElementById('scannerReader');if(readerEl)readerEl.style.display='flex';var statusEl=document.getElementById('scannerStatus');if(statusEl){statusEl.textContent='';statusEl.className='promo-status';}var hintEl=document.getElementById('scannerHint');if(hintEl)hintEl.innerHTML=(_scannerMode==='inventory')?'<i class="fas fa-info-circle"></i> Scan new barcode':'<i class="fas fa-barcode"></i> Scan one item';var manual=document.getElementById('scannerManualInput');if(manual)manual.value='';startCameraScanner();}
+function showScanNextButton(){var btn=document.getElementById('scanNextBtn');if(btn)btn.style.display='block';var readerEl=document.getElementById('scannerReader');if(readerEl)readerEl.style.display='none';var hintEl=document.getElementById('scannerHint');if(hintEl)hintEl.innerHTML='<i class="fas fa-check-circle" style="color:var(--accent-4);"></i> Sale saved. Tap "Scan Next" to continue.';}
+function armScannerNext(){
+  _scanLocked=false;
+  var btn=document.getElementById('scanNextBtn');
+  if(btn)btn.style.display='none';
+  var readerEl=document.getElementById('scannerReader');
+  if(readerEl)readerEl.style.display='flex';
+  var statusEl=document.getElementById('scannerStatus');
+  if(statusEl){statusEl.textContent='';statusEl.className='promo-status';}
+  var hintEl=document.getElementById('scannerHint');
+  if(hintEl){
+    hintEl.innerHTML=(_scannerMode==='inventory')
+      ?'<i class="fas fa-info-circle"></i> Scan new barcode'
+      :'<i class="fas fa-barcode"></i> Scan product — enter quantity next';
+  }
+  var manual=document.getElementById('scannerManualInput');
+  if(manual)manual.value='';
+  startCameraScanner();
+}
 function processBarcodeScan(barcode){
   if(_scanLocked)return;_scanLocked=true;
   var statusEl=document.getElementById('scannerStatus');
   var product=findProductByBarcode(barcode);
+
+  /* ===== EDIT BARCODE MODE ===== */
   if(_scannerMode==='edit_barcode'){
-    if(product&&Number(product.id)!==Number(_editBarcodeTargetId)){playErrorBeep();if(statusEl){statusEl.innerHTML='⚠ Barcode used by: <strong>'+escapeHtml(product.name)+'</strong>';statusEl.className='promo-status bad';}showToast('Barcode already used','warning');stopCameraScanner();showScanNextButton();return;}
-    playSuccessBeep();_pendingBarcodeValue=barcode;closeScannerModal();return;
+    if(product&&Number(product.id)!==Number(_editBarcodeTargetId)){
+      playErrorBeep();
+      if(statusEl){statusEl.innerHTML='⚠ Barcode used by: <strong>'+escapeHtml(product.name)+'</strong>';statusEl.className='promo-status bad';}
+      showToast('Barcode already used','warning');
+      stopCameraScanner();showScanNextButton();return;
+    }
+    playSuccessBeep();
+    _pendingBarcodeValue=barcode;
+    closeScannerModal();return;
   }
+
+  /* ===== INVENTORY MODE ===== */
   if(_scannerMode==='inventory'){
-    if(product){playErrorBeep();if(statusEl){statusEl.innerHTML='ℹ️ Already exists: <strong>'+escapeHtml(product.name)+'</strong> <button class="btn btn-primary btn-xs" onclick="closeScannerModal();setTimeout(function(){openEditProductModal(\''+product.id+'\');},200);">Edit</button>';statusEl.className='promo-status ok';}showToast('Product exists','warning');stopCameraScanner();showScanNextButton();return;}
-    playSuccessBeep();closeScannerModal();setTimeout(function(){openModal('product',{barcode:barcode});},150);return;
+    if(product){
+      playErrorBeep();
+      if(statusEl){statusEl.innerHTML='ℹ️ Already exists: <strong>'+escapeHtml(product.name)+'</strong> <button class="btn btn-primary btn-xs" onclick="closeScannerModal();setTimeout(function(){openEditProductModal(\''+product.id+'\');},200);">Edit</button>';statusEl.className='promo-status ok';}
+      showToast('Product exists','warning');
+      stopCameraScanner();showScanNextButton();return;
+    }
+    playSuccessBeep();
+    closeScannerModal();
+    setTimeout(function(){openModal('product',{barcode:barcode});},150);
+    return;
   }
-  if(!product){playErrorBeep();if(statusEl){statusEl.innerHTML='⚠ Not found: <strong>'+escapeHtml(barcode)+'</strong>';statusEl.className='promo-status bad';}showToast('⚠ Not found','warning');stopCameraScanner();showScanNextButton();return;}
-  if(Number(product.quantity)<=0){playErrorBeep();if(statusEl){statusEl.innerHTML='⚠ Out of stock: <strong>'+escapeHtml(product.name)+'</strong>';statusEl.className='promo-status bad';}showToast('Out of stock','error');stopCameraScanner();showScanNextButton();return;}
-  var ok=recordQuickSale(product);
-  if(ok){playSuccessBeep();_scanSessionCount++;_scanSessionTotal+=Number(product.price)||0;updateScanStats();if(statusEl){statusEl.innerHTML='✅ '+t('msg_sold')+': <strong>'+escapeHtml(product.name)+'</strong> — '+fmtMoney(product.price);statusEl.className='promo-status ok';}if(navigator.vibrate){try{navigator.vibrate(80);}catch(e){}}updateLowStockBadge();updateDebtsBadge();stopCameraScanner();showScanNextButton();setTimeout(function(){softRefreshCurrentView(true);},800);}
-  else{playErrorBeep();if(statusEl){statusEl.innerHTML='⚠ Could not save';statusEl.className='promo-status bad';}stopCameraScanner();showScanNextButton();}
+
+  /* ===== SALE MODE ===== */
+  if(!product){
+    playErrorBeep();
+    if(statusEl){statusEl.innerHTML='⚠ Not found: <strong>'+escapeHtml(barcode)+'</strong>';statusEl.className='promo-status bad';}
+    showToast('⚠ Not found','warning');
+    stopCameraScanner();showScanNextButton();return;
+  }
+  if(Number(product.quantity)<=0){
+    playErrorBeep();
+    if(statusEl){statusEl.innerHTML='⚠ Out of stock: <strong>'+escapeHtml(product.name)+'</strong>';statusEl.className='promo-status bad';}
+    showToast('Out of stock','error');
+    stopCameraScanner();showScanNextButton();return;
+  }
+
+  /* ===== SUCCESS → open quantity modal ===== */
+  playSuccessBeep();
+  stopCameraScanner();
+  _pendingScanProduct=product;
+  openScanQtyModal(product);
 }
-function recordQuickSale(product){
+
+/* ===== SCAN QUANTITY MODAL ===== */
+function openScanQtyModal(product){
+  if(!product)return;
+  _pendingScanProduct=product;
+
+  /* ---- Product info card ---- */
+  var info=document.getElementById('scanQtyProductInfo');
+  if(info){
+    info.innerHTML='<div style="background:var(--input-bg);padding:14px 16px;border-radius:12px;margin-bottom:14px;border:2px solid var(--accent-1);"><div style="font-weight:800;font-size:1.05rem;color:var(--accent-1);">'+escapeHtml(product.name)+'</div><div style="color:var(--text-muted);font-size:.82rem;margin-top:6px;font-weight:600;"><i class="fas fa-box"></i> Stock: <strong>'+product.quantity+'</strong> &nbsp;·&nbsp; <i class="fas fa-tag"></i> '+fmtMoney(product.price)+' / unit</div></div>';
+  }
+
+  /* ---- Input binding ---- */
+  var inp=document.getElementById('scanQtyInput');
+  if(inp){
+    inp.value=1;
+    inp.max=product.quantity;
+    inp.min=1;
+    inp.oninput=function(){
+      var q=parseInt(this.value)||0;
+      var tot=document.getElementById('scanQtyTotal');
+      if(tot)tot.textContent=fmtMoney(q*(Number(product.price)||0));
+    };
+    inp.onkeydown=function(e){
+      if(e.key==='Enter'){e.preventDefault();confirmScanQty();}
+    };
+  }
+
+  /* ---- Quick quantity buttons ---- */
+  var quickBtns='';
+  var amounts=[1,5,10,20,50,100];
+  var seen={};
+  for(var i=0;i<amounts.length;i++){
+    var n=amounts[i];
+    if(n<=product.quantity&&!seen[n]){
+      quickBtns+='<button type="button" class="btn btn-secondary btn-sm" onclick="setScanQty('+n+')" style="margin:2px;min-width:44px;font-weight:700;">'+n+'</button>';
+      seen[n]=true;
+    }
+  }
+  if(!seen[product.quantity]){
+    quickBtns+='<button type="button" class="btn btn-primary btn-sm" onclick="setScanQty('+product.quantity+')" style="margin:2px;font-weight:700;">All ('+product.quantity+')</button>';
+  }
+
+  /* ---- Hint + quick row ---- */
+  var hint=document.getElementById('scanQtyHint');
+  if(hint){
+    hint.innerHTML='<div style="margin-bottom:8px;">Max: <strong>'+product.quantity+'</strong> &nbsp;·&nbsp; Total: <strong id="scanQtyTotal" style="color:var(--accent-1);font-size:1.05rem;">'+fmtMoney(product.price)+'</strong></div><div style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px;">'+quickBtns+'</div>';
+  }
+
+  document.getElementById('scanQtyModal').classList.add('show');
+  document.body.classList.add('modal-open');
+  setTimeout(function(){if(inp){inp.focus();inp.select();}},200);
+}
+function setScanQty(n){
+  var inp=document.getElementById('scanQtyInput');
+  if(!inp)return;
+  inp.value=n;
+  try{inp.dispatchEvent(new Event('input'));}catch(e){}
+  inp.focus();
+  inp.select();
+}
+function confirmScanQty(){
+  if(!_pendingScanProduct){showToast('No product scanned','error');return;}
+  var inp=document.getElementById('scanQtyInput');
+  if(!inp){showToast('Quantity input missing','error');return;}
+
+  var qty=parseInt(inp.value)||0;
+  if(qty<1){showToast('Quantity must be at least 1','error');inp.focus();return;}
+  if(qty>Number(_pendingScanProduct.quantity)){
+    showToast('Only '+_pendingScanProduct.quantity+' in stock','error');
+    inp.focus();return;
+  }
+
+  var product=_pendingScanProduct;
+  var ok=recordQuickSale(product,qty);
+  if(!ok){showToast('Could not save sale','error');playErrorBeep();return;}
+
+  /* ---- Clear state ---- */
+  _pendingScanProduct=null;
+  closeScanQtyModal();
+  playSuccessBeep();
+
+  /* ---- Update session stats ---- */
+  _scanSessionCount+=qty;
+  _scanSessionTotal+=(Number(product.price)||0)*qty;
+  updateScanStats();
+
+  if(navigator.vibrate){try{navigator.vibrate(80);}catch(e){}}
+  updateLowStockBadge();
+  updateDebtsBadge();
+
+  /* ---- Status message ---- */
+  var statusEl=document.getElementById('scannerStatus');
+  if(statusEl){
+    statusEl.innerHTML='✅ Sold: <strong>'+escapeHtml(product.name)+'</strong> × '+qty+' — '+fmtMoney((Number(product.price)||0)*qty);
+    statusEl.className='promo-status ok';
+  }
+
+  /* ---- Auto re-arm scanner for next product ---- */
+  _scanLocked=false;
+  var readerEl=document.getElementById('scannerReader');
+  if(readerEl)readerEl.style.display='flex';
+  var scanNextBtn=document.getElementById('scanNextBtn');
+  if(scanNextBtn)scanNextBtn.style.display='none';
+  var hintEl=document.getElementById('scannerHint');
+  if(hintEl)hintEl.innerHTML='<i class="fas fa-barcode"></i> Scan next product — set quantity next';
+  setTimeout(function(){
+    if(_scannerMode==='sale')startCameraScanner();
+  },500);
+
+  setTimeout(function(){softRefreshCurrentView(true);},800);
+}
+function cancelScanQty(){
+  _pendingScanProduct=null;
+  closeScanQtyModal();
+  _scanLocked=false;
+  var readerEl=document.getElementById('scannerReader');
+  if(readerEl)readerEl.style.display='flex';
+  var scanNextBtn=document.getElementById('scanNextBtn');
+  if(scanNextBtn)scanNextBtn.style.display='none';
+  var statusEl=document.getElementById('scannerStatus');
+  if(statusEl){statusEl.textContent='';statusEl.className='promo-status';}
+  setTimeout(function(){startCameraScanner();},300);
+}
+function closeScanQtyModal(){
+  var ov=document.getElementById('scanQtyModal');
+  if(ov)ov.classList.remove('show');
+  var so=document.querySelector('.modal-overlay.show');
+  if(!so)document.body.classList.remove('modal-open');
+}
+function recordQuickSale(product,qty){
   if(!product)return false;
-  var ps=getTenantData('products',[]);var liveProduct=null;
+  qty=parseInt(qty)||1;
+  if(qty<1)return false;
+  var ps=getTenantData('products',[]);
+  var liveProduct=null;
   for(var i=0;i<ps.length;i++){if(Number(ps[i].id)===Number(product.id)){liveProduct=ps[i];break;}}
   if(!liveProduct)return false;
-  if(Number(liveProduct.quantity)<=0)return false;
+  if(Number(liveProduct.quantity)<qty)return false;
   var u=getCurrentUser();if(!u)return false;
   var store=getCatalogStore();
   var sales=getTenantData('sales',[]);
   var price=Number(liveProduct.price)||0;var cost=Number(liveProduct.cost)||0;
-  sales.push({id:uid(),productId:liveProduct.id,quantity:1,totalPrice:price,totalCost:cost,date:Date.now(),customer:'',store:store,createdBy:u.id,unitPrice:price,unitCost:cost,paid:true});
+  sales.push({id:uid(),productId:liveProduct.id,quantity:qty,totalPrice:price*qty,totalCost:cost*qty,date:Date.now(),customer:'',store:store,createdBy:u.id,unitPrice:price,unitCost:cost,paid:true});
   persistSales(sales);
-  liveProduct.quantity=Number(liveProduct.quantity)-1;
+  liveProduct.quantity=Number(liveProduct.quantity)-qty;
   persistProducts(ps);
   syncLargeDataToSupabase(tenantKey('sales'),sales);
   syncLargeDataToSupabase(tenantKey('products'),ps);
