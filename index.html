@@ -791,10 +791,8 @@ var _syncTimer=null;
 var _largeDataLoaded=false;
 var _largeDataLoading=false;
 
-/* Update sync status tracking (no visible UI — kept for diagnostics only) */
 function updateSyncStatusUI(){}
 
-/* Manual force-sync callable from console (e.g. forceSyncNow()) */
 function forceSyncNow(){
   try{showToast('🔄 Syncing...','info');}catch(e){}
   try{flushLargeDataSync();}catch(e){}
@@ -948,7 +946,6 @@ function flushLargeDataSync(){
   }
 }
 
-/* FIXED: ANY error → fallback to blob */
 function syncLargeDataToSupabase(fullKey,arr){
   if(!supabaseClient||!currentTenantId||!Array.isArray(arr))return;
   var m=fullKey.match(/_([a-zA-Z]+)$/);
@@ -1052,7 +1049,14 @@ function pullAllFromSupabase(){
         }
         var isLarge=false;
         for(var lk=0;lk<LARGE_DATA_KEYS.length;lk++){if(row.key==='sb_tenant_'+currentTenantId+'_'+LARGE_DATA_KEYS[lk]){isLarge=true;break;}}
-        if(isLarge){_largeDataCache[row.key]=row.value;return;}
+        if(isLarge){
+          var __localArr = _largeDataCache[row.key] || [];
+          var __cloudArr = Array.isArray(row.value) ? row.value : [];
+          if(__cloudArr.length >= __localArr.length || __localArr.length === 0){
+            _largeDataCache[row.key] = __cloudArr;
+          }
+          return;
+        }
         try{if(row.value!==null&&row.value!==undefined){localStorage.setItem(row.key,JSON.stringify(row.value));}}catch(e){}
       });
     }
@@ -1100,7 +1104,14 @@ async function pullTenantDataForLogin(tenantId){
         for(var lk=0;lk<LARGE_DATA_KEYS.length;lk++){
           if(k==='sb_tenant_'+tenantId+'_'+LARGE_DATA_KEYS[lk]){isLarge=true;break;}
         }
-        if(isLarge){_largeDataCache[k]=rows[i].value;continue;}
+        if(isLarge){
+          var __localArr = _largeDataCache[k] || [];
+          var __cloudArr = Array.isArray(rows[i].value) ? rows[i].value : [];
+          if(__cloudArr.length >= __localArr.length || __localArr.length === 0){
+            _largeDataCache[k] = __cloudArr;
+          }
+          continue;
+        }
         localStorage.setItem(k,JSON.stringify(rows[i].value));
       }catch(e){}
     }
@@ -1312,7 +1323,14 @@ function pullFromCloudOnly(){
         }
         var isLarge=false;
         for(var lk=0;lk<LARGE_DATA_KEYS.length;lk++){if(row.key==='sb_tenant_'+currentTenantId+'_'+LARGE_DATA_KEYS[lk]){isLarge=true;break;}}
-        if(isLarge){_largeDataCache[row.key]=row.value;return;}
+        if(isLarge){
+          var __localArr = _largeDataCache[row.key] || [];
+          var __cloudArr = Array.isArray(row.value) ? row.value : [];
+          if(__cloudArr.length >= __localArr.length || __localArr.length === 0){
+            _largeDataCache[row.key] = __cloudArr;
+          }
+          return;
+        }
         try{if(row.value!==null&&row.value!==undefined){localStorage.setItem(row.key,JSON.stringify(row.value));}}catch(e){}
       });
     }
@@ -2106,7 +2124,59 @@ function filterSaleProducts(q){var sel=document.getElementById('saleProductSelec
 function closeModal(){var ov=document.getElementById('modalOverlay');var bx=document.getElementById('modalBox');ov.classList.remove('show');ov.style.zIndex='';bx.style.padding='';bx.style.overflow='';bx.style.borderRadius='';bx.style.maxWidth='';var so=document.querySelector('.modal-overlay.show');if(!so)document.body.classList.remove('modal-open');}
 function onSaleProductChange(){var sel=document.getElementById('saleProductSelect');var pi=document.getElementById('saleUnitPriceInput');if(!sel||!pi)return;var o=sel.options[sel.selectedIndex];if(!o||!sel.value){pi.value='';return;}pi.value=parseFloat(o.dataset.price)||0;}
 function submitSale(e){e.preventDefault();if(!hasPerm('sales_create'))return;var fd=new FormData(e.target);var pid=parseInt(fd.get('productId'));var q=parseInt(fd.get('quantity'));var c=(fd.get('customer')||'').trim();var st=(fd.get('store')||'').trim()||getCatalogStore();var isPaid=fd.get('paid')==='on';if(!pid||!q||q<1)return;if(!isPaid&&!c){showToast('Customer required for debt','error');return;}var ps=getTenantData('products',[]);var p=null;for(var i=0;i<ps.length;i++){if(ps[i].id===pid){p=ps[i];break;}}if(!p||p.quantity<q)return;var up=parseFloat(fd.get('unitPrice'))||Number(p.price);var tp=up*q;var tc=(Number(p.cost)||0)*q;var u=getCurrentUser();var sales=getTenantData('sales',[]);sales.push({id:uid(),productId:pid,quantity:q,totalPrice:tp,totalCost:tc,date:Date.now(),customer:c,store:st,createdBy:u.id,unitPrice:up,unitCost:Number(p.cost)||0,paid:isPaid});persistSales(sales);p.quantity-=q;persistProducts(ps);syncLargeDataToSupabase(tenantKey('sales'),sales);syncLargeDataToSupabase(tenantKey('products'),ps);closeModal();if(isPaid){showToast('✓ Sale recorded','success');navigate('sales');}else{showToast('📝 Debt recorded','warning');navigate('debts');}updateDebtsBadge();}
-function submitProduct(e){e.preventDefault();if(!hasPerm('inventory_manage'))return;var fd=new FormData(e.target);var n=(fd.get('name')||'').trim();var bc=(fd.get('barcode')||'').trim();var pr=parseFloat(fd.get('price'));var co=parseFloat(fd.get('cost'));var q=parseInt(fd.get('quantity'))||0;var cat=(fd.get('category')||'').trim()||'General';var st=(fd.get('store')||'').trim()||getCatalogStore();if(!n||!pr||!co)return;var ps=getTenantData('products',[]);if(bc){var tbc=bc.toLowerCase();for(var ck=0;ck<ps.length;ck++){if(ps[ck].barcode&&String(ps[ck].barcode).toLowerCase()===tbc){showToast('⚠ Barcode exists: '+ps[ck].name,'error');return;}}}var exp=(fd.get('expiryDate')||'').trim();ps.push({id:uid(),name:n,barcode:bc,price:pr,cost:co,category:cat,quantity:q,store:st,image:'',expiryDate:exp});persistProducts(ps);syncLargeDataToSupabase(tenantKey('products'),ps);closeModal();showToast('✅ '+t('msg_product_added')+': '+n,'success');navigate('inventory');}
+
+/* ===== FIXED submitProduct — barcode now works at registration ===== */
+function submitProduct(e){
+  if(e && e.preventDefault) e.preventDefault();
+  if(!hasPerm('inventory_manage')){showToast('⚠ Permission denied','error');return;}
+  var form = (e && e.target) || document.querySelector('#modalBox form');
+  if(!form){showToast('⚠ Form not found','error');return;}
+  var fd = new FormData(form);
+  var n = String(fd.get('name')||'').trim();
+  var bc = String(fd.get('barcode')||'').trim();
+  var prRaw = fd.get('price');
+  var coRaw = fd.get('cost');
+  var pr = parseFloat(prRaw);
+  var co = parseFloat(coRaw);
+  var qRaw = fd.get('quantity');
+  var q = (qRaw!=null && qRaw!=='') ? (parseInt(qRaw)||0) : 0;
+  var cat = String(fd.get('category')||'').trim()||'General';
+  var st = String(fd.get('store')||'').trim()||getCatalogStore();
+  if(!n){showToast('⚠ Product name required','error');return;}
+  if(isNaN(pr)||pr<=0){showToast('⚠ Valid price required','error');return;}
+  if(isNaN(co)||co<=0){showToast('⚠ Valid cost required','error');return;}
+  if(q<0) q=0;
+  var ps = getTenantData('products',[]);
+  if(!Array.isArray(ps)) ps = [];
+  if(bc){
+    var tbc = bc.toLowerCase();
+    for(var ck=0; ck<ps.length; ck++){
+      if(!ps[ck]) continue;
+      var eb = ps[ck].barcode;
+      if(eb!=null && String(eb).trim()!==''){
+        if(String(eb).trim().toLowerCase() === tbc){
+          showToast('⚠ Barcode already used by: '+(ps[ck].name||'another product'),'error');
+          return;
+        }
+      }
+    }
+  }
+  var exp = String(fd.get('expiryDate')||'').trim();
+  var newProduct = {id:uid(), name:n, barcode:bc, price:pr, cost:co, category:cat, quantity:q, store:st, image:'', expiryDate:exp};
+  ps.push(newProduct);
+  persistProducts(ps);
+  try{
+    var fullKey = tenantKey('products');
+    localStorage.setItem(fullKey, JSON.stringify(ps));
+  }catch(err){}
+  syncLargeDataToSupabase(tenantKey('products'), ps);
+  closeModal();
+  showToast('✅ '+t('msg_product_added')+': '+n, 'success');
+  navigate('inventory');
+  setTimeout(function(){softRefreshCurrentView(true);}, 400);
+}
+/* ===== END FIXED submitProduct ===== */
+
 function openEditProductModal(id){
   if(!hasPerm('inventory_manage'))return;
   var ps=getTenantData('products',[]);var p=null;
