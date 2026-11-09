@@ -104,6 +104,14 @@ tr:last-child td{border-bottom:none}
 .topbar .topbar-actions .profile-trigger{display:flex;align-items:center;gap:10px;cursor:pointer;padding:6px 16px 6px 6px;border-radius:34px;background:var(--input-bg);border:1px solid var(--border-color)!important;max-width:200px;flex-shrink:0}
 .topbar .topbar-actions .profile-trigger img{width:34px;height:34px;border-radius:50%;object-fit:cover}
 .topbar .topbar-actions .profile-trigger .profile-name{font-size:.85rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* ===== SYNC STATUS BUTTON ===== */
+.sync-status-btn{background:var(--input-bg);border:1px solid var(--border-color)!important;border-radius:50%!important;width:46px;height:46px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-secondary);font-size:1.1rem;flex-shrink:0;position:relative;transition:all .25s}
+.sync-status-btn.synced{color:var(--accent-4);border-color:var(--accent-4)!important;background:rgba(16,185,129,.08)}
+.sync-status-btn.error{color:var(--accent-danger);border-color:var(--accent-danger)!important;background:rgba(239,68,68,.08)}
+.sync-status-btn.pending{color:var(--accent-3);border-color:var(--accent-3)!important}
+.sync-status-btn.syncing{color:var(--accent-1);border-color:var(--accent-1)!important}
+.sync-status-btn.syncing i{animation:syncSpin 1s linear infinite}
+@keyframes syncSpin{to{transform:rotate(360deg)}}
 .content-area{flex:1;overflow-y:auto;padding:24px 28px 32px;overscroll-behavior:contain}
 .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-bottom:18px}
 .stat-card{background:var(--bg-card);border-radius:16px;padding:12px 16px;border:1px solid var(--border-color);box-shadow:var(--shadow-card);position:relative;overflow:hidden;min-height:66px;display:flex;flex-direction:column;justify-content:center}
@@ -346,7 +354,7 @@ body.dark .chat-modal .modal-box .chat-messages{background-color:#0b141a}
   .topbar .topbar-actions{display:flex;align-items:center;gap:6px;flex-wrap:nowrap;flex-shrink:0;min-width:0}
   .topbar .topbar-actions .date-display{display:none}
   .topbar .topbar-actions .low-stock-alert-btn{padding:0 12px!important;width:auto;min-width:auto;height:38px;min-height:38px;border-radius:12px!important;justify-content:center;gap:6px;font-size:.76rem;font-weight:700;white-space:nowrap}
-  .topbar .topbar-actions .theme-toggle,.topbar .topbar-actions .chat-topbar-btn,.topbar .topbar-actions .lang-toggle-btn{width:38px;height:38px;min-width:38px;font-size:.9rem}
+  .topbar .topbar-actions .theme-toggle,.topbar .topbar-actions .chat-topbar-btn,.topbar .topbar-actions .lang-toggle-btn,.topbar .topbar-actions .sync-status-btn{width:38px;height:38px;min-width:38px;font-size:.9rem}
   .topbar .topbar-actions .profile-trigger{padding:2px!important;gap:0;width:38px;height:38px;min-width:38px;max-width:38px;border-radius:50%;flex-shrink:0;overflow:hidden;justify-content:center}
   .topbar .topbar-actions .profile-trigger img{width:32px;height:32px;border-radius:50%}
   .topbar .topbar-actions .profile-trigger .profile-name{display:none}
@@ -364,7 +372,7 @@ body.dark .chat-modal .modal-box .chat-messages{background-color:#0b141a}
   .mobile-menu-btn{display:inline-flex!important;width:36px;height:36px;min-width:36px;font-size:.95rem}
   .topbar .page-title{font-size:.85rem}
   .topbar .topbar-actions{gap:5px}
-  .topbar .topbar-actions .theme-toggle,.topbar .topbar-actions .chat-topbar-btn,.topbar .topbar-actions .lang-toggle-btn{width:36px;height:36px;min-width:36px;font-size:.85rem}
+  .topbar .topbar-actions .theme-toggle,.topbar .topbar-actions .chat-topbar-btn,.topbar .topbar-actions .lang-toggle-btn,.topbar .topbar-actions .sync-status-btn{width:36px;height:36px;min-width:36px;font-size:.85rem}
   .topbar .topbar-actions .low-stock-alert-btn{height:36px;min-height:36px;padding:0 10px!important;font-size:.72rem}
   .topbar .topbar-actions .profile-trigger{width:36px;height:36px;min-width:36px;max-width:36px}
   .topbar .topbar-actions .profile-trigger img{width:30px;height:30px}
@@ -509,6 +517,7 @@ body.dark .chat-modal .modal-box .chat-messages{background-color:#0b141a}
       <div class="topbar-actions">
         <span class="date-display"><i class="far fa-calendar-alt"></i><span id="currentDate"></span></span>
         <button class="low-stock-alert-btn" id="lowStockAlertBtn"><i class="fas fa-exclamation-triangle"></i><span class="alert-text">Low Stock</span><span class="alert-count" id="lowStockAlertCount">0</span></button>
+        <button class="sync-status-btn pending" id="syncStatusBtn" title="Sync Status" onclick="forceSyncNow()"><i class="fas fa-cloud"></i></button>
         <button class="theme-toggle" id="themeToggle" title="Theme"><i class="fas fa-moon"></i></button>
         <button class="chat-topbar-btn" id="chatTopbarBtn" title="Chat"><i class="fas fa-comments"></i><span class="chat-badge" id="chatBadge">0</span></button>
         <button class="lang-toggle-btn" id="langToggleBtn" title="Badilisha Lugha" onclick="toggleLanguage()"><i class="fas fa-language"></i><span class="lang-code">EN</span></button>
@@ -679,7 +688,6 @@ body.dark .chat-modal .modal-box .chat-messages{background-color:#0b141a}
   </div>
 </div>
 
-<!-- NEW: Scan Quantity Modal -->
 <div class="modal-overlay" id="scanQtyModal">
   <div class="modal-box" style="max-width:420px;">
     <h3><i class="fas fa-cart-plus" style="color:var(--accent-1);"></i> Scan &amp; Sell</h3>
@@ -771,11 +779,11 @@ var SUPABASE_SYNC_EXCLUDE=[
 function isLargeDataKey(k){for(var i=0;i<LARGE_DATA_KEYS.length;i++){if(k===LARGE_DATA_KEYS[i])return true;}return false;}
 function shouldSyncKey(key){
   if(!key)return false;
-  for(var i=0;i<SUPABASE_SYNC_EXCLUDE.length;i++){
-    var excl=SUPABASE_SYNC_EXCLUDE[i];
-    if(excl.charAt(0)==='_'&&key.indexOf(excl)!==-1&&key.indexOf('sb_tenant_')===0)return false;
-    if(key.indexOf(excl)===0)return false;
+  var EXCL_PREFIX=['sb_session','sb_login_lock','sb_super_hash','sb_super_session_token','sb_superadmin_logged_in','sb_superadmin_user','sb_mex_current_employee','sb_chat_wallpaper_type','sb_chat_wallpaper_value','sb_video_audio_pref','sb_lang'];
+  for(var i=0;i<EXCL_PREFIX.length;i++){
+    if(key.indexOf(EXCL_PREFIX[i])===0)return false;
   }
+  if(/^sb_tenant_.+_(sales|products|expenses|punchHistory|transfers|statuses)$/.test(key))return false;
   if(/_currentUser$/.test(key))return false;
   return true;
 }
@@ -783,12 +791,40 @@ function patchBuilderCatch(){try{if(!supabaseClient)return;var p=supabaseClient.
 function initSupabase(){try{if(window.supabase&&typeof window.supabase.createClient==='function'){supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);patchBuilderCatch();}}catch(e){}}
 function getSessionTenantId(){var s=lsGet('sb_session',null);return (s&&s.tid)?s.tid:null;}
 
-/* ===== LARGE DATA STORAGE (IndexedDB + Supabase, PAGINATED) ===== */
+/* ===== LARGE DATA STORAGE (IndexedDB + Supabase) ===== */
 var _largeDataCache={};
+var _syncStatus={pending:0,lastSuccess:0,lastError:0};
+var _largeDataTableExists={};
 var _syncQueue={};
 var _syncTimer=null;
 var _largeDataLoaded=false;
 var _largeDataLoading=false;
+
+/* ---- Sync status UI ---- */
+function updateSyncStatusUI(){
+  var btn=document.getElementById('syncStatusBtn');
+  if(!btn)return;
+  btn.classList.remove('synced','error','pending','syncing');
+  if(_syncStatus.pending>0){btn.classList.add('syncing');btn.title='Syncing ('+_syncStatus.pending+')...';}
+  else if(_syncStatus.lastError>_syncStatus.lastSuccess){btn.classList.add('error');btn.title='⚠ Sync failed — tap to retry';}
+  else if(_syncStatus.lastSuccess>0){btn.classList.add('synced');btn.title='✓ Synced '+(typeof fmtRelative==='function'?fmtRelative(_syncStatus.lastSuccess):'recently');}
+  else{btn.classList.add('pending');btn.title='Not synced yet';}
+}
+
+function forceSyncNow(){
+  try{showToast('🔄 Syncing...','info');}catch(e){}
+  updateSyncStatusUI();
+  try{flushLargeDataSync();}catch(e){}
+  try{flushKVWrites();}catch(e){}
+  try{flushRelWrites();}catch(e){}
+  setTimeout(function(){
+    pullFromCloudOnly().then(function(changed){
+      if(changed)softRefreshCurrentView(true);
+      try{showToast('✓ Sync complete','success');}catch(e){}
+      updateSyncStatusUI();
+    }).catch(function(){try{showToast('⚠ Sync failed','error');}catch(e){}});
+  },1200);
+}
 
 async function preloadLargeDataFromIDB(){
   if(!currentTenantId)return;
@@ -813,6 +849,34 @@ async function preloadLargeDataFromIDB(){
   }
 }
 
+function getBlobFallbackKey(entity){return 'sb_tenant_'+currentTenantId+'_'+entity+'__blob';}
+function isTableMissingError(err){
+  if(!err)return false;
+  var code=err.code||'';
+  var msg=(err.message||'').toLowerCase();
+  if(code==='42P01'||code==='PGRST205')return true;
+  if(msg.indexOf('does not exist')!==-1&&(msg.indexOf('relation')!==-1||msg.indexOf('table')!==-1))return true;
+  return false;
+}
+function syncLargeDataToKVBlob(entity,arr,callback){
+  if(!supabaseClient||!currentTenantId){if(callback)callback(false);return;}
+  var blobKey=getBlobFallbackKey(entity);
+  supabaseClient.from(TBL_KV).upsert({key:blobKey,value:arr,updated_at:new Date().toISOString()},{onConflict:'key'}).then(function(r){
+    if(r.error){console.warn('[SB blob fail]',entity,r.error.message);if(callback)callback(false);}
+    else{console.log('[SB blob OK]',entity,arr.length);if(callback)callback(true);}
+  }).catch(function(e){console.warn('[SB blob err]',entity,e);if(callback)callback(false);});
+}
+async function loadLargeDataFromKVBlob(entity){
+  if(!supabaseClient||!currentTenantId)return null;
+  try{
+    var blobKey=getBlobFallbackKey(entity);
+    var res=await supabaseClient.from(TBL_KV).select('value').eq('key',blobKey).maybeSingle();
+    if(res.error||!res.data)return null;
+    return Array.isArray(res.data.value)?res.data.value:null;
+  }catch(e){return null;}
+}
+
+/* FIXED: load from BOTH table and blob, take the larger dataset */
 async function loadLargeDataFromSupabase(){
   if(!supabaseClient||!currentTenantId)return;
   if(_largeDataLoading)return;
@@ -823,35 +887,45 @@ async function loadLargeDataFromSupabase(){
       var table='mex_'+k;
       var fullKey='sb_tenant_'+currentTenantId+'_'+k;
       try{
-        var allRows=[];
-        var offset=0;
-        var safety=0;
-        while(true){
-          safety++;
-          if(safety>100000)break;
-          var res=await supabaseClient.from(table)
-            .select('data')
-            .eq('tenant_id',currentTenantId)
-            .order('id',{ascending:true})
-            .range(offset, offset+SUPABASE_FETCH_BATCH-1);
-          if(res.error){
-            if(res.error.code!=='42P01'&&res.error.code!=='PGRST205')console.warn('[SB load]',table,res.error.message);
-            break;
+        var tableRows=[];
+        try{
+          var offset=0,safety=0;
+          while(true){
+            safety++;if(safety>100000)break;
+            var res=await supabaseClient.from(table)
+              .select('data')
+              .eq('tenant_id',currentTenantId)
+              .order('id',{ascending:true})
+              .range(offset,offset+SUPABASE_FETCH_BATCH-1);
+            if(res.error){
+              if(isTableMissingError(res.error))_largeDataTableExists[k]=false;
+              else console.warn('[SB load table]',table,res.error.message);
+              break;
+            }
+            _largeDataTableExists[k]=true;
+            var rows=(res.data||[]).map(function(r){return r.data;}).filter(Boolean);
+            tableRows=tableRows.concat(rows);
+            if(rows.length<SUPABASE_FETCH_BATCH)break;
+            offset+=SUPABASE_FETCH_BATCH;
           }
-          var rows=(res.data||[]).map(function(r){return r.data;}).filter(Boolean);
-          allRows=allRows.concat(rows);
-          if(rows.length<SUPABASE_FETCH_BATCH)break;
-          offset+=SUPABASE_FETCH_BATCH;
-        }
-        console.log('[SB load] '+table+': '+allRows.length+' rows');
+        }catch(e){console.warn('[SB load table exc]',table,e);}
+
+        var blobRows=await loadLargeDataFromKVBlob(k);
+
+        var best=tableRows.slice();
+        var source='table';
+        if(blobRows&&blobRows.length>tableRows.length){best=blobRows.slice();source='blob';}
+
         var existing=_largeDataCache[fullKey]||[];
-        if(allRows.length>=existing.length){
-          _largeDataCache[fullKey]=allRows;
-          try{await dbSet(STORES.json,'lg_'+fullKey,allRows);}catch(e){}
-        }else if(existing.length>allRows.length&&allRows.length>0){
+        if(best.length>=existing.length){
+          _largeDataCache[fullKey]=best;
+          try{await dbSet(STORES.json,'lg_'+fullKey,best);}catch(e){}
+        }else if(existing.length>best.length){
           syncLargeDataToSupabase(fullKey,existing);
         }
-      }catch(e){console.warn('[SB load error]',table,e);}
+
+        console.log('[SB load] '+k+' — table='+tableRows.length+' blob='+(blobRows?blobRows.length:0)+' local='+existing.length+' → used '+source);
+      }catch(e){console.warn('[SB load err]',table,e);}
     }
     _largeDataLoaded=true;
   }finally{
@@ -893,17 +967,35 @@ function flushLargeDataSync(){
   }
 }
 
+/* FIXED: ANY error → fallback to blob (not just 42P01) */
 function syncLargeDataToSupabase(fullKey,arr){
   if(!supabaseClient||!currentTenantId||!Array.isArray(arr))return;
   var m=fullKey.match(/_([a-zA-Z]+)$/);
   if(!m)return;
   var entity=m[1];
   if(LARGE_DATA_KEYS.indexOf(entity)===-1)return;
+
+  _syncStatus.pending++;
+  updateSyncStatusUI();
+
+  function finish(ok){
+    _syncStatus.pending=Math.max(0,_syncStatus.pending-1);
+    if(ok){_syncStatus.lastSuccess=Date.now();}
+    else{_syncStatus.lastError=Date.now();}
+    updateSyncStatusUI();
+  }
+
+  if(_largeDataTableExists[entity]===false){
+    syncLargeDataToKVBlob(entity,arr,finish);
+    return;
+  }
+
   var table='mex_'+entity;
   var BATCH=400;
   var total=arr.length;
+
   function doBatch(start){
-    if(start>=total)return;
+    if(start>=total){finish(true);return;}
     var end=Math.min(start+BATCH,total);
     var batch=[];
     for(var i=start;i<end;i++){
@@ -913,9 +1005,19 @@ function syncLargeDataToSupabase(fullKey,arr){
     }
     if(!batch.length){doBatch(end);return;}
     supabaseClient.from(table).upsert(batch,{onConflict:'id'}).then(function(r){
-      if(r.error)console.warn('[SB upsert]',table,r.error.message);
+      if(r.error){
+        console.warn('[SB table failed → BLOB]',table,r.error.code||'',r.error.message||'');
+        _largeDataTableExists[entity]=false;
+        syncLargeDataToKVBlob(entity,arr,finish);
+        return;
+      }
+      _largeDataTableExists[entity]=true;
       doBatch(end);
-    }).catch(function(e){console.warn('[SB upsert fail]',table,e);});
+    }).catch(function(e){
+      console.warn('[SB network err → BLOB]',table,e);
+      _largeDataTableExists[entity]=false;
+      syncLargeDataToKVBlob(entity,arr,finish);
+    });
   }
   doBatch(0);
 }
@@ -959,6 +1061,16 @@ function pullAllFromSupabase(){
         if(!shouldSyncKey(row.key))return;
         if(SKIP_KEYS[row.key])return;
         if(_pendingKVWrites[row.key])return;
+        if(currentTenantId&&row.key.indexOf('sb_tenant_'+currentTenantId+'_')===0){
+          for(var bi=0;bi<LARGE_DATA_KEYS.length;bi++){
+            var ent=LARGE_DATA_KEYS[bi];
+            if(row.key==='sb_tenant_'+currentTenantId+'_'+ent+'__blob'){
+              _largeDataCache['sb_tenant_'+currentTenantId+'_'+ent]=row.value;
+              dbSet(STORES.json,'lg_sb_tenant_'+currentTenantId+'_'+ent,row.value).catch(function(){});
+              return;
+            }
+          }
+        }
         var isLarge=false;
         for(var lk=0;lk<LARGE_DATA_KEYS.length;lk++){if(row.key==='sb_tenant_'+currentTenantId+'_'+LARGE_DATA_KEYS[lk]){isLarge=true;break;}}
         if(isLarge){_largeDataCache[row.key]=row.value;return;}
@@ -994,8 +1106,21 @@ async function pullTenantDataForLogin(tenantId){
       try{
         if(rows[i].value==null)continue;
         var k=rows[i].key;
+        var handledBlob=false;
+        for(var bi=0;bi<LARGE_DATA_KEYS.length;bi++){
+          var ent=LARGE_DATA_KEYS[bi];
+          if(k==='sb_tenant_'+tenantId+'_'+ent+'__blob'){
+            _largeDataCache['sb_tenant_'+tenantId+'_'+ent]=rows[i].value;
+            dbSet(STORES.json,'lg_sb_tenant_'+tenantId+'_'+ent,rows[i].value).catch(function(){});
+            handledBlob=true;
+            break;
+          }
+        }
+        if(handledBlob)continue;
         var isLarge=false;
-        for(var lk=0;lk<LARGE_DATA_KEYS.length;lk++){if(k==='sb_tenant_'+tenantId+'_'+LARGE_DATA_KEYS[lk]){isLarge=true;break;}}
+        for(var lk=0;lk<LARGE_DATA_KEYS.length;lk++){
+          if(k==='sb_tenant_'+tenantId+'_'+LARGE_DATA_KEYS[lk]){isLarge=true;break;}
+        }
         if(isLarge){_largeDataCache[k]=rows[i].value;continue;}
         localStorage.setItem(k,JSON.stringify(rows[i].value));
       }catch(e){}
@@ -1104,7 +1229,28 @@ function setupRealtimeSync(){
   if(!supabaseClient)return;
   _realtimeChannels.forEach(function(ch){try{supabaseClient.removeChannel(ch);}catch(e){}});
   _realtimeChannels=[];
-  try{var kvChannel=supabaseClient.channel('mex_kv_realtime').on('postgres_changes',{event:'*',schema:'public',table:TBL_KV},function(payload){if(isInOwnWriteCooldown())return;if(!payload.new||!payload.new.key)return;if(!shouldSyncKey(payload.new.key))return;if(_pendingKVWrites[payload.new.key])return;try{localStorage.setItem(payload.new.key,JSON.stringify(payload.new.value));}catch(e){}scheduleSoftReRender();}).subscribe();_realtimeChannels.push(kvChannel);}catch(e){}
+  try{
+    var kvChannel=supabaseClient.channel('mex_kv_realtime').on('postgres_changes',{event:'*',schema:'public',table:TBL_KV},function(payload){
+      if(isInOwnWriteCooldown())return;
+      if(!payload.new||!payload.new.key)return;
+      if(!shouldSyncKey(payload.new.key))return;
+      if(_pendingKVWrites[payload.new.key])return;
+      if(currentTenantId&&payload.new.key.indexOf('sb_tenant_'+currentTenantId+'_')===0){
+        for(var bi=0;bi<LARGE_DATA_KEYS.length;bi++){
+          var ent=LARGE_DATA_KEYS[bi];
+          if(payload.new.key==='sb_tenant_'+currentTenantId+'_'+ent+'__blob'){
+            _largeDataCache['sb_tenant_'+currentTenantId+'_'+ent]=payload.new.value;
+            dbSet(STORES.json,'lg_sb_tenant_'+currentTenantId+'_'+ent,payload.new.value).catch(function(){});
+            scheduleSoftReRender();
+            return;
+          }
+        }
+      }
+      try{localStorage.setItem(payload.new.key,JSON.stringify(payload.new.value));}catch(e){}
+      scheduleSoftReRender();
+    }).subscribe();
+    _realtimeChannels.push(kvChannel);
+  }catch(e){}
   try{var postsChannel=supabaseClient.channel('mex_posts_realtime').on('postgres_changes',{event:'*',schema:'public',table:TBL_POSTS},function(){if(isInOwnWriteCooldown())return;scheduleCloudPullAndRender();}).subscribe();_realtimeChannels.push(postsChannel);}catch(e){}
   try{var profilesChannel=supabaseClient.channel('mex_profiles_realtime').on('postgres_changes',{event:'*',schema:'public',table:TBL_PROFILES},function(payload){if(isInOwnWriteCooldown())return;if(payload.new){try{applyProfileFromCloud(payload.new);}catch(e){}}scheduleSoftReRender();}).subscribe();_realtimeChannels.push(profilesChannel);}catch(e){}
   for(var i=0;i<LARGE_DATA_KEYS.length;i++){
@@ -1175,6 +1321,16 @@ function pullFromCloudOnly(){
       kvRes.data.forEach(function(row){
         if(!shouldSyncKey(row.key))return;
         if(_pendingKVWrites[row.key])return;
+        if(currentTenantId&&row.key.indexOf('sb_tenant_'+currentTenantId+'_')===0){
+          for(var bi=0;bi<LARGE_DATA_KEYS.length;bi++){
+            var ent=LARGE_DATA_KEYS[bi];
+            if(row.key==='sb_tenant_'+currentTenantId+'_'+ent+'__blob'){
+              _largeDataCache['sb_tenant_'+currentTenantId+'_'+ent]=row.value;
+              dbSet(STORES.json,'lg_sb_tenant_'+currentTenantId+'_'+ent,row.value).catch(function(){});
+              return;
+            }
+          }
+        }
         var isLarge=false;
         for(var lk=0;lk<LARGE_DATA_KEYS.length;lk++){if(row.key==='sb_tenant_'+currentTenantId+'_'+LARGE_DATA_KEYS[lk]){isLarge=true;break;}}
         if(isLarge){_largeDataCache[row.key]=row.value;return;}
@@ -1552,7 +1708,7 @@ function updateAllUI(user){
   if(isSuperAdmin){var sur=document.getElementById('sideUserRole');if(sur)sur.textContent='Super Admin';var cnd=document.getElementById('companyNameDisplay');if(cnd)cnd.textContent='MeX Admin';}
   else if(isMexEmployee){var sur2=document.getElementById('sideUserRole');if(sur2)sur2.textContent='Member';var cnd2=document.getElementById('companyNameDisplay');if(cnd2)cnd2.textContent='MeX Team';}
   else{var sur3=document.getElementById('sideUserRole');if(sur3)sur3.textContent=getRoleLabel(user.role);var tx=getTenant(currentTenantId);var cnd3=document.getElementById('companyNameDisplay');if(cnd3&&tx)cnd3.textContent=tx.companyName||'MeX';}
-  updateLowStockBadge();updateDebtsBadge();updateChatBadge();
+  updateLowStockBadge();updateDebtsBadge();updateChatBadge();updateSyncStatusUI();
 }
 
 function navigate(view){
@@ -2066,6 +2222,8 @@ function logout(){
   setCurrentUser(null);setMexSession(null);lsRemove('sb_session');
   currentTenantId=null;isSuperAdmin=false;isMexEmployee=false;currentMexEmployeeId=null;
   _largeDataCache={};
+  _largeDataTableExists={};
+  _syncStatus={pending:0,lastSuccess:0,lastError:0};
   document.getElementById('appContainer').classList.remove('active');
   document.getElementById('loginPage').classList.remove('hidden');
   document.getElementById('loginUsername').value='';document.getElementById('loginPassword').value='';
@@ -2097,16 +2255,16 @@ function initApp(user){
   try{setupRealtimeSync();}catch(e){}
   try{startPeriodicRefresh();}catch(e){}
   try{updateNavLabels();}catch(e){}
-  try{preloadLargeDataFromIDB().then(function(){return loadLargeDataFromSupabase();}).then(function(){softRefreshCurrentView(true);}).catch(function(){});}catch(e){}
+  try{preloadLargeDataFromIDB().then(function(){return loadLargeDataFromSupabase();}).then(function(){softRefreshCurrentView(true);updateSyncStatusUI();}).catch(function(){});}catch(e){}
   if(promotedTickerInterval)clearInterval(promotedTickerInterval);
   promotedTickerInterval=setInterval(function(){cleanupExpiredAds();},60000);
   var navItems=document.querySelectorAll('.sidebar-nav .nav-item');
-  if(isMexEmployee){for(var i=0;i<navItems.length;i++){var v=navItems[i].dataset.view;navItems[i].style.display=(v==='mexEarnings'||v==='mexCompanies'||v==='mexStatus')?'flex':'none';}document.getElementById('navMexEarnings').classList.add('active');document.getElementById('lowStockAlertBtn').style.display='none';document.getElementById('currentDate').textContent=getTzNowDate();if(!_appInitialized){_appInitialized=true;bindGlobalEvents();}try{applyLanguageUI();}catch(e){}navigate('mexEarnings');setTimeout(hydratePhotos,100);return;}
+  if(isMexEmployee){for(var i=0;i<navItems.length;i++){var v=navItems[i].dataset.view;navItems[i].style.display=(v==='mexEarnings'||v==='mexCompanies'||v==='mexStatus')?'flex':'none';}document.getElementById('navMexEarnings').classList.add('active');document.getElementById('lowStockAlertBtn').style.display='none';document.getElementById('syncStatusBtn').style.display='none';document.getElementById('currentDate').textContent=getTzNowDate();if(!_appInitialized){_appInitialized=true;bindGlobalEvents();}try{applyLanguageUI();}catch(e){}navigate('mexEarnings');setTimeout(hydratePhotos,100);return;}
   startHeartbeat();
   if(isSuperAdmin){for(var j=0;j<navItems.length;j++){var v2=navItems[j].dataset.view;navItems[j].style.display=(v2==='superadmin'||v2==='status')?'flex':'none';}document.getElementById('navSuperAdmin').classList.add('active');document.getElementById('lowStockAlertBtn').style.display='none';currentStatusTab='ads';navigate('superadmin');}
   else{for(var k=0;k<navItems.length;k++){var v3=navItems[k].dataset.view;if(v3&&v3.indexOf('mex')===0){navItems[k].style.display='none';continue;}if(v3==='superadmin')navItems[k].style.display='none';else navItems[k].style.display='flex';}document.getElementById('lowStockAlertBtn').style.display='inline-flex';navigate('status');}
   document.getElementById('currentDate').textContent=getTzNowDate();
-  updateChatBadge();updateLowStockBadge();updateDebtsBadge();
+  updateChatBadge();updateLowStockBadge();updateDebtsBadge();updateSyncStatusUI();
   try{applyLanguageUI();}catch(e){}
   if(!_appInitialized){_appInitialized=true;bindGlobalEvents();}
 }
@@ -2284,7 +2442,6 @@ function processBarcodeScan(barcode){
   var statusEl=document.getElementById('scannerStatus');
   var product=findProductByBarcode(barcode);
 
-  /* ===== EDIT BARCODE MODE ===== */
   if(_scannerMode==='edit_barcode'){
     if(product&&Number(product.id)!==Number(_editBarcodeTargetId)){
       playErrorBeep();
@@ -2297,7 +2454,6 @@ function processBarcodeScan(barcode){
     closeScannerModal();return;
   }
 
-  /* ===== INVENTORY MODE ===== */
   if(_scannerMode==='inventory'){
     if(product){
       playErrorBeep();
@@ -2311,7 +2467,6 @@ function processBarcodeScan(barcode){
     return;
   }
 
-  /* ===== SALE MODE ===== */
   if(!product){
     playErrorBeep();
     if(statusEl){statusEl.innerHTML='⚠ Not found: <strong>'+escapeHtml(barcode)+'</strong>';statusEl.className='promo-status bad';}
@@ -2325,25 +2480,21 @@ function processBarcodeScan(barcode){
     stopCameraScanner();showScanNextButton();return;
   }
 
-  /* ===== SUCCESS → open quantity modal ===== */
   playSuccessBeep();
   stopCameraScanner();
   _pendingScanProduct=product;
   openScanQtyModal(product);
 }
 
-/* ===== SCAN QUANTITY MODAL ===== */
 function openScanQtyModal(product){
   if(!product)return;
   _pendingScanProduct=product;
 
-  /* ---- Product info card ---- */
   var info=document.getElementById('scanQtyProductInfo');
   if(info){
     info.innerHTML='<div style="background:var(--input-bg);padding:14px 16px;border-radius:12px;margin-bottom:14px;border:2px solid var(--accent-1);"><div style="font-weight:800;font-size:1.05rem;color:var(--accent-1);">'+escapeHtml(product.name)+'</div><div style="color:var(--text-muted);font-size:.82rem;margin-top:6px;font-weight:600;"><i class="fas fa-box"></i> Stock: <strong>'+product.quantity+'</strong> &nbsp;·&nbsp; <i class="fas fa-tag"></i> '+fmtMoney(product.price)+' / unit</div></div>';
   }
 
-  /* ---- Input binding ---- */
   var inp=document.getElementById('scanQtyInput');
   if(inp){
     inp.value=1;
@@ -2359,7 +2510,6 @@ function openScanQtyModal(product){
     };
   }
 
-  /* ---- Quick quantity buttons ---- */
   var quickBtns='';
   var amounts=[1,5,10,20,50,100];
   var seen={};
@@ -2374,7 +2524,6 @@ function openScanQtyModal(product){
     quickBtns+='<button type="button" class="btn btn-primary btn-sm" onclick="setScanQty('+product.quantity+')" style="margin:2px;font-weight:700;">All ('+product.quantity+')</button>';
   }
 
-  /* ---- Hint + quick row ---- */
   var hint=document.getElementById('scanQtyHint');
   if(hint){
     hint.innerHTML='<div style="margin-bottom:8px;">Max: <strong>'+product.quantity+'</strong> &nbsp;·&nbsp; Total: <strong id="scanQtyTotal" style="color:var(--accent-1);font-size:1.05rem;">'+fmtMoney(product.price)+'</strong></div><div style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px;">'+quickBtns+'</div>';
@@ -2408,12 +2557,10 @@ function confirmScanQty(){
   var ok=recordQuickSale(product,qty);
   if(!ok){showToast('Could not save sale','error');playErrorBeep();return;}
 
-  /* ---- Clear state ---- */
   _pendingScanProduct=null;
   closeScanQtyModal();
   playSuccessBeep();
 
-  /* ---- Update session stats ---- */
   _scanSessionCount+=qty;
   _scanSessionTotal+=(Number(product.price)||0)*qty;
   updateScanStats();
@@ -2422,14 +2569,12 @@ function confirmScanQty(){
   updateLowStockBadge();
   updateDebtsBadge();
 
-  /* ---- Status message ---- */
   var statusEl=document.getElementById('scannerStatus');
   if(statusEl){
     statusEl.innerHTML='✅ Sold: <strong>'+escapeHtml(product.name)+'</strong> × '+qty+' — '+fmtMoney((Number(product.price)||0)*qty);
     statusEl.className='promo-status ok';
   }
 
-  /* ---- Auto re-arm scanner for next product ---- */
   _scanLocked=false;
   var readerEl=document.getElementById('scannerReader');
   if(readerEl)readerEl.style.display='flex';
@@ -2483,6 +2628,35 @@ function recordQuickSale(product,qty){
   return true;
 }
 
+/* ===== DIAGNOSTIC ===== */
+window.__debugSync=async function(){
+  console.log('=== MeX SYNC DIAGNOSTIC ===');
+  console.log('Tenant:',currentTenantId);
+  console.log('Table status:',JSON.stringify(_largeDataTableExists));
+  console.log('Sync status:',JSON.stringify(_syncStatus));
+  if(!supabaseClient){console.log('❌ NO SUPABASE CLIENT');return;}
+  for(var i=0;i<LARGE_DATA_KEYS.length;i++){
+    var k=LARGE_DATA_KEYS[i];
+    var fullKey='sb_tenant_'+currentTenantId+'_'+k;
+    var localCount=(_largeDataCache[fullKey]||[]).length;
+    var tInfo='?';
+    try{
+      var r=await supabaseClient.from('mex_'+k).select('id',{count:'exact',head:true}).eq('tenant_id',currentTenantId);
+      tInfo=r.error?('❌ '+r.error.code+' '+r.error.message):('✅ '+(r.count||0));
+    }catch(e){tInfo='❌ '+e.message;}
+    var bInfo='?';
+    try{
+      var br=await supabaseClient.from(TBL_KV).select('value').eq('key',getBlobFallbackKey(k)).maybeSingle();
+      if(br.error)bInfo='❌ '+br.error.message;
+      else if(!br.data)bInfo='—';
+      else bInfo='✅ '+(Array.isArray(br.data.value)?br.data.value.length:'?');
+    }catch(e){bInfo='❌ '+e.message;}
+    console.log(k+': local='+localCount+' | table='+tInfo+' | blob='+bInfo);
+  }
+  console.log('=== END ===');
+  showToast('Diagnostic → open F12 Console','info');
+};
+
 /* ===== BOOT ===== */
 window.__bootMain=function boot(){
   var splashStart=Date.now();
@@ -2519,7 +2693,7 @@ window.__bootMain=function boot(){
   try{applyLanguageUI();}catch(e){}
   pullAllFromSupabase().then(function(){
     try{preloadAllMedia();}catch(e){}
-    try{preloadLargeDataFromIDB().then(function(){return loadLargeDataFromSupabase();}).then(function(){softRefreshCurrentView(true);}).catch(function(){});}catch(e){}
+    try{preloadLargeDataFromIDB().then(function(){return loadLargeDataFromSupabase();}).then(function(){softRefreshCurrentView(true);updateSyncStatusUI();}).catch(function(){});}catch(e){}
   }).catch(function(e){});
 };
 (function tryAutoBoot(){setTimeout(function(){if(typeof window.__bootMain==='function'&&!window.__bootCalled){window.__bootCalled=true;try{window.__bootMain();}catch(e){console.error('[AutoBoot]',e);}}},300);})();
