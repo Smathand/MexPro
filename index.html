@@ -1261,7 +1261,7 @@ function migrateBranchUserNames(){
   }catch(e){}
 }
 
-/* ===================== DELETION LOG (Branch deletes → notifies company) ===================== */
+/* ===================== DELETION LOG ===================== */
 function getDeletionLog(){var a=getTenantData(DELETION_LOG_KEY,[]);return Array.isArray(a)?a:[];}
 function saveDeletionLog(a){setTenantData(DELETION_LOG_KEY,a||[]);}
 function addDeletionLogEntry(entry){var log=getDeletionLog();log.push(entry);saveDeletionLog(log);}
@@ -1483,22 +1483,33 @@ var DEFAULT_ROLE_PERMS={admin:['sales_create','sales_delete','inventory_view','i
 var PERMISSION_DEFS=['sales_create','sales_delete','inventory_view','inventory_manage','expenses_view','expenses_manage','reports_view','pnl_view','users_manage','attendance_view'];
 function rolePermsFor(role){var out={};for(var i=0;i<PERMISSION_DEFS.length;i++){var p=PERMISSION_DEFS[i];out[p]=role==='owner'||((DEFAULT_ROLE_PERMS[role]||[]).indexOf(p)!==-1);}return out;}
 function hasPerm(perm){if(isSuperAdmin)return true;if(isMexEmployee)return false;var u=getCurrentUser();if(!u)return false;if(u.role==='owner')return true;return !!rolePermsFor(u.role)[perm];}
-function getDefaultBranchPermissions(){return{seeNetProfit:false,seeExpenses:true,deleteSales:true,addBranches:false,manageRoles:false,seeUsers:false};}
+
+/* ===== NEW: Branch permissions with addInventory ===== */
+function getDefaultBranchPermissions(){return{seeNetProfit:false,seeExpenses:true,deleteSales:true,addInventory:true,addBranches:false,manageRoles:false,seeUsers:false};}
 function ensureBranchPermissions(){var ts=getAllTenants();var changed=false;var defaults=getDefaultBranchPermissions();for(var i=0;i<ts.length;i++){var branches=ts[i].branches||[];for(var j=0;j<branches.length;j++){var p=branches[j].permissions||{};var np={};for(var key in defaults){np[key]=(key in p)?(p[key]===true):defaults[key];}branches[j].permissions=np;changed=true;}}if(changed)saveTenants(ts);}
 function getBranchPermissions(storeName){if(!storeName)return null;var branches=getBranchList();for(var i=0;i<branches.length;i++){if(branches[i].name===storeName){var p=branches[i].permissions||{};var defaults=getDefaultBranchPermissions();var result={};for(var key in defaults){result[key]=(key in p)?(p[key]===true):defaults[key];}return result;}}return null;}
 function _branchAllows(permKey){if(isSuperAdmin||isMexEmployee)return null;var u=getCurrentUser();if(!u)return false;if(u.role==='owner')return null;var bp=getBranchPermissions(u.store);if(!bp)return null;return bp[permKey]===true;}
 
-function canDeleteSales(){if(isSuperAdmin)return true;if(isMexEmployee)return false;var u=getCurrentUser();if(!u)return false;return true;}
+/* ===== NEW: Combined inventory management check ===== */
+function canManageInventory(){
+  if(isSuperAdmin)return true;
+  if(isMexEmployee)return false;
+  var u=getCurrentUser();
+  if(!u)return false;
+  if(u.role==='owner')return true;
+  var bp=getBranchPermissions(u.store);
+  if(bp&&bp.addInventory===true)return true;
+  return !!rolePermsFor(u.role)['inventory_manage'];
+}
 
+function canDeleteSales(){if(isSuperAdmin)return true;if(isMexEmployee)return false;var u=getCurrentUser();if(!u)return false;return true;}
 function canSeeUsers(){if(isSuperAdmin)return true;if(isMexEmployee)return false;var u=getCurrentUser();if(!u)return false;if(u.role==='owner')return true;if(!hasPerm('users_manage'))return false;var bp=_branchAllows('seeUsers');if(bp===false)return false;return true;}
 function canManageUsers(){if(isSuperAdmin)return true;if(isMexEmployee)return false;var u=getCurrentUser();if(!u)return false;if(u.role==='owner')return true;if(!hasPerm('users_manage'))return false;var bp=_branchAllows('seeUsers');if(bp===false)return false;return true;}
 function canManageRoles(){if(isSuperAdmin)return true;if(isMexEmployee)return false;var u=getCurrentUser();if(!u)return false;if(u.role==='owner')return true;if(u.role!=='admin')return false;var bp=_branchAllows('manageRoles');if(bp===false)return false;return true;}
 function canRecordSales(){if(isSuperAdmin)return true;if(isMexEmployee)return false;return hasPerm('sales_create');}
 function getRoleLabel(r){var m={owner:'Owner',admin:'Admin',accountant:'Accountant',employee:'Employee',superadmin:'Super Admin',mexemployee:'Member'};return m[r]||r;}
 function getRoleBadgeClass(r){var m={owner:'badge-role-owner',admin:'badge-role-admin',accountant:'badge-role-accountant',employee:'badge-role-employee'};return m[r]||'badge-primary';}
-
 function canSeeNetProfit(){if(isSuperAdmin)return true;if(isMexEmployee)return false;var u=getCurrentUser();if(!u)return false;if(u.role==='owner')return true;return false;}
-
 function canSeeExpenses(){if(isSuperAdmin)return true;if(isMexEmployee)return false;var u=getCurrentUser();if(!u)return false;if(u.role==='owner')return true;if(!hasPerm('expenses_view'))return false;var bp=_branchAllows('seeExpenses');if(bp===false)return false;return true;}
 function getUserPermissions(){if(isSuperAdmin||isMexEmployee)return {seeNetProfit:true,seeExpenses:true};var u=getCurrentUser();if(!u)return {seeNetProfit:false,seeExpenses:false};if(u.role==='owner')return {seeNetProfit:true,seeExpenses:true};return {seeNetProfit:canSeeNetProfit(),seeExpenses:canSeeExpenses()};}
 
@@ -1764,10 +1775,11 @@ views.debts=function(){
   return '<div class="section-header"><h2><i class="fas fa-hand-holding-usd" style="color:var(--accent-danger);"></i> '+t('debts_title')+'<span class="record-badge">'+d.length+'</span></h2><div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn btn-whatsapp btn-icon" onclick="openSendReportModal(\'debts\')"><i class="fab fa-whatsapp"></i> Send Report</button></div></div><div class="stats-grid"><div class="stat-card"><div class="stat-label">'+t('dash_total_debts')+'</div><div class="stat-value red">'+fmtMoney(total)+'</div></div><div class="stat-card"><div class="stat-label">Debtors</div><div class="stat-value primary">'+d.length+'</div></div></div><div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>'+t('cust_customer')+'</th><th>'+t('cust_product')+'</th><th>'+t('cust_qty')+'</th><th>'+t('cust_amount')+'</th><th>Sold by</th><th>'+t('cust_date')+'</th><th></th></tr></thead><tbody>'+(rows||'<tr class="empty-row"><td colspan="8">No debts</td></tr>')+'</tbody></table></div></div></div>';
 };
 
+/* ===== CHANGED: uses canManageInventory() instead of hasPerm('inventory_manage') ===== */
 function buildInventoryRowsHtml(){
   if(isSuperAdmin||isMexEmployee)return '';
   var p=getFilteredProducts().slice().sort(function(a,b){return (a.name||'').localeCompare(b.name||'');});
-  var ce=hasPerm('inventory_manage');
+  var ce=canManageInventory();
   if(inventorySearchTerm&&inventorySearchTerm.trim()){var q=inventorySearchTerm.trim().toLowerCase();var filtered=[];for(var f=0;f<p.length;f++){var xp=p[f];if(String(xp.name||'').toLowerCase().indexOf(q)!==-1||String(xp.barcode||'').toLowerCase().indexOf(q)!==-1||String(xp.category||'').toLowerCase().indexOf(q)!==-1||String(xp.store||'').toLowerCase().indexOf(q)!==-1)filtered.push(xp);}p=filtered;}
   var paged=getPagedItems(p,'inventory');var rows='';
   for(var j=0;j<paged.items.length;j++){
@@ -1782,9 +1794,11 @@ function buildInventoryRowsHtml(){
   return rows||'<tr class="empty-row"><td colspan="10">'+(inventorySearchTerm?'No products match "'+escapeHtml(inventorySearchTerm)+'"':'No products')+'</td></tr>';
 }
 function onInventorySearch(v){inventorySearchTerm=v;var tb=document.getElementById('inventoryTableBody');if(tb)tb.innerHTML=buildInventoryRowsHtml();}
+
+/* ===== CHANGED: uses canManageInventory() for branch users ===== */
 views.inventory=function(){
   if(isSuperAdmin||isMexEmployee)return '';
-  var ce=hasPerm('inventory_manage');
+  var ce=canManageInventory();
   var u=getCurrentUser();var bns=getBranchNames();
   var canT=u&&hasPerm('inventory_manage')&&bns.length>1;
   var cats=ensureCategories();
@@ -1862,11 +1876,20 @@ views.branches=function(){
   return '<div class="section-header"><h2>'+t('branches_title')+'<span class="record-badge">'+branches.length+'</span></h2><button class="btn btn-primary btn-icon" onclick="openBranchModal()"><i class="fas fa-plus"></i> Add Branch — TSh 10,000</button></div><div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th>'+t('inv_branch')+'</th><th>Address</th><th>'+t('login_username')+'</th><th>Status</th><th>Perms</th><th></th></tr></thead><tbody>'+(bh||'<tr class="empty-row"><td colspan="6">—</td></tr>')+'</tbody></table></div></div></div>';
 };
 
+/* ===== NEW: Branch Permissions Modal includes Add Inventory ===== */
 function openBranchPermissionsModal(branchName){
   branchName=safeDecode(branchName);
   if(!isSuperAdmin){var u=getCurrentUser();if(!u||u.role!=='owner')return;}
   var bp=getBranchPermissions(branchName)||getDefaultBranchPermissions();
-  var permDefs=[{key:'seeNetProfit',icon:'fa-chart-line',label:'View Profit & Loss (Net Profit)',hint:'Branch can see Net Profit and P&L reports'},{key:'seeExpenses',icon:'fa-receipt',label:'View Expenses',hint:'Branch can see company expenses'},{key:'deleteSales',icon:'fa-trash',label:'Delete Sales',hint:'Branch can delete sales records'},{key:'addBranches',icon:'fa-plus-circle',label:'Add New Branches',hint:'Branch can create new branches (TSh 10,000)'},{key:'manageRoles',icon:'fa-user-tag',label:'Manage User Roles',hint:'Branch can change user roles'},{key:'seeUsers',icon:'fa-users',label:'View Users List',hint:'Branch can see the users list'}];
+  var permDefs=[
+    {key:'seeNetProfit',icon:'fa-chart-line',label:'View Profit & Loss (Net Profit)',hint:'Branch can see Net Profit and P&L reports'},
+    {key:'seeExpenses',icon:'fa-receipt',label:'View Expenses',hint:'Branch can see company expenses'},
+    {key:'addInventory',icon:'fa-boxes',label:'Add / Edit Inventory',hint:'Branch can add, edit, delete products, adjust stock, and add barcodes'},
+    {key:'deleteSales',icon:'fa-trash',label:'Delete Sales',hint:'Branch can delete sales records'},
+    {key:'addBranches',icon:'fa-plus-circle',label:'Add New Branches',hint:'Branch can create new branches (TSh 10,000)'},
+    {key:'manageRoles',icon:'fa-user-tag',label:'Manage User Roles',hint:'Branch can change user roles'},
+    {key:'seeUsers',icon:'fa-users',label:'View Users List',hint:'Branch can see the users list'}
+  ];
   var html='<h3><i class="fas fa-shield-alt" style="color:#8b5cf6;"></i> Branch Permissions</h3>';
   html+='<div style="background:var(--input-bg);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:.9rem;font-weight:700;display:flex;align-items:center;gap:8px;"><i class="fas fa-store" style="color:var(--accent-1);"></i> '+escapeHtml(branchName)+'</div>';
   html+='<div style="display:flex;flex-direction:column;gap:10px;">';
@@ -2046,7 +2069,6 @@ function filterSaleProducts(q){var sel=document.getElementById('saleProductSelec
 function closeModal(){var ov=document.getElementById('modalOverlay');var bx=document.getElementById('modalBox');ov.classList.remove('show');ov.style.zIndex='';bx.style.padding='';bx.style.overflow='';bx.style.borderRadius='';bx.style.maxWidth='';var so=document.querySelector('.modal-overlay.show');if(!so)document.body.classList.remove('modal-open');}
 function onSaleProductChange(){var sel=document.getElementById('saleProductSelect');var pi=document.getElementById('saleUnitPriceInput');if(!sel||!pi)return;var o=sel.options[sel.selectedIndex];if(!o||!sel.value){pi.value='';return;}pi.value=parseFloat(o.dataset.price)||0;}
 
-/* ===== CHANGED: createdByName uses username ===== */
 function submitSale(e){
   e.preventDefault();
   if(!hasPerm('sales_create'))return;
@@ -2076,9 +2098,10 @@ function submitSale(e){
   updateDebtsBadge();
 }
 
+/* ===== CHANGED: uses canManageInventory() ===== */
 function submitProduct(e){
   if(e&&e.preventDefault)e.preventDefault();
-  if(!hasPerm('inventory_manage')){showToast('⚠ Permission denied','error');return;}
+  if(!canManageInventory()){showToast('⚠ Permission denied','error');return;}
   var form=(e&&e.target)||document.querySelector('#modalBox form');
   if(!form){showToast('⚠ Form not found','error');return;}
   var fd=new FormData(form);
@@ -2107,8 +2130,9 @@ function submitProduct(e){
   navigate('inventory');
   setTimeout(function(){softRefreshCurrentView(false);},400);
 }
+/* ===== CHANGED: uses canManageInventory() ===== */
 function openEditProductModal(id){
-  if(!hasPerm('inventory_manage'))return;
+  if(!canManageInventory())return;
   var ps=getTenantData('products',[]);var p=null;
   for(var i=0;i<ps.length;i++){if(Number(ps[i].id)===Number(id)){p=ps[i];break;}}
   if(!p){showToast('Product not found','error');return;}
@@ -2120,14 +2144,18 @@ function openEditProductModal(id){
   bx.innerHTML='<h3><i class="fas fa-edit" style="color:var(--accent-1);"></i> '+t('form_edit_product')+'</h3><form onsubmit="submitEditProduct(event,\''+p.id+'\')"><div class="form-group"><label>'+t('form_name')+' *</label><input type="text" name="name" required value="'+escapeAttr(p.name)+'"/></div><div class="form-group"><label><i class="fas fa-barcode"></i> '+t('form_barcode')+'</label><div style="display:flex;gap:8px;"><input type="text" name="barcode" id="editProductBarcodeInput" value="'+escapeAttr(p.barcode||'')+'" placeholder="Scan or type" style="flex:1;"/><button type="button" class="btn btn-secondary btn-sm" onclick="scanBarcodeForEdit(\''+p.id+'\')" style="white-space:nowrap;"><i class="fas fa-camera"></i> '+t('btn_scan')+'</button></div><div class="promo-status" id="editBarcodeStatus"></div></div><div class="form-row"><div class="form-group"><label>'+t('form_price')+' *</label><input type="number" name="price" min="1" step="any" required value="'+escapeAttr(p.price)+'"/></div><div class="form-group"><label>'+t('form_cost')+' *</label><input type="number" name="cost" min="1" step="any" required value="'+escapeAttr(p.cost)+'"/></div></div><div class="form-row"><div class="form-group"><label>'+t('form_category')+'</label><select name="category">'+catOpts+'</select></div><div class="form-group"><label>'+t('form_quantity')+'</label><input type="number" name="quantity" min="0" value="'+escapeAttr(p.quantity)+'"/></div></div><div class="form-group"><label><i class="fas fa-calendar-times" style="color:var(--accent-3);"></i> '+t('form_expiry_date')+' '+t('form_optional')+'</label><input type="date" name="expiryDate" value="'+escapeAttr(p.expiryDate||'')+'"/></div><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">'+t('btn_cancel')+'</button><button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> '+t('btn_save_changes')+'</button></div></form>';
   ov.classList.add('show');document.body.classList.add('modal-open');
 }
-function submitEditProduct(e,productId){e.preventDefault();if(!hasPerm('inventory_manage'))return;var fd=new FormData(e.target);var n=(fd.get('name')||'').trim();var bc=(fd.get('barcode')||'').trim();var pr=parseFloat(fd.get('price'));var co=parseFloat(fd.get('cost'));var q=parseInt(fd.get('quantity'));var cat=(fd.get('category')||'').trim()||'General';if(!n||!pr||!co||isNaN(q)||q<0){showToast('Fill all fields','error');return;}var ps=getTenantData('products',[]);if(bc){var tbc=bc.toLowerCase();for(var ck=0;ck<ps.length;ck++){if(Number(ps[ck].id)!==Number(productId)&&ps[ck].barcode&&String(ps[ck].barcode).toLowerCase()===tbc){showToast('⚠ Barcode used by: '+ps[ck].name,'error');return;}}}var exp=(fd.get('expiryDate')||'').trim();var updated=false;for(var i=0;i<ps.length;i++){if(Number(ps[i].id)===Number(productId)){ps[i].name=n;ps[i].barcode=bc;ps[i].price=pr;ps[i].cost=co;ps[i].quantity=q;ps[i].category=cat;ps[i].expiryDate=exp;updated=true;break;}}if(!updated){showToast('Product not found','error');return;}persistProducts(ps);syncLargeDataToSupabase(tenantKey('products'),ps);closeModal();showToast('✅ '+t('msg_product_updated'),'success');navigate('inventory');}
+/* ===== CHANGED: uses canManageInventory() ===== */
+function submitEditProduct(e,productId){e.preventDefault();if(!canManageInventory())return;var fd=new FormData(e.target);var n=(fd.get('name')||'').trim();var bc=(fd.get('barcode')||'').trim();var pr=parseFloat(fd.get('price'));var co=parseFloat(fd.get('cost'));var q=parseInt(fd.get('quantity'));var cat=(fd.get('category')||'').trim()||'General';if(!n||!pr||!co||isNaN(q)||q<0){showToast('Fill all fields','error');return;}var ps=getTenantData('products',[]);if(bc){var tbc=bc.toLowerCase();for(var ck=0;ck<ps.length;ck++){if(Number(ps[ck].id)!==Number(productId)&&ps[ck].barcode&&String(ps[ck].barcode).toLowerCase()===tbc){showToast('⚠ Barcode used by: '+ps[ck].name,'error');return;}}}var exp=(fd.get('expiryDate')||'').trim();var updated=false;for(var i=0;i<ps.length;i++){if(Number(ps[i].id)===Number(productId)){ps[i].name=n;ps[i].barcode=bc;ps[i].price=pr;ps[i].cost=co;ps[i].quantity=q;ps[i].category=cat;ps[i].expiryDate=exp;updated=true;break;}}if(!updated){showToast('Product not found','error');return;}persistProducts(ps);syncLargeDataToSupabase(tenantKey('products'),ps);closeModal();showToast('✅ '+t('msg_product_updated'),'success');navigate('inventory');}
 function scanBarcodeForEdit(productId,quickMode){_editBarcodeTargetId=productId;_editBarcodeQuickMode=!!quickMode;_pendingBarcodeValue=null;openScannerModal('edit_barcode');}
-function quickAddBarcode(productId){if(!hasPerm('inventory_manage')){showToast('Permission denied','error');return;}var ps=getTenantData('products',[]);var p=null;for(var i=0;i<ps.length;i++){if(Number(ps[i].id)===Number(productId)){p=ps[i];break;}}if(!p){showToast('Product not found','error');return;}_quickBarcodeTargetId=productId;var ov=document.getElementById('modalOverlay');var bx=document.getElementById('modalBox');bx.style.padding='';bx.style.overflow='';bx.style.borderRadius='';bx.style.maxWidth='440px';bx.innerHTML='<h3><i class="fas fa-barcode" style="color:var(--accent-1);"></i> '+t('inv_add_barcode')+'</h3><div style="background:var(--input-bg);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:.85rem;"><strong>'+escapeHtml(p.name)+'</strong><div style="color:var(--text-muted);margin-top:4px;font-size:.78rem;"><i class="fas fa-store"></i> '+escapeHtml(p.store||'--')+' · '+fmtMoney(p.price)+'</div></div><form onsubmit="submitQuickBarcode(event,\''+p.id+'\')"><div class="form-group"><label><i class="fas fa-barcode"></i> Barcode *</label><div style="display:flex;gap:8px;"><input type="text" name="barcode" id="quickBarcodeInput" placeholder="Scan or type barcode" required autofocus style="flex:1;"/><button type="button" class="btn btn-secondary btn-sm" onclick="scanBarcodeForQuickAdd(\''+p.id+'\')" style="white-space:nowrap;"><i class="fas fa-camera"></i> '+t('btn_scan')+'</button></div><div class="promo-status" id="quickBarcodeStatus"></div></div><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">'+t('btn_cancel')+'</button><button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> '+t('btn_save')+'</button></div></form>';ov.classList.add('show');document.body.classList.add('modal-open');setTimeout(function(){var i=document.getElementById('quickBarcodeInput');if(i)i.focus();},200);}
-function submitQuickBarcode(e,productId){e.preventDefault();if(!hasPerm('inventory_manage'))return;var fd=new FormData(e.target);var bc=(fd.get('barcode')||'').trim();if(!bc){showToast('Enter barcode','error');return;}var ps=getTenantData('products',[]);var tbc=bc.toLowerCase();for(var i=0;i<ps.length;i++){if(Number(ps[i].id)!==Number(productId)&&ps[i].barcode&&String(ps[i].barcode).toLowerCase()===tbc){showToast('⚠ Barcode used by: '+ps[i].name,'error');return;}}for(var j=0;j<ps.length;j++){if(Number(ps[j].id)===Number(productId)){ps[j].barcode=bc;break;}}persistProducts(ps);syncLargeDataToSupabase(tenantKey('products'),ps);_quickBarcodeTargetId=null;_pendingBarcodeValue=null;closeModal();showToast('✅ Barcode added','success');navigate('inventory');}
+/* ===== CHANGED: uses canManageInventory() ===== */
+function quickAddBarcode(productId){if(!canManageInventory()){showToast('Permission denied','error');return;}var ps=getTenantData('products',[]);var p=null;for(var i=0;i<ps.length;i++){if(Number(ps[i].id)===Number(productId)){p=ps[i];break;}}if(!p){showToast('Product not found','error');return;}_quickBarcodeTargetId=productId;var ov=document.getElementById('modalOverlay');var bx=document.getElementById('modalBox');bx.style.padding='';bx.style.overflow='';bx.style.borderRadius='';bx.style.maxWidth='440px';bx.innerHTML='<h3><i class="fas fa-barcode" style="color:var(--accent-1);"></i> '+t('inv_add_barcode')+'</h3><div style="background:var(--input-bg);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:.85rem;"><strong>'+escapeHtml(p.name)+'</strong><div style="color:var(--text-muted);margin-top:4px;font-size:.78rem;"><i class="fas fa-store"></i> '+escapeHtml(p.store||'--')+' · '+fmtMoney(p.price)+'</div></div><form onsubmit="submitQuickBarcode(event,\''+p.id+'\')"><div class="form-group"><label><i class="fas fa-barcode"></i> Barcode *</label><div style="display:flex;gap:8px;"><input type="text" name="barcode" id="quickBarcodeInput" placeholder="Scan or type barcode" required autofocus style="flex:1;"/><button type="button" class="btn btn-secondary btn-sm" onclick="scanBarcodeForQuickAdd(\''+p.id+'\')" style="white-space:nowrap;"><i class="fas fa-camera"></i> '+t('btn_scan')+'</button></div><div class="promo-status" id="quickBarcodeStatus"></div></div><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">'+t('btn_cancel')+'</button><button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> '+t('btn_save')+'</button></div></form>';ov.classList.add('show');document.body.classList.add('modal-open');setTimeout(function(){var i=document.getElementById('quickBarcodeInput');if(i)i.focus();},200);}
+/* ===== CHANGED: uses canManageInventory() ===== */
+function submitQuickBarcode(e,productId){e.preventDefault();if(!canManageInventory())return;var fd=new FormData(e.target);var bc=(fd.get('barcode')||'').trim();if(!bc){showToast('Enter barcode','error');return;}var ps=getTenantData('products',[]);var tbc=bc.toLowerCase();for(var i=0;i<ps.length;i++){if(Number(ps[i].id)!==Number(productId)&&ps[i].barcode&&String(ps[i].barcode).toLowerCase()===tbc){showToast('⚠ Barcode used by: '+ps[i].name,'error');return;}}for(var j=0;j<ps.length;j++){if(Number(ps[j].id)===Number(productId)){ps[j].barcode=bc;break;}}persistProducts(ps);syncLargeDataToSupabase(tenantKey('products'),ps);_quickBarcodeTargetId=null;_pendingBarcodeValue=null;closeModal();showToast('✅ Barcode added','success');navigate('inventory');}
 function scanBarcodeForQuickAdd(productId){_quickBarcodeTargetId=productId;_editBarcodeTargetId=productId;_editBarcodeQuickMode=true;_pendingBarcodeValue=null;openScannerModal('edit_barcode');}
 function submitExpense(e){e.preventDefault();if(!hasPerm('expenses_manage'))return;var fd=new FormData(e.target);var d=(fd.get('description')||'').trim();var a=parseFloat(fd.get('amount'));var c=fd.get('category')||'Other';var st=(fd.get('store')||'').trim()||getCatalogStore();if(!d||!a||a<1)return;var u=getCurrentUser();var ex=getTenantData('expenses',[]);ex.push({id:uid(),description:d,amount:a,category:c,date:Date.now(),store:st,createdBy:u.id});persistExpenses(ex);syncLargeDataToSupabase(tenantKey('expenses'),ex);closeModal();navigate('expenses');}
 function submitUser(e){e.preventDefault();if(!canManageUsers())return;var fd=new FormData(e.target);var un=(fd.get('username')||'').trim();var pw=fd.get('password');var role=fd.get('role');var fn=(fd.get('fullName')||'').trim()||un;var st=(fd.get('store')||'').trim()||getStoreName();if(!un||!pw||!role)return;var us=getTenantData('users',[]);if(isUsernameTaken(un)){showToast('Username taken','error');return;}var u=getCurrentUser();var newUser={id:uid(),username:un,password:hashPw(un,pw),role:role,store:st,fullName:fn,createdBy:u.id,photoKey:'',tenantId:currentTenantId,theme:'light'};us.push(newUser);setTenantData('users',us);indexUsername(un,currentTenantId);markOwnWrite();scheduleProfilePush({userKey:'t_'+currentTenantId+'_'+newUser.id,userType:'tenant',tenantId:currentTenantId,userId:newUser.id,username:un,fullName:fn,photoKey:null,bio:'',phone:'',email:'',socialWhatsapp:'',socialInstagram:'',socialFacebook:'',socialTiktok:'',socialWebsite:'',theme:'light'});closeModal();navigate('users');}
-function submitStockAdjust(e,pid){e.preventDefault();if(!hasPerm('inventory_manage'))return;var fd=new FormData(e.target);var adj=parseInt(fd.get('adjust'));if(isNaN(adj)||adj===0)return;var ps=getTenantData('products',[]);for(var i=0;i<ps.length;i++){if(ps[i].id===parseInt(pid)){ps[i].quantity=Math.max(0,ps[i].quantity+adj);break;}}persistProducts(ps);syncLargeDataToSupabase(tenantKey('products'),ps);closeModal();navigate('inventory');}
+/* ===== CHANGED: uses canManageInventory() ===== */
+function submitStockAdjust(e,pid){e.preventDefault();if(!canManageInventory())return;var fd=new FormData(e.target);var adj=parseInt(fd.get('adjust'));if(isNaN(adj)||adj===0)return;var ps=getTenantData('products',[]);for(var i=0;i<ps.length;i++){if(ps[i].id===parseInt(pid)){ps[i].quantity=Math.max(0,ps[i].quantity+adj);break;}}persistProducts(ps);syncLargeDataToSupabase(tenantKey('products'),ps);closeModal();navigate('inventory');}
 
 function deleteSale(id){
   if(!canDeleteSales())return;
@@ -2174,7 +2202,8 @@ function deleteSale(id){
 }
 
 function deleteExpense(id){if(!hasPerm('expenses_manage'))return;if(!confirm('Delete?'))return;var all=getTenantData('expenses',[]);var out=[];for(var i=0;i<all.length;i++)if(Number(all[i].id)!==Number(id))out.push(all[i]);persistExpenses(out);if(supabaseClient)supabaseClient.from('mex_expenses').delete().eq('id',Number(id)).catch(function(){});navigate('expenses');}
-function deleteProduct(id){if(!hasPerm('inventory_manage'))return;if(!confirm('Delete?'))return;var all=getTenantData('products',[]);var out=[];for(var i=0;i<all.length;i++)if(Number(all[i].id)!==Number(id))out.push(all[i]);persistProducts(out);if(supabaseClient)supabaseClient.from('mex_products').delete().eq('id',Number(id)).catch(function(){});navigate('inventory');}
+/* ===== CHANGED: uses canManageInventory() ===== */
+function deleteProduct(id){if(!canManageInventory())return;if(!confirm('Delete?'))return;var all=getTenantData('products',[]);var out=[];for(var i=0;i<all.length;i++)if(Number(all[i].id)!==Number(id))out.push(all[i]);persistProducts(out);if(supabaseClient)supabaseClient.from('mex_products').delete().eq('id',Number(id)).catch(function(){});navigate('inventory');}
 function deleteUser(id){if(!canManageUsers())return;var u=getUser(Number(id));if(!u||u.role==='owner')return;if(!confirm('Delete?'))return;var all=getTenantData('users',[]);var out=[];for(var i=0;i<all.length;i++){if(Number(all[i].id)===Number(id)){if(all[i].username)unindexUsername(all[i].username);}else out.push(all[i]);}setTenantData('users',out);markOwnWrite();if(supabaseClient)supabaseClient.from(TBL_PROFILES).delete().eq('user_key','t_'+currentTenantId+'_'+id).catch(function(e){});navigate('users');}
 function changeUserRole(userId,newRole){if(!canManageRoles())return;if(['admin','accountant','employee'].indexOf(newRole)===-1)return;var cu=getCurrentUser();if(cu&&cu.role==='admin'){var target=getUser(Number(userId));if(!target||target.role==='owner'||target.role==='admin'){showToast('⚠ Only owner can change admin','error');return;}}var us=getTenantData('users',[]);for(var i=0;i<us.length;i++){if(Number(us[i].id)===Number(userId)&&us[i].role!=='owner'){us[i].role=newRole;setTenantData('users',us);showToast('✓ Role updated','success');break;}}navigate('roles');}
 function adjustStock(id){openModal('adjustStock',id);}
@@ -2193,7 +2222,6 @@ function viewTransferHistory(){var transfers=getTenantData(TRANSFERS_KEY_SUFFIX,
 function openBranchModal(){var ov=document.getElementById('subModal');['newBranchName','newBranchAddress','newBranchTin','newBranchUsername','newBranchPassword'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});ov.classList.add('show');document.body.classList.add('modal-open');}
 function closeSubscriptionModal(){document.getElementById('subModal').classList.remove('show');var so=document.querySelector('.modal-overlay.show');if(!so)document.body.classList.remove('modal-open');}
 
-/* ===== CHANGED: fullName uses username (not "Branch Manager - X") ===== */
 function handleSubscriptionPayment(){
   var bn=document.getElementById('newBranchName').value.trim();
   var ba=document.getElementById('newBranchAddress').value.trim();
@@ -2247,7 +2275,6 @@ function superRenewSubscription(tenantId,planKey){if(!isSuperAdmin)return;var pr
 function openTenantCredentials(tenantId){if(!isSuperAdmin)return;var tn=getTenant(tenantId);if(!tn)return;_credentialsTenantId=tenantId;var users=lsGet('sb_tenant_'+tenantId+'_users',[]);if(!Array.isArray(users))users=[];var rows='';for(var i=0;i<users.length;i++){var u=users[i];rows+='<tr><td>'+(i+1)+'</td><td><strong>'+escapeHtml(u.fullName||u.username)+'</strong></td><td><code style="background:var(--input-bg);padding:3px 8px;border-radius:6px;font-size:.82rem;">'+escapeHtml(u.username)+'</code></td><td><span class="badge '+getRoleBadgeClass(u.role)+'">'+getRoleLabel(u.role)+'</span></td><td><span style="color:var(--text-muted);font-style:italic;font-size:.78rem;">🔒 Hashed</span></td><td><button class="btn btn-xs btn-secondary" onclick="superResetUserPassword(\''+tenantId+'\',\''+u.id+'\')"><i class="fas fa-sync"></i> Reset</button></td></tr>';}var ov=document.getElementById('modalOverlay');var bx=document.getElementById('modalBox');bx.style.padding='';bx.style.overflow='';bx.style.borderRadius='';bx.style.maxWidth='820px';bx.innerHTML='<h3><i class="fas fa-key" style="color:#8b5cf6;"></i> Credentials — '+escapeHtml(tn.companyName)+'</h3><div style="background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.25);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:.82rem;color:var(--text-secondary);line-height:1.5;"><i class="fas fa-shield-alt" style="color:#8b5cf6;"></i> Passwords are hashed. Click Reset to generate a new one (shown once).</div><div class="table-wrap"><table><thead><tr><th>#</th><th>'+t('form_name')+'</th><th>'+t('login_username')+'</th><th>Role</th><th>Password</th><th>'+t('cust_actions')+'</th></tr></thead><tbody>'+(rows||'<tr class="empty-row"><td colspan="6">No users</td></tr>')+'</tbody></table></div><div class="form-actions" style="margin-top:16px;justify-content:flex-end;"><button class="btn btn-secondary" onclick="closeModal()">'+t('btn_close')+'</button></div>';ov.classList.add('show');document.body.classList.add('modal-open');}
 function superResetUserPassword(tenantId,userId){if(!isSuperAdmin)return;var np=genTempPassword();var users=lsGet('sb_tenant_'+tenantId+'_users',[]);var found=null;for(var i=0;i<users.length;i++){if(Number(users[i].id)===Number(userId)){users[i].password=hashPw(users[i].username,np);found=users[i];break;}}if(!found){showToast('User not found','error');return;}lsSet('sb_tenant_'+tenantId+'_users',users);markOwnWrite();showToast('✅ New password: '+np,'success');try{copyToClipboardText(np);}catch(e){}openTenantCredentials(tenantId);}
 
-/* ===== CHANGED: Prefer createdByName (username) over fullName ===== */
 function shareReceipt(id){
   var sales=getTenantData('sales',[]);var s=null;
   for(var i=0;i<sales.length;i++){if(Number(sales[i].id)===Number(id)){s=sales[i];break;}}
@@ -2683,7 +2710,6 @@ function confirmScanQty(){
 function cancelScanQty(){_pendingScanProduct=null;closeScanQtyModal();_scanLocked=false;var readerEl=document.getElementById('scannerReader');if(readerEl)readerEl.style.display='flex';var scanNextBtn=document.getElementById('scanNextBtn');if(scanNextBtn)scanNextBtn.style.display='none';var statusEl=document.getElementById('scannerStatus');if(statusEl){statusEl.textContent='';statusEl.className='promo-status';}setTimeout(function(){startCameraScanner();},300);}
 function closeScanQtyModal(){var ov=document.getElementById('scanQtyModal');if(ov)ov.classList.remove('show');var so=document.querySelector('.modal-overlay.show');if(!so)document.body.classList.remove('modal-open');}
 
-/* ===== CHANGED: createdByName uses username ===== */
 function recordQuickSale(product,qty){
   if(!product)return false;qty=parseInt(qty)||1;if(qty<1)return false;
   var ps=getTenantData('products',[]);var liveProduct=null;
