@@ -478,7 +478,7 @@ body.dark .chat-modal .modal-box .chat-messages{background-color:#0b141a}
     <nav class="sidebar-nav" id="sidebarNav">
       <button class="nav-item active" data-view="status"><i class="fas fa-bullhorn"></i><span>MexFace</span></button>
       <button class="nav-item" data-view="dashboard"><i class="fas fa-chart-pie"></i><span>MexData</span></button>
-      <button class="nav-item" data-view="sales"><i class="fas fa-cart-plus"></i><span>Sales</span></button>
+      <button class="nav-item" data-view="sales"><i class="fas fa-cart-plus"></i><span>Sales</span><span class="badge" id="salesNavBadge" style="display:none;">0</span></button>
       <button class="nav-item" data-view="debts" id="navDebts"><i class="fas fa-hand-holding-usd"></i><span>Debts</span><span class="badge" id="debtsNavBadge" style="display:none;">0</span></button>
       <button class="nav-item" data-view="inventory" id="navInventory"><i class="fas fa-boxes"></i><span>Inventory</span><span class="badge" id="lowStockNavBadge" style="display:none;">0</span></button>
       <button class="nav-item" data-view="pnl"><i class="fas fa-scale-balanced"></i><span>Profit &amp; Loss</span></button>
@@ -487,7 +487,7 @@ body.dark .chat-modal .modal-box .chat-messages{background-color:#0b141a}
       <button class="nav-item" data-view="users"><i class="fas fa-users-cog"></i><span>Users</span></button>
       <button class="nav-item" data-view="roles"><i class="fas fa-user-tag"></i><span>Roles</span></button>
       <button class="nav-item" data-view="reports"><i class="fas fa-file-alt"></i><span>Reports</span></button>
-      <button class="nav-item" data-view="attendance" style="display:none;"><i class="fas fa-clock"></i><span>Attendance</span></button>
+      <button class="nav-item" data-view="attendance"><i class="fas fa-clock"></i><span>Attendance</span></button>
       <button class="nav-item" data-view="superadmin" id="navSuperAdmin" style="display:none;"><i class="fas fa-crown"></i><span>Super Admin</span></button>
       <button class="nav-item" data-view="mexEarnings" id="navMexEarnings" style="display:none;"><i class="fas fa-coins"></i><span>My Earnings</span></button>
       <button class="nav-item" data-view="mexCompanies" id="navMexCompanies" style="display:none;"><i class="fas fa-building"></i><span>My Companies</span></button>
@@ -714,6 +714,7 @@ var CHAT_KEY='sb_chat_messages';
 var CHAT_WALLPAPER_TYPE_KEY='sb_chat_wallpaper_type';
 var CHAT_WALLPAPER_VALUE_KEY='sb_chat_wallpaper_value';
 var TRANSFERS_KEY_SUFFIX='transfers';
+var DELETION_LOG_KEY='deletion_log';
 var MAX_VIDEO_MB=200;
 var BOOT_DURATION=1200;
 var _superAdminPhotoKey=null;
@@ -1038,13 +1039,11 @@ function scheduleSoftReRender(){if(_realtimeDebounceTimer)clearTimeout(_realtime
 function capturePlayingVideoState(){var states={};try{var vids=document.querySelectorAll('video[data-media-key]');for(var i=0;i<vids.length;i++){var v=vids[i];var k=v.dataset.mediaKey;if(!k)continue;if(v.currentTime>0.3)states[k]={time:v.currentTime,playing:(!v.paused&&!v.ended)};}}catch(e){}return states;}
 function applyPlayingVideoState(states){if(!states)return;var keys=Object.keys(states);if(!keys.length)return;try{var vids=document.querySelectorAll('video[data-media-key]');for(var i=0;i<vids.length;i++){var v=vids[i];var k=v.dataset.mediaKey;if(k&&states[k]){v.dataset.lastTime=String(states[k].time);if(states[k].playing)v.dataset.wasPlaying='1';}}}catch(e){}}
 
-/* ===== KEY FIX: skip refresh if ANY video exists (prevents restart + blank) ===== */
 function softRefreshCurrentView(force){
   var active=document.activeElement;
   if(active){var tag=active.tagName;if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT'){if(!force)return;}}
   var openModal=document.querySelector('.modal-overlay.show');
   if(openModal&&!force)return;
-  // Skip if ANY video exists in view (prevents restart + sound cut)
   if(!force){
     try{var _vids=document.querySelectorAll('video[data-media-key]');if(_vids.length>0)return;}catch(e){}
   }
@@ -1074,6 +1073,7 @@ function startPeriodicRefresh(){
     if(!supabaseClient)return;
     if(document.visibilityState!=='visible')return;
     pullFromCloudOnly().then(function(changed){if(changed)softRefreshCurrentView(false);});
+    try{updateDeletionBadge();}catch(e){}
   },60000);
 }
 
@@ -1229,9 +1229,56 @@ function getCurrentUser(){
 function setCurrentUser(u){if(isSuperAdmin){if(u)lsSet('sb_superadmin_user',u);else{try{localStorage.removeItem('sb_superadmin_user');}catch(e){}}return;}if(u){var safe=Object.assign({},u);delete safe.password;setTenantData('_currentUser',safe);}else setTenantData('_currentUser',null);}
 function getUser(id){var all=getTenantData('users',[]);for(var i=0;i<all.length;i++){if(all[i].id===id)return all[i];}return null;}
 function getUserPhotoKey(user){if(!user)return '';return user.photoKey||'';}
-function getUserPhoto(user){if(!user)return avatarUrl('User','128C7E');var key=getUserPhotoKey(user);if(key&&_mediaUrlCache[key])return _mediaUrlCache[key];var name=user.fullName||user.username||'User';var bg=(user.role==='mexemployee')?'f59e0b':'128C7E';return avatarUrl(name,bg);}
+function getUserPhoto(user){if(!user)return avatarUrl('User','128C7E');var key=getUserPhotoKey(user);if(key&&_mediaUrlCache[key])return _mediaUrlCache[key];var name=user.username||user.fullName||'User';var bg=(user.role==='mexemployee')?'f59e0b':'128C7E';return avatarUrl(name,bg);}
 function getUserPhotoHtml(user,cls,st){var key=getUserPhotoKey(user);var src=getUserPhoto(user);var attrs=key?' data-photo-key="'+escapeHtml(key)+'"':'';var c=cls?' class="'+cls+'"':'';var s=st?' style="'+st+'"':'';return '<img src="'+src+'"'+c+s+attrs+' alt="" loading="lazy" decoding="async"/>';}
 function getCompanyPhotoHtml(id,cls,st){var op=getTenantOwnerPublic(id);var key=op.photoKey||'';var t2=getTenant(id);var src=(key&&_mediaUrlCache[key])?_mediaUrlCache[key]:avatarUrl((t2&&t2.companyName)||'Company','128C7E');var attrs=key?' data-photo-key="'+escapeHtml(key)+'"':'';var c=cls?' class="'+cls+'"':'';var s=st?' style="'+st+'"':'';return '<img src="'+src+'"'+c+s+attrs+' alt="" loading="lazy" decoding="async"/>';}
+
+/* ===================== MIGRATION: Branch users use username as name ===================== */
+function migrateBranchUserNames(){
+  try{
+    var ts = getAllTenants();
+    for(var i=0;i<ts.length;i++){
+      var tid = ts[i].id;
+      var users = lsGet('sb_tenant_'+tid+'_users',[]);
+      if(!Array.isArray(users)) continue;
+      var changed = false;
+      for(var j=0;j<users.length;j++){
+        var u = users[j];
+        if(u.role === 'employee' && u.fullName && String(u.fullName).indexOf('Branch Manager - ') === 0){
+          u.fullName = u.username;
+          changed = true;
+          if(supabaseClient){
+            try{
+              supabaseClient.from(TBL_PROFILES).update({full_name:u.username,updated_at:new Date().toISOString()}).eq('user_key','t_'+tid+'_'+u.id).catch(function(){});
+            }catch(e){}
+          }
+        }
+      }
+      if(changed){
+        lsSet('sb_tenant_'+tid+'_users', users);
+      }
+    }
+  }catch(e){}
+}
+
+/* ===================== DELETION LOG (Branch deletes → notifies company) ===================== */
+function getDeletionLog(){var a=getTenantData(DELETION_LOG_KEY,[]);return Array.isArray(a)?a:[];}
+function saveDeletionLog(a){setTenantData(DELETION_LOG_KEY,a||[]);}
+function addDeletionLogEntry(entry){var log=getDeletionLog();log.push(entry);saveDeletionLog(log);}
+function updateDeletionBadge(){
+  try{
+    var badge=document.getElementById('salesNavBadge');
+    if(!badge)return;
+    if(isSuperAdmin||isMexEmployee){badge.style.display='none';return;}
+    var cu=getCurrentUser();
+    if(!cu||cu.role!=='owner'){badge.style.display='none';return;}
+    var log=getDeletionLog();
+    var cutoff=Date.now()-24*60*60*1000;
+    var count=0;
+    for(var i=0;i<log.length;i++){if(log[i]&&log[i].timestamp>=cutoff)count++;}
+    if(count>0){badge.textContent=count;badge.style.display='inline-block';}else{badge.style.display='none';}
+  }catch(e){}
+}
 
 /* ===================== VIDEO SYSTEM ===================== */
 var _videoRetryCount={};
@@ -1419,31 +1466,39 @@ function deleteInventoryCategory(id){var all=getAllCategories();var out=[];for(v
 function deleteExpenseCategory(id){var all=getAllExpenseCategories();var out=[];for(var i=0;i<all.length;i++){if(Number(all[i].id)!==Number(id))out.push(all[i]);}persistExpenseCategories(out);navigate('expenses');}
 function promptAddCategory(){var name=prompt('New category');if(!name)return;var store=getCatalogStore();persistCategories(getAllCategories().concat([{id:uid(),name:name,store:store}]));navigate('inventory');}
 function promptAddExpenseCategory(){var name=prompt('New expense category');if(!name)return;var store=getCatalogStore();persistExpenseCategories(getAllExpenseCategories().concat([{id:uid(),name:name,store:store}]));navigate('expenses');}
-function getFilteredSales(){if(isSuperAdmin||isMexEmployee)return [];var s=getTenantData('sales',[]);var u=getCurrentUser();if(!u)return [];var out=[];for(var i=0;i<s.length;i++){var x=s[i];if(x.paid!==false&&(matchesWorkingStore(x.store)||(!x.store&&u.role==='owner')))out.push(x);}return out;}
-function getFilteredDebts(){if(isSuperAdmin||isMexEmployee)return [];var s=getTenantData('sales',[]);var u=getCurrentUser();if(!u)return [];var out=[];for(var i=0;i<s.length;i++){var x=s[i];if(x.paid===false&&(matchesWorkingStore(x.store)||(!x.store&&u.role==='owner')))out.push(x);}return out;}
-function getFilteredProducts(){if(isSuperAdmin||isMexEmployee)return [];var p=getTenantData('products',[]);var u=getCurrentUser();if(!u)return [];var out=[];for(var i=0;i<p.length;i++){var x=p[i];if(matchesWorkingStore(x.store)||(!x.store&&u.role==='owner'))out.push(x);}return out;}
-function getFilteredExpenses(){if(isSuperAdmin||isMexEmployee)return [];var e=getTenantData('expenses',[]);var u=getCurrentUser();if(!u)return [];var out=[];for(var i=0;i<e.length;i++){var x=e[i];if(matchesWorkingStore(x.store)||(!x.store&&u.role==='owner'))out.push(x);}return out;}
+
+function getFilteredSales(){if(isSuperAdmin||isMexEmployee)return [];var s=getTenantData('sales',[]);var u=getCurrentUser();if(!u)return [];var out=[];for(var i=0;i<s.length;i++){var x=s[i];if(x.paid!==false)out.push(x);}return out;}
+function getFilteredDebts(){if(isSuperAdmin||isMexEmployee)return [];var s=getTenantData('sales',[]);var u=getCurrentUser();if(!u)return [];var out=[];for(var i=0;i<s.length;i++){var x=s[i];if(x.paid===false)out.push(x);}return out;}
+
+function getFilteredProducts(){if(isSuperAdmin||isMexEmployee)return [];var p=getTenantData('products',[]);var u=getCurrentUser();if(!u)return [];if(u.role==='owner')return p.slice();var bns=getBranchNames();var companyStore=bns.length?bns[0]:null;var out=[];for(var i=0;i<p.length;i++){var x=p[i];if(!x.store)continue;var st=normStore(x.store);if(st===normStore(u.store)||(companyStore&&st===normStore(companyStore)))out.push(x);}return out;}
+
+function getFilteredExpenses(){if(isSuperAdmin||isMexEmployee)return [];var e=getTenantData('expenses',[]);var u=getCurrentUser();if(!u)return [];return e.slice();}
+
 function calculatePnL(){if(isSuperAdmin||isMexEmployee)return {totalRevenue:0,totalExpenses:0,cogs:0,netProfit:0};var s=getFilteredSales();var e=getFilteredExpenses();var tr=0,cogs=0;for(var i=0;i<s.length;i++){tr+=s[i].totalPrice||0;cogs+=s[i].totalCost||0;}var te=0;for(var j=0;j<e.length;j++)te+=e[j].amount||0;return {totalRevenue:tr,totalExpenses:te,cogs:cogs,netProfit:tr-cogs-te};}
 function getLowStockItems(th){th=th||LOW_STOCK_THRESHOLD;if(isSuperAdmin||isMexEmployee)return [];var all=getFilteredProducts();var out=[];for(var i=0;i<all.length;i++){if(all[i].quantity<=th)out.push(all[i]);}return out;}
 function updateLowStockBadge(){if(isSuperAdmin||isMexEmployee){var nb=document.getElementById('lowStockNavBadge');var ab=document.getElementById('lowStockAlertBtn');if(nb)nb.style.display='none';if(ab)ab.style.display='none';return;}var c=getLowStockItems().length;var b=document.getElementById('lowStockNavBadge');if(b){if(c>0){b.textContent=c;b.style.display='inline-block';}else b.style.display='none';}var ab=document.getElementById('lowStockAlertBtn');var co=document.getElementById('lowStockAlertCount');if(ab&&co){co.textContent=c;if(c>0)ab.classList.add('has-alert');else ab.classList.remove('has-alert');}}
 function updateDebtsBadge(){if(isSuperAdmin||isMexEmployee){var nb=document.getElementById('debtsNavBadge');if(nb)nb.style.display='none';return;}var c=getFilteredDebts().length;var b=document.getElementById('debtsNavBadge');if(b){if(c>0){b.textContent=c;b.style.display='inline-block';}else b.style.display='none';}}
 
-var DEFAULT_ROLE_PERMS={admin:['sales_create','sales_delete','inventory_view','inventory_manage','expenses_view','expenses_manage','reports_view','pnl_view','users_manage','attendance_view'],accountant:['sales_create','sales_delete','inventory_view','inventory_manage','expenses_view','expenses_manage','reports_view','pnl_view'],employee:['sales_create','inventory_view','expenses_view','reports_view','pnl_view']};
+var DEFAULT_ROLE_PERMS={admin:['sales_create','sales_delete','inventory_view','inventory_manage','expenses_view','expenses_manage','reports_view','pnl_view','users_manage','attendance_view'],accountant:['sales_create','sales_delete','inventory_view','inventory_manage','expenses_view','expenses_manage','reports_view','pnl_view'],employee:['sales_create','sales_delete','inventory_view','expenses_view','reports_view','pnl_view','attendance_view']};
 var PERMISSION_DEFS=['sales_create','sales_delete','inventory_view','inventory_manage','expenses_view','expenses_manage','reports_view','pnl_view','users_manage','attendance_view'];
 function rolePermsFor(role){var out={};for(var i=0;i<PERMISSION_DEFS.length;i++){var p=PERMISSION_DEFS[i];out[p]=role==='owner'||((DEFAULT_ROLE_PERMS[role]||[]).indexOf(p)!==-1);}return out;}
 function hasPerm(perm){if(isSuperAdmin)return true;if(isMexEmployee)return false;var u=getCurrentUser();if(!u)return false;if(u.role==='owner')return true;return !!rolePermsFor(u.role)[perm];}
-function getDefaultBranchPermissions(){return{seeNetProfit:false,seeExpenses:true,deleteSales:false,addBranches:false,manageRoles:false,seeUsers:false};}
+function getDefaultBranchPermissions(){return{seeNetProfit:false,seeExpenses:true,deleteSales:true,addBranches:false,manageRoles:false,seeUsers:false};}
 function ensureBranchPermissions(){var ts=getAllTenants();var changed=false;var defaults=getDefaultBranchPermissions();for(var i=0;i<ts.length;i++){var branches=ts[i].branches||[];for(var j=0;j<branches.length;j++){var p=branches[j].permissions||{};var np={};for(var key in defaults){np[key]=(key in p)?(p[key]===true):defaults[key];}branches[j].permissions=np;changed=true;}}if(changed)saveTenants(ts);}
 function getBranchPermissions(storeName){if(!storeName)return null;var branches=getBranchList();for(var i=0;i<branches.length;i++){if(branches[i].name===storeName){var p=branches[i].permissions||{};var defaults=getDefaultBranchPermissions();var result={};for(var key in defaults){result[key]=(key in p)?(p[key]===true):defaults[key];}return result;}}return null;}
 function _branchAllows(permKey){if(isSuperAdmin||isMexEmployee)return null;var u=getCurrentUser();if(!u)return false;if(u.role==='owner')return null;var bp=getBranchPermissions(u.store);if(!bp)return null;return bp[permKey]===true;}
-function canDeleteSales(){if(isSuperAdmin)return true;if(isMexEmployee)return false;var u=getCurrentUser();if(!u)return false;if(u.role==='owner')return true;if(!hasPerm('sales_delete'))return false;var bp=_branchAllows('deleteSales');if(bp===false)return false;return true;}
+
+function canDeleteSales(){if(isSuperAdmin)return true;if(isMexEmployee)return false;var u=getCurrentUser();if(!u)return false;return true;}
+
 function canSeeUsers(){if(isSuperAdmin)return true;if(isMexEmployee)return false;var u=getCurrentUser();if(!u)return false;if(u.role==='owner')return true;if(!hasPerm('users_manage'))return false;var bp=_branchAllows('seeUsers');if(bp===false)return false;return true;}
 function canManageUsers(){if(isSuperAdmin)return true;if(isMexEmployee)return false;var u=getCurrentUser();if(!u)return false;if(u.role==='owner')return true;if(!hasPerm('users_manage'))return false;var bp=_branchAllows('seeUsers');if(bp===false)return false;return true;}
 function canManageRoles(){if(isSuperAdmin)return true;if(isMexEmployee)return false;var u=getCurrentUser();if(!u)return false;if(u.role==='owner')return true;if(u.role!=='admin')return false;var bp=_branchAllows('manageRoles');if(bp===false)return false;return true;}
 function canRecordSales(){if(isSuperAdmin)return true;if(isMexEmployee)return false;return hasPerm('sales_create');}
 function getRoleLabel(r){var m={owner:'Owner',admin:'Admin',accountant:'Accountant',employee:'Employee',superadmin:'Super Admin',mexemployee:'Member'};return m[r]||r;}
 function getRoleBadgeClass(r){var m={owner:'badge-role-owner',admin:'badge-role-admin',accountant:'badge-role-accountant',employee:'badge-role-employee'};return m[r]||'badge-primary';}
-function canSeeNetProfit(){if(isSuperAdmin)return true;if(isMexEmployee)return false;var u=getCurrentUser();if(!u)return false;if(u.role==='owner')return true;if(!hasPerm('pnl_view'))return false;var bp=_branchAllows('seeNetProfit');if(bp===false)return false;return true;}
+
+function canSeeNetProfit(){if(isSuperAdmin)return true;if(isMexEmployee)return false;var u=getCurrentUser();if(!u)return false;if(u.role==='owner')return true;return false;}
+
 function canSeeExpenses(){if(isSuperAdmin)return true;if(isMexEmployee)return false;var u=getCurrentUser();if(!u)return false;if(u.role==='owner')return true;if(!hasPerm('expenses_view'))return false;var bp=_branchAllows('seeExpenses');if(bp===false)return false;return true;}
 function getUserPermissions(){if(isSuperAdmin||isMexEmployee)return {seeNetProfit:true,seeExpenses:true};var u=getCurrentUser();if(!u)return {seeNetProfit:false,seeExpenses:false};if(u.role==='owner')return {seeNetProfit:true,seeExpenses:true};return {seeNetProfit:canSeeNetProfit(),seeExpenses:canSeeExpenses()};}
 
@@ -1457,7 +1512,15 @@ function isUserOnline(userId){var s=getSessions()[userId];if(!s||s.status==='off
 function getOnlineUsers(){var users=getTenantData('users',[]);var out=[];for(var i=0;i<users.length;i++)if(isUserOnline(users[i].id))out.push(users[i]);return out;}
 function getTodayPunches(){var h=getPunchHistory();var t2=new Date();t2.setHours(0,0,0,0);var cutoff=t2.getTime();var out=[];for(var i=0;i<h.length;i++)if(h[i].loginTime>=cutoff)out.push(h[i]);return out;}
 function startHeartbeat(){if(heartbeatInterval)clearInterval(heartbeatInterval);var u=getCurrentUser();if(!u||isSuperAdmin||isMexEmployee)return;heartbeatInterval=setInterval(function(){var cu=getCurrentUser();if(!cu){clearInterval(heartbeatInterval);return;}var s=getSessions();if(s[cu.id]){s[cu.id].lastActive=Date.now();s[cu.id].status='online';saveSessions(s);}},30000);}
-function punchIn(){if(isSuperAdmin||isMexEmployee)return;var u=getCurrentUser();if(!u){showToast('Not logged in','error');return;}var s=getSessions();var now=Date.now();s[u.id]={loginTime:now,lastActive:now,status:'online',branchName:u.store||'Unknown'};saveSessions(s);var h=getPunchHistory();h.push({id:uid(),userId:u.id,userName:u.fullName||u.username,branchName:u.store||'Unknown',loginTime:now,logoutTime:null});savePunchHistory(h);showToast('✅ Punch In: '+fmtTime(now),'success');navigate('attendance');}
+function punchIn(){
+  if(isSuperAdmin||isMexEmployee)return;
+  var u=getCurrentUser();if(!u){showToast('Not logged in','error');return;}
+  var s=getSessions();var now=Date.now();
+  s[u.id]={loginTime:now,lastActive:now,status:'online',branchName:u.store||'Unknown'};saveSessions(s);
+  var h=getPunchHistory();
+  h.push({id:uid(),userId:u.id,userName:u.username||u.fullName||'User',branchName:u.store||'Unknown',loginTime:now,logoutTime:null});
+  savePunchHistory(h);showToast('✅ Punch In: '+fmtTime(now),'success');navigate('attendance');
+}
 function punchOut(){if(isSuperAdmin||isMexEmployee)return;var u=getCurrentUser();if(!u)return;var s=getSessions();if(s[u.id]){s[u.id].status='offline';s[u.id].lastActive=Date.now();saveSessions(s);}var h=getPunchHistory();for(var i=h.length-1;i>=0;i--){if(h[i].userId===u.id&&!h[i].logoutTime){h[i].logoutTime=Date.now();break;}}savePunchHistory(h);showToast('✅ Punch Out: '+fmtTime(Date.now()),'success');navigate('attendance');}
 function isPunchedIn(){var u=getCurrentUser();if(!u||isSuperAdmin||isMexEmployee)return false;var s=getSessions();return s[u.id]&&s[u.id].status==='online';}
 
@@ -1510,7 +1573,7 @@ function createTenant(companyName,username,password,phone,promoCode,pendingAppro
   if(!saveTenants(ts))return {success:false,msg:'Storage full.'};
   var ownerUser={id:1,username:username,password:hashPw(username,password),role:'owner',store:companyName,fullName:companyName,createdBy:null,photoKey:'',tenantId:id,theme:'light'};
   var old=currentTenantId;currentTenantId=id;
-  try{setTenantData('users',[ownerUser]);persistProducts([]);persistCategories([{id:1,name:'General',store:companyName}]);persistSales([]);persistExpenses([]);var ecs=[];for(var i=0;i<DEFAULT_EXPENSE_CATEGORIES.length;i++){ecs.push({id:i+1,name:DEFAULT_EXPENSE_CATEGORIES[i],store:companyName});}persistExpenseCategories(ecs);setTenantData('statuses',[]);setTenantData('ceo',{whatsapp:'',email:''});setTenantData('company',{name:companyName,tin:'',address:''});setTenantData('sessions',{});setTenantData('punchHistory',[]);setTenantData(FOLLOWS_KEY_SUFFIX,[]);setTenantData(TRANSFERS_KEY_SUFFIX,[]);}finally{currentTenantId=old;}
+  try{setTenantData('users',[ownerUser]);persistProducts([]);persistCategories([{id:1,name:'General',store:companyName}]);persistSales([]);persistExpenses([]);var ecs=[];for(var i=0;i<DEFAULT_EXPENSE_CATEGORIES.length;i++){ecs.push({id:i+1,name:DEFAULT_EXPENSE_CATEGORIES[i],store:companyName});}persistExpenseCategories(ecs);setTenantData('statuses',[]);setTenantData('ceo',{whatsapp:'',email:''});setTenantData('company',{name:companyName,tin:'',address:''});setTenantData('sessions',{});setTenantData('punchHistory',[]);setTenantData(FOLLOWS_KEY_SUFFIX,[]);setTenantData(TRANSFERS_KEY_SUFFIX,[]);setTenantData(DELETION_LOG_KEY,[]);}finally{currentTenantId=old;}
   indexUsername(username,id);markOwnWrite();
   scheduleProfilePush({userKey:'t_'+id+'_1',userType:'tenant',tenantId:id,userId:1,username:username,fullName:companyName,photoKey:null,bio:'',phone:phone||'',email:'',socialWhatsapp:'',socialInstagram:'',socialFacebook:'',socialTiktok:'',socialWebsite:'',theme:'light'});
   if(!pendingApproval){var fresh=getAllTenants();var created=null;for(var j=0;j<fresh.length;j++){if(fresh[j].id===id){created=fresh[j];break;}}if(created){creditTenantCommission(created);saveTenants(fresh);}}
@@ -1546,7 +1609,7 @@ function closeMobileSidebar(){document.getElementById('sidebar').classList.remov
 function toggleMobileSidebar(){var sb=document.getElementById('sidebar');if(sb.classList.contains('open'))closeMobileSidebar();else openMobileSidebar();}
 function updateAllUI(user){
   if(!user)return;
-  var photo=getUserPhoto(user);var key=getUserPhotoKey(user);var dn=user.fullName||user.username||'User';
+  var photo=getUserPhoto(user);var key=getUserPhotoKey(user);var dn=user.username||user.fullName||'User';
   var av=document.getElementById('sideUserAvatar');if(av){av.src=photo;av.dataset.photoKey=key;av.onerror=function(){this.src=avatarUrl(dn,'128C7E');};av.style.display='block';}
   var ti=document.getElementById('topProfileImg');if(ti){ti.src=photo;ti.dataset.photoKey=key;ti.onerror=function(){this.src=avatarUrl(dn,'128C7E');};}
   var sn=document.getElementById('sideUserName');if(sn)sn.textContent=dn;
@@ -1554,7 +1617,7 @@ function updateAllUI(user){
   if(isSuperAdmin){var sur=document.getElementById('sideUserRole');if(sur)sur.textContent='Super Admin';var cnd=document.getElementById('companyNameDisplay');if(cnd)cnd.textContent='MeX Admin';}
   else if(isMexEmployee){var sur2=document.getElementById('sideUserRole');if(sur2)sur2.textContent='Member';var cnd2=document.getElementById('companyNameDisplay');if(cnd2)cnd2.textContent='MeX Team';}
   else{var sur3=document.getElementById('sideUserRole');if(sur3)sur3.textContent=getRoleLabel(user.role);var tx=getTenant(currentTenantId);var cnd3=document.getElementById('companyNameDisplay');if(cnd3&&tx)cnd3.textContent=tx.companyName||'MeX';}
-  updateLowStockBadge();updateDebtsBadge();updateChatBadge();
+  updateLowStockBadge();updateDebtsBadge();updateChatBadge();updateDeletionBadge();
 }
 
 function navigate(view){
@@ -1572,7 +1635,7 @@ function navigate(view){
   try{if(typeof views[view]==='function')area.innerHTML=views[view]();else area.innerHTML='<div class="card"><div class="card-body"><p>Coming soon</p></div></div>';}
   catch(err){area.innerHTML='<div class="card"><div class="card-body"><p style="color:var(--accent-danger);">Error: '+escapeHtml(String(err&&err.message||err))+'</p></div></div>';}
   setTimeout(hydrateMedia,20);
-  updateLowStockBadge();updateDebtsBadge();
+  updateLowStockBadge();updateDebtsBadge();updateDeletionBadge();
   if(window.innerWidth<=768)closeMobileSidebar();
 }
 
@@ -1596,7 +1659,7 @@ views.dashboard=function(){
   if(isSuperAdmin)return views.superadmin();
   if(isMexEmployee)return views.mexEarnings();
   var user=getCurrentUser();if(!user)return '<div class="card"><div class="card-body"><p>—</p></div></div>';
-  var allP=getTenantData('products',[]);var op=[];for(var i=0;i<allP.length;i++){if(normStore(allP[i].store)===normStore(user.store))op.push(allP[i]);}
+  var op=getFilteredProducts();
   var sales=getFilteredSales();var expenses=getFilteredExpenses();var pnl=calculatePnL();
   var tot=0,sv=0;for(var j=0;j<op.length;j++){tot+=Number(op[j].quantity)||0;sv+=(Number(op[j].cost)||0)*(Number(op[j].quantity)||0);}
   var dayLabels=[];var daySales=[];
@@ -1637,26 +1700,59 @@ function renderDashboardCharts(dayLabels,daySales,expLabels,expValues,bgColors,p
 
 function buildSalesRowsHtml(){
   var allSales=getFilteredSales().slice().reverse();var s=allSales;
-  if(salesSearchTerm&&salesSearchTerm.trim()){var q=salesSearchTerm.trim().toLowerCase();var filtered=[];for(var k=0;k<allSales.length;k++){var xs=allSales[k];var ps=getProduct(xs.productId);var pn=ps?String(ps.name).toLowerCase():'';var cn=String(xs.customer||'').toLowerCase();if(pn.indexOf(q)!==-1||cn.indexOf(q)!==-1)filtered.push(xs);}s=filtered;}
+  if(salesSearchTerm&&salesSearchTerm.trim()){var q=salesSearchTerm.trim().toLowerCase();var filtered=[];for(var k=0;k<allSales.length;k++){var xs=allSales[k];var ps=getProduct(xs.productId);var pn=ps?String(ps.name).toLowerCase():'';var cn=String(xs.customer||'').toLowerCase();var sn=String(xs.createdByName||'').toLowerCase();if(pn.indexOf(q)!==-1||cn.indexOf(q)!==-1||sn.indexOf(q)!==-1)filtered.push(xs);}s=filtered;}
   var paged=getPagedItems(s,'sales');var canDel=canDeleteSales();var rows='';
   for(var i=0;i<paged.items.length;i++){
     var x=paged.items[i];var p=getProduct(x.productId);var up=(x.unitPrice!=null)?x.unitPrice:(x.totalPrice/x.quantity);
     var expWarn='';if(p&&p.expiryDate){var ei=getExpiryInfo(p.expiryDate);if(ei.expired)expWarn=' <span class="badge badge-danger" style="font-size:.6rem;">'+t('inv_expired')+'</span>';else if(ei.daysLeft!==null&&ei.daysLeft<=30)expWarn=' <span class="badge badge-warning" style="font-size:.6rem;">'+ei.daysLeft+'d</span>';}
     var rowNum=(PAGE_ALL_MODE.sales?0:paged.page*PAGE_SIZE)+i+1;
-    rows+='<tr><td>'+rowNum+'</td><td>'+(p?escapeHtml(p.name)+expWarn:'--')+'</td><td>'+x.quantity+'</td><td>'+fmtMoney(up)+'</td><td><strong>'+fmtMoney(x.totalPrice)+'</strong></td><td>'+escapeHtml(x.customer||'--')+'</td><td>'+fmtDate(x.date)+'</td><td style="display:flex;gap:4px;">'+(canDel?'<button class="btn btn-danger btn-xs" onclick="deleteSale(\''+x.id+'\')"><i class="fas fa-trash"></i></button>':'')+'<button class="btn btn-primary btn-xs" onclick="shareReceipt(\''+x.id+'\')"><i class="fas fa-receipt"></i></button></td></tr>';
+    var sellerName=x.createdByName||'—';
+    if(!x.createdByName&&x.createdBy){var uu=getUser(x.createdBy);if(uu)sellerName=uu.username||uu.fullName;}
+    var storeTag=x.store?'<div style="font-size:.65rem;color:var(--text-muted);font-weight:600;"><i class="fas fa-store"></i> '+escapeHtml(x.store)+'</div>':'';
+    rows+='<tr><td>'+rowNum+'</td><td>'+(p?escapeHtml(p.name)+expWarn:'--')+'</td><td>'+x.quantity+'</td><td>'+fmtMoney(up)+'</td><td><strong>'+fmtMoney(x.totalPrice)+'</strong></td><td>'+escapeHtml(x.customer||'--')+'</td><td><strong style="font-size:.78rem;">'+escapeHtml(sellerName)+'</strong>'+storeTag+'</td><td>'+fmtDate(x.date)+'</td><td style="display:flex;gap:4px;">'+(canDel?'<button class="btn btn-danger btn-xs" onclick="deleteSale(\''+x.id+'\')"><i class="fas fa-trash"></i></button>':'')+'<button class="btn btn-primary btn-xs" onclick="shareReceipt(\''+x.id+'\')"><i class="fas fa-receipt"></i></button></td></tr>';
   }
-  return rows||'<tr class="empty-row"><td colspan="8">No sales</td></tr>';
+  return rows||'<tr class="empty-row"><td colspan="9">No sales</td></tr>';
 }
 function onSalesSearch(v){salesSearchTerm=v;var tb=document.getElementById('salesTableBody');if(tb)tb.innerHTML=buildSalesRowsHtml();}
+
+function buildDeletionAlertHtml(){
+  if(isSuperAdmin||isMexEmployee)return '';
+  var cu=getCurrentUser();
+  if(!cu||cu.role!=='owner')return '';
+  var log=getDeletionLog();
+  if(!log.length)return '';
+  var cutoff=Date.now()-7*86400000;
+  var recent=[];
+  for(var i=0;i<log.length;i++){if(log[i]&&log[i].timestamp>=cutoff)recent.push(log[i]);}
+  if(!recent.length)return '';
+  recent.sort(function(a,b){return b.timestamp-a.timestamp;});
+  var rows='';
+  for(var j=0;j<recent.length&&j<8;j++){
+    var e=recent[j];
+    rows+='<tr><td style="font-size:.78rem;">'+fmtDateTime(e.timestamp)+'</td><td><strong>'+escapeHtml(e.deletedByName||'—')+'</strong>'+(e.deletedByStore?'<div style="font-size:.68rem;color:var(--text-muted);"><i class="fas fa-store"></i> '+escapeHtml(e.deletedByStore)+'</div>':'')+'</td><td>'+escapeHtml(e.productName||'—')+'</td><td>'+Number(e.quantity||0)+'</td><td><strong style="color:var(--accent-danger);">'+fmtMoney(e.totalPrice)+'</strong></td><td style="font-size:.78rem;">'+fmtDate(e.saleDate||e.timestamp)+'</td></tr>';
+  }
+  var more=recent.length>8?'<div style="text-align:center;font-size:.78rem;color:var(--text-muted);padding:8px 0;">+ '+(recent.length-8)+' more…</div>':'';
+  return '<div class="card mb-16" style="border-left:4px solid var(--accent-danger);background:rgba(239,68,68,.03);"><div class="card-header"><h3 style="color:var(--accent-danger);"><i class="fas fa-exclamation-triangle"></i> Recent Sale Deletions ('+recent.length+')</h3><button class="btn btn-xs btn-secondary" onclick="clearDeletionLog()"><i class="fas fa-times"></i> Clear</button></div><div class="card-body"><div class="table-wrap"><table><thead><tr><th>Deleted At</th><th>Deleted By</th><th>Product</th><th>Qty</th><th>Amount</th><th>Sale Date</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+more+'</div></div>';
+}
+function clearDeletionLog(){
+  var cu=getCurrentUser();
+  if(!cu||cu.role!=='owner')return;
+  if(!confirm('Clear deletion log?'))return;
+  saveDeletionLog([]);
+  updateDeletionBadge();
+  navigate('sales');
+}
+
 views.sales=function(){
   if(isSuperAdmin||isMexEmployee)return '';
   var ha='<div style="display:flex;gap:8px;flex-wrap:wrap;">';
   ha+='<button class="btn btn-icon" onclick="openScannerModal(\'sale\')" style="background:#8b5cf6!important;color:#fff!important;padding:12px 22px;font-size:.95rem;font-weight:700;"><i class="fas fa-barcode"></i> Scan &amp; Sell</button>';
   if(canRecordSales())ha+='<button class="btn btn-secondary btn-icon" onclick="openModal(\'sale\')"><i class="fas fa-plus"></i> Manual Sale</button>';
   ha+='</div>';
-  var searchBar='<div class="inventory-search-wrap" style="margin-bottom:12px;"><i class="fas fa-search inventory-search-icon"></i><input type="text" class="inventory-search-input" id="salesSearchInput" placeholder="Search sales by product or customer..." value="'+escapeHtml(salesSearchTerm)+'" oninput="onSalesSearch(this.value)" autocomplete="off"/></div>';
+  var searchBar='<div class="inventory-search-wrap" style="margin-bottom:12px;"><i class="fas fa-search inventory-search-icon"></i><input type="text" class="inventory-search-input" id="salesSearchInput" placeholder="Search sales by product, customer, or seller..." value="'+escapeHtml(salesSearchTerm)+'" oninput="onSalesSearch(this.value)" autocomplete="off"/></div>';
   var total=getFilteredSales().length;
-  return '<div class="section-header"><h2><i class="fas fa-cart-plus"></i> '+t('sales_title')+'<span class="record-badge">'+total+' '+t('pager_records')+'</span></h2>'+ha+'</div>'+searchBar+'<div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>'+t('cust_product')+'</th><th>'+t('cust_qty')+'</th><th>'+t('form_price')+'</th><th>'+t('cust_total')+'</th><th>'+t('cust_customer')+'</th><th>'+t('cust_date')+'</th><th></th></tr></thead><tbody id="salesTableBody">'+buildSalesRowsHtml()+'</tbody></table></div>'+pagerHtml('sales',total)+'</div></div>';
+  var delAlert=buildDeletionAlertHtml();
+  return '<div class="section-header"><h2><i class="fas fa-cart-plus"></i> '+t('sales_title')+'<span class="record-badge">'+total+' '+t('pager_records')+'</span></h2>'+ha+'</div>'+delAlert+searchBar+'<div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>'+t('cust_product')+'</th><th>'+t('cust_qty')+'</th><th>'+t('form_price')+'</th><th>'+t('cust_total')+'</th><th>'+t('cust_customer')+'</th><th>Sold by</th><th>'+t('cust_date')+'</th><th></th></tr></thead><tbody id="salesTableBody">'+buildSalesRowsHtml()+'</tbody></table></div>'+pagerHtml('sales',total)+'</div></div>';
 };
 
 views.debts=function(){
@@ -1664,8 +1760,8 @@ views.debts=function(){
   var d=getFilteredDebts().slice().sort(function(a,b){return b.date-a.date;});
   var total=0;for(var i=0;i<d.length;i++)total+=d[i].totalPrice||0;
   var canPay=hasPerm('sales_create');var canDel=canDeleteSales();var rows='';
-  for(var j=0;j<d.length;j++){var x=d[j];var p=getProduct(x.productId);rows+='<tr><td>'+(j+1)+'</td><td><strong>'+escapeHtml(x.customer||'Unknown')+'</strong></td><td>'+(p?escapeHtml(p.name):'--')+'</td><td>'+x.quantity+'</td><td><strong style="color:var(--accent-danger);">'+fmtMoney(x.totalPrice)+'</strong></td><td>'+fmtDate(x.date)+'</td><td style="display:flex;gap:4px;">'+(canPay?'<button class="btn btn-success btn-xs" onclick="markDebtPaid(\''+x.id+'\')"><i class="fas fa-check-circle"></i></button>':'')+(canDel?'<button class="btn btn-danger btn-xs" onclick="deleteDebt(\''+x.id+'\')"><i class="fas fa-trash"></i></button>':'')+'</td></tr>';}
-  return '<div class="section-header"><h2><i class="fas fa-hand-holding-usd" style="color:var(--accent-danger);"></i> '+t('debts_title')+'<span class="record-badge">'+d.length+'</span></h2><div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn btn-whatsapp btn-icon" onclick="openSendReportModal(\'debts\')"><i class="fab fa-whatsapp"></i> Send Report</button></div></div><div class="stats-grid"><div class="stat-card"><div class="stat-label">'+t('dash_total_debts')+'</div><div class="stat-value red">'+fmtMoney(total)+'</div></div><div class="stat-card"><div class="stat-label">Debtors</div><div class="stat-value primary">'+d.length+'</div></div></div><div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>'+t('cust_customer')+'</th><th>'+t('cust_product')+'</th><th>'+t('cust_qty')+'</th><th>'+t('cust_amount')+'</th><th>'+t('cust_date')+'</th><th></th></tr></thead><tbody>'+(rows||'<tr class="empty-row"><td colspan="7">No debts</td></tr>')+'</tbody></table></div></div></div>';
+  for(var j=0;j<d.length;j++){var x=d[j];var p=getProduct(x.productId);var sellerName=x.createdByName||'—';if(!x.createdByName&&x.createdBy){var uu=getUser(x.createdBy);if(uu)sellerName=uu.username||uu.fullName;}rows+='<tr><td>'+(j+1)+'</td><td><strong>'+escapeHtml(x.customer||'Unknown')+'</strong></td><td>'+(p?escapeHtml(p.name):'--')+'</td><td>'+x.quantity+'</td><td><strong style="color:var(--accent-danger);">'+fmtMoney(x.totalPrice)+'</strong></td><td style="font-size:.8rem;">'+escapeHtml(sellerName)+'</td><td>'+fmtDate(x.date)+'</td><td style="display:flex;gap:4px;">'+(canPay?'<button class="btn btn-success btn-xs" onclick="markDebtPaid(\''+x.id+'\')"><i class="fas fa-check-circle"></i></button>':'')+(canDel?'<button class="btn btn-danger btn-xs" onclick="deleteDebt(\''+x.id+'\')"><i class="fas fa-trash"></i></button>':'')+'</td></tr>';}
+  return '<div class="section-header"><h2><i class="fas fa-hand-holding-usd" style="color:var(--accent-danger);"></i> '+t('debts_title')+'<span class="record-badge">'+d.length+'</span></h2><div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn btn-whatsapp btn-icon" onclick="openSendReportModal(\'debts\')"><i class="fab fa-whatsapp"></i> Send Report</button></div></div><div class="stats-grid"><div class="stat-card"><div class="stat-label">'+t('dash_total_debts')+'</div><div class="stat-value red">'+fmtMoney(total)+'</div></div><div class="stat-card"><div class="stat-label">Debtors</div><div class="stat-value primary">'+d.length+'</div></div></div><div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>'+t('cust_customer')+'</th><th>'+t('cust_product')+'</th><th>'+t('cust_qty')+'</th><th>'+t('cust_amount')+'</th><th>Sold by</th><th>'+t('cust_date')+'</th><th></th></tr></thead><tbody>'+(rows||'<tr class="empty-row"><td colspan="8">No debts</td></tr>')+'</tbody></table></div></div></div>';
 };
 
 function buildInventoryRowsHtml(){
@@ -1723,7 +1819,7 @@ views.expenses=function(){
 
 views.pnl=function(){
   if(isSuperAdmin||isMexEmployee)return '';
-  if(!canSeeNetProfit())return '<div class="card"><div class="card-body"><p class="text-muted">🔒</p></div></div>';
+  if(!canSeeNetProfit())return '<div class="card"><div class="card-body"><p class="text-muted">🔒 Restricted</p></div></div>';
   var perms=getUserPermissions();var pnl=calculatePnL();
   var cards='<div class="stat-card"><div class="stat-label">Revenue</div><div class="stat-value primary">'+fmtMoney(pnl.totalRevenue)+'</div></div><div class="stat-card"><div class="stat-label">COGS</div><div class="stat-value primary-light">'+fmtMoney(pnl.cogs)+'</div></div>';
   if(perms.seeExpenses)cards+='<div class="stat-card"><div class="stat-label">'+t('dash_total_expenses')+'</div><div class="stat-value">'+fmtMoney(pnl.totalExpenses)+'</div></div>';
@@ -1793,7 +1889,16 @@ function saveBranchPermissions(branchName){
   showToast('✓ Permissions saved for '+branchName,'success');navigate('branches');
 }
 
-views.attendance=function(){if(isSuperAdmin||isMexEmployee)return '';if(!hasPerm('attendance_view'))return '';var h=getPunchHistory();var tp=getTodayPunches();var onu=getOnlineUsers();var punched=isPunchedIn();var punchBtn=punched?'<button class="btn btn-danger btn-icon" onclick="punchOut()" style="padding:14px 28px;font-size:1rem;"><i class="fas fa-sign-out-alt"></i> Punch Out</button>':'<button class="btn btn-success btn-icon" onclick="punchIn()" style="padding:14px 28px;font-size:1rem;"><i class="fas fa-sign-in-alt"></i> Punch In</button>';var hh='';var slice=h.slice(-50).reverse();for(var i=0;i<slice.length;i++){var p=slice[i];var dur=p.logoutTime?Math.round((p.logoutTime-p.loginTime)/60000)+' min':'—';hh+='<tr><td>'+(i+1)+'</td><td><strong>'+escapeHtml(p.userName)+'</strong></td><td>'+escapeHtml(p.branchName)+'</td><td>'+fmtDateTime(p.loginTime)+'</td><td>'+(p.logoutTime?fmtDateTime(p.logoutTime):'—')+'</td><td>'+dur+'</td></tr>';}return '<div class="section-header"><h2><i class="fas fa-clock"></i> '+t('attendance_title')+'<span class="record-badge">'+h.length+'</span></h2><div style="display:flex;gap:8px;flex-wrap:wrap;">'+punchBtn+'<button class="btn btn-secondary btn-icon" onclick="clearAttendanceHistory()"><i class="fas fa-trash"></i> Clear</button></div></div><div class="stats-grid"><div class="stat-card"><div class="stat-label">Online</div><div class="stat-value primary">'+onu.length+'</div></div><div class="stat-card"><div class="stat-label">Today</div><div class="stat-value primary-light">'+tp.length+'</div></div><div class="stat-card"><div class="stat-label">Total Records</div><div class="stat-value gold">'+h.length+'</div></div></div><div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>Employee</th><th>'+t('inv_branch')+'</th><th>Punch In</th><th>Punch Out</th><th>Duration</th></tr></thead><tbody>'+(hh||'<tr class="empty-row"><td colspan="6">—</td></tr>')+'</tbody></table></div></div></div>';};
+views.attendance=function(){
+  if(isSuperAdmin||isMexEmployee)return '';
+  if(!hasPerm('attendance_view'))return '';
+  var h=getPunchHistory();var tp=getTodayPunches();var onu=getOnlineUsers();var punched=isPunchedIn();
+  var punchBtn=punched?'<button class="btn btn-danger btn-icon" onclick="punchOut()" style="padding:14px 28px;font-size:1rem;"><i class="fas fa-sign-out-alt"></i> Punch Out</button>':'<button class="btn btn-success btn-icon" onclick="punchIn()" style="padding:14px 28px;font-size:1rem;"><i class="fas fa-sign-in-alt"></i> Punch In</button>';
+  var cu=getCurrentUser();
+  var clearBtn=(cu&&cu.role==='owner')?'<button class="btn btn-secondary btn-icon" onclick="clearAttendanceHistory()"><i class="fas fa-trash"></i> Clear</button>':'';
+  var hh='';var slice=h.slice(-50).reverse();for(var i=0;i<slice.length;i++){var p=slice[i];var dur=p.logoutTime?Math.round((p.logoutTime-p.loginTime)/60000)+' min':'—';hh+='<tr><td>'+(i+1)+'</td><td><strong>'+escapeHtml(p.userName)+'</strong></td><td>'+escapeHtml(p.branchName)+'</td><td>'+fmtDateTime(p.loginTime)+'</td><td>'+(p.logoutTime?fmtDateTime(p.logoutTime):'—')+'</td><td>'+dur+'</td></tr>';}
+  return '<div class="section-header"><h2><i class="fas fa-clock"></i> '+t('attendance_title')+'<span class="record-badge">'+h.length+'</span></h2><div style="display:flex;gap:8px;flex-wrap:wrap;">'+punchBtn+clearBtn+'</div></div><div class="stats-grid"><div class="stat-card"><div class="stat-label">Online</div><div class="stat-value primary">'+onu.length+'</div></div><div class="stat-card"><div class="stat-label">Today</div><div class="stat-value primary-light">'+tp.length+'</div></div><div class="stat-card"><div class="stat-label">Total Records</div><div class="stat-value gold">'+h.length+'</div></div></div><div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>Employee</th><th>'+t('inv_branch')+'</th><th>Punch In</th><th>Punch Out</th><th>Duration</th></tr></thead><tbody>'+(hh||'<tr class="empty-row"><td colspan="6">—</td></tr>')+'</tbody></table></div></div></div>';
+};
 
 views.reports=function(){
   if(isSuperAdmin||isMexEmployee)return '';
@@ -1863,7 +1968,6 @@ function renderAdsTab(){var user=getCurrentUser();cleanupExpiredAds();var canPos
 function renderCompaniesTab(){if(isSuperAdmin||isMexEmployee||!getCurrentUser())return '';var all=getAllTenants();var companies=[];for(var i=0;i<all.length;i++){if(!all[i].blocked&&!all[i].pendingApproval&&all[i].id!==currentTenantId)companies.push(all[i]);}if(!companies.length)return '<div class="card"><div class="card-body"><div class="empty-state"><i class="fas fa-users"></i><h3>No data</h3></div></div></div>';var h='';for(var j=0;j<companies.length;j++){var tn=companies[j];var f=getFollowerCount(tn.id);h+='<div class="card" style="padding:14px;margin-bottom:10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;"><div onclick="openCompanyProfile(\''+tn.id+'\')" style="cursor:pointer;display:flex;align-items:center;gap:12px;flex:1;min-width:0;">'+getCompanyPhotoHtml(tn.id,'','width:50px;height:50px;border-radius:50%;object-fit:cover;border:2px solid var(--accent-1);')+'<div style="flex:1;min-width:0;"><div style="font-weight:700;font-size:.95rem;display:flex;align-items:center;gap:5px;">'+escapeHtml(tn.companyName)+renderVerifiedBadge()+'</div><div style="font-size:.72rem;color:var(--text-muted);margin-top:2px;font-weight:600;"><i class="fas fa-user-friends"></i> '+f+' followers</div></div></div>'+renderFollowButton(tn.id)+'</div>';}return '<div class="section-header"><h2>Mexers</h2></div><div>'+h+'</div>';}
 function renderCompanyStatusTab(user){var s=getStatuses().slice().sort(function(a,b){return b.timestamp-a.timestamp;});var sH='';for(var i=0;i<s.length;i++)sH+=renderSingleStatusCard(s[i],user);return '<div class="section-header"><h2><i class="fas fa-pen"></i> Status</h2><button class="btn btn-primary btn-icon" onclick="openPostStatus()"><i class="fas fa-plus"></i> Post</button></div>'+(sH||'<div class="card"><div class="card-body"><div class="empty-state"><i class="fas fa-pen"></i></div></div></div>');}
 
-/* ===== RENDER AD CARD — NO muted attribute (sound ON by default) ===== */
 function renderAdCard(ad,user,canPost){
   if(!Array.isArray(ad.likes))ad.likes=[];
   var isSuper=ad.postedBy==='super';var isMex=ad.postedBy==='mex';var cn=ad.companyName||'Company';
@@ -1941,7 +2045,37 @@ function openModal(type,data){
 function filterSaleProducts(q){var sel=document.getElementById('saleProductSelect');if(!sel)return;var priceInput=document.getElementById('saleUnitPriceInput');var query=String(q||'').trim().toLowerCase();var products=getFilteredProducts();var avail=[];for(var i=0;i<products.length;i++){if(products[i].quantity>0)avail.push(products[i]);}var opts='<option value="">--</option>';for(var j=0;j<avail.length;j++){var p=avail[j];if(!query||String(p.name).toLowerCase().indexOf(query)!==-1){opts+='<option value="'+p.id+'" data-price="'+p.price+'">'+escapeHtml(p.name)+' ('+p.quantity+')</option>';}}sel.innerHTML=opts;if(sel.options.length===2){sel.selectedIndex=1;onSaleProductChange();}else{sel.selectedIndex=0;if(priceInput)priceInput.value='';}}
 function closeModal(){var ov=document.getElementById('modalOverlay');var bx=document.getElementById('modalBox');ov.classList.remove('show');ov.style.zIndex='';bx.style.padding='';bx.style.overflow='';bx.style.borderRadius='';bx.style.maxWidth='';var so=document.querySelector('.modal-overlay.show');if(!so)document.body.classList.remove('modal-open');}
 function onSaleProductChange(){var sel=document.getElementById('saleProductSelect');var pi=document.getElementById('saleUnitPriceInput');if(!sel||!pi)return;var o=sel.options[sel.selectedIndex];if(!o||!sel.value){pi.value='';return;}pi.value=parseFloat(o.dataset.price)||0;}
-function submitSale(e){e.preventDefault();if(!hasPerm('sales_create'))return;var fd=new FormData(e.target);var pid=parseInt(fd.get('productId'));var q=parseInt(fd.get('quantity'));var c=(fd.get('customer')||'').trim();var st=(fd.get('store')||'').trim()||getCatalogStore();var isPaid=fd.get('paid')==='on';if(!pid||!q||q<1)return;if(!isPaid&&!c){showToast('Customer required for debt','error');return;}var ps=getTenantData('products',[]);var p=null;for(var i=0;i<ps.length;i++){if(ps[i].id===pid){p=ps[i];break;}}if(!p||p.quantity<q)return;var up=parseFloat(fd.get('unitPrice'))||Number(p.price);var tp=up*q;var tc=(Number(p.cost)||0)*q;var u=getCurrentUser();var sales=getTenantData('sales',[]);sales.push({id:uid(),productId:pid,quantity:q,totalPrice:tp,totalCost:tc,date:Date.now(),customer:c,store:st,createdBy:u.id,unitPrice:up,unitCost:Number(p.cost)||0,paid:isPaid});persistSales(sales);p.quantity-=q;persistProducts(ps);syncLargeDataToSupabase(tenantKey('sales'),sales);syncLargeDataToSupabase(tenantKey('products'),ps);closeModal();if(isPaid){showToast('✓ Sale recorded','success');navigate('sales');}else{showToast('📝 Debt recorded','warning');navigate('debts');}updateDebtsBadge();}
+
+/* ===== CHANGED: createdByName uses username ===== */
+function submitSale(e){
+  e.preventDefault();
+  if(!hasPerm('sales_create'))return;
+  var fd=new FormData(e.target);
+  var pid=parseInt(fd.get('productId'));
+  var q=parseInt(fd.get('quantity'));
+  var c=(fd.get('customer')||'').trim();
+  var st=(fd.get('store')||'').trim()||getCatalogStore();
+  var isPaid=fd.get('paid')==='on';
+  if(!pid||!q||q<1)return;
+  if(!isPaid&&!c){showToast('Customer required for debt','error');return;}
+  var ps=getTenantData('products',[]);var p=null;
+  for(var i=0;i<ps.length;i++){if(ps[i].id===pid){p=ps[i];break;}}
+  if(!p||p.quantity<q)return;
+  var up=parseFloat(fd.get('unitPrice'))||Number(p.price);
+  var tp=up*q;var tc=(Number(p.cost)||0)*q;
+  var u=getCurrentUser();
+  var sales=getTenantData('sales',[]);
+  sales.push({id:uid(),productId:pid,quantity:q,totalPrice:tp,totalCost:tc,date:Date.now(),customer:c,store:st,createdBy:u.id,createdByName:u.username,unitPrice:up,unitCost:Number(p.cost)||0,paid:isPaid});
+  persistSales(sales);
+  p.quantity-=q;persistProducts(ps);
+  syncLargeDataToSupabase(tenantKey('sales'),sales);
+  syncLargeDataToSupabase(tenantKey('products'),ps);
+  closeModal();
+  if(isPaid){showToast('✓ Sale recorded','success');navigate('sales');}
+  else{showToast('📝 Debt recorded','warning');navigate('debts');}
+  updateDebtsBadge();
+}
+
 function submitProduct(e){
   if(e&&e.preventDefault)e.preventDefault();
   if(!hasPerm('inventory_manage')){showToast('⚠ Permission denied','error');return;}
@@ -1994,14 +2128,58 @@ function scanBarcodeForQuickAdd(productId){_quickBarcodeTargetId=productId;_edit
 function submitExpense(e){e.preventDefault();if(!hasPerm('expenses_manage'))return;var fd=new FormData(e.target);var d=(fd.get('description')||'').trim();var a=parseFloat(fd.get('amount'));var c=fd.get('category')||'Other';var st=(fd.get('store')||'').trim()||getCatalogStore();if(!d||!a||a<1)return;var u=getCurrentUser();var ex=getTenantData('expenses',[]);ex.push({id:uid(),description:d,amount:a,category:c,date:Date.now(),store:st,createdBy:u.id});persistExpenses(ex);syncLargeDataToSupabase(tenantKey('expenses'),ex);closeModal();navigate('expenses');}
 function submitUser(e){e.preventDefault();if(!canManageUsers())return;var fd=new FormData(e.target);var un=(fd.get('username')||'').trim();var pw=fd.get('password');var role=fd.get('role');var fn=(fd.get('fullName')||'').trim()||un;var st=(fd.get('store')||'').trim()||getStoreName();if(!un||!pw||!role)return;var us=getTenantData('users',[]);if(isUsernameTaken(un)){showToast('Username taken','error');return;}var u=getCurrentUser();var newUser={id:uid(),username:un,password:hashPw(un,pw),role:role,store:st,fullName:fn,createdBy:u.id,photoKey:'',tenantId:currentTenantId,theme:'light'};us.push(newUser);setTenantData('users',us);indexUsername(un,currentTenantId);markOwnWrite();scheduleProfilePush({userKey:'t_'+currentTenantId+'_'+newUser.id,userType:'tenant',tenantId:currentTenantId,userId:newUser.id,username:un,fullName:fn,photoKey:null,bio:'',phone:'',email:'',socialWhatsapp:'',socialInstagram:'',socialFacebook:'',socialTiktok:'',socialWebsite:'',theme:'light'});closeModal();navigate('users');}
 function submitStockAdjust(e,pid){e.preventDefault();if(!hasPerm('inventory_manage'))return;var fd=new FormData(e.target);var adj=parseInt(fd.get('adjust'));if(isNaN(adj)||adj===0)return;var ps=getTenantData('products',[]);for(var i=0;i<ps.length;i++){if(ps[i].id===parseInt(pid)){ps[i].quantity=Math.max(0,ps[i].quantity+adj);break;}}persistProducts(ps);syncLargeDataToSupabase(tenantKey('products'),ps);closeModal();navigate('inventory');}
-function deleteSale(id){if(!canDeleteSales())return;if(!confirm('Delete?'))return;var sales=getTenantData('sales',[]);var sale=null;for(var i=0;i<sales.length;i++){if(Number(sales[i].id)===Number(id)){sale=sales[i];break;}}if(sale){var ps=getTenantData('products',[]);for(var j=0;j<ps.length;j++){if(Number(ps[j].id)===Number(sale.productId)){ps[j].quantity+=sale.quantity;break;}}persistProducts(ps);}var filtered=[];for(var k=0;k<sales.length;k++)if(Number(sales[k].id)!==Number(id))filtered.push(sales[k]);persistSales(filtered);if(supabaseClient)supabaseClient.from('mex_sales').delete().eq('id',Number(id)).catch(function(){});navigate('sales');}
+
+function deleteSale(id){
+  if(!canDeleteSales())return;
+  if(!confirm('Delete this sale?'))return;
+  var sales=getTenantData('sales',[]);
+  var sale=null;
+  for(var i=0;i<sales.length;i++){if(Number(sales[i].id)===Number(id)){sale=sales[i];break;}}
+  if(!sale)return;
+  var cu=getCurrentUser();
+  if(cu&&cu.role!=='owner'&&!isSuperAdmin&&!isMexEmployee){
+    var prodName='—';
+    try{var pp=getProduct(sale.productId);if(pp)prodName=pp.name;}catch(e){}
+    try{
+      addDeletionLogEntry({
+        id:uid(),
+        saleId:Number(id),
+        productName:prodName,
+        quantity:Number(sale.quantity)||0,
+        totalPrice:Number(sale.totalPrice)||0,
+        originalStore:sale.store||'—',
+        saleDate:Number(sale.date)||Date.now(),
+        deletedBy:cu.id,
+        deletedByName:(cu.username||cu.fullName||'—'),
+        deletedByStore:(cu.store||'—'),
+        deletedByRole:cu.role||'—',
+        timestamp:Date.now()
+      });
+      if(supabaseClient){try{supabaseClient.from(TBL_KV).upsert([{key:'sb_tenant_'+currentTenantId+'_'+DELETION_LOG_KEY,value:getDeletionLog(),updated_at:new Date().toISOString()}],{onConflict:'key'}).catch(function(){});}catch(e){}}
+    }catch(e){}
+  }
+  try{
+    var ps=getTenantData('products',[]);
+    for(var j=0;j<ps.length;j++){if(Number(ps[j].id)===Number(sale.productId)){ps[j].quantity=Number(ps[j].quantity)+Number(sale.quantity);break;}}
+    persistProducts(ps);
+    if(supabaseClient){try{supabaseClient.from('mex_products').delete().eq('id',Number(sale.productId)).catch(function(){});}catch(e){}}
+  }catch(e){}
+  var filtered=[];
+  for(var k=0;k<sales.length;k++)if(Number(sales[k].id)!==Number(id))filtered.push(sales[k]);
+  persistSales(filtered);
+  if(supabaseClient){try{supabaseClient.from('mex_sales').delete().eq('id',Number(id)).catch(function(){});}catch(e){}}
+  updateDeletionBadge();
+  showToast('🗑 Sale deleted','warning');
+  navigate('sales');
+}
+
 function deleteExpense(id){if(!hasPerm('expenses_manage'))return;if(!confirm('Delete?'))return;var all=getTenantData('expenses',[]);var out=[];for(var i=0;i<all.length;i++)if(Number(all[i].id)!==Number(id))out.push(all[i]);persistExpenses(out);if(supabaseClient)supabaseClient.from('mex_expenses').delete().eq('id',Number(id)).catch(function(){});navigate('expenses');}
 function deleteProduct(id){if(!hasPerm('inventory_manage'))return;if(!confirm('Delete?'))return;var all=getTenantData('products',[]);var out=[];for(var i=0;i<all.length;i++)if(Number(all[i].id)!==Number(id))out.push(all[i]);persistProducts(out);if(supabaseClient)supabaseClient.from('mex_products').delete().eq('id',Number(id)).catch(function(){});navigate('inventory');}
 function deleteUser(id){if(!canManageUsers())return;var u=getUser(Number(id));if(!u||u.role==='owner')return;if(!confirm('Delete?'))return;var all=getTenantData('users',[]);var out=[];for(var i=0;i<all.length;i++){if(Number(all[i].id)===Number(id)){if(all[i].username)unindexUsername(all[i].username);}else out.push(all[i]);}setTenantData('users',out);markOwnWrite();if(supabaseClient)supabaseClient.from(TBL_PROFILES).delete().eq('user_key','t_'+currentTenantId+'_'+id).catch(function(e){});navigate('users');}
 function changeUserRole(userId,newRole){if(!canManageRoles())return;if(['admin','accountant','employee'].indexOf(newRole)===-1)return;var cu=getCurrentUser();if(cu&&cu.role==='admin'){var target=getUser(Number(userId));if(!target||target.role==='owner'||target.role==='admin'){showToast('⚠ Only owner can change admin','error');return;}}var us=getTenantData('users',[]);for(var i=0;i<us.length;i++){if(Number(us[i].id)===Number(userId)&&us[i].role!=='owner'){us[i].role=newRole;setTenantData('users',us);showToast('✓ Role updated','success');break;}}navigate('roles');}
 function adjustStock(id){openModal('adjustStock',id);}
-function markDebtPaid(id){if(!hasPerm('sales_create'))return;var sales=getTenantData('sales',[]);var sale=null;for(var i=0;i<sales.length;i++){if(Number(sales[i].id)===Number(id)){sale=sales[i];break;}}if(!sale)return;sale.paid=true;sale.paidAt=Date.now();var cu=getCurrentUser();sale.paidBy=cu?cu.id:null;persistSales(sales);syncLargeDataToSupabase(tenantKey('sales'),sales);showToast('✅ Payment recorded','success');updateDebtsBadge();navigate('debts');}
-function deleteDebt(id){if(!canDeleteSales())return;if(!confirm('Delete?'))return;var sales=getTenantData('sales',[]);var sale=null;for(var i=0;i<sales.length;i++){if(Number(sales[i].id)===Number(id)){sale=sales[i];break;}}if(!sale)return;var ps=getTenantData('products',[]);for(var j=0;j<ps.length;j++){if(Number(ps[j].id)===Number(sale.productId)){ps[j].quantity+=sale.quantity;break;}}persistProducts(ps);var filtered=[];for(var k=0;k<sales.length;k++)if(Number(sales[k].id)!==Number(id))filtered.push(sales[k]);persistSales(filtered);if(supabaseClient)supabaseClient.from('mex_sales').delete().eq('id',Number(id)).catch(function(){});updateDebtsBadge();navigate('debts');}
+function markDebtPaid(id){if(!hasPerm('sales_create'))return;var sales=getTenantData('sales',[]);var sale=null;for(var i=0;i<sales.length;i++){if(Number(sales[i].id)===Number(id)){sale=sales[i];break;}}if(!sale)return;sale.paid=true;sale.paidAt=Date.now();var cu=getCurrentUser();sale.paidBy=cu?cu.id:null;sale.paidByName=cu?cu.username:'—';persistSales(sales);syncLargeDataToSupabase(tenantKey('sales'),sales);showToast('✅ Payment recorded','success');updateDebtsBadge();navigate('debts');}
+function deleteDebt(id){if(!canDeleteSales())return;if(!confirm('Delete?'))return;var sales=getTenantData('sales',[]);var sale=null;for(var i=0;i<sales.length;i++){if(Number(sales[i].id)===Number(id)){sale=sales[i];break;}}if(!sale)return;var cu=getCurrentUser();if(cu&&cu.role!=='owner'&&!isSuperAdmin&&!isMexEmployee){var prodName='—';try{var pp=getProduct(sale.productId);if(pp)prodName=pp.name;}catch(e){}try{addDeletionLogEntry({id:uid(),saleId:Number(id),productName:prodName,quantity:Number(sale.quantity)||0,totalPrice:Number(sale.totalPrice)||0,originalStore:sale.store||'—',saleDate:Number(sale.date)||Date.now(),deletedBy:cu.id,deletedByName:(cu.username||cu.fullName||'—'),deletedByStore:(cu.store||'—'),deletedByRole:cu.role||'—',timestamp:Date.now()});}catch(e){}}var ps=getTenantData('products',[]);for(var j=0;j<ps.length;j++){if(Number(ps[j].id)===Number(sale.productId)){ps[j].quantity+=sale.quantity;break;}}persistProducts(ps);var filtered=[];for(var k=0;k<sales.length;k++)if(Number(sales[k].id)!==Number(id))filtered.push(sales[k]);persistSales(filtered);if(supabaseClient)supabaseClient.from('mex_sales').delete().eq('id',Number(id)).catch(function(){});updateDebtsBadge();updateDeletionBadge();navigate('debts');}
 function openLowStockModal(){var m=document.getElementById('lowStockModal');var l=document.getElementById('lowStockList');var items=getLowStockItems();var h='';if(!items.length)h='<div style="text-align:center;padding:30px;font-weight:600;">—</div>';else{for(var i=0;i<items.length;i++){var p=items[i];var expInfo=getExpiryInfo(p.expiryDate);var expTag=expInfo.badge?' <span class="badge badge-danger" style="font-size:.6rem;">'+expInfo.label+'</span>':'';h+='<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border-color);gap:8px;"><span style="font-weight:600;">'+escapeHtml(p.name)+expTag+' <strong style="color:var(--accent-danger);">'+p.quantity+'</strong></span><button class="btn btn-sm btn-success" onclick="adjustStock(\''+p.id+'\');closeLowStockModal();">+</button></div>';}}l.innerHTML=h;m.classList.add('show');document.body.classList.add('modal-open');}
 function closeLowStockModal(){document.getElementById('lowStockModal').classList.remove('show');var so=document.querySelector('.modal-overlay.show');if(!so)document.body.classList.remove('modal-open');}
 
@@ -2009,14 +2187,49 @@ function openTransferModal(){if(isSuperAdmin||isMexEmployee){showToast('Not allo
 function closeTransferModal(){document.getElementById('transferModal').classList.remove('show');var so=document.querySelector('.modal-overlay.show');if(!so)document.body.classList.remove('modal-open');}
 function onTransferFromChange(){var fromSel=document.getElementById('transferFrom');var prodSel=document.getElementById('transferProduct');var qi=document.getElementById('transferQty');var info=document.getElementById('transferQtyInfo');if(!fromSel||!prodSel)return;var br=fromSel.value;if(qi)qi.value=1;if(info)info.textContent='';if(!br){prodSel.innerHTML='<option value="">--</option>';return;}var products=getTenantData('products',[]);var filtered=[];for(var i=0;i<products.length;i++){if(normStore(products[i].store)===normStore(br)&&Number(products[i].quantity)>0)filtered.push(products[i]);}if(!filtered.length){prodSel.innerHTML='<option value="">— No products —</option>';return;}var opts='';for(var j=0;j<filtered.length;j++){opts+='<option value="'+filtered[j].id+'" data-qty="'+filtered[j].quantity+'">'+escapeHtml(filtered[j].name)+' (Qty: '+filtered[j].quantity+')</option>';}prodSel.innerHTML='<option value="">--</option>'+opts;}
 function onTransferProductChange(){var prodSel=document.getElementById('transferProduct');var qi=document.getElementById('transferQty');var info=document.getElementById('transferQtyInfo');if(!prodSel||!qi)return;var pid=parseInt(prodSel.value);if(!pid){qi.max='';qi.value=1;if(info)info.textContent='';return;}var opt=prodSel.options[prodSel.selectedIndex];var maxQty=opt?parseInt(opt.dataset.qty)||0:0;qi.max=maxQty;if(parseInt(qi.value)>maxQty)qi.value=maxQty;if(info)info.innerHTML='Available: <strong>'+maxQty+'</strong>';}
-function submitTransfer(e){if(e)e.preventDefault();if(isSuperAdmin||isMexEmployee){showToast('Not allowed','error');return;}var u=getCurrentUser();if(!u||!hasPerm('inventory_manage')){showToast('Only Owner/Admin','error');return;}var from=document.getElementById('transferFrom').value;var pid=parseInt(document.getElementById('transferProduct').value);var to=document.getElementById('transferBranch').value;var qty=parseInt(document.getElementById('transferQty').value);if(!from||!pid||!to||!qty||qty<1){showToast('Fill all fields','error');return;}if(normStore(from)===normStore(to)){showToast('Source≠target','error');return;}var ps=getTenantData('products',[]);var srcProd=null;for(var i=0;i<ps.length;i++){if(Number(ps[i].id)===pid&&normStore(ps[i].store)===normStore(from)){srcProd=ps[i];break;}}if(!srcProd){showToast('Not in source','error');return;}if(Number(srcProd.quantity)<qty){showToast('Not enough','error');return;}var targetProd=null;for(var j=0;j<ps.length;j++){if(normStore(ps[j].store)===normStore(to)&&normName(ps[j].name)===normName(srcProd.name)&&Number(ps[j].price)===Number(srcProd.price)&&Number(ps[j].cost)===Number(srcProd.cost)){targetProd=ps[j];break;}}srcProd.quantity=Number(srcProd.quantity)-qty;if(targetProd){targetProd.quantity=Number(targetProd.quantity)+qty;}else{var newProd={id:uid(),name:srcProd.name,price:srcProd.price,cost:srcProd.cost,category:srcProd.category||'General',quantity:qty,store:to,image:srcProd.image||'',barcode:srcProd.barcode||'',expiryDate:srcProd.expiryDate||''};ps.push(newProd);}persistProducts(ps);syncLargeDataToSupabase(tenantKey('products'),ps);var transfers=getTenantData(TRANSFERS_KEY_SUFFIX,[]);if(!Array.isArray(transfers))transfers=[];transfers.push({id:uid(),productId:pid,productName:srcProd.name,fromBranch:from,toBranch:to,quantity:qty,transferredBy:u.fullName||u.username,transferredById:u.id,date:Date.now()});setTenantData(TRANSFERS_KEY_SUFFIX,transfers);syncLargeDataToSupabase(tenantKey('transfers'),transfers);closeTransferModal();showToast('✅ Transferred: '+qty+' × '+srcProd.name,'success');navigate('inventory');}
+function submitTransfer(e){if(e)e.preventDefault();if(isSuperAdmin||isMexEmployee){showToast('Not allowed','error');return;}var u=getCurrentUser();if(!u||!hasPerm('inventory_manage')){showToast('Only Owner/Admin','error');return;}var from=document.getElementById('transferFrom').value;var pid=parseInt(document.getElementById('transferProduct').value);var to=document.getElementById('transferBranch').value;var qty=parseInt(document.getElementById('transferQty').value);if(!from||!pid||!to||!qty||qty<1){showToast('Fill all fields','error');return;}if(normStore(from)===normStore(to)){showToast('Source≠target','error');return;}var ps=getTenantData('products',[]);var srcProd=null;for(var i=0;i<ps.length;i++){if(Number(ps[i].id)===pid&&normStore(ps[i].store)===normStore(from)){srcProd=ps[i];break;}}if(!srcProd){showToast('Not in source','error');return;}if(Number(srcProd.quantity)<qty){showToast('Not enough','error');return;}var targetProd=null;for(var j=0;j<ps.length;j++){if(normStore(ps[j].store)===normStore(to)&&normName(ps[j].name)===normName(srcProd.name)&&Number(ps[j].price)===Number(srcProd.price)&&Number(ps[j].cost)===Number(srcProd.cost)){targetProd=ps[j];break;}}srcProd.quantity=Number(srcProd.quantity)-qty;if(targetProd){targetProd.quantity=Number(targetProd.quantity)+qty;}else{var newProd={id:uid(),name:srcProd.name,price:srcProd.price,cost:srcProd.cost,category:srcProd.category||'General',quantity:qty,store:to,image:srcProd.image||'',barcode:srcProd.barcode||'',expiryDate:srcProd.expiryDate||''};ps.push(newProd);}persistProducts(ps);syncLargeDataToSupabase(tenantKey('products'),ps);var transfers=getTenantData(TRANSFERS_KEY_SUFFIX,[]);if(!Array.isArray(transfers))transfers=[];transfers.push({id:uid(),productId:pid,productName:srcProd.name,fromBranch:from,toBranch:to,quantity:qty,transferredBy:u.username,transferredById:u.id,date:Date.now()});setTenantData(TRANSFERS_KEY_SUFFIX,transfers);syncLargeDataToSupabase(tenantKey('transfers'),transfers);closeTransferModal();showToast('✅ Transferred: '+qty+' × '+srcProd.name,'success');navigate('inventory');}
 function viewTransferHistory(){var transfers=getTenantData(TRANSFERS_KEY_SUFFIX,[]);if(!Array.isArray(transfers))transfers=[];transfers=transfers.slice().sort(function(a,b){return b.date-a.date;});var ov=document.getElementById('modalOverlay');var bx=document.getElementById('modalBox');bx.style.padding='';bx.style.overflow='';bx.style.borderRadius='';bx.style.maxWidth='780px';var rows='';for(var i=0;i<transfers.length;i++){var tr=transfers[i];rows+='<tr><td>'+(i+1)+'</td><td><strong>'+escapeHtml(tr.productName)+'</strong></td><td><span class="badge badge-info">'+escapeHtml(tr.fromBranch)+'</span></td><td><span class="badge badge-primary">'+escapeHtml(tr.toBranch)+'</span></td><td><span class="badge badge-warning">'+tr.quantity+'</span></td><td style="font-size:.75rem;">'+escapeHtml(tr.transferredBy||'—')+'</td><td style="font-size:.75rem;">'+fmtDateTime(tr.date)+'</td></tr>';}bx.innerHTML='<h3><i class="fas fa-history" style="color:#8b5cf6;"></i> Transfer History ('+transfers.length+')</h3><div class="table-wrap"><table><thead><tr><th>#</th><th>'+t('inv_product')+'</th><th>From</th><th>To</th><th>'+t('inv_qty')+'</th><th>By</th><th>'+t('cust_date')+'</th></tr></thead><tbody>'+(rows||'<tr class="empty-row"><td colspan="7">No transfers</td></tr>')+'</tbody></table></div><div class="form-actions" style="margin-top:16px;justify-content:flex-end;"><button class="btn btn-secondary" onclick="closeModal()">'+t('btn_close')+'</button></div>';ov.classList.add('show');document.body.classList.add('modal-open');}
 
 function openBranchModal(){var ov=document.getElementById('subModal');['newBranchName','newBranchAddress','newBranchTin','newBranchUsername','newBranchPassword'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});ov.classList.add('show');document.body.classList.add('modal-open');}
 function closeSubscriptionModal(){document.getElementById('subModal').classList.remove('show');var so=document.querySelector('.modal-overlay.show');if(!so)document.body.classList.remove('modal-open');}
-function handleSubscriptionPayment(){var bn=document.getElementById('newBranchName').value.trim();var ba=document.getElementById('newBranchAddress').value.trim();var bt=document.getElementById('newBranchTin').value.trim();var un=document.getElementById('newBranchUsername').value.trim();var pw=document.getElementById('newBranchPassword').value.trim();if(!bn||!un||!pw){showToast('Fill required','error');return;}var existing=getBranchNames();for(var i=0;i<existing.length;i++){if(normStore(existing[i]).toLowerCase()===bn.toLowerCase()){showToast('Branch exists','error');return;}}if(!confirm('Pay '+fmtMoney(BRANCH_FEE)+' for "'+bn+'"?'))return;var ts=getAllTenants();var tn=null;for(var j=0;j<ts.length;j++){if(ts[j].id===currentTenantId){tn=ts[j];break;}}if(!tn)return;var users=getTenantData('users',[]);if(isUsernameTaken(un)){showToast('Username taken','error');return;}tn.branches.push({name:bn,address:ba||'N/A',tin:bt||'N/A',permissions:getDefaultBranchPermissions()});saveTenants(ts);var cu=getCurrentUser();var newU={id:uid(),username:un,password:hashPw(un,pw),role:'employee',store:bn,fullName:'Branch Manager - '+bn,createdBy:cu?cu.id:1,photoKey:'',tenantId:currentTenantId,theme:'light'};users.push(newU);setTenantData('users',users);indexUsername(un,currentTenantId);markOwnWrite();scheduleProfilePush({userKey:'t_'+currentTenantId+'_'+newU.id,userType:'tenant',tenantId:currentTenantId,userId:newU.id,username:newU.username,fullName:newU.fullName,photoKey:null,bio:'',phone:'',email:'',socialWhatsapp:'',socialInstagram:'',socialFacebook:'',socialTiktok:'',socialWebsite:'',theme:'light'});var fresh=getAllTenants();var tnFresh=null;for(var k=0;k<fresh.length;k++){if(fresh[k].id===currentTenantId){tnFresh=fresh[k];break;}}if(tnFresh&&tnFresh.promoCode){var comm=creditBranchCommission(tnFresh,bn,BRANCH_FEE,cu?(cu.fullName||cu.username):'Owner');if(comm)showToast('✅ '+bn+' added · +'+fmtMoney(comm),'success');else showToast('✅ '+bn+' added','success');}else showToast('✅ '+bn+' added','success');closeSubscriptionModal();navigate('branches');}
+
+/* ===== CHANGED: fullName uses username (not "Branch Manager - X") ===== */
+function handleSubscriptionPayment(){
+  var bn=document.getElementById('newBranchName').value.trim();
+  var ba=document.getElementById('newBranchAddress').value.trim();
+  var bt=document.getElementById('newBranchTin').value.trim();
+  var un=document.getElementById('newBranchUsername').value.trim();
+  var pw=document.getElementById('newBranchPassword').value.trim();
+  if(!bn||!un||!pw){showToast('Fill required','error');return;}
+  var existing=getBranchNames();
+  for(var i=0;i<existing.length;i++){if(normStore(existing[i]).toLowerCase()===bn.toLowerCase()){showToast('Branch exists','error');return;}}
+  if(!confirm('Pay '+fmtMoney(BRANCH_FEE)+' for "'+bn+'"?'))return;
+  var ts=getAllTenants();var tn=null;
+  for(var j=0;j<ts.length;j++){if(ts[j].id===currentTenantId){tn=ts[j];break;}}
+  if(!tn)return;
+  var users=getTenantData('users',[]);
+  if(isUsernameTaken(un)){showToast('Username taken','error');return;}
+  tn.branches.push({name:bn,address:ba||'N/A',tin:bt||'N/A',permissions:getDefaultBranchPermissions()});
+  saveTenants(ts);
+  var cu=getCurrentUser();
+  var newU={id:uid(),username:un,password:hashPw(un,pw),role:'employee',store:bn,fullName:un,createdBy:cu?cu.id:1,photoKey:'',tenantId:currentTenantId,theme:'light'};
+  users.push(newU);
+  setTenantData('users',users);
+  indexUsername(un,currentTenantId);
+  markOwnWrite();
+  scheduleProfilePush({userKey:'t_'+currentTenantId+'_'+newU.id,userType:'tenant',tenantId:currentTenantId,userId:newU.id,username:newU.username,fullName:un,photoKey:null,bio:'',phone:'',email:'',socialWhatsapp:'',socialInstagram:'',socialFacebook:'',socialTiktok:'',socialWebsite:'',theme:'light'});
+  var fresh=getAllTenants();var tnFresh=null;
+  for(var k=0;k<fresh.length;k++){if(fresh[k].id===currentTenantId){tnFresh=fresh[k];break;}}
+  if(tnFresh&&tnFresh.promoCode){
+    var comm=creditBranchCommission(tnFresh,bn,BRANCH_FEE,cu?(cu.fullName||cu.username):'Owner');
+    if(comm)showToast('✅ '+bn+' added · +'+fmtMoney(comm),'success');
+    else showToast('✅ '+bn+' added','success');
+  }else showToast('✅ '+bn+' added','success');
+  closeSubscriptionModal();
+  navigate('branches');
+}
 function resetBranchPassword(userId){var cg=getCurrentUser();if(!cg||isSuperAdmin||isMexEmployee||cg.role!=='owner')return;var pw=prompt('New password (min 4 chars):');if(!pw||pw.length<4)return;var users=getTenantData('users',[]);for(var i=0;i<users.length;i++){if(users[i].id===Number(userId)){users[i].password=hashPw(users[i].username,pw);break;}}setTenantData('users',users);showToast('✓ Password reset','success');navigate('branches');}
-function clearAttendanceHistory(){if(!confirm('Clear?'))return;savePunchHistory([]);saveSessions({});navigate('attendance');}
+function clearAttendanceHistory(){var cu=getCurrentUser();if(!cu||cu.role!=='owner')return;if(!confirm('Clear?'))return;savePunchHistory([]);saveSessions({});navigate('attendance');}
 
 function switchSuperAdminTab(tab){currentSuperAdminTab=tab;navigate('superadmin');}
 function openAddMexEmployeeModal(){if(!isSuperAdmin)return;var ov=document.getElementById('modalOverlay');var bx=document.getElementById('modalBox');bx.innerHTML='<h3><i class="fas fa-user-plus"></i> Add Member</h3><form onsubmit="submitAddMexEmployee(event)"><div class="form-group"><label>Full Name *</label><input type="text" name="name" required/></div><div class="form-group"><label>Phone</label><input type="text" name="phone"/></div><div class="form-group"><label>Password</label><input type="text" name="password" placeholder="(auto)"/></div><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">'+t('btn_cancel')+'</button><button type="submit" class="btn btn-primary">'+t('btn_save')+'</button></div></form>';ov.classList.add('show');document.body.classList.add('modal-open');}
@@ -2034,7 +2247,37 @@ function superRenewSubscription(tenantId,planKey){if(!isSuperAdmin)return;var pr
 function openTenantCredentials(tenantId){if(!isSuperAdmin)return;var tn=getTenant(tenantId);if(!tn)return;_credentialsTenantId=tenantId;var users=lsGet('sb_tenant_'+tenantId+'_users',[]);if(!Array.isArray(users))users=[];var rows='';for(var i=0;i<users.length;i++){var u=users[i];rows+='<tr><td>'+(i+1)+'</td><td><strong>'+escapeHtml(u.fullName||u.username)+'</strong></td><td><code style="background:var(--input-bg);padding:3px 8px;border-radius:6px;font-size:.82rem;">'+escapeHtml(u.username)+'</code></td><td><span class="badge '+getRoleBadgeClass(u.role)+'">'+getRoleLabel(u.role)+'</span></td><td><span style="color:var(--text-muted);font-style:italic;font-size:.78rem;">🔒 Hashed</span></td><td><button class="btn btn-xs btn-secondary" onclick="superResetUserPassword(\''+tenantId+'\',\''+u.id+'\')"><i class="fas fa-sync"></i> Reset</button></td></tr>';}var ov=document.getElementById('modalOverlay');var bx=document.getElementById('modalBox');bx.style.padding='';bx.style.overflow='';bx.style.borderRadius='';bx.style.maxWidth='820px';bx.innerHTML='<h3><i class="fas fa-key" style="color:#8b5cf6;"></i> Credentials — '+escapeHtml(tn.companyName)+'</h3><div style="background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.25);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:.82rem;color:var(--text-secondary);line-height:1.5;"><i class="fas fa-shield-alt" style="color:#8b5cf6;"></i> Passwords are hashed. Click Reset to generate a new one (shown once).</div><div class="table-wrap"><table><thead><tr><th>#</th><th>'+t('form_name')+'</th><th>'+t('login_username')+'</th><th>Role</th><th>Password</th><th>'+t('cust_actions')+'</th></tr></thead><tbody>'+(rows||'<tr class="empty-row"><td colspan="6">No users</td></tr>')+'</tbody></table></div><div class="form-actions" style="margin-top:16px;justify-content:flex-end;"><button class="btn btn-secondary" onclick="closeModal()">'+t('btn_close')+'</button></div>';ov.classList.add('show');document.body.classList.add('modal-open');}
 function superResetUserPassword(tenantId,userId){if(!isSuperAdmin)return;var np=genTempPassword();var users=lsGet('sb_tenant_'+tenantId+'_users',[]);var found=null;for(var i=0;i<users.length;i++){if(Number(users[i].id)===Number(userId)){users[i].password=hashPw(users[i].username,np);found=users[i];break;}}if(!found){showToast('User not found','error');return;}lsSet('sb_tenant_'+tenantId+'_users',users);markOwnWrite();showToast('✅ New password: '+np,'success');try{copyToClipboardText(np);}catch(e){}openTenantCredentials(tenantId);}
 
-function shareReceipt(id){var sales=getTenantData('sales',[]);var s=null;for(var i=0;i<sales.length;i++){if(Number(sales[i].id)===Number(id)){s=sales[i];break;}}if(!s)return;var p=getProduct(s.productId);var co=getTenantData('company',{});var up=Number(s.unitPrice)||(s.totalPrice/s.quantity);var cn=co.name||'Company';var tin=co.tin||'';var addr=co.address||'';var seller=getUser(s.createdBy);var sellerName=seller?(seller.fullName||seller.username):'--';var c=document.getElementById('receiptContent');var html='<div class="receipt-header"><div class="receipt-brand">'+escapeHtml(cn)+'</div>';if(addr)html+='<div class="receipt-address">'+escapeHtml(addr)+'</div>';if(tin)html+='<div class="receipt-tin">TIN: '+escapeHtml(tin)+'</div>';html+='<div class="receipt-title">RECEIPT</div></div>';html+='<div class="receipt-row"><span class="label">'+t('cust_date')+':</span><span class="value">'+fmtDateTime(s.date)+'</span></div>';html+='<div class="receipt-row"><span class="label">Receipt #:</span><span class="value">'+String(s.id).slice(-8)+'</span></div>';html+='<div style="border-top:1px dashed var(--border-color);margin:12px 0;"></div>';html+='<div class="receipt-row"><span class="label">'+t('cust_product')+':</span><span class="value">'+(p?escapeHtml(p.name):'--')+'</span></div>';html+='<div class="receipt-row"><span class="label">'+t('cust_qty')+':</span><span class="value">'+s.quantity+'</span></div>';html+='<div class="receipt-row"><span class="label">'+t('form_price')+':</span><span class="value">'+fmtMoney(up)+'</span></div>';html+='<div class="receipt-total"><span>'+t('cust_total')+'</span><span class="value">'+fmtMoney(s.totalPrice)+'</span></div>';html+='<div style="border-top:1px dashed var(--border-color);margin:12px 0;"></div>';html+='<div class="receipt-row"><span class="label">Sold by:</span><span class="value">'+escapeHtml(sellerName)+'</span></div>';html+='<div class="receipt-row"><span class="label">Buyer:</span><span class="value">'+escapeHtml(s.customer||'Cash Customer')+'</span></div>';html+='<div class="receipt-footer">Thank you!<br>Please come again.</div>';c.innerHTML=html;document.getElementById('receiptModal').classList.add('show');document.body.classList.add('modal-open');currentReceiptData=s;}
+/* ===== CHANGED: Prefer createdByName (username) over fullName ===== */
+function shareReceipt(id){
+  var sales=getTenantData('sales',[]);var s=null;
+  for(var i=0;i<sales.length;i++){if(Number(sales[i].id)===Number(id)){s=sales[i];break;}}
+  if(!s)return;
+  var p=getProduct(s.productId);
+  var co=getTenantData('company',{});var up=Number(s.unitPrice)||(s.totalPrice/s.quantity);
+  var cn=co.name||'Company';var tin=co.tin||'';var addr=co.address||'';
+  var seller=getUser(s.createdBy);
+  var sellerName=s.createdByName||(seller?seller.username:'--');
+  var c=document.getElementById('receiptContent');
+  var html='<div class="receipt-header"><div class="receipt-brand">'+escapeHtml(cn)+'</div>';
+  if(addr)html+='<div class="receipt-address">'+escapeHtml(addr)+'</div>';
+  if(tin)html+='<div class="receipt-tin">TIN: '+escapeHtml(tin)+'</div>';
+  html+='<div class="receipt-title">RECEIPT</div></div>';
+  html+='<div class="receipt-row"><span class="label">'+t('cust_date')+':</span><span class="value">'+fmtDateTime(s.date)+'</span></div>';
+  html+='<div class="receipt-row"><span class="label">Receipt #:</span><span class="value">'+String(s.id).slice(-8)+'</span></div>';
+  html+='<div style="border-top:1px dashed var(--border-color);margin:12px 0;"></div>';
+  html+='<div class="receipt-row"><span class="label">'+t('cust_product')+':</span><span class="value">'+(p?escapeHtml(p.name):'--')+'</span></div>';
+  html+='<div class="receipt-row"><span class="label">'+t('cust_qty')+':</span><span class="value">'+s.quantity+'</span></div>';
+  html+='<div class="receipt-row"><span class="label">'+t('form_price')+':</span><span class="value">'+fmtMoney(up)+'</span></div>';
+  html+='<div class="receipt-total"><span>'+t('cust_total')+'</span><span class="value">'+fmtMoney(s.totalPrice)+'</span></div>';
+  html+='<div style="border-top:1px dashed var(--border-color);margin:12px 0;"></div>';
+  html+='<div class="receipt-row"><span class="label">Sold by:</span><span class="value">'+escapeHtml(sellerName)+'</span></div>';
+  html+='<div class="receipt-row"><span class="label">Buyer:</span><span class="value">'+escapeHtml(s.customer||'Cash Customer')+'</span></div>';
+  html+='<div class="receipt-footer">Thank you!<br>Please come again.</div>';
+  c.innerHTML=html;
+  document.getElementById('receiptModal').classList.add('show');
+  document.body.classList.add('modal-open');
+  currentReceiptData=s;
+}
 function closeReceiptModal(){document.getElementById('receiptModal').classList.remove('show');var so=document.querySelector('.modal-overlay.show');if(!so)document.body.classList.remove('modal-open');currentReceiptData=null;}
 function sendReceiptWhatsApp(){if(!currentReceiptData)return;var ceo=getTenantData('ceo',{whatsapp:''});var u=getCurrentUser();var def=(ceo&&ceo.whatsapp)?ceo.whatsapp:((u&&u.phone)?u.phone:'');var wa=prompt('WhatsApp number:',def);if(!wa)return;var n=normalizeWaNumber(wa);if(!n){showToast('Invalid','error');return;}var s=currentReceiptData;var p=getProduct(s.productId);var co=getTenantData('company',{});var cn=co.name||'Company';var msg='*RECEIPT*\n━━━━━━━━━━━━━━━━━━\n🏢 *'+cn+'*\n📅 '+fmtDateTime(s.date)+'\n🧾 #'+String(s.id).slice(-8)+'\n\n📦 '+(p?p.name:'--')+'\n🔢 Qty: '+s.quantity+'\n💰 Total: '+fmtMoney(s.totalPrice)+'\n\n_MeX PRO_';window.open('https://wa.me/'+n+'?text='+encodeURIComponent(msg),'_blank');showToast('✅ WhatsApp','success');}
 
@@ -2045,10 +2288,60 @@ function setCustomReportRange(){var f=document.getElementById('reportFromDate');
 function openSendReportModal(type,forceEmail){sendReportType=(type==='sales')?'sales':'debts';var te=document.getElementById('sendReportTitle');if(te)te.textContent=(sendReportType==='sales')?'Send Sales Report':'Send Debts Report';var ceo=getTenantData('ceo',{whatsapp:'',email:''});var u=getCurrentUser();var wa=document.getElementById('reportWhatsappNumber');var em=document.getElementById('reportEmailAddress');if(wa)wa.value=(ceo&&ceo.whatsapp)?ceo.whatsapp:((u&&u.phone)?u.phone:'');if(em)em.value=(ceo&&ceo.email)?ceo.email:((u&&u.email)?u.email:'');document.getElementById('sendReportModal').classList.add('show');document.body.classList.add('modal-open');setTimeout(function(){if(forceEmail&&em)em.focus();else if(wa&&!forceEmail)wa.focus();},200);}
 function closeSendReportModal(){document.getElementById('sendReportModal').classList.remove('show');var so=document.querySelector('.modal-overlay.show');if(!so)document.body.classList.remove('modal-open');}
 function executeSendReport(channel){var waI=document.getElementById('reportWhatsappNumber');var emI=document.getElementById('reportEmailAddress');var wa=(waI?waI.value:'').trim();var em=(emI?emI.value:'').trim();var ceo=getTenantData('ceo',{whatsapp:'',email:''});ceo.whatsapp=wa;ceo.email=em;setTenantData('ceo',ceo);if(channel==='whatsapp'){if(!wa){showToast('Enter WhatsApp','error');return;}var n=normalizeWaNumber(wa);if(!n){showToast('Invalid','error');return;}var msg=buildReportMessage(sendReportType);if(!msg)return;window.open('https://wa.me/'+n+'?text='+encodeURIComponent(msg),'_blank');closeSendReportModal();showToast('✅ WhatsApp opened','success');}else if(channel==='email'){if(!em){showToast('Enter email','error');return;}var msg2=buildReportMessage(sendReportType);if(!msg2)return;var subj=(sendReportType==='sales')?'Sales Report':'Debts Report';window.location.href='mailto:'+encodeURIComponent(em)+'?subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(msg2);closeSendReportModal();showToast('✅ Email opened','success');}}
-function buildReportMessage(type){var tn=getTenant(currentTenantId);var cN=tn?(tn.companyName||'Company'):'Company';var lines=[];if(type==='sales'){var data=buildReportData();var sales=data.sales.slice().sort(function(a,b){return b.date-a.date;});if(!sales.length){showToast('No sales','warning');return '';}lines.push('*SALES REPORT*');lines.push('━━━━━━━━━━━━━━━━━━');lines.push('🏢 *'+cN+'*');lines.push('📅 '+data.range.label);lines.push('🕐 '+fmtDateTime(Date.now()));lines.push('');lines.push('💰 Revenue: '+fmtMoney(data.revenue));lines.push('📊 COGS: '+fmtMoney(data.cogs));lines.push('🧾 Expenses: '+fmtMoney(data.expensesTotal));lines.push('📈 *NET PROFIT: '+fmtMoney(data.profit)+'*');lines.push('');lines.push('*Recent Sales:*');var top=sales.slice(0,10);for(var i=0;i<top.length;i++){var s=top[i];var p=getProduct(s.productId);lines.push((i+1)+'. '+(p?p.name:'--')+' × '+s.quantity+' — '+fmtMoney(s.totalPrice));}if(sales.length>10)lines.push('... +'+(sales.length-10)+' more');}else{var debts=getFilteredDebts().slice().sort(function(a,b){return b.date-a.date;});if(!debts.length){showToast('No debts','warning');return '';}var total=0;for(var j=0;j<debts.length;j++)total+=debts[j].totalPrice||0;lines.push('*DEBTS REPORT*');lines.push('━━━━━━━━━━━━━━━━━━');lines.push('🏢 *'+cN+'*');lines.push('🕐 '+fmtDateTime(Date.now()));lines.push('');lines.push('💰 *Total: '+fmtMoney(total)+'*');lines.push('👥 Count: '+debts.length);lines.push('');lines.push('*Debtors:*');for(var k=0;k<debts.length;k++){var d=debts[k];var pp=getProduct(d.productId);lines.push((k+1)+'. '+(d.customer||'?')+' — '+(pp?pp.name:'--')+' × '+d.quantity+' — '+fmtMoney(d.totalPrice));}}lines.push('');lines.push('_MeX PRO — Multi-Tenant Business System_');return lines.join('\n');}
+
+function buildReportMessage(type){
+  var tn=getTenant(currentTenantId);
+  var cN=tn?(tn.companyName||'Company'):'Company';
+  var lines=[];
+  var showProfit=canSeeNetProfit();
+  if(type==='sales'){
+    var data=buildReportData();
+    var sales=data.sales.slice().sort(function(a,b){return b.date-a.date;});
+    if(!sales.length){showToast('No sales','warning');return '';}
+    lines.push('*SALES REPORT*');
+    lines.push('━━━━━━━━━━━━━━━━━━');
+    lines.push('🏢 *'+cN+'*');
+    lines.push('📅 '+data.range.label);
+    lines.push('🕐 '+fmtDateTime(Date.now()));
+    lines.push('');
+    lines.push('💰 Revenue: '+fmtMoney(data.revenue));
+    lines.push('📊 COGS: '+fmtMoney(data.cogs));
+    lines.push('🧾 Expenses: '+fmtMoney(data.expensesTotal));
+    if(showProfit){lines.push('📈 *NET PROFIT: '+fmtMoney(data.profit)+'*');}
+    lines.push('');
+    lines.push('*Recent Sales:*');
+    var top=sales.slice(0,10);
+    for(var i=0;i<top.length;i++){
+      var s=top[i];var p=getProduct(s.productId);
+      var seller=s.createdByName||'—';
+      lines.push((i+1)+'. '+(p?p.name:'--')+' × '+s.quantity+' — '+fmtMoney(s.totalPrice)+' · by '+seller);
+    }
+    if(sales.length>10)lines.push('... +'+(sales.length-10)+' more');
+  }else{
+    var debts=getFilteredDebts().slice().sort(function(a,b){return b.date-a.date;});
+    if(!debts.length){showToast('No debts','warning');return '';}
+    var total=0;for(var j=0;j<debts.length;j++)total+=debts[j].totalPrice||0;
+    lines.push('*DEBTS REPORT*');
+    lines.push('━━━━━━━━━━━━━━━━━━');
+    lines.push('🏢 *'+cN+'*');
+    lines.push('🕐 '+fmtDateTime(Date.now()));
+    lines.push('');
+    lines.push('💰 *Total: '+fmtMoney(total)+'*');
+    lines.push('👥 Count: '+debts.length);
+    lines.push('');
+    lines.push('*Debtors:*');
+    for(var k=0;k<debts.length;k++){
+      var d=debts[k];var pp=getProduct(d.productId);
+      var seller2=d.createdByName||'—';
+      lines.push((k+1)+'. '+(d.customer||'?')+' — '+(pp?pp.name:'--')+' × '+d.quantity+' — '+fmtMoney(d.totalPrice)+' · by '+seller2);
+    }
+  }
+  lines.push('');
+  lines.push('_MeX PRO — Multi-Tenant Business System_');
+  return lines.join('\n');
+}
 function closeCredentialsModal(){document.getElementById('credentialsModal').classList.remove('show');_credentialsTenantId=null;var so=document.querySelector('.modal-overlay.show');if(!so)document.body.classList.remove('modal-open');}
 
-/* ===== FULL STATE RESET (account isolation) ===== */
 function resetAllAppState(){
   try{var vids=document.querySelectorAll('video');for(var i=0;i<vids.length;i++){try{vids[i].pause();}catch(e){}try{vids[i].removeAttribute('src');vids[i].load();}catch(e){}}}catch(e){}
   try{Object.keys(_mediaUrlCache).forEach(function(k){var u=_mediaUrlCache[k];if(u&&typeof u==='string'&&u.indexOf('blob:')===0){try{URL.revokeObjectURL(u);}catch(e){}}});}catch(e){}
@@ -2145,7 +2438,12 @@ function bindGlobalEvents(){
 function toggleTheme(){var u=getCurrentUser();if(!u)return;var nt=(u.theme==='dark')?'light':'dark';u.theme=nt;if(isSuperAdmin)setCurrentUser(u);else if(isMexEmployee){updateMexEmployee(currentMexEmployeeId,{theme:nt});setMexSession(Object.assign({},getMexSession()||{},{theme:nt}));}else{var us=getTenantData('users',[]);for(var i=0;i<us.length;i++){if(Number(us[i].id)===Number(u.id)){us[i].theme=nt;break;}}setTenantData('users',us);setCurrentUser(u);}applyTheme();}
 
 function initApp(user){
-  if(!isSuperAdmin&&!isMexEmployee){ensureCategories();ensureExpenseCategories();try{ensureBranchPermissions();}catch(e){}}
+  if(!isSuperAdmin&&!isMexEmployee){
+    try{migrateBranchUserNames();}catch(e){}
+    ensureCategories();
+    ensureExpenseCategories();
+    try{ensureBranchPermissions();}catch(e){}
+  }
   initVideoObserver();initImageObserver();applyTheme();
   updateAllUI(user);cleanupExpiredAds();
   try{setupRealtimeSync();}catch(e){}
@@ -2157,15 +2455,31 @@ function initApp(user){
   var navItems=document.querySelectorAll('.sidebar-nav .nav-item');
   if(isMexEmployee){for(var i=0;i<navItems.length;i++){var v=navItems[i].dataset.view;navItems[i].style.display=(v==='mexEarnings'||v==='mexCompanies'||v==='mexStatus')?'flex':'none';}document.getElementById('navMexEarnings').classList.add('active');document.getElementById('lowStockAlertBtn').style.display='none';document.getElementById('currentDate').textContent=getTzNowDate();if(!_appInitialized){_appInitialized=true;bindGlobalEvents();}try{applyLanguageUI();}catch(e){}navigate('mexEarnings');setTimeout(hydratePhotos,100);return;}
   startHeartbeat();
-  if(isSuperAdmin){for(var j=0;j<navItems.length;j++){var v2=navItems[j].dataset.view;navItems[j].style.display=(v2==='superadmin'||v2==='status')?'flex':'none';}document.getElementById('navSuperAdmin').classList.add('active');document.getElementById('lowStockAlertBtn').style.display='none';currentStatusTab='ads';navigate('superadmin');}
-  else{for(var k=0;k<navItems.length;k++){var v3=navItems[k].dataset.view;if(v3&&v3.indexOf('mex')===0){navItems[k].style.display='none';continue;}if(v3==='superadmin')navItems[k].style.display='none';else navItems[k].style.display='flex';}document.getElementById('lowStockAlertBtn').style.display='inline-flex';navigate('status');}
+  if(isSuperAdmin){
+    for(var j=0;j<navItems.length;j++){var v2=navItems[j].dataset.view;navItems[j].style.display=(v2==='superadmin'||v2==='status')?'flex':'none';}
+    document.getElementById('navSuperAdmin').classList.add('active');
+    document.getElementById('lowStockAlertBtn').style.display='none';
+    currentStatusTab='ads';
+    navigate('superadmin');
+  }
+  else{
+    var _isOwner=user&&user.role==='owner';
+    for(var k=0;k<navItems.length;k++){
+      var v3=navItems[k].dataset.view;
+      if(v3&&v3.indexOf('mex')===0){navItems[k].style.display='none';continue;}
+      if(v3==='superadmin'){navItems[k].style.display='none';continue;}
+      if(!_isOwner&&(v3==='users'||v3==='roles'||v3==='branches')){navItems[k].style.display='none';continue;}
+      navItems[k].style.display='flex';
+    }
+    document.getElementById('lowStockAlertBtn').style.display='inline-flex';
+    navigate('status');
+  }
   document.getElementById('currentDate').textContent=getTzNowDate();
-  updateChatBadge();updateLowStockBadge();updateDebtsBadge();
+  updateChatBadge();updateLowStockBadge();updateDebtsBadge();updateDeletionBadge();
   try{applyLanguageUI();}catch(e){}
   if(!_appInitialized){_appInitialized=true;bindGlobalEvents();}
 }
 
-/* ===== FIXED LOGIN — RENDER FIRST, LOAD IN BACKGROUND ===== */
 async function handleLogin(){
   resetAllAppState();
   var un=document.getElementById('loginUsername').value.trim();
@@ -2192,7 +2506,6 @@ async function handleLogin(){
     try{var __tok=setSuperSessionToken();if(__tok)localStorage.setItem(SUPER_ADMIN_SESSION_KEY,__tok);}catch(e){}
     document.getElementById('loginPage').classList.add('hidden');
     document.getElementById('appContainer').classList.add('active');
-    // ⬇️ RENDER FIRST
     initApp(su);
     pullFromCloudOnly().then(function(){softRefreshCurrentView(false);});
     return;
@@ -2237,7 +2550,6 @@ async function handleLogin(){
   recordUserLogin(found.id,found.store);
   document.getElementById('loginPage').classList.add('hidden');
   document.getElementById('appContainer').classList.add('active');
-  // ⬇️ RENDER FIRST — data loads in background (fix: 4s blank delay)
   initApp(found);
   pullFromCloudOnly().then(function(){softRefreshCurrentView(false);});
 }
@@ -2370,6 +2682,8 @@ function confirmScanQty(){
 }
 function cancelScanQty(){_pendingScanProduct=null;closeScanQtyModal();_scanLocked=false;var readerEl=document.getElementById('scannerReader');if(readerEl)readerEl.style.display='flex';var scanNextBtn=document.getElementById('scanNextBtn');if(scanNextBtn)scanNextBtn.style.display='none';var statusEl=document.getElementById('scannerStatus');if(statusEl){statusEl.textContent='';statusEl.className='promo-status';}setTimeout(function(){startCameraScanner();},300);}
 function closeScanQtyModal(){var ov=document.getElementById('scanQtyModal');if(ov)ov.classList.remove('show');var so=document.querySelector('.modal-overlay.show');if(!so)document.body.classList.remove('modal-open');}
+
+/* ===== CHANGED: createdByName uses username ===== */
 function recordQuickSale(product,qty){
   if(!product)return false;qty=parseInt(qty)||1;if(qty<1)return false;
   var ps=getTenantData('products',[]);var liveProduct=null;
@@ -2378,7 +2692,7 @@ function recordQuickSale(product,qty){
   var u=getCurrentUser();if(!u)return false;
   var store=getCatalogStore();var sales=getTenantData('sales',[]);
   var price=Number(liveProduct.price)||0;var cost=Number(liveProduct.cost)||0;
-  sales.push({id:uid(),productId:liveProduct.id,quantity:qty,totalPrice:price*qty,totalCost:cost*qty,date:Date.now(),customer:'',store:store,createdBy:u.id,unitPrice:price,unitCost:cost,paid:true});
+  sales.push({id:uid(),productId:liveProduct.id,quantity:qty,totalPrice:price*qty,totalCost:cost*qty,date:Date.now(),customer:'',store:store,createdBy:u.id,createdByName:u.username,unitPrice:price,unitCost:cost,paid:true});
   persistSales(sales);
   liveProduct.quantity=Number(liveProduct.quantity)-qty;persistProducts(ps);
   syncLargeDataToSupabase(tenantKey('sales'),sales);
