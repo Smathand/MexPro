@@ -2652,6 +2652,156 @@ window.__bootMain=function boot(){
   }).catch(function(e){});
 };
 (function tryAutoBoot(){setTimeout(function(){if(typeof window.__bootMain==='function'&&!window.__bootCalled){window.__bootCalled=true;try{window.__bootMain();}catch(e){console.error('[AutoBoot]',e);}}},300);})();
+/* ==========================================================
+   MeX PRO — PATCH (Low Stock Search + Inventory Edit Permission)
+   Bandika hii mwisho wa <script> yako.
+   ========================================================== */
+(function(){
+'use strict';
+
+/* ============ PATCH 1: LOW STOCK SEARCH BAR ============ */
+function getLowStockRows(container){
+  if(!container) return [];
+  if(container.children.length === 1){
+    var only = container.children[0];
+    if(only && only.tagName === 'TABLE') return [].slice.call(only.querySelectorAll('tbody > tr'));
+    if(only && (only.tagName === 'UL' || only.tagName === 'OL')) return [].slice.call(only.children);
+  }
+  return [].slice.call(container.children).filter(function(el){
+    return el.nodeType === 1 && !el.classList.contains('empty-state');
+  });
+}
+function filterLowStockList(){
+  var input = document.getElementById('lowStockSearchInput');
+  var container = document.getElementById('lowStockList');
+  var noRes = document.getElementById('lowStockNoResults');
+  if(!input || !container) return;
+  var q = (input.value || '').toLowerCase().trim();
+  var rows = getLowStockRows(container);
+  var visible = 0;
+  rows.forEach(function(el){
+    var show = !q || (el.textContent || '').toLowerCase().indexOf(q) !== -1;
+    el.style.display = show ? '' : 'none';
+    if(show) visible++;
+  });
+  if(noRes) noRes.style.display = (q && visible === 0 && rows.length > 0) ? '' : 'none';
+}
+function resetLowStockSearch(){
+  var input = document.getElementById('lowStockSearchInput');
+  if(input) input.value = '';
+  filterLowStockList();
+  setTimeout(function(){
+    var i = document.getElementById('lowStockSearchInput');
+    if(i && i.offsetParent !== null){ try{ i.focus(); }catch(e){} }
+  }, 120);
+}
+function injectLowStockSearchBar(){
+  var modal = document.getElementById('lowStockModal');
+  if(!modal) return;
+  if(document.getElementById('lowStockSearchInput')) return;
+  var list = document.getElementById('lowStockList');
+  if(!list) return;
+  var wrap = document.createElement('div');
+  wrap.className = 'inventory-search-wrap';
+  wrap.innerHTML = '<i class="fas fa-search inventory-search-icon"></i>' +
+    '<input type="text" id="lowStockSearchInput" class="inventory-search-input" ' +
+    'placeholder="Search product name, code or barcode..." autocomplete="off"/>';
+  list.parentNode.insertBefore(wrap, list);
+  var noRes = document.createElement('div');
+  noRes.id = 'lowStockNoResults';
+  noRes.className = 'empty-state';
+  noRes.style.cssText = 'display:none;padding:24px;';
+  noRes.innerHTML = '<i class="fas fa-search"></i><h3>No matches</h3><p>Try a different search term</p>';
+  list.parentNode.insertBefore(noRes, list.nextSibling);
+  document.getElementById('lowStockSearchInput').addEventListener('input', filterLowStockList);
+}
+function watchLowStockModal(){
+  var modal = document.getElementById('lowStockModal');
+  if(!modal) return;
+  new MutationObserver(function(muts){
+    for(var i=0;i<muts.length;i++){
+      if(muts[i].type === 'attributes' && muts[i].attributeName === 'class' && modal.classList.contains('show')){
+        resetLowStockSearch();
+      }
+    }
+  }).observe(modal, {attributes:true, attributeFilter:['class']});
+  var list = document.getElementById('lowStockList');
+  if(list){
+    new MutationObserver(function(){
+      var inp = document.getElementById('lowStockSearchInput');
+      if(inp && inp.value) filterLowStockList();
+    }).observe(list, {childList:true, subtree:true});
+  }
+}
+
+/* ============ PATCH 2: HIDE EDIT IF 'inventory_manage' IS OFF ============ */
+function userCanManageInventory(){
+  try {
+    if(typeof hasPerm === 'function') return hasPerm('inventory_manage') === true;
+    if(typeof canManageInventory === 'function') return canManageInventory() === true;
+  } catch(e){}
+  return true; /* fallback: usificha kama hatuwezi kuamua */
+}
+function hideEditButtonsIfNoPerm(){
+  var app = document.getElementById('appContainer');
+  if(!app || !app.classList.contains('active')) return;
+  var canManage = userCanManageInventory();
+  /* rudisha visibility kwa buttons zilizofichwa awali */
+  var prevHidden = document.querySelectorAll('[data-perm-hidden="1"]');
+  for(var h=0;h<prevHidden.length;h++){
+    prevHidden[h].style.display = '';
+    prevHidden[h].removeAttribute('data-perm-hidden');
+  }
+  if(canManage) return; /* ana ruhusa — acha kama zilivyo */
+  var area = document.getElementById('contentArea');
+  if(!area) return;
+  var selectors = [
+    'button[onclick*="editProduct"]',
+    'button[onclick*="openEditProduct"]',
+    'button[onclick*="editInventory"]',
+    'button[onclick*="editStock"]',
+    '[onclick*="editProduct("]',
+    '[onclick*="openEditProduct("]'
+  ];
+  var seen = [];
+  for(var s=0;s<selectors.length;s++){
+    var nodes = area.querySelectorAll(selectors[s]);
+    for(var i=0;i<nodes.length;i++){
+      if(seen.indexOf(nodes[i]) !== -1) continue;
+      seen.push(nodes[i]);
+      nodes[i].style.display = 'none';
+      nodes[i].setAttribute('data-perm-hidden', '1');
+    }
+  }
+}
+function watchInventoryView(){
+  var area = document.getElementById('contentArea');
+  if(!area) return;
+  new MutationObserver(function(){
+    var active = document.querySelector('.sidebar-nav .nav-item.active');
+    if(active && active.dataset.view === 'inventory') setTimeout(hideEditButtonsIfNoPerm, 60);
+  }).observe(area, {childList:true, subtree:true});
+  var navItems = document.querySelectorAll('.sidebar-nav .nav-item');
+  for(var n=0;n<navItems.length;n++){
+    navItems[n].addEventListener('click', function(){ setTimeout(hideEditButtonsIfNoPerm, 150); });
+  }
+}
+
+/* ============ INIT ============ */
+function patchInit(){
+  injectLowStockSearchBar();
+  watchLowStockModal();
+  watchInventoryView();
+  setInterval(function(){
+    if(document.getElementById('lowStockModal') && !document.getElementById('lowStockSearchInput')){
+      injectLowStockSearchBar();
+    }
+  }, 2000);
+}
+if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', patchInit);
+else patchInit();
+
+})();
 </script>
 </body>
 </html>
