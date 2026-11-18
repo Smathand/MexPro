@@ -11,8 +11,8 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <style>
-:root{--bg-body:#f0f4f8;--bg-card:#fff;--bg-sidebar:#128C7E;--bg-sidebar-hover:#0e6b5f;--bg-sidebar-active:#0a554b;--text-primary:#0f172a;--text-secondary:#334155;--text-muted:#64748b;--text-sidebar:#e0f0ee;--accent-1:#128C7E;--accent-2:#0e6b5f;--accent-3:#f59e0b;--accent-4:#10b981;--accent-danger:#ef4444;--verified-blue:#0095F6;--shadow-card:0 4px 20px rgba(0,0,0,.06);--shadow-dropdown:0 8px 30px rgba(0,0,0,.1);--radius-card:20px;--radius-sm:12px;--border-color:rgba(0,0,0,.06);--input-bg:#f8fafc;--input-border:#e2e8f0;--font:'Inter','Segoe UI',sans-serif;--whatsapp-color:#25D366;--email-color:#3b82f6;--online-dot:#22c55e;--offline-dot:#94a3b8;--media-bg:linear-gradient(150deg,#eef3f7 0%,#dde7ee 48%,#cfdce6 100%);--media-ink:#5b7183;--media-sheen:rgba(255,255,255,.6);}
-body.dark{--bg-body:#0a0a0a;--bg-card:#1a1a1a;--bg-sidebar:#0a554b;--bg-sidebar-hover:#063f37;--bg-sidebar-active:#042b25;--text-primary:#e8e8f0;--text-secondary:#b0b0c8;--text-muted:#70708a;--text-sidebar:#b8d9d4;--shadow-card:0 4px 20px rgba(0,0,0,.4);--shadow-dropdown:0 8px 30px rgba(0,0,0,.6);--border-color:rgba(255,255,255,.08);--input-bg:#1f1f1f;--input-border:#2a2a2a;--media-bg:linear-gradient(150deg,#26364a 0%,#1d2938 52%,#17212d 100%);--media-ink:#93a8bd;--media-sheen:rgba(255,255,255,.07);}
+:root{--bg-body:#f0f4f8;--bg-card:#fff;--bg-sidebar:#128C7E;--bg-sidebar-hover:#0e6b5f;--bg-sidebar-active:#0a554b;--text-primary:#0f172a;--text-secondary:#334155;--text-muted:#64748b;--text-sidebar:#e0f0ee;--accent-1:#128C7E;--accent-2:#0e6b5f;--accent-3:#f59e0b;--accent-4:#10b981;--accent-danger:#ef4444;--verified-blue:#0095F6;--shadow-card:0 4px 20px rgba(0,0,0,.06);--shadow-dropdown:0 8px 30px rgba(0,0,0,.1);--radius-card:20px;--radius-sm:12px;--border-color:rgba(0,0,0,.06);--input-bg:#f8fafc;--input-border:#e2e8f0;--font:'Inter','Segoe UI',sans-serif;--whatsapp-color:#25D366;--email-color:#3b82f6;--online-dot:#22c55e;--offline-dot:#94a3b8;--media-bg:linear-gradient(150deg,#f0f4f8 0%,#e2e8f0 48%,#cbd5e1 100%);--media-ink:#5b7183;--media-sheen:rgba(255,255,255,.6);}
+body.dark{--bg-body:#0a0a0a;--bg-card:#1a1a1a;--bg-sidebar:#0a554b;--bg-sidebar-hover:#063f37;--bg-sidebar-active:#042b25;--text-primary:#e8e8f0;--text-secondary:#b0b0c8;--text-muted:#70708a;--text-sidebar:#b8d9d4;--shadow-card:0 4px 20px rgba(0,0,0,.4);--shadow-dropdown:0 8px 30px rgba(0,0,0,.6);--border-color:rgba(255,255,255,.08);--input-bg:#1f1f1f;--input-border:#2a2a2a;--media-bg:linear-gradient(150deg,#f0f4f8 0%,#e2e8f0 48%,#cbd5e1 100%);--media-ink:#5b7183;--media-sheen:rgba(255,255,255,.07);}
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{scrollbar-width:none;-ms-overflow-style:none}
 html::-webkit-scrollbar,body::-webkit-scrollbar,*::-webkit-scrollbar{width:0!important;height:0!important;display:none!important}
@@ -318,7 +318,6 @@ tr:last-child td{border-bottom:none}
 .chat-modal .modal-box .chat-messages-area{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;background:var(--bg-body)}
 .chat-modal .modal-box .chat-messages{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:6px;background-color:#efeae2}
 body.dark .chat-modal .modal-box .chat-messages{background-color:#0b141a}
-.chat-modal .modal-box .chat-messages .no-chat{display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-muted);flex-direction:column;gap:8px;text-align:center;padding:20px}
 .chat-modal .modal-box .chat-input-area{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--border-color);flex-shrink:0;align-items:center;flex-wrap:wrap;background:var(--bg-card)}
 .chat-modal .modal-box .chat-input-area input[type="text"]{flex:1;padding:10px 14px;border-radius:24px;font-size:16px;min-width:100px}
 .chat-msg{max-width:75%;padding:10px 14px;border-radius:16px;font-size:.88rem;line-height:1.5;word-wrap:break-word;font-weight:500}
@@ -396,12 +395,6 @@ body.dark .ios-toggle .slider{background-color:#39393d}
 body.dark .ios-toggle input:checked+.slider{background-color:#30d158}
 .ios-toggle input:checked+.slider:before{transform:translateX(20px)}
 .ios-toggle:disabled+.slider{opacity:.4;cursor:not-allowed}
-
-/* ============================================================
-   LIGHT-FIRST MEDIA — no dark frame before a video or photo
-   Layer order: media(1) < light card / skeleton(3) < real cover(4)
-   The video/photo stays invisible until real pixels exist.
-   ============================================================ */
 .insta-ad-media[data-mex-player],.insta-ad-media[data-mex-photo]{cursor:pointer;isolation:isolate;background:var(--media-bg)!important}
 .insta-ad-media[data-mex-player] video,.insta-ad-media[data-mex-photo] img{position:relative;z-index:1;opacity:0;transition:opacity .24s ease;background:transparent!important}
 .insta-ad-media[data-mex-player].mex-live video,.insta-ad-media[data-mex-photo].mex-live img{opacity:1}
@@ -425,8 +418,6 @@ body.dark .ios-toggle input:checked+.slider{background-color:#30d158}
 .mex-pill{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:9;display:inline-flex;align-items:center;gap:8px;padding:11px 20px;border-radius:30px;background:rgba(255,255,255,.96);color:#0a554b;font-size:.82rem;font-weight:800;border:1px solid rgba(18,140,126,.35);cursor:pointer;box-shadow:0 10px 28px rgba(15,23,42,.22)}
 .mex-grid-ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:var(--media-bg);color:var(--media-ink);font-size:1.4rem}
 .mex-grid-play{position:absolute;top:7px;right:8px;color:#fff;font-size:.78rem;text-shadow:0 2px 8px rgba(0,0,0,.55);z-index:2}
-
-/* LOW STOCK — every "+" on one straight right-hand line */
 .ls-head,.ls-row{display:grid;grid-template-columns:minmax(0,1fr) 60px 46px;align-items:center;gap:10px}
 .ls-head{padding:0 2px 8px;border-bottom:1px solid var(--border-color);font-size:.6rem;letter-spacing:.5px;text-transform:uppercase;font-weight:800;color:var(--text-muted)}
 .ls-head .ls-h-qty,.ls-head .ls-h-act{text-align:right}
@@ -442,8 +433,6 @@ body.dark .ios-toggle input:checked+.slider{background-color:#30d158}
 .ls-act .btn{width:40px;height:34px;padding:0!important;display:inline-flex;align-items:center;justify-content:center;font-size:1.05rem;line-height:1;border-radius:10px!important}
 .ls-readonly{width:40px;height:34px;display:inline-flex;align-items:center;justify-content:center;border-radius:10px;background:var(--input-bg);border:1px solid var(--border-color);color:var(--text-muted);font-size:.8rem}
 .ls-note{background:rgba(245,158,11,.1);border-left:3px solid var(--accent-3);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:.76rem;font-weight:700;color:#b45309}
-
-/* DELETED SALES — owner-only audit page */
 .del-hero{background:linear-gradient(135deg,rgba(239,68,68,.1),rgba(245,158,11,.08));border:1px solid rgba(239,68,68,.2);border-radius:var(--radius-card);padding:18px 20px;margin-bottom:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .del-hero .dh-icon{width:52px;height:52px;border-radius:15px;background:linear-gradient(135deg,#ef4444,#f59e0b);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
 .del-hero .dh-text{flex:1;min-width:180px}
@@ -457,8 +446,6 @@ body.dark .ios-toggle input:checked+.slider{background-color:#30d158}
 .del-chip.active{background:var(--accent-danger);color:#fff!important;border-color:var(--accent-danger)!important}
 .del-who{display:flex;align-items:center;gap:8px}
 .del-avatar{width:26px;height:26px;border-radius:50%;background:var(--accent-1);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:800;flex-shrink:0}
-
-/* status cards */
 .status-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 .status-avatar{width:38px;height:38px;border-radius:50%;object-fit:cover;flex-shrink:0}
 .status-meta{flex:1;min-width:0}
@@ -484,7 +471,6 @@ body.dark .ios-toggle input:checked+.slider{background-color:#30d158}
 <div class="boot-tag">Multi-Tenant Business System</div>
 <div class="boot-spinner"></div>
 </div>
-
 <div id="loginPage" class="page-overlay">
 <div class="page-card">
 <button class="login-lang-btn" onclick="toggleLanguage()">🌐 <span id="loginLangCode">EN</span></button>
@@ -503,7 +489,6 @@ body.dark .ios-toggle input:checked+.slider{background-color:#30d158}
 </div>
 </div>
 </div>
-
 <div id="registerPage" class="page-overlay hidden">
 <div class="page-card" style="max-width:440px;padding:22px 20px;">
 <div class="logo-icon" style="font-size:38px;"><i class="fas fa-user-plus"></i></div>
@@ -528,7 +513,6 @@ body.dark .ios-toggle input:checked+.slider{background-color:#30d158}
 <p style="font-size:.8rem;">Already registered? <span id="goToLoginLink" class="link-text">Login</span></p>
 </div>
 </div>
-
 <div id="memberRegisterPage" class="page-overlay hidden">
 <div class="page-card" style="max-width:400px;">
 <div class="logo-icon" style="color:#f59e0b;"><i class="fas fa-user-tie"></i></div>
@@ -544,7 +528,6 @@ body.dark .ios-toggle input:checked+.slider{background-color:#30d158}
 <p style="font-size:.8rem;">Already a member? <span id="memberGoToLogin" class="link-text">Login</span></p>
 </div>
 </div>
-
 <div id="paymentPlanModal" class="modal-overlay">
 <div class="modal-box" style="max-width:600px;">
 <h3 style="justify-content:center;"><i class="fas fa-credit-card" style="color:var(--accent-3);"></i> Choose Your Plan</h3>
@@ -560,7 +543,6 @@ body.dark .ios-toggle input:checked+.slider{background-color:#30d158}
 </div>
 </div>
 </div>
-
 <div id="appContainer" class="app-container">
 <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeMobileSidebar()"></div>
 <aside class="sidebar" id="sidebar">
@@ -613,7 +595,6 @@ body.dark .ios-toggle input:checked+.slider{background-color:#30d158}
 <div class="content-area" id="contentArea"></div>
 </div>
 </div>
-
 <div id="profileModal" class="modal-overlay">
 <div class="modal-box">
 <h3><i class="fas fa-user-cog"></i> My Profile</h3>
@@ -631,9 +612,7 @@ body.dark .ios-toggle input:checked+.slider{background-color:#30d158}
 <div style="display:flex;gap:12px;justify-content:center;margin-top:20px;flex-wrap:wrap;"><button id="saveProfileBtn" class="btn-sm btn-primary">Save</button><button id="closeProfileBtn" class="btn-sm btn-secondary">Cancel</button></div>
 </div>
 </div>
-
 <div id="adProfileModal" class="modal-overlay ad-profile-modal"><div class="modal-box" id="adProfileBox"></div></div>
-
 <div id="commentsModal" class="modal-overlay comments-modal">
 <div class="modal-box">
 <div class="comments-header"><h3><i class="fas fa-comments"></i> Comments</h3><button class="cm-close" onclick="closeCommentsModal()"><i class="fas fa-times"></i></button></div>
@@ -645,7 +624,6 @@ body.dark .ios-toggle input:checked+.slider{background-color:#30d158}
 </div>
 </div>
 </div>
-
 <div id="subModal" class="modal-overlay">
 <div class="modal-box" style="max-width:680px;">
 <h3 style="justify-content:center;"><i class="fas fa-store" style="color:var(--accent-3);"></i> Add Branch</h3>
@@ -661,7 +639,6 @@ body.dark .ios-toggle input:checked+.slider{background-color:#30d158}
 </div>
 </div>
 </div>
-
 <div class="modal-overlay" id="lowStockModal">
 <div class="modal-box">
 <h3><i class="fas fa-exclamation-triangle" style="color:var(--accent-danger);"></i> Low Stock <span class="record-badge" id="lowStockModalCount">0</span></h3>
@@ -669,7 +646,6 @@ body.dark .ios-toggle input:checked+.slider{background-color:#30d158}
 <div class="form-actions" style="margin-top:16px;"><button class="btn btn-secondary btn-sm" onclick="closeLowStockModal()">Close</button></div>
 </div>
 </div>
-
 <div class="modal-overlay chat-modal" id="chatModal">
 <div class="modal-box">
 <div class="chat-header">
@@ -691,7 +667,6 @@ body.dark .ios-toggle input:checked+.slider{background-color:#30d158}
 </div>
 </div>
 </div>
-
 <div class="modal-overlay" id="chatWallpaperModal">
 <div class="modal-box" style="max-width:560px;">
 <h3><i class="fas fa-image" style="color:var(--accent-1);"></i> Chat Wallpaper</h3>
@@ -700,9 +675,7 @@ body.dark .ios-toggle input:checked+.slider{background-color:#30d158}
 <div class="form-actions" style="margin-top:16px;"><button class="btn btn-secondary" onclick="closeChatWallpaperPicker()">Cancel</button><button class="btn btn-primary" onclick="saveChatWallpaperPicker()"><i class="fas fa-check"></i> Apply</button></div>
 </div>
 </div>
-
 <div class="modal-overlay" id="modalOverlay"><div class="modal-box" id="modalBox"></div></div>
-
 <div class="modal-overlay receipt-modal" id="receiptModal">
 <div class="modal-box">
 <div class="receipt-content" id="receiptContent"></div>
@@ -713,7 +686,6 @@ body.dark .ios-toggle input:checked+.slider{background-color:#30d158}
 </div>
 </div>
 </div>
-
 <div class="modal-overlay" id="transferModal">
 <div class="modal-box" style="max-width:520px;">
 <h3><i class="fas fa-exchange-alt" style="color:#8b5cf6;"></i> Transfer Stock</h3>
@@ -729,7 +701,6 @@ body.dark .ios-toggle input:checked+.slider{background-color:#30d158}
 </form>
 </div>
 </div>
-
 <div class="modal-overlay" id="sendReportModal">
 <div class="modal-box" style="max-width:520px;">
 <h3><i class="fas fa-paper-plane" style="color:var(--accent-1);"></i> <span id="sendReportTitle">Send Report</span></h3>
@@ -742,7 +713,6 @@ body.dark .ios-toggle input:checked+.slider{background-color:#30d158}
 <div class="form-actions" style="margin-top:14px;"><button class="btn btn-secondary" onclick="closeSendReportModal()">Cancel</button></div>
 </div>
 </div>
-
 <div class="modal-overlay" id="credentialsModal">
 <div class="modal-box" style="max-width:820px;">
 <h3 style="margin-bottom:16px;"><i class="fas fa-key" style="color:#8b5cf6;"></i> <span id="credentialsTitle">Company Credentials</span></h3>
@@ -750,7 +720,6 @@ body.dark .ios-toggle input:checked+.slider{background-color:#30d158}
 <div class="form-actions" style="margin-top:16px;"><button class="btn btn-secondary" onclick="closeCredentialsModal()">Close</button></div>
 </div>
 </div>
-
 <div class="modal-overlay scanner-modal" id="scannerModal">
 <div class="modal-box">
 <h3><i class="fas fa-barcode" style="color:var(--accent-1);"></i> <span id="scannerTitle">Scan Barcode</span></h3>
@@ -773,7 +742,6 @@ body.dark .ios-toggle input:checked+.slider{background-color:#30d158}
 </div>
 </div>
 </div>
-
 <div class="modal-overlay" id="scanQtyModal">
 <div class="modal-box" style="max-width:420px;">
 <h3><i class="fas fa-cart-plus" style="color:var(--accent-1);"></i> Scan &amp; Sell</h3>
@@ -789,9 +757,7 @@ body.dark .ios-toggle input:checked+.slider{background-color:#30d158}
 </div>
 </div>
 </div>
-
 <div class="toast-container" id="toastContainer"></div>
-
 <script>
 'use strict';
 /* ===================== CONFIG ===================== */
@@ -829,7 +795,6 @@ var PROMOTE_OPTIONS=[{key:'3d',label:'3 Days',days:3,price:5000},{key:'7d',label
 var LARGE_DATA_KEYS=['sales','products','expenses','punchHistory','transfers','statuses'];
 function getVideoAudioPref(){try{var v=localStorage.getItem(VIDEO_AUDIO_PREF_KEY);return v===null?true:(v==='1');}catch(e){return true;}}
 function setVideoAudioPref(val){try{localStorage.setItem(VIDEO_AUDIO_PREF_KEY,val?'1':'0');}catch(e){}}
-
 /* ===================== SUPABASE ===================== */
 var SUPABASE_URL='https://snswbfohhxianhgdaenv.supabase.co';
 var SUPABASE_PUBLISHABLE_KEY='sb_publishable_-KyAgqCZBgsvmdKp9uQdAA_nCCUxa0s';
@@ -858,7 +823,6 @@ return true;
 function patchBuilderCatch(){try{if(!supabaseClient)return;var p=supabaseClient.from(TBL_KV).select('key');while(p&&!Object.prototype.hasOwnProperty.call(p,'then'))p=Object.getPrototypeOf(p);if(p&&typeof p.catch!=='function'){Object.defineProperty(p,'catch',{value:function(f){return this.then(undefined,f);},configurable:true,writable:true});}}catch(e){}}
 function initSupabase(){try{if(window.supabase&&typeof window.supabase.createClient==='function'){supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);patchBuilderCatch();}}catch(e){}}
 function getSessionTenantId(){var s=lsGet('sb_session',null);return (s&&s.tid)?s.tid:null;}
-
 /* ===================== LARGE DATA ===================== */
 var _largeDataCache={};
 var _syncStatus={pending:0,lastSuccess:0,lastError:0};
@@ -925,7 +889,6 @@ supabaseClient.from(table).upsert(batch,{onConflict:'id'}).then(function(r){if(r
 }
 doBatch(0);
 }
-
 /* ===================== USERNAME INDEX ===================== */
 function getUsernameIndex(){var idx=lsGet(USERNAME_INDEX_KEY,{});return (idx&&typeof idx==='object'&&!Array.isArray(idx))?idx:{};}
 function setUsernameIndex(idx){try{localStorage.setItem(USERNAME_INDEX_KEY,JSON.stringify(idx||{}));}catch(e){}}
@@ -1079,7 +1042,6 @@ mexPumpUploads();
 });
 }
 function getSupabaseMediaUrl(key){if(!supabaseClient)return null;if(!key)return null;try{var r=supabaseClient.storage.from(SUPABASE_MEDIA_BUCKET).getPublicUrl(key);if(r&&r.data&&r.data.publicUrl)return r.data.publicUrl;}catch(e){}return null;}
-
 var _realtimeChannels=[];
 var _realtimeDebounceTimer=null;
 var _cloudPullTimer=null;
@@ -1171,7 +1133,6 @@ document.addEventListener('visibilitychange',function(){
 if(document.visibilityState==='hidden'){try{var vids=document.querySelectorAll('video[data-media-key]');for(var i=0;i<vids.length;i++){if(!vids[i].paused){saveVideoTime(vids[i]);vids[i].pause();}}}catch(e){}}
 if(document.visibilityState==='visible'&&supabaseClient){_lastCloudPullTime=0;pullFromCloudOnly().then(function(changed){if(changed)softRefreshCurrentView(false);});}
 });
-
 /* ===================== SHA-256 ===================== */
 var _sha={K:null,H:null};
 function _shaFrac(x){return ((x-Math.floor(x))*4294967296)|0;}
@@ -1191,7 +1152,6 @@ function superSessionToken(){try{return localStorage.getItem('sb_super_session_t
 function setSuperSessionToken(){try{var t;if(window.crypto&&window.crypto.randomUUID){t=window.crypto.randomUUID();}else if(window.crypto&&window.crypto.getRandomValues){var arr=new Uint32Array(8);window.crypto.getRandomValues(arr);t='tok_'+Date.now()+'_'+Array.from(arr).map(function(x){return x.toString(36);}).join('');}else{t='tok_'+Date.now()+'_'+Math.random().toString(36).slice(2);}localStorage.setItem('sb_super_session_token',t);return t;}catch(e){return null;}}
 function encArg(s){return encodeURIComponent(String(s==null?'':s)).replace(/'/g,'%27');}
 function safeDecode(s){try{return decodeURIComponent(String(s));}catch(e){return String(s);}}
-
 /* ===================== INDEXEDDB ===================== */
 var DB_NAME='mex_pro_db_v19';var DB_VERSION=1;
 var STORES={media:'media',json:'json'};
@@ -1230,13 +1190,11 @@ mexForgetCover(key);
 if(supabaseClient){try{supabaseClient.storage.from(SUPABASE_MEDIA_BUCKET).remove([key]).catch(function(){});}catch(e){}}
 return dbDel(STORES.media,key);
 }
-
 /* ===================== LOCALSTORAGE ===================== */
 function lsGet(key,def){try{var d=localStorage.getItem(key);return d?JSON.parse(d):def;}catch(e){return def;}}
 function tryCleanupLocalStorage(){try{var msgs=lsGet(CHAT_KEY,[]);if(Array.isArray(msgs)&&msgs.length>500){var cutoff=Date.now()-60*86400000;var filtered=[];for(var k=0;k<msgs.length;k++){if(msgs[k]&&msgs[k].timestamp>cutoff)filtered.push(msgs[k]);}if(filtered.length<msgs.length)localStorage.setItem(CHAT_KEY,JSON.stringify(filtered));}}catch(e){}}
 function lsSet(key,val){try{localStorage.setItem(key,JSON.stringify(val));try{scheduleSupabasePush(key,val);}catch(e2){}return {ok:true};}catch(e){showToast('⚠ Storage full','warning');return {ok:true};}}
 function lsRemove(key){try{localStorage.removeItem(key);try{deleteFromSupabase(key);}catch(e){}return true;}catch(e){return false;}}
-
 /* ===================== STATE ===================== */
 var isSuperAdmin=false;
 var isMexEmployee=false;
@@ -1272,7 +1230,6 @@ var _delSearch='';
 var _delRange='7d';
 var _delWho='all';
 var _delSort='newest';
-
 /* ===================== LANGUAGE ===================== */
 var CURRENT_LANG=(function(){try{var v=localStorage.getItem('sb_lang');return (v==='sw'||v==='en')?v:'en';}catch(e){return 'en';}})();
 var NAV_MAP={status:'nav_face',dashboard:'nav_data',sales:'nav_sales',debts:'nav_debts',deletions:'nav_deletions',inventory:'nav_inventory',pnl:'nav_pnl',expenses:'nav_expenses',branches:'nav_branches',users:'nav_users',roles:'nav_roles',reports:'nav_reports',attendance:'nav_attendance',superadmin:'nav_superadmin',mexEarnings:'nav_earnings',mexCompanies:'nav_companies',mexStatus:'nav_face'};
@@ -1285,7 +1242,6 @@ function toggleLanguage(){CURRENT_LANG=(CURRENT_LANG==='en')?'sw':'en';try{local
 function updateNavLabels(){var items=document.querySelectorAll('.sidebar-nav .nav-item');for(var i=0;i<items.length;i++){var v=items[i].dataset.view;if(v&&NAV_MAP[v]){var sp=items[i].querySelector('span:not(.badge)');if(sp)sp.textContent=t(NAV_MAP[v]);}}}
 function updateLoginPageLabels(){var sub=document.querySelector('#loginPage .subtitle');if(sub)sub.textContent=t('login_subtitle');var lb=document.getElementById('loginBtn');if(lb)lb.innerHTML='<i class="fas fa-sign-in-alt"></i> '+t('btn_login');var rc=document.getElementById('goToRegisterLink');if(rc)rc.innerHTML='<i class="fas fa-building"></i> '+t('login_register_company');var rm=document.getElementById('goToMemberRegisterLink');if(rm)rm.innerHTML='<i class="fas fa-user-tie"></i> '+t('login_register_member');var llc=document.getElementById('loginLangCode');if(llc)llc.textContent=CURRENT_LANG==='en'?'EN':'SW';}
 function applyLanguageUI(){var btn=document.getElementById('langToggleBtn');if(btn){var code=btn.querySelector('.lang-code');if(code)code.textContent=CURRENT_LANG==='en'?'EN':'SW';}updateNavLabels();updateLoginPageLabels();var lsText=document.querySelector('#lowStockAlertBtn .alert-text');if(lsText)lsText.textContent=t('top_low_stock');var activeNav=document.querySelector('.sidebar-nav .nav-item.active');if(activeNav&&activeNav.dataset.view&&NAV_MAP[activeNav.dataset.view]){var pt=document.getElementById('pageTitle');if(pt)pt.textContent=t(NAV_MAP[activeNav.dataset.view]);}}
-
 /* ===================== UTILS ===================== */
 function getExpiryInfo(expiryDate){if(!expiryDate)return{label:t('inv_no_expiry'),color:'var(--text-muted)',daysLeft:null,expired:false,badge:false};try{var exp=new Date(expiryDate);exp.setHours(23,59,59,999);var now=new Date();var daysLeft=Math.ceil((exp-now)/86400000);if(daysLeft<0)return{label:t('inv_expired'),color:'var(--accent-danger)',daysLeft:daysLeft,expired:true,badge:true};if(daysLeft<=30)return{label:fmtDateInput(exp.getTime())+' ('+daysLeft+'d)',color:'var(--accent-3)',daysLeft:daysLeft,expired:false,badge:false};return{label:fmtDateInput(exp.getTime()),color:'var(--accent-4)',daysLeft:daysLeft,expired:false,badge:false};}catch(e){return{label:'—',color:'var(--text-muted)',daysLeft:null,expired:false,badge:false};}}
 function uid(){return Date.now()*1000+Math.floor(Math.random()*1000);}
@@ -1308,7 +1264,6 @@ function avatarUrl(name,bg){var n=String(name||'User').trim()||'User';var b=(bg|
 function initials(name){var p=String(name||'?').trim().split(/\s+/);var a=(p[0]||'?').charAt(0);var b=p.length>1?p[p.length-1].charAt(0):'';return (a+b).toUpperCase();}
 function showToast(msg,type){type=type||'info';try{var c=document.getElementById('toastContainer');if(!c)return;var d=document.createElement('div');d.className='toast '+type;d.textContent=String(msg==null?'':msg);c.appendChild(d);setTimeout(function(){try{d.remove();}catch(e){}},3800);}catch(e){}}
 function applyTheme(){var u=getCurrentUser();var isDark=u?u.theme==='dark':false;document.body.classList.toggle('dark',isDark);var i=document.querySelector('#themeToggle i');if(i)i.className=isDark?'fas fa-sun':'fas fa-moon';applyChatWallpaper();}
-
 /* ===================== TENANT ===================== */
 function tenantKey(k){return currentTenantId?'sb_tenant_'+currentTenantId+'_'+k:'sb__'+k;}
 function getTenantData(k,def){var fullKey=tenantKey(k);if(isLargeDataKey(k))return getLargeData(fullKey,def);return lsGet(fullKey,def);}
@@ -1345,7 +1300,6 @@ if(count>0){badge.textContent=count>99?'99+':count;badge.style.display='inline-b
 else badge.style.display='none';
 }catch(e){}
 }
-
 /* ===================== VIDEO CORE ===================== */
 var _videoRetryCount={};
 var _videoObserver=null;
@@ -1425,7 +1379,6 @@ setTimeout(function(){if(!done)finish();},6000);
 }catch(e){resolve(null);}
 });
 }
-/* Real frame is painted by the browser via "#t=0.1" — never a black box. */
 function loadVideo(el,opts){
 opts=opts||{};
 if(!el||!el.isConnected)return;
@@ -1497,7 +1450,6 @@ function getFollowerCount(id){if(!id)return 0;var c=0;var ts=getAllTenants();for
 function toggleFollowTenant(id){if(isSuperAdmin||isMexEmployee||!id||currentTenantId===id)return;var list=getFollows();var idx=list.indexOf(id);var nowFollowing=false;if(idx===-1){list.push(id);nowFollowing=true;}else list.splice(idx,1);saveFollows(list);var slot=document.getElementById('profile-follow-slot');if(slot)slot.innerHTML=renderFollowButton(id);var fc=document.getElementById('profile-follower-count');if(fc)fc.textContent=getFollowerCount(id);showToast(nowFollowing?'✓ Following':'Unfollowed',nowFollowing?'success':'warning');}
 function renderFollowButton(id){if(isSuperAdmin||isMexEmployee||!id||currentTenantId===id)return '';var f=isFollowing(id);return '<button class="btn btn-sm" style="background:'+(f?'var(--input-bg)':'var(--verified-blue)')+'!important;color:'+(f?'var(--text-secondary)':'#fff')+'!important;border-radius:10px!important;font-weight:700;" onclick="event.stopPropagation();toggleFollowTenant(\''+id+'\')"><i class="fas fa-'+(f?'user-check':'user-plus')+'"></i> '+(f?'Following':'Follow')+'</button>';}
 function renderVerifiedBadge(){return '<span class="verified-badge"><i class="fas fa-check"></i></span>';}
-
 /* ===================== MEX EMPLOYEES ===================== */
 function getMexSession(){return lsGet(MEX_SESSION_KEY,null);}
 function setMexSession(e){if(e)lsSet(MEX_SESSION_KEY,e);else lsRemove(MEX_SESSION_KEY);}
@@ -1519,7 +1471,6 @@ function isUsernameTaken(un){var u=normalizeUsername(un);if(!u)return false;if(u
 function likeKey(u){if(isSuperAdmin)return 'super';if(isMexEmployee)return 'mex_'+currentMexEmployeeId;return 't_'+currentTenantId+'_'+(u?u.id:0);}
 function loginLockedSeconds(){var left=Math.ceil((_loginLockUntil-Date.now())/1000);return left>0?left:0;}
 function registerLoginFail(){_loginFails++;if(_loginFails>=5){_loginLockUntil=Date.now()+60000;_loginFails=0;lsSet('sb_login_lock',_loginLockUntil);}}
-
 /* ===================== DATA ACCESSORS ===================== */
 function getBranchList(){var t1=getTenant(currentTenantId);return (t1&&Array.isArray(t1.branches))?t1.branches:[];}
 function getBranchNames(){var list=getBranchList();var out=[];for(var i=0;i<list.length;i++)if(list[i].name)out.push(list[i].name);return out;}
@@ -1550,14 +1501,7 @@ function calculatePnL(){if(isSuperAdmin||isMexEmployee)return {totalRevenue:0,to
 function getLowStockItems(th){th=th||LOW_STOCK_THRESHOLD;if(isSuperAdmin||isMexEmployee)return [];var all=getFilteredProducts();var out=[];for(var i=0;i<all.length;i++){if(all[i].quantity<=th)out.push(all[i]);}return out;}
 function updateLowStockBadge(){if(isSuperAdmin||isMexEmployee){var nb=document.getElementById('lowStockNavBadge');var ab=document.getElementById('lowStockAlertBtn');if(nb)nb.style.display='none';if(ab)ab.style.display='none';return;}var c=getLowStockItems().length;var b=document.getElementById('lowStockNavBadge');if(b){if(c>0){b.textContent=c;b.style.display='inline-block';}else b.style.display='none';}var ab=document.getElementById('lowStockAlertBtn');var co=document.getElementById('lowStockAlertCount');if(ab&&co){co.textContent=c;if(c>0)ab.classList.add('has-alert');else ab.classList.remove('has-alert');}}
 function updateDebtsBadge(){if(isSuperAdmin||isMexEmployee){var nb=document.getElementById('debtsNavBadge');if(nb)nb.style.display='none';return;}var c=getFilteredDebts().length;var b=document.getElementById('debtsNavBadge');if(b){if(c>0){b.textContent=c;b.style.display='inline-block';}else b.style.display='none';}}
-
-/* ===================== PERMISSIONS =====================
-   inventory_view   → see products
-   inventory_add    → Add Product / Scan to Add
-   inventory_manage → EDIT products (edit, adjust stock, barcodes,
-                      categories, transfer) + the Low Stock "+" button
-   inventory_delete → delete products
-========================================================= */
+/* ===================== PERMISSIONS ===================== */
 var DEFAULT_ROLE_PERMS={
 admin:['sales_create','sales_delete','inventory_view','inventory_add','inventory_manage','inventory_delete','expenses_view','expenses_manage','reports_view','pnl_view','users_manage','attendance_view'],
 accountant:['sales_create','sales_delete','inventory_view','inventory_add','inventory_manage','inventory_delete','expenses_view','expenses_manage','reports_view','pnl_view'],
@@ -1667,7 +1611,6 @@ function startHeartbeat(){if(heartbeatInterval)clearInterval(heartbeatInterval);
 function punchIn(){if(isSuperAdmin||isMexEmployee)return;var u=getCurrentUser();if(!u){showToast('Not logged in','error');return;}var s=getSessions();var now=Date.now();s[u.id]={loginTime:now,lastActive:now,status:'online',branchName:u.store||'Unknown'};saveSessions(s);var h=getPunchHistory();h.push({id:uid(),userId:u.id,userName:u.username||u.fullName||'User',branchName:u.store||'Unknown',loginTime:now,logoutTime:null});savePunchHistory(h);showToast('✅ Punch In: '+fmtTime(now),'success');navigate('attendance');}
 function punchOut(){if(isSuperAdmin||isMexEmployee)return;var u=getCurrentUser();if(!u)return;var s=getSessions();if(s[u.id]){s[u.id].status='offline';s[u.id].lastActive=Date.now();saveSessions(s);}var h=getPunchHistory();for(var i=h.length-1;i>=0;i--){if(h[i].userId===u.id&&!h[i].logoutTime){h[i].logoutTime=Date.now();break;}}savePunchHistory(h);showToast('✅ Punch Out: '+fmtTime(Date.now()),'success');navigate('attendance');}
 function isPunchedIn(){var u=getCurrentUser();if(!u||isSuperAdmin||isMexEmployee)return false;var s=getSessions();return s[u.id]&&s[u.id].status==='online';}
-
 /* ===================== ADS ===================== */
 function getGlobalAds(){var a=lsGet(GLOBAL_ADS_KEY,[]);return Array.isArray(a)?a:[];}
 function saveGlobalAds(a,skipPush){if(Array.isArray(a)){for(var i=0;i<a.length;i++){var ad=a[i];if(ad&&ad.image&&typeof ad.image==='string'&&ad.image.indexOf('data:')===0&&ad.image.length>2000)ad.image='';}}try{localStorage.setItem(GLOBAL_ADS_KEY,JSON.stringify(a));}catch(e){}if(!skipPush&&Array.isArray(a)){for(var j=0;j<a.length;j++){if(a[j]&&a[j].id)schedulePostPush(a[j]);}}}
@@ -1685,7 +1628,6 @@ function quickAddComment(adId){var inp=document.getElementById('ad-quick-input-'
 function getCurrentCommenterPhotoKey(u){if(isSuperAdmin)return _superAdminPhotoKey||'';if(isMexEmployee){var emp=findMexEmployeeById(currentMexEmployeeId);return emp?(emp.photoKey||''):'';}return (u&&u.photoKey)?u.photoKey:'';}
 function resolveCommentPhotoKey(c){if(!c)return '';if(c.photoKey)return c.photoKey;if(c.isSuperAdmin)return _superAdminPhotoKey||'';if(c.isMexEmployee){var emp=findMexEmployeeById(c.mexEmployeeId);if(emp&&emp.photoKey)return emp.photoKey;return '';}if(c.tenantId&&c.userId){var users=lsGet('sb_tenant_'+c.tenantId+'_users',[]);if(Array.isArray(users)){for(var i=0;i<users.length;i++){if(Number(users[i].id)===Number(c.userId)&&users[i].photoKey)return users[i].photoKey;}}}return '';}
 function getCommenterAvatarHtml(c){if(!c)return '<img src="'+avatarUrl('User','128C7E')+'" alt=""/>';var key=resolveCommentPhotoKey(c);var name=c.userName||'User';var bg=c.isSuperAdmin?'f59e0b':(c.isMexEmployee?'f59e0b':'128C7E');var src=(key&&_mediaUrlCache[key])?_mediaUrlCache[key]:avatarUrl(name,bg);var attrs=key?' data-photo-key="'+escapeHtml(key)+'"':'';return '<img src="'+src+'"'+attrs+' alt="" loading="lazy" decoding="async"/>';}
-
 /* ===================== EARNINGS / SUBSCRIPTIONS ===================== */
 function getMemberEarnings(){var a=lsGet(MEMBER_EARNINGS_KEY,[]);return Array.isArray(a)?a:[];}
 function saveMemberEarnings(a){lsSet(MEMBER_EARNINGS_KEY,a||[]);}
@@ -1724,7 +1666,6 @@ scheduleProfilePush({userKey:'t_'+id+'_1',userType:'tenant',tenantId:id,userId:1
 if(!pendingApproval){var fresh=getAllTenants();var created=null;for(var j=0;j<fresh.length;j++){if(fresh[j].id===id){created=fresh[j];break;}}if(created){creditTenantCommission(created);saveTenants(fresh);}}
 return {success:true,tenant:tenant,ownerUser:ownerUser};
 }
-
 /* ===================== CHAT ===================== */
 function getChatMessages(){return lsGet(CHAT_KEY,[]);}
 function saveChatMessages(list){lsSet(CHAT_KEY,list||[]);}
@@ -1747,7 +1688,6 @@ function closeChatWallpaperPicker(){document.getElementById('chatWallpaperModal'
 function renderChatWallpaperPicker(){var grid=document.getElementById('wpPickerGrid');if(!grid)return;var cur=_wpPickerTemp||{type:'default',value:''};var h='';h+='<button type="button" class="wp-option'+(cur.type==='default'?' selected':'')+'" onclick="selectChatWallpaperOption(\'default\',\'\')"><span class="wp-check"><i class="fas fa-check"></i></span><span class="wp-label">Default</span></button>';for(var i=0;i<CHAT_WALLPAPER_COLORS.length;i++){var c=CHAT_WALLPAPER_COLORS[i];var sel=(cur.type==='color'&&cur.value===c.color);h+='<button type="button" class="wp-option'+(sel?' selected':'')+'" onclick="selectChatWallpaperOption(\'color\',\''+c.color+'\')" style="background-color:'+c.color+'"><span class="wp-check"><i class="fas fa-check"></i></span><span class="wp-label">'+c.label+'</span></button>';}grid.innerHTML=h;}
 function selectChatWallpaperOption(type,value){if(type==='custom'&&value)_wpPickerTemp={type:'custom',value:value};else if(type==='color')_wpPickerTemp={type:'color',value:value};else _wpPickerTemp={type:'default',value:''};}
 function saveChatWallpaperPicker(){if(!_wpPickerTemp)_wpPickerTemp={type:'default',value:''};setCurrentChatWallpaper(_wpPickerTemp.type,_wpPickerTemp.value);applyChatWallpaper();closeChatWallpaperPicker();showToast('✓ Applied','success');}
-
 /* ===================== UI HELPERS ===================== */
 function openMobileSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('sidebarBackdrop').classList.add('show');}
 function closeMobileSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarBackdrop').classList.remove('show');}
@@ -1805,7 +1745,6 @@ function pagerHtml(pageKey,total){var page=_pageState[pageKey]||0;var allMode=!!
 var views={};
 var _reportCharts={};
 function destroyChart(id){if(_reportCharts[id]){try{_reportCharts[id].destroy();}catch(e){}delete _reportCharts[id];}}
-
 /* ===================== VIEWS ===================== */
 views.status=function(){
 var user=getCurrentUser();
@@ -1901,7 +1840,6 @@ var canPay=hasPerm('sales_create');var canDel=canDeleteSales();var rows='';
 for(var j=0;j<d.length;j++){var x=d[j];var p=getProduct(x.productId);var sellerName=x.createdByName||'—';if(!x.createdByName&&x.createdBy){var uu=getUser(x.createdBy);if(uu)sellerName=uu.username||uu.fullName;}rows+='<tr><td>'+(j+1)+'</td><td><strong>'+escapeHtml(x.customer||'Unknown')+'</strong></td><td>'+(p?escapeHtml(p.name):'--')+'</td><td>'+x.quantity+'</td><td><strong style="color:var(--accent-danger);">'+fmtMoney(x.totalPrice)+'</strong></td><td style="font-size:.8rem;">'+escapeHtml(sellerName)+'</td><td>'+fmtDate(x.date)+'</td><td style="display:flex;gap:4px;">'+(canPay?'<button class="btn btn-success btn-xs" onclick="markDebtPaid(\''+x.id+'\')"><i class="fas fa-check-circle"></i></button>':'')+(canDel?'<button class="btn btn-danger btn-xs" onclick="deleteDebt(\''+x.id+'\')"><i class="fas fa-trash"></i></button>':'')+'</td></tr>';}
 return '<div class="section-header"><h2><i class="fas fa-hand-holding-usd" style="color:var(--accent-danger);"></i> '+t('debts_title')+'<span class="record-badge">'+d.length+'</span></h2><div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn btn-whatsapp btn-icon" onclick="openSendReportModal(\'debts\')"><i class="fab fa-whatsapp"></i> Send Report</button></div></div><div class="stats-grid"><div class="stat-card"><div class="stat-label">'+t('dash_total_debts')+'</div><div class="stat-value red">'+fmtMoney(total)+'</div></div><div class="stat-card"><div class="stat-label">Debtors</div><div class="stat-value primary">'+d.length+'</div></div></div><div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>'+t('cust_customer')+'</th><th>'+t('cust_product')+'</th><th>'+t('cust_qty')+'</th><th>'+t('cust_amount')+'</th><th>Sold by</th><th>'+t('cust_date')+'</th><th></th></tr></thead><tbody>'+(rows||'<tr class="empty-row"><td colspan="8">No debts</td></tr>')+'</tbody></table></div></div></div>';
 };
-
 /* ===================== DELETED SALES (owner-only page) ===================== */
 function deletionRangeMs(){
 if(_delRange==='24h')return 24*3600000;
@@ -2055,7 +1993,6 @@ window.location.href='mailto:'+encodeURIComponent(em)+'?subject='+encodeURICompo
 showToast('✅ Email opened','success');
 }
 }
-
 /* ===================== INVENTORY ===================== */
 function buildInventoryRowsHtml(){
 if(isSuperAdmin||isMexEmployee)return '';
@@ -2346,7 +2283,6 @@ return '<div class="section-header"><h2><i class="fas fa-crown" style="color:#f5
 views.mexEarnings=function(){if(!isMexEmployee)return '';var emp=findMexEmployeeById(currentMexEmployeeId);if(!emp)return '';var totalE=getMemberTotalEarnings(emp.id);var paidE=getMemberPaidEarnings(emp.id);var pendingE=getMemberPendingEarnings(emp.id);var eList=getMemberEarningsByEmployee(emp.id).sort(function(a,b){return b.date-a.date;});var eRows='';for(var i=0;i<eList.length;i++){var e=eList[i];var sb=e.paid?'<span class="badge badge-success">Paid</span>':'<span class="badge badge-warning">Pending</span>';eRows+='<tr><td>'+(i+1)+'</td><td><strong>'+escapeHtml(e.companyName||'--')+'</strong></td><td>'+fmtMoney(e.planPrice)+'</td><td><strong style="color:var(--accent-4);">+ '+fmtMoney(e.commissionAmount)+'</strong></td><td>'+sb+'</td></tr>';}return '<div class="section-header"><h2><i class="fas fa-coins" style="color:#f59e0b;"></i> '+t('nav_earnings')+'</h2></div><div style="display:flex;align-items:center;gap:16px;margin-bottom:18px;padding:18px 20px;background:rgba(245,158,11,.12);border-radius:var(--radius-card);border:1px solid rgba(245,158,11,.25);flex-wrap:wrap;">'+getUserPhotoHtml(emp,'','width:64px;height:64px;border-radius:50%;object-fit:cover;border:3px solid #f59e0b;')+'<div style="flex:1;min-width:0;"><div style="font-size:1.5rem;font-weight:800;color:#d97706;">'+escapeHtml(emp.name)+'</div><div style="font-size:.85rem;color:var(--text-muted);margin-top:4px;font-weight:600;"><i class="fas fa-at"></i> '+escapeHtml(emp.username)+'</div></div></div><div class="stats-grid"><div class="stat-card"><div class="stat-label">Registrations</div><div class="stat-value primary">'+(emp.totalRegistrations||0)+'</div></div><div class="stat-card"><div class="stat-label">Earnings</div><div class="stat-value primary">'+fmtMoney(totalE)+'</div></div><div class="stat-card"><div class="stat-label">Paid</div><div class="stat-value primary-light">'+fmtMoney(paidE)+'</div></div><div class="stat-card"><div class="stat-label">Pending</div><div class="stat-value gold">'+fmtMoney(pendingE)+'</div></div></div><div class="card mb-16" style="background:rgba(245,158,11,.05);border:2px dashed #f59e0b;"><div class="card-body" style="text-align:center;padding:24px 18px;"><div style="font-size:.75rem;text-transform:uppercase;font-weight:800;color:#d97706;margin-bottom:10px;"><i class="fas fa-tag"></i> Your Promo Code</div><div class="mex-emp-code" onclick="copyPromoCode(\''+encArg(emp.promoCode)+'\')" style="font-size:1.5rem;padding:10px 22px;display:inline-flex;letter-spacing:3px;">'+escapeHtml(emp.promoCode)+'</div></div></div><div class="card mb-16"><div class="card-header"><h3>Earnings</h3></div><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>Company</th><th>Price</th><th>Commission</th><th>Status</th></tr></thead><tbody>'+(eRows||'<tr class="empty-row"><td colspan="5">No earnings</td></tr>')+'</tbody></table></div></div></div>';};
 views.mexCompanies=function(){if(!isMexEmployee)return '';var emp=findMexEmployeeById(currentMexEmployeeId);if(!emp)return '';var regs=Array.isArray(emp.registeredCompanyIds)?emp.registeredCompanyIds:[];var rows='';for(var i=0;i<regs.length;i++){var r=regs[i];rows+='<tr><td>'+(i+1)+'</td><td><strong>'+escapeHtml(r.companyName||'--')+'</strong></td><td>'+escapeHtml(r.ownerUsername||'--')+'</td><td>'+fmtDate(r.date)+'</td></tr>';}return '<div class="section-header"><h2>'+t('nav_companies')+'</h2></div><div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th>#</th><th>Company</th><th>Username</th><th>Date</th></tr></thead><tbody>'+(rows||'<tr class="empty-row"><td colspan="4">—</td></tr>')+'</tbody></table></div></div></div>';};
 views.mexStatus=function(){if(!isMexEmployee)return '';return renderAdsTab();};
-
 /* ===================== STATUSES ===================== */
 function getStatuses(){if(isSuperAdmin||isMexEmployee)return [];return getTenantData('statuses',[]);}
 function saveStatuses(s){if(isSuperAdmin||isMexEmployee)return;setTenantData('statuses',s);}
@@ -2373,7 +2309,6 @@ clh+='<div class="comment-item"><div class="comment-avatar">'+getUserPhotoHtml(c
 }
 return '<div class="card" style="margin-bottom:16px;padding:16px;"><div class="status-header">'+getUserPhotoHtml(author,'status-avatar')+'<div class="status-meta"><div class="status-name">'+escapeHtml(an)+renderVerifiedBadge()+'</div><div class="status-time">'+fmtDateTime(s.timestamp)+'</div></div>'+(isOwn?'<button class="btn btn-danger btn-xs" onclick="deleteStatus(\''+s.id+'\')"><i class="fas fa-trash"></i></button>':'')+'</div><p class="status-text">'+escapeHtml(s.text||'')+'</p><div style="display:flex;gap:10px;align-items:center;"><button class="btn '+(isL?'btn-primary':'btn-secondary')+' btn-sm" onclick="toggleLike(\''+s.id+'\')"><i class="fas fa-heart"></i> '+lc+'</button><button class="btn btn-secondary btn-sm" onclick="toggleCommentInput(\''+s.id+'\')"><i class="fas fa-comment"></i> '+comments.length+'</button></div><div style="margin-top:8px;"><div id="comment-input-'+s.id+'" style="display:none;margin-bottom:8px;"><div style="display:flex;gap:8px;align-items:center;">'+getUserPhotoHtml(user,'','width:34px;height:34px;border-radius:50%;object-fit:cover;')+'<input type="text" id="comment-text-'+s.id+'" placeholder="Add comment..." style="flex:1;padding:9px 14px;border-radius:20px;font-size:16px;"/><button class="btn btn-sm btn-primary" onclick="addComment(\''+s.id+'\')"><i class="fas fa-paper-plane"></i></button></div></div><div style="max-height:200px;overflow-y:auto;">'+clh+'</div></div></div>';
 }
-
 /* ===================== FEED ===================== */
 function getAdAuthorPhotoKey(ad){if(!ad)return '';if(ad.postedBy==='super')return _superAdminPhotoKey||'';if(ad.postedBy==='mex'&&ad.posterId){var emp=findMexEmployeeById(ad.posterId);if(emp&&emp.photoKey)return emp.photoKey;return '';}if(ad.tenantId){var op=getTenantOwnerPublic(ad.tenantId);if(op.photoKey)return op.photoKey;}return '';}
 function getAdAuthorPhoto(ad){if(!ad)return avatarUrl('Company','128C7E');if(ad.postedBy==='super')return _mediaUrlCache[SUPER_ADMIN_PHOTO_KEY]||avatarUrl(ad.companyName||'MeX Admin','f59e0b');if(ad.postedBy==='mex'&&ad.posterId){var emp=findMexEmployeeById(ad.posterId);if(emp&&emp.photoKey&&_mediaUrlCache[emp.photoKey])return _mediaUrlCache[emp.photoKey];return avatarUrl(ad.companyName||'Member','f59e0b');}var key=getAdAuthorPhotoKey(ad);if(key&&_mediaUrlCache[key])return _mediaUrlCache[key];var t2=ad.tenantId?getTenant(ad.tenantId):null;if(t2)return avatarUrl(t2.companyName||ad.companyName||'Company','128C7E');return avatarUrl(ad.companyName||'Company','128C7E');}
@@ -2431,7 +2366,6 @@ function closeAdDetail(){var ov=document.getElementById('modalOverlay');var bx=d
 function openAdAuthorProfile(adId){var ads=getGlobalAds();var clicked=null;for(var i=0;i<ads.length;i++){if(Number(ads[i].id)===Number(adId)){clicked=ads[i];break;}}if(!clicked)return;var isS=clicked.postedBy==='super';var isM=clicked.postedBy==='mex';var allAds=[];for(var j=0;j<ads.length;j++){var a=ads[j];if(isS&&a.postedBy==='super')allAds.push(a);else if(isM&&a.postedBy==='mex'&&String(a.posterId)===String(clicked.posterId))allAds.push(a);else if(!isS&&!isM&&a.tenantId===clicked.tenantId)allAds.push(a);}allAds.sort(function(a,b){return b.timestamp-a.timestamp;});var name=clicked.companyName||'Company';var fol=clicked.tenantId?getFollowerCount(clicked.tenantId):0;var soc;if(isS)soc=lsGet('sb_superadmin_user',null)||{};else if(isM)soc=findMexEmployeeById(clicked.posterId)||{};else if(clicked.tenantId)soc={ownerPublic:getTenantOwnerPublic(clicked.tenantId)};else soc={};var bS=renderProfileBioAndSocial(soc);var fh='';for(var k=0;k<allAds.length;k++)fh+=renderAdGridTile(allAds[k]);if(!fh)fh='<div class="empty-state" style="grid-column:1/-1;"><i class="fas fa-bullhorn"></i></div>';var rl=isS?'👑 Super Admin':(isM?'👤 Member':'<i class="fas fa-check-circle"></i> Verified');var showFollow=!!(clicked.tenantId&&!isSuperAdmin&&!isMexEmployee&&clicked.tenantId!==currentTenantId);document.getElementById('adProfileBox').innerHTML='<div class="ad-profile-header"><button class="ad-profile-close" onclick="closeAdProfileModal()"><i class="fas fa-times"></i></button>'+getAdAuthorPhotoHtml(clicked,'ad-profile-avatar')+'<div class="ad-profile-info"><div class="ad-profile-name">'+escapeHtml(name)+renderVerifiedBadge()+'</div><div class="ad-profile-sub">'+rl+'</div></div></div><div class="ad-profile-stats"><div><div class="num">'+allAds.length+'</div><div class="lbl">Posts</div></div><div><div class="num" id="profile-follower-count">'+fol+'</div><div class="lbl">Followers</div></div>'+(showFollow?'<div id="profile-follow-slot">'+renderFollowButton(clicked.tenantId)+'</div>':'')+'</div>'+bS+'<div class="ad-profile-feed">'+fh+'</div>';document.getElementById('adProfileModal').classList.add('show');document.body.classList.add('modal-open');setTimeout(hydrateMedia,30);}
 function closeAdProfileModal(){document.getElementById('adProfileModal').classList.remove('show');var so=document.querySelector('.modal-overlay.show');if(!so)document.body.classList.remove('modal-open');}
 function openCompanyProfile(tid){var ads=getGlobalAds();var companyAds=[];for(var i=0;i<ads.length;i++)if(ads[i].tenantId===tid)companyAds.push(ads[i]);if(companyAds.length){openAdAuthorProfile(companyAds[0].id);return;}var tn=getTenant(tid);if(!tn)return;var bS=renderProfileBioAndSocial(tn.ownerPublic||{});document.getElementById('adProfileBox').innerHTML='<div class="ad-profile-header"><button class="ad-profile-close" onclick="closeAdProfileModal()"><i class="fas fa-times"></i></button>'+getCompanyPhotoHtml(tid,'ad-profile-avatar')+'<div class="ad-profile-info"><div class="ad-profile-name">'+escapeHtml(tn.companyName)+renderVerifiedBadge()+'</div></div></div><div class="ad-profile-stats"><div><div class="num">0</div><div class="lbl">Posts</div></div><div><div class="num">'+getFollowerCount(tid)+'</div><div class="lbl">Followers</div></div></div>'+bS+'<div class="ad-profile-feed"></div>';document.getElementById('adProfileModal').classList.add('show');document.body.classList.add('modal-open');}
-/* PROFILE GRID = real thumbnails only, light surface. Never a black tile. */
 function renderAdGridTile(ad){
 var isV=ad.mediaType==='video'&&ad.mediaKey;
 var inner='';
@@ -2517,7 +2451,6 @@ return;
 finish(null,null,null);
 }
 function deleteGlobalAdConfirm(id){if(!confirm('Delete this?'))return;markOwnWrite();deleteGlobalAd(id);navigate('status');}
-
 /* ===================== COMMENTS ===================== */
 function openCommentsModal(adId){var ads=getGlobalAds();var ad=null;for(var i=0;i<ads.length;i++){if(Number(ads[i].id)===Number(adId)){ad=ads[i];break;}}if(!ad)return;currentCommentsAdId=Number(adId);replyToCommentId=null;var inp=document.getElementById('commentsModalInput');if(inp)inp.value='';document.getElementById('commentsModal').classList.add('show');document.body.classList.add('modal-open');renderCommentsModal();}
 function closeCommentsModal(){document.getElementById('commentsModal').classList.remove('show');currentCommentsAdId=null;replyToCommentId=null;var so=document.querySelector('.modal-overlay.show');if(!so)document.body.classList.remove('modal-open');}
@@ -2528,7 +2461,6 @@ function cancelReply(){replyToCommentId=null;var inp=document.getElementById('co
 function postCommentFromModal(){if(!currentCommentsAdId)return;var u=getCurrentUser();if(!u)return;var inp=document.getElementById('commentsModalInput');if(!inp)return;var tx=inp.value.trim();if(!tx)return;markOwnWrite();var ads=getGlobalAds();var ad=null;for(var i=0;i<ads.length;i++){if(Number(ads[i].id)===Number(currentCommentsAdId)){ad=ads[i];break;}}if(!ad)return;if(!Array.isArray(ad.comments))ad.comments=[];var newC={id:uid(),userId:isSuperAdmin?0:(isMexEmployee?currentMexEmployeeId:u.id),userName:isSuperAdmin?'Super Admin':(u.fullName||u.username),photoKey:getCurrentCommenterPhotoKey(u),isSuperAdmin:isSuperAdmin,isMexEmployee:isMexEmployee,mexEmployeeId:isMexEmployee?currentMexEmployeeId:null,tenantId:(isSuperAdmin||isMexEmployee)?null:currentTenantId,text:tx,timestamp:Date.now()};if(replyToCommentId){var parent=null;for(var j=0;j<ad.comments.length;j++){if(Number(ad.comments[j].id)===Number(replyToCommentId)){parent=ad.comments[j];break;}}if(parent){if(!Array.isArray(parent.replies))parent.replies=[];newC.parentId=parent.id;parent.replies.push(newC);}}else{newC.replies=[];ad.comments.push(newC);}saveGlobalAds(ads,true);scheduleCommentPush(ad.id,newC);if(supabaseClient)supabaseClient.from(TBL_POSTS).update({comments_count:countAdComments(ad),updated_at:new Date().toISOString()}).eq('id',Number(ad.id)).catch(function(e){});inp.value='';cancelReply();renderCommentsModal();updateAdCardCommentCount(ad.id);}
 function deleteAdComment(adId,cid,parentId){if(!confirm('Delete this?'))return;markOwnWrite();var ads=getGlobalAds();var ad=null;for(var i=0;i<ads.length;i++){if(Number(ads[i].id)===Number(adId)){ad=ads[i];break;}}if(!ad||!Array.isArray(ad.comments))return;if(parentId&&parentId!=='null'&&parentId!==null){var p=null;for(var j=0;j<ad.comments.length;j++){if(Number(ad.comments[j].id)===Number(parentId)){p=ad.comments[j];break;}}if(p&&Array.isArray(p.replies)){var filtered=[];for(var k=0;k<p.replies.length;k++)if(Number(p.replies[k].id)!==Number(cid))filtered.push(p.replies[k]);p.replies=filtered;}}else{var filtered2=[];for(var m=0;m<ad.comments.length;m++)if(Number(ad.comments[m].id)!==Number(cid))filtered2.push(ad.comments[m]);ad.comments=filtered2;}saveGlobalAds(ads,true);scheduleCommentDelete(Number(cid));if(supabaseClient)supabaseClient.from(TBL_POSTS).update({comments_count:countAdComments(ad),updated_at:new Date().toISOString()}).eq('id',Number(adId)).catch(function(e){});if(currentCommentsAdId&&Number(currentCommentsAdId)===Number(adId))renderCommentsModal();updateAdCardCommentCount(ad.id);}
 function updateAdCardCommentCount(adId){var ads=getGlobalAds();var ad=null;for(var i=0;i<ads.length;i++){if(Number(ads[i].id)===Number(adId)){ad=ads[i];break;}}if(!ad)return;var total=countAdComments(ad);var el=document.getElementById('comment-count-'+adId);if(el)el.textContent=total>0?total:'';}
-
 /* ===================== PROFILE ===================== */
 var SOCIAL_FIELDS=[{key:'socialWhatsapp',icon:'fab fa-whatsapp',label:'WhatsApp',ph:'+255 xxx xxx xxx'},{key:'socialInstagram',icon:'fab fa-instagram',label:'Instagram',ph:'https://instagram.com/...'},{key:'socialFacebook',icon:'fab fa-facebook-f',label:'Facebook',ph:'https://facebook.com/...'},{key:'socialTiktok',icon:'fab fa-tiktok',label:'TikTok',ph:'https://tiktok.com/@...'},{key:'socialWebsite',icon:'fas fa-globe',label:'Website',ph:'https://...'}];
 function renderSocialFields(user){var h='<div class="social-header"><i class="fas fa-share-alt"></i> Social Media</div>';for(var i=0;i<SOCIAL_FIELDS.length;i++){var f=SOCIAL_FIELDS[i];var v=(user&&user[f.key])?user[f.key]:'';h+='<div class="form-group"><label style="display:flex;align-items:center;gap:6px;"><i class="'+f.icon+'"></i> '+f.label+'</label><input type="text" id="profile_'+f.key+'" value="'+escapeHtml(v)+'" placeholder="'+f.ph+'"/></div>';}return h;}
@@ -2541,7 +2473,6 @@ function updateBioCounter(){var b=document.getElementById('profileBio');var c=do
 function closeProfileModal(){document.getElementById('profileModal').classList.remove('show');var so=document.querySelector('.modal-overlay.show');if(!so)document.body.classList.remove('modal-open');}
 function bindProfileUploadListener(){var input=document.getElementById('profileUpload');if(!input)return;var ni=input.cloneNode(true);input.parentNode.replaceChild(ni,input);ni.addEventListener('change',function(e){var f=e.target.files&&e.target.files[0];if(!f)return;if(f.size>15*1024*1024){showToast('Max 15MB','error');return;}markOwnWrite();var k=saveMediaBlob(f,'avatar_');var u=getCurrentUser();if(!u)return;var userKey,userType,tenantId,userId;if(isMexEmployee){updateMexEmployee(currentMexEmployeeId,{photoKey:k});userKey='mex_'+currentMexEmployeeId;userType='mex';tenantId=null;userId=currentMexEmployeeId;}else if(isSuperAdmin){u.photoKey=k;setCurrentUser(u);dbSet(STORES.json,SUPER_ADMIN_PHOTO_KEY,k).catch(function(){});_superAdminPhotoKey=k;userKey='super';userType='super';tenantId=null;userId=0;}else{var us=getTenantData('users',[]);for(var i=0;i<us.length;i++){if(Number(us[i].id)===Number(u.id)){us[i].photoKey=k;break;}}setTenantData('users',us);u.photoKey=k;setCurrentUser(u);syncTenantOwnerPublic(currentTenantId);userKey='t_'+currentTenantId+'_'+u.id;userType='tenant';tenantId=currentTenantId;userId=u.id;}scheduleProfilePush({userKey:userKey,userType:userType,tenantId:tenantId,userId:userId,username:u.username||'',fullName:u.fullName||u.username||'',photoKey:k,bio:u.bio||'',phone:u.phone||'',email:u.email||'',socialWhatsapp:u.socialWhatsapp||'',socialInstagram:u.socialInstagram||'',socialFacebook:u.socialFacebook||'',socialTiktok:u.socialTiktok||'',socialWebsite:u.socialWebsite||'',theme:u.theme||'light'});getMediaUrl(k).then(function(url){var prev=document.getElementById('modalProfilePreview');prev.src=url||'';prev.dataset.photoKey=k;updateAllUI(getCurrentUser());setTimeout(function(){softRefreshCurrentView(false);},100);showToast('📸 Photo updated','success');});e.target.value='';});}
 function saveProfile(){var u=getCurrentUser();if(!u)return;var fn=document.getElementById('profileFullName').value.trim();var em=document.getElementById('profileEmail').value.trim();var ph=document.getElementById('profilePhone').value.trim();var np=document.getElementById('newPassword').value;var cp=document.getElementById('confirmPassword').value;var b=document.getElementById('profileBio');var bio=b?b.value.trim().substring(0,300):'';var sd={};for(var i=0;i<SOCIAL_FIELDS.length;i++){var f=SOCIAL_FIELDS[i];var el=document.getElementById('profile_'+f.key);if(el)sd[f.key]=el.value.trim();}if(np&&np.length<4){showToast('Password too short','error');return;}if(np!==cp){showToast('Passwords do not match','error');return;}markOwnWrite();if(isMexEmployee){var emp=findMexEmployeeById(currentMexEmployeeId);if(!emp)return;var up={};if(fn)up.name=fn;up.email=em;up.phone=ph;up.bio=bio;for(var k in sd){if(sd.hasOwnProperty(k))up[k]=sd[k];}if(np){up.password=hashPw(emp.username,np);}updateMexEmployee(emp.id,up);var nu={id:emp.id,username:emp.username,fullName:up.name||emp.name,role:'mexemployee',phone:up.phone||emp.phone||'',email:up.email||emp.email||'',photoKey:emp.photoKey||'',theme:emp.theme||'light',bio:up.bio};for(var k2 in sd){if(sd.hasOwnProperty(k2))nu[k2]=sd[k2];}setMexSession(nu);setCurrentUser(null);updateAllUI(nu);scheduleProfilePush({userKey:'mex_'+emp.id,userType:'mex',tenantId:null,userId:emp.id,username:emp.username,fullName:nu.fullName,photoKey:emp.photoKey||null,bio:bio,phone:nu.phone,email:nu.email,socialWhatsapp:sd.socialWhatsapp||'',socialInstagram:sd.socialInstagram||'',socialFacebook:sd.socialFacebook||'',socialTiktok:sd.socialTiktok||'',socialWebsite:sd.socialWebsite||'',theme:emp.theme||'light'});closeProfileModal();showToast('✓ Saved','success');setTimeout(function(){softRefreshCurrentView(false);},100);return;}if(isSuperAdmin){u.fullName=fn||'Super Admin';u.email=em;u.phone=ph;u.bio=bio;for(var k3 in sd){if(sd.hasOwnProperty(k3))u[k3]=sd[k3];}if(np)lsSet('sb_super_hash',hashPw(SUPER_ADMIN_USERNAME,np));setCurrentUser(u);updateAllUI(u);scheduleProfilePush({userKey:'super',userType:'super',tenantId:null,userId:0,username:'Super Admin',fullName:u.fullName,photoKey:u.photoKey||null,bio:bio,phone:ph,email:em,socialWhatsapp:sd.socialWhatsapp||'',socialInstagram:sd.socialInstagram||'',socialFacebook:sd.socialFacebook||'',socialTiktok:sd.socialTiktok||'',socialWebsite:sd.socialWebsite||'',theme:u.theme||'light'});closeProfileModal();showToast('✓ Saved','success');setTimeout(function(){softRefreshCurrentView(false);},100);return;}var us=getTenantData('users',[]);var tg=null;for(var m=0;m<us.length;m++){if(Number(us[m].id)===Number(u.id)){tg=us[m];break;}}if(!tg)return;if(fn)tg.fullName=fn;tg.email=em;tg.phone=ph;tg.bio=bio;for(var k4 in sd){if(sd.hasOwnProperty(k4))tg[k4]=sd[k4];}if(np){tg.password=hashPw(tg.username,np);}setTenantData('users',us);setCurrentUser(tg);syncTenantOwnerPublic(currentTenantId);updateAllUI(tg);scheduleProfilePush({userKey:'t_'+currentTenantId+'_'+tg.id,userType:'tenant',tenantId:currentTenantId,userId:tg.id,username:tg.username,fullName:tg.fullName||tg.username,photoKey:tg.photoKey||null,bio:bio,phone:tg.phone||'',email:tg.email||'',socialWhatsapp:sd.socialWhatsapp||'',socialInstagram:sd.socialInstagram||'',socialFacebook:sd.socialFacebook||'',socialTiktok:sd.socialTiktok||'',socialWebsite:sd.socialWebsite||'',theme:tg.theme||'light'});closeProfileModal();showToast('✓ Saved','success');setTimeout(function(){softRefreshCurrentView(false);},100);}
-
 /* ===================== MODALS / FORMS ===================== */
 function openModal(type,data){
 if(isSuperAdmin||isMexEmployee)return;
@@ -2573,7 +2504,7 @@ for(var p2=0;p2<stores.length;p2++)storeOpts+='<option value="'+escapeAttr(store
 h='<h3><i class="fas fa-user-plus"></i> Add User</h3><form onsubmit="submitUser(event)"><div class="form-group"><label>'+t('form_name')+'</label><input type="text" name="fullName"/></div><div class="form-row"><div class="form-group"><label>'+t('login_username')+' *</label><input type="text" name="username" required/></div><div class="form-group"><label>'+t('login_password')+' *</label><input type="password" name="password" required/></div></div><div class="form-row"><div class="form-group"><label>Role</label><select name="role" required>'+roleOpts+'</select></div><div class="form-group"><label>Store</label><select name="store">'+storeOpts+'</select></div></div><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">'+t('btn_cancel')+'</button><button type="submit" class="btn btn-primary">'+t('btn_save')+'</button></div></form>';
 }
 else if(type==='adjustStock'&&data){
-if(!canManageInventory()){showToast('⚠ Edit permission is off','error');return;}
+if(!canAddInventory()){showToast('⚠ Add permission is off','error');return;}
 var p3=getProduct(parseInt(data));if(!p3){closeModal();return;}
 h='<h3>'+escapeHtml(p3.name)+'</h3><form onsubmit="submitStockAdjust(event,\''+p3.id+'\')"><div class="form-group"><label>Adjust (+/-)</label><input type="number" name="adjust" required autofocus/></div><p class="text-muted text-sm" style="font-weight:600;">Current: <strong>'+p3.quantity+'</strong></p><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">'+t('btn_cancel')+'</button><button type="submit" class="btn btn-primary">'+t('btn_save')+'</button></div></form>';
 }
@@ -2651,14 +2582,40 @@ function submitQuickBarcode(e,productId){e.preventDefault();if(!canManageInvento
 function scanBarcodeForQuickAdd(productId){_quickBarcodeTargetId=productId;_editBarcodeTargetId=productId;_editBarcodeQuickMode=true;_pendingBarcodeValue=null;openScannerModal('edit_barcode');}
 function submitExpense(e){e.preventDefault();if(!hasPerm('expenses_manage')){showToast('⚠ Permission denied','error');return;}var fd=new FormData(e.target);var d=(fd.get('description')||'').trim();var a=parseFloat(fd.get('amount'));var c=fd.get('category')||'Other';var st=(fd.get('store')||'').trim()||getCatalogStore();if(!d||!a||a<1)return;var u=getCurrentUser();var ex=getTenantData('expenses',[]);ex.push({id:uid(),description:d,amount:a,category:c,date:Date.now(),store:st,createdBy:u.id});persistExpenses(ex);syncLargeDataToSupabase(tenantKey('expenses'),ex);closeModal();navigate('expenses');}
 function submitUser(e){e.preventDefault();if(!canManageUsers()){showToast('⚠ Permission denied','error');return;}var fd=new FormData(e.target);var un=(fd.get('username')||'').trim();var pw=fd.get('password');var role=fd.get('role');var fn=(fd.get('fullName')||'').trim()||un;var st=(fd.get('store')||'').trim()||getStoreName();if(!un||!pw||!role)return;var us=getTenantData('users',[]);if(isUsernameTaken(un)){showToast('Username taken','error');return;}var u=getCurrentUser();var newUser={id:uid(),username:un,password:hashPw(un,pw),role:role,store:st,fullName:fn,createdBy:u.id,photoKey:'',tenantId:currentTenantId,theme:'light'};us.push(newUser);setTenantData('users',us);indexUsername(un,currentTenantId);markOwnWrite();scheduleProfilePush({userKey:'t_'+currentTenantId+'_'+newUser.id,userType:'tenant',tenantId:currentTenantId,userId:newUser.id,username:un,fullName:fn,photoKey:null,bio:'',phone:'',email:'',socialWhatsapp:'',socialInstagram:'',socialFacebook:'',socialTiktok:'',socialWebsite:'',theme:'light'});closeModal();navigate('users');}
+/* ============================================================
+NOTIFY OWNER — stock added via Low Stock / Adjust
+Creates a status visible only to the owner account.
+============================================================ */
+function notifyOwnerStockAdded(product,addedQty,newQty,actor){
+if(!product||!actor)return;
+try{
+var statuses=getTenantData('statuses',[]);if(!Array.isArray(statuses))statuses=[];
+var text='📦 *Stock Added*\n\n'+
+'• Product: '+product.name+'\n'+
+'• Added: +'+addedQty+'\n'+
+'• New Stock: '+newQty+'\n'+
+'• Branch: '+(product.store||'—')+'\n'+
+'• Added by: '+actor.name+' ('+actor.role+')\n'+
+'• Time: '+fmtDateTime(Date.now());
+statuses.push({id:uid(),userId:actor.userId||0,authorName:actor.name,text:text,timestamp:Date.now(),likes:[],comments:[],isStockNotification:true});
+setTenantData('statuses',statuses);
+}catch(e){}
+}
 function submitStockAdjust(e,pid){
 e.preventDefault();
-if(!canManageInventory()){showToast('⚠ Edit permission is off','error');return;}
+if(!canAddInventory()){showToast('⚠ Add permission is off','error');return;}
 var fd=new FormData(e.target);var adj=parseInt(fd.get('adjust'));
 if(isNaN(adj)||adj===0){showToast('Enter a non-zero adjustment','warning');return;}
-var ps=getTenantData('products',[]);var name='';
-for(var i=0;i<ps.length;i++){if(ps[i].id===parseInt(pid)){ps[i].quantity=Math.max(0,ps[i].quantity+adj);name=ps[i].name;break;}}
+var ps=getTenantData('products',[]);var name='';var newQty=0;var prod=null;
+for(var i=0;i<ps.length;i++){if(ps[i].id===parseInt(pid)){ps[i].quantity=Math.max(0,ps[i].quantity+adj);name=ps[i].name;newQty=ps[i].quantity;prod=ps[i];break;}}
 persistProducts(ps);syncLargeDataToSupabase(tenantKey('products'),ps);
+// Notify owner
+if(adj>0&&prod){
+var u=getCurrentUser();
+if(u){
+notifyOwnerStockAdded(prod,adj,newQty,{name:u.fullName||u.username,role:u.role,userId:u.id});
+}
+}
 closeModal();showToast('✅ Stock updated'+(name?': '+name:''),'success');
 updateLowStockBadge();
 if(document.getElementById('lowStockModal').classList.contains('show'))renderLowStockRows();
@@ -2695,7 +2652,7 @@ showToast('🗑 Product deleted','warning');navigate('inventory');
 }
 function deleteUser(id){if(!canManageUsers())return;var u=getUser(Number(id));if(!u||u.role==='owner')return;if(!confirm('Delete?'))return;var all=getTenantData('users',[]);var out=[];for(var i=0;i<all.length;i++){if(Number(all[i].id)===Number(id)){if(all[i].username)unindexUsername(all[i].username);}else out.push(all[i]);}setTenantData('users',out);markOwnWrite();navigate('users');}
 function changeUserRole(userId,newRole){if(!canManageRoles())return;if(['admin','accountant','employee'].indexOf(newRole)===-1)return;var cu=getCurrentUser();if(cu&&cu.role==='admin'){var target=getUser(Number(userId));if(!target||target.role==='owner'||target.role==='admin'){showToast('⚠ Only owner can change admin','error');return;}}var us=getTenantData('users',[]);for(var i=0;i<us.length;i++){if(Number(us[i].id)===Number(userId)&&us[i].role!=='owner'){us[i].role=newRole;setTenantData('users',us);showToast('✓ Role updated','success');break;}}navigate('roles');}
-function adjustStock(id){if(!canManageInventory()){showToast('⚠ Edit permission is off','error');return;}openModal('adjustStock',id);}
+function adjustStock(id){if(!canAddInventory()){showToast('⚠ Add permission is off','error');return;}openModal('adjustStock',id);}
 function markDebtPaid(id){if(!hasPerm('sales_create'))return;var sales=getTenantData('sales',[]);var sale=null;for(var i=0;i<sales.length;i++){if(Number(sales[i].id)===Number(id)){sale=sales[i];break;}}if(!sale)return;sale.paid=true;sale.paidAt=Date.now();var cu=getCurrentUser();sale.paidBy=cu?cu.id:null;sale.paidByName=cu?cu.username:'—';persistSales(sales);syncLargeDataToSupabase(tenantKey('sales'),sales);showToast('✅ Payment recorded','success');updateDebtsBadge();navigate('debts');}
 function deleteDebt(id){
 if(!canDeleteSales())return;
@@ -2714,15 +2671,14 @@ var filtered=[];for(var k=0;k<sales.length;k++)if(Number(sales[k].id)!==Number(i
 persistSales(filtered);syncLargeDataToSupabase(tenantKey('sales'),filtered);
 updateDebtsBadge();updateDeletionBadge();navigate('debts');
 }
-
 /* ===================== LOW STOCK (aligned "+" column) ===================== */
 function openLowStockModal(){
 var m=document.getElementById('lowStockModal');
 var l=document.getElementById('lowStockList');
 if(!m||!l)return;
 _lowStockQuery='';
-var canEdit=canManageInventory();
-var note=canEdit?'':'<div class="ls-note"><i class="fas fa-lock"></i> View only — Manage Inventory is OFF, so stock cannot be adjusted here.</div>';
+var canAdd=canAddInventory();
+var note=canAdd?'':'<div class="ls-note"><i class="fas fa-lock"></i> View only — Add Inventory permission is OFF.</div>';
 l.innerHTML=note+
 '<div class="inventory-search-wrap" style="margin-bottom:14px;"><i class="fas fa-search inventory-search-icon"></i><input type="text" class="inventory-search-input" id="lowStockSearchInput" placeholder="Search product, branch or barcode..." autocomplete="off" oninput="onLowStockSearch(this.value)"/></div>'+
 '<div class="ls-head"><span>'+t('inv_product')+'</span><span class="ls-h-qty">'+t('inv_qty')+'</span><span class="ls-h-act">Add</span></div>'+
@@ -2741,7 +2697,7 @@ if(q){items=items.filter(function(p){return String(p.name||'').toLowerCase().ind
 items.sort(function(a,b){return (Number(a.quantity)||0)-(Number(b.quantity)||0);});
 var badge=document.getElementById('lowStockModalCount');
 if(badge)badge.textContent=items.length;
-var canEdit=canManageInventory();
+var canAdd=canAddInventory();
 if(!items.length){host.innerHTML='<div class="empty-state" style="padding:30px 16px;"><i class="fas fa-box-open"></i><h3>'+(q?'No matches':'All stocked up')+'</h3><p>'+(q?'Try a different search term':'Nothing is below the low-stock threshold.')+'</p></div>';return;}
 var h='';
 for(var i=0;i<items.length;i++){
@@ -2753,7 +2709,7 @@ var meta=[p.store||'—'];
 if(p.barcode)meta.push(p.barcode);
 if(ei.badge)meta.push(ei.label);
 else if(ei.daysLeft!==null&&ei.daysLeft<=30)meta.push(ei.daysLeft+'d left');
-var action=canEdit
+var action=canAdd
 ?'<button class="btn btn-success" data-inv-edit="1" title="Add stock" onclick="adjustStock(\''+p.id+'\')">+</button>'
 :'<span class="ls-readonly" title="View only"><i class="fas fa-eye"></i></span>';
 h+='<div class="ls-row">'+
@@ -2765,7 +2721,6 @@ h+='<div class="ls-row">'+
 host.innerHTML=h;
 }
 function closeLowStockModal(){document.getElementById('lowStockModal').classList.remove('show');var so=document.querySelector('.modal-overlay.show');if(!so)document.body.classList.remove('modal-open');}
-
 /* ===================== TRANSFERS / BRANCHES ===================== */
 function openTransferModal(){if(isSuperAdmin||isMexEmployee){showToast('Not allowed','error');return;}if(!canManageInventory()){showToast('⚠ Edit permission is off','error');return;}var branches=getBranchNames();if(branches.length<2){showToast('Need 2+ branches','warning');return;}var fromSel=document.getElementById('transferFrom');var toSel=document.getElementById('transferBranch');var prodSel=document.getElementById('transferProduct');var qi=document.getElementById('transferQty');var info=document.getElementById('transferQtyInfo');var opts='';for(var i=0;i<branches.length;i++)opts+='<option value="'+escapeAttr(branches[i])+'">'+escapeHtml(branches[i])+'</option>';if(fromSel)fromSel.innerHTML='<option value="">--</option>'+opts;if(toSel)toSel.innerHTML='<option value="">--</option>'+opts;if(prodSel)prodSel.innerHTML='<option value="">--</option>';if(qi)qi.value=1;if(info)info.textContent='';document.getElementById('transferModal').classList.add('show');document.body.classList.add('modal-open');}
 function closeTransferModal(){document.getElementById('transferModal').classList.remove('show');var so=document.querySelector('.modal-overlay.show');if(!so)document.body.classList.remove('modal-open');}
@@ -2807,7 +2762,6 @@ navigate('branches');
 }
 function resetBranchPassword(userId){var cg=getCurrentUser();if(!cg||isSuperAdmin||isMexEmployee||cg.role!=='owner')return;var pw=prompt('New password (min 4 chars):');if(!pw||pw.length<4)return;var users=getTenantData('users',[]);for(var i=0;i<users.length;i++){if(users[i].id===Number(userId)){users[i].password=hashPw(users[i].username,pw);break;}}setTenantData('users',users);showToast('✓ Password reset','success');navigate('branches');}
 function clearAttendanceHistory(){var cu=getCurrentUser();if(!cu||cu.role!=='owner')return;if(!confirm('Clear?'))return;savePunchHistory([]);saveSessions({});navigate('attendance');}
-
 /* ===================== SUPER ADMIN ===================== */
 function switchSuperAdminTab(tab){currentSuperAdminTab=tab;navigate('superadmin');}
 function openAddMexEmployeeModal(){if(!isSuperAdmin)return;var ov=document.getElementById('modalOverlay');var bx=document.getElementById('modalBox');bx.innerHTML='<h3><i class="fas fa-user-plus"></i> Add Member</h3><form onsubmit="submitAddMexEmployee(event)"><div class="form-group"><label>Full Name *</label><input type="text" name="name" required/></div><div class="form-group"><label>Phone</label><input type="text" name="phone"/></div><div class="form-group"><label>Password</label><input type="text" name="password" placeholder="(auto)"/></div><div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">'+t('btn_cancel')+'</button><button type="submit" class="btn btn-primary">'+t('btn_save')+'</button></div></form>';ov.classList.add('show');document.body.classList.add('modal-open');}
@@ -2824,7 +2778,6 @@ function openRenewSubscriptionModal(tenantId){if(!isSuperAdmin)return;var tn=get
 function superRenewSubscription(tenantId,planKey){if(!isSuperAdmin)return;var prices={monthly:25000,quarterly:70000,yearly:270000};var days={monthly:30,quarterly:90,yearly:365};var price=prices[planKey]||25000;var duration=days[planKey]||30;if(!confirm('Renewal — '+fmtMoney(price)+' for '+duration+' days?'))return;var currentEnd=getTenantSubscriptionEnd(tenantId);var base=Math.max(Date.now(),currentEnd||0);var newExpiry=base+duration*24*60*60*1000;setTenantSubscriptionExpiry(tenantId,newExpiry);markOwnWrite();var ts=getAllTenants();for(var i=0;i<ts.length;i++){if(ts[i].id===tenantId){ts[i].blocked=false;ts[i].pendingApproval=false;ts[i].renewedAt=Date.now();saveTenants(ts);break;}}var tn=getTenant(tenantId);if(tn&&tn.promoCode){var emp=findMexEmployeeByPromo(tn.promoCode);if(emp){try{creditMemberEarning(emp.id,emp.name,tn.id,tn.companyName,planKey,price,tn.ownerUsername,'renewal',null);}catch(e){}}}showToast('✅ Renewed until '+fmtDate(newExpiry),'success');closeModal();navigate('superadmin');}
 function openTenantCredentials(tenantId){if(!isSuperAdmin)return;var tn=getTenant(tenantId);if(!tn)return;_credentialsTenantId=tenantId;var users=lsGet('sb_tenant_'+tenantId+'_users',[]);if(!Array.isArray(users))users=[];var rows='';for(var i=0;i<users.length;i++){var u=users[i];rows+='<tr><td>'+(i+1)+'</td><td><strong>'+escapeHtml(u.fullName||u.username)+'</strong></td><td><code style="background:var(--input-bg);padding:3px 8px;border-radius:6px;font-size:.82rem;">'+escapeHtml(u.username)+'</code></td><td><span class="badge '+getRoleBadgeClass(u.role)+'">'+getRoleLabel(u.role)+'</span></td><td><span style="color:var(--text-muted);font-style:italic;font-size:.78rem;">🔒 Hashed</span></td><td><button class="btn btn-xs btn-secondary" onclick="superResetUserPassword(\''+tenantId+'\',\''+u.id+'\')"><i class="fas fa-sync"></i> Reset</button></td></tr>';}var ov=document.getElementById('modalOverlay');var bx=document.getElementById('modalBox');bx.style.padding='';bx.style.overflow='';bx.style.borderRadius='';bx.style.maxWidth='820px';bx.innerHTML='<h3><i class="fas fa-key" style="color:#8b5cf6;"></i> Credentials — '+escapeHtml(tn.companyName)+'</h3><div style="background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.25);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:.82rem;color:var(--text-secondary);line-height:1.5;"><i class="fas fa-shield-alt" style="color:#8b5cf6;"></i> Passwords are hashed. Click Reset to generate a new one (shown once).</div><div class="table-wrap"><table><thead><tr><th>#</th><th>'+t('form_name')+'</th><th>'+t('login_username')+'</th><th>Role</th><th>Password</th><th>'+t('cust_actions')+'</th></tr></thead><tbody>'+(rows||'<tr class="empty-row"><td colspan="6">No users</td></tr>')+'</tbody></table></div><div class="form-actions" style="margin-top:16px;justify-content:flex-end;"><button class="btn btn-secondary" onclick="closeModal()">'+t('btn_close')+'</button></div>';ov.classList.add('show');document.body.classList.add('modal-open');}
 function superResetUserPassword(tenantId,userId){if(!isSuperAdmin)return;var np=genTempPassword();var users=lsGet('sb_tenant_'+tenantId+'_users',[]);var found=null;for(var i=0;i<users.length;i++){if(Number(users[i].id)===Number(userId)){users[i].password=hashPw(users[i].username,np);found=users[i];break;}}if(!found){showToast('User not found','error');return;}lsSet('sb_tenant_'+tenantId+'_users',users);markOwnWrite();showToast('✅ New password: '+np,'success');try{copyToClipboardText(np);}catch(e){}openTenantCredentials(tenantId);}
-
 /* ===================== RECEIPTS / REPORTS ===================== */
 function shareReceipt(id){
 var sales=getTenantData('sales',[]);var s=null;
@@ -2900,7 +2853,6 @@ lines.push('');lines.push('_MeX PRO — Multi-Tenant Business System_');
 return lines.join('\n');
 }
 function closeCredentialsModal(){document.getElementById('credentialsModal').classList.remove('show');_credentialsTenantId=null;var so=document.querySelector('.modal-overlay.show');if(!so)document.body.classList.remove('modal-open');}
-
 /* ===================== SESSION ===================== */
 function resetAllAppState(){
 try{var vids=document.querySelectorAll('video[data-media-key]');for(var i=0;i<vids.length;i++){try{vids[i].pause();}catch(e){}try{vids[i].removeAttribute('src');vids[i].load();}catch(e){}}}catch(e){}
@@ -3104,7 +3056,6 @@ document.getElementById('memberGoToLogin').addEventListener('click',function(){d
 document.getElementById('memberRegisterBtn').addEventListener('click',function(){var n=document.getElementById('memberName').value.trim();var p=document.getElementById('memberPhone').value.trim();var pw=document.getElementById('memberPassword').value;var eE=document.getElementById('memberRegError');var sE=document.getElementById('memberRegSuccess');eE.textContent='';sE.textContent='';if(!n||!pw){eE.textContent='Fill fields';return;}if(pw.length<4){eE.textContent='Password too short';return;}var emp=addMexEmployee(n,p,pw);sE.innerHTML='✅ Promo: <strong>'+escapeHtml(emp.promoCode)+'</strong> · Username: <strong>'+escapeHtml(emp.username)+'</strong>';setTimeout(function(){document.getElementById('memberRegisterPage').classList.add('hidden');document.getElementById('loginPage').classList.remove('hidden');document.getElementById('loginUsername').value=emp.username;},2600);});
 document.getElementById('registerBtn').addEventListener('click',function(){var company=document.getElementById('regCompany').value.trim();var un=document.getElementById('regUsername').value.trim();var pw=document.getElementById('regPassword').value.trim();var cf=document.getElementById('regConfirm').value.trim();var ph=document.getElementById('regPhone').value.trim();var pe=document.getElementById('regPromoCode');var promo=pe?pe.value.trim().toUpperCase():'';var er=document.getElementById('registerError');er.textContent='';if(!company||!un||!pw||!cf||!ph){er.textContent='Fill fields';return;}if(pw.length<4){er.textContent='Password too short';return;}if(pw!==cf){er.textContent='Passwords do not match';return;}if(promo){var emp=findMexEmployeeByPromo(promo);if(!emp){er.textContent='Invalid promo';return;}}if(isUsernameTaken(un)){er.textContent='Username taken';return;}pendingRegistrationData={company:company,username:un,password:pw,phone:ph,promo:promo};openPaymentPlanModal();});
 document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeModal();closeProfileModal();closeSubscriptionModal();closeReceiptModal();closeLowStockModal();closeTransferModal();closeMobileSidebar();closePaymentPlanModal();closeChatModal();closeChatWallpaperPicker();closeAdProfileModal();closeAdDetail();closeCommentsModal();closeSendReportModal();closeCredentialsModal();closeScannerModal();closeScanQtyModal();}});
-
 /* ===================== SCANNER ===================== */
 var _scannerInstance=null;
 var _scannerMode=null;
@@ -3260,7 +3211,6 @@ syncLargeDataToSupabase(tenantKey('sales'),sales);
 syncLargeDataToSupabase(tenantKey('products'),ps);
 return true;
 }
-
 /* ===================== BOOT ===================== */
 window.__debugSync=async function(){
 console.log('=== MeX SYNC DIAGNOSTIC ===');
@@ -3339,30 +3289,18 @@ try{preloadLargeDataFromIDB().then(function(){return loadLargeDataFromSupabase()
 }).catch(function(){});
 };
 (function tryAutoBoot(){setTimeout(function(){if(typeof window.__bootMain==='function'&&!window.__bootCalled){window.__bootCalled=true;try{window.__bootMain();}catch(e){console.error('[AutoBoot]',e);}}},300);})();
-
 /* ============================================================
-   LIGHT-FIRST MEDIA ENGINE
-   • Videos and photos stay invisible until REAL pixels exist, so
-     a dark rectangle can never appear before content.
-   • src + "#t=0.1" makes the browser decode & paint a real frame
-     immediately; a real thumbnail sits on top until then.
-   • Missing thumbnails are generated once from the real video,
-     cached on device, and uploaded for every other device.
-   • Src attaches ~1400px early, players stay warm, first visible
-     video is kicked immediately.
-   ============================================================ */
+LIGHT-FIRST MEDIA ENGINE
+============================================================ */
 var _mexCover={},_mexCoverBusy={},_mexCoverSaved={};
 var _mexPlayers=[],_mexPhotos=[],_mexWarm=[],_mexTime={};
 var _mexPreloader=null,_mexPreviewUrl=null,_mexGestured=false;
 var _mexHud=null,_mexHudDone=0;
 var _mexUpload={queue:[],active:0,blob:{},done:{},failed:{}};
 var MEX_WARM_MAX=6,MEX_RETRY_MAX=6;
-
 function mexDist(el){try{var r=el.getBoundingClientRect();return Math.abs((r.top+r.bottom)/2-(window.innerHeight||800)/2);}catch(e){return 99999;}}
 function mexSaveTime(el){try{var k=el.dataset.mediaKey;if(k&&el.currentTime>0.3){_mexTime[k]=el.currentTime;var ks=Object.keys(_mexTime);if(ks.length>300)for(var i=0;i<50;i++)delete _mexTime[ks[i]];}}catch(e){}}
 function mexPauseOthers(except){var v=document.querySelectorAll('video[data-media-key]');for(var i=0;i<v.length;i++)if(v[i]!==except)pauseVideoEl(v[i]);}
-
-/* ---- real thumbnail resolution ---- */
 function mexCoverSrc(mediaKey,posterKey){
 if(mediaKey&&_mexCover[mediaKey])return _mexCover[mediaKey];
 if(posterKey&&_mediaUrlCache[posterKey])return _mediaUrlCache[posterKey];
@@ -3494,8 +3432,6 @@ if(!key)return;
 delete _mexCover[key];delete _mexCoverBusy[key];delete _mexCoverSaved[key];
 try{dbDel(STORES.json,'cover_'+key);}catch(e){}
 }
-
-/* ---- players ---- */
 function mexBindPlayer(p){
 if(!p||p._mexBound)return;
 p._mexBound=true;
@@ -3674,8 +3610,6 @@ else if(v.dataset.mediaLoading!=='1')loadVideo(v);
 return;
 }
 }
-
-/* ---- uploads ---- */
 function mexPumpUploads(){
 if(_mexUpload.active>=1)return;
 var job=_mexUpload.queue.shift();
@@ -3728,8 +3662,6 @@ else if(failed){_mexHud.className='show error';_mexHud.innerHTML='<i class="fas 
 else if(Date.now()-_mexHudDone<1600){_mexHud.className='show';_mexHud.innerHTML='<i class="fas fa-check-circle" style="color:var(--accent-4);"></i><span>Uploaded ✓</span>';setTimeout(mexHud,1700);}
 else _mexHud.className='';
 }
-
-/* ---- feed sync without killing playback ---- */
 function mexUpdateCounts(node,ad,user){
 var id=String(ad.id);
 var likes=Array.isArray(ad.likes)?ad.likes:[];
@@ -3798,8 +3730,6 @@ prev=node;
 setTimeout(hydrateMedia,20);
 return true;
 }
-
-/* ---- lifecycle ---- */
 (function watchModals(){
 var mo=new MutationObserver(function(muts){
 for(var i=0;i<muts.length;i++){var el=muts[i].target;if(!el.classList.contains('show'))mexCleanupIn(el);}
