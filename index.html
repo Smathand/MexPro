@@ -335,6 +335,31 @@ body.dark .chat-modal .modal-box .chat-messages{background-color:#0b141a}
 .pager-bar{display:flex;align-items:center;justify-content:center;gap:12px;padding:16px 0;flex-wrap:wrap}
 .pager-bar .pager-info{font-weight:700;font-size:.85rem;color:var(--text-secondary);white-space:nowrap}
 .record-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:800;background:rgba(18,140,126,.12);color:var(--accent-1);margin-left:8px;vertical-align:middle}
+/* 🔧 NEW: Product analytics cards */
+.analytics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-bottom:18px}
+.analytics-card{background:var(--bg-card);border-radius:16px;border:1px solid var(--border-color);box-shadow:var(--shadow-card);overflow:hidden}
+.analytics-card .ac-header{padding:14px 18px;border-bottom:1px solid var(--border-color);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.analytics-card .ac-header h4{font-size:.95rem;font-weight:800;display:flex;align-items:center;gap:8px;margin:0}
+.analytics-card .ac-header .ac-count{font-size:.7rem;font-weight:800;padding:3px 10px;border-radius:20px}
+.analytics-card .ac-body{padding:0;max-height:340px;overflow-y:auto}
+.analytics-card .ac-empty{padding:30px 20px;text-align:center;color:var(--text-muted);font-size:.85rem;font-weight:600}
+.analytics-row{display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid var(--border-color);transition:background .15s}
+.analytics-row:last-child{border-bottom:none}
+.analytics-row:hover{background:var(--input-bg)}
+.analytics-row .ar-rank{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;color:#fff;flex-shrink:0}
+.analytics-row .ar-rank.r1{background:linear-gradient(135deg,#f59e0b,#d97706)}
+.analytics-row .ar-rank.r2{background:linear-gradient(135deg,#94a3b8,#64748b)}
+.analytics-row .ar-rank.r3{background:linear-gradient(135deg,#b45309,#92400e)}
+.analytics-row .ar-rank.rn{background:var(--accent-1)}
+.analytics-row .ar-info{flex:1;min-width:0}
+.analytics-row .ar-name{font-weight:700;font-size:.86rem;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.analytics-row .ar-meta{font-size:.7rem;color:var(--text-muted);font-weight:600;margin-top:2px}
+.analytics-row .ar-stats{text-align:right;flex-shrink:0}
+.analytics-row .ar-qty{font-size:.95rem;font-weight:800;color:var(--accent-1);line-height:1.1}
+.analytics-row .ar-rev{font-size:.68rem;color:var(--text-muted);font-weight:700;margin-top:2px}
+.analytics-row.dead .ar-qty{color:var(--accent-danger)}
+.analytics-row.dead .ar-rank{background:var(--accent-danger)}
+.analytics-row.best .ar-qty{color:var(--accent-4)}
 @media(max-width:768px){
 .app-container{padding:0;gap:0;height:100dvh}
 .main-content{border-radius:0;box-shadow:none;height:100dvh;min-width:0}
@@ -358,6 +383,7 @@ body.dark .chat-modal .modal-box .chat-messages{background-color:#0b141a}
 .modal-box{max-width:100%;border-radius:22px 22px 0 0;padding:22px 18px;margin:0}
 .form-row{grid-template-columns:1fr}
 .insta-ad{border-radius:0;border-left:none;border-right:none;margin-left:-12px;margin-right:-12px;width:calc(100% + 24px);max-width:calc(100% + 24px)}
+.analytics-grid{grid-template-columns:1fr}
 }
 @media(max-width:420px){
 .topbar{padding:6px 8px;gap:6px}
@@ -552,8 +578,8 @@ body.dark .ios-toggle input:checked+.slider{background-color:#30d158}
 <span class="brand-ver">PRO</span>
 </div>
 <nav class="sidebar-nav" id="sidebarNav">
-<button class="nav-item active" data-view="status"><i class="fas fa-bullhorn"></i><span>MexFace</span></button>
-<button class="nav-item" data-view="dashboard"><i class="fas fa-chart-pie"></i><span>MexData</span></button>
+<button class="nav-item active" data-view="dashboard"><i class="fas fa-chart-pie"></i><span>MexData</span></button>
+<button class="nav-item" data-view="status"><i class="fas fa-bullhorn"></i><span>MexFace</span></button>
 <button class="nav-item" data-view="sales"><i class="fas fa-cart-plus"></i><span>Sales</span></button>
 <button class="nav-item" data-view="debts" id="navDebts"><i class="fas fa-hand-holding-usd"></i><span>Debts</span><span class="badge" id="debtsNavBadge" style="display:none;">0</span></button>
 <button class="nav-item" data-view="deletions" id="navDeletions" style="display:none;"><i class="fas fa-clock-rotate-left"></i><span>Deleted Sales</span><span class="badge hot" id="deletionsNavBadge" style="display:none;">0</span></button>
@@ -582,7 +608,7 @@ body.dark .ios-toggle input:checked+.slider{background-color:#30d158}
 <div class="main-content">
 <header class="topbar">
 <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu"><i class="fas fa-bars"></i></button>
-<div class="page-title" id="pageTitle">MexFace</div>
+<div class="page-title" id="pageTitle">MexData</div>
 <div class="topbar-actions">
 <span class="date-display"><i class="far fa-calendar-alt"></i><span id="currentDate"></span></span>
 <button class="low-stock-alert-btn" id="lowStockAlertBtn"><i class="fas fa-exclamation-triangle"></i><span class="alert-text">Low Stock</span><span class="alert-count" id="lowStockAlertCount">0</span></button>
@@ -763,7 +789,8 @@ body.dark .ios-toggle input:checked+.slider{background-color:#30d158}
 /* ===================== CONFIG ===================== */
 var SUPER_ADMIN_USERNAME='Mex';
 var SUPER_ADMIN_HASH='h1$cc098c531ea5366c7735d08df65954c8bfefe8b5ae99ee1bd13e3c994c4b7cbf';
-var LOW_STOCK_THRESHOLD=10;
+/* 🔧 MABADILIKO: LOW_STOCK_THRESHOLD kutoka 10 → 5 */
+var LOW_STOCK_THRESHOLD=5;
 var GLOBAL_ADS_KEY='sb_global_ads';
 var MEX_EMPLOYEES_KEY='sb_mex_employees';
 var MEX_SESSION_KEY='sb_mex_current_employee';
@@ -1077,7 +1104,7 @@ var active=document.activeElement;
 if(active){var tag=active.tagName;if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT'){if(!force)return;}}
 var openModal=document.querySelector('.modal-overlay.show');
 if(openModal&&!force)return;
-var currentView='status';
+var currentView='dashboard';
 var activeNav=document.querySelector('.sidebar-nav .nav-item.active');
 if(activeNav)currentView=activeNav.dataset.view;
 if((currentView==='status'||currentView==='mexStatus')&&document.getElementById('adsFeedContainer')){
@@ -1501,6 +1528,93 @@ function calculatePnL(){if(isSuperAdmin||isMexEmployee)return {totalRevenue:0,to
 function getLowStockItems(th){th=th||LOW_STOCK_THRESHOLD;if(isSuperAdmin||isMexEmployee)return [];var all=getFilteredProducts();var out=[];for(var i=0;i<all.length;i++){if(all[i].quantity<=th)out.push(all[i]);}return out;}
 function updateLowStockBadge(){if(isSuperAdmin||isMexEmployee){var nb=document.getElementById('lowStockNavBadge');var ab=document.getElementById('lowStockAlertBtn');if(nb)nb.style.display='none';if(ab)ab.style.display='none';return;}var c=getLowStockItems().length;var b=document.getElementById('lowStockNavBadge');if(b){if(c>0){b.textContent=c;b.style.display='inline-block';}else b.style.display='none';}var ab=document.getElementById('lowStockAlertBtn');var co=document.getElementById('lowStockAlertCount');if(ab&&co){co.textContent=c;if(c>0)ab.classList.add('has-alert');else ab.classList.remove('has-alert');}}
 function updateDebtsBadge(){if(isSuperAdmin||isMexEmployee){var nb=document.getElementById('debtsNavBadge');if(nb)nb.style.display='none';return;}var c=getFilteredDebts().length;var b=document.getElementById('debtsNavBadge');if(b){if(c>0){b.textContent=c;b.style.display='inline-block';}else b.style.display='none';}}
+
+/* ============================================================
+🔧 NEW: PRODUCT ANALYTICS — Best Sellers & Dead Stock
+============================================================ */
+function getProductSalesStats(){
+/* Returns an object with:
+   - bestSellers: array of {product, qtySold, revenue, txCount}
+   - deadStock: array of products never sold
+   - allStats: map productId -> {qtySold, revenue, txCount}
+*/
+if(isSuperAdmin||isMexEmployee)return {bestSellers:[],deadStock:[],allStats:{}};
+var products=getFilteredProducts();
+var sales=getTenantData('sales',[]);
+var stats={};
+for(var i=0;i<products.length;i++){
+stats[products[i].id]={product:products[i],qtySold:0,revenue:0,txCount:0};
+}
+for(var j=0;j<sales.length;j++){
+var s=sales[j];
+if(!s||!s.productId)continue;
+if(!stats[s.productId]){
+stats[s.productId]={product:{id:s.productId,name:'Unknown',price:s.unitPrice||0,store:s.store||''},qtySold:0,revenue:0,txCount:0};
+}
+stats[s.productId].qtySold+=Number(s.quantity)||0;
+stats[s.productId].revenue+=Number(s.totalPrice)||0;
+stats[s.productId].txCount+=1;
+}
+var allStatsArr=[];
+for(var k in stats){if(stats.hasOwnProperty(k))allStatsArr.push(stats[k]);}
+var best=allStatsArr.filter(function(x){return x.qtySold>0;}).sort(function(a,b){return b.qtySold-a.qtySold;});
+var dead=allStatsArr.filter(function(x){return x.qtySold===0;}).sort(function(a,b){return (a.product.name||'').localeCompare(b.product.name||'');});
+return {bestSellers:best,deadStock:dead,allStats:stats};
+}
+
+function renderBestSellersCard(limit){
+limit=limit||8;
+var data=getProductSalesStats();
+var list=data.bestSellers.slice(0,limit);
+var html='<div class="analytics-card">';
+html+='<div class="ac-header"><h4><i class="fas fa-fire" style="color:var(--accent-4);"></i> Best Sellers</h4><span class="ac-count" style="background:rgba(16,185,129,.12);color:var(--accent-4);">'+data.bestSellers.length+' sold</span></div>';
+html+='<div class="ac-body">';
+if(!list.length){
+html+='<div class="ac-empty"><i class="fas fa-chart-line" style="font-size:2rem;opacity:.3;display:block;margin-bottom:8px;"></i>No sales yet</div>';
+}else{
+for(var i=0;i<list.length;i++){
+var x=list[i];
+var rankCls=i===0?'r1':(i===1?'r2':(i===2?'r3':'rn'));
+var pct=x.product.quantity>0?Math.round((x.qtySold/(x.qtySold+x.product.quantity))*100):100;
+html+='<div class="analytics-row best">';
+html+='<div class="ar-rank '+rankCls+'">'+(i+1)+'</div>';
+html+='<div class="ar-info"><div class="ar-name">'+escapeHtml(x.product.name||'—')+'</div><div class="ar-meta">'+x.txCount+' sale'+(x.txCount>1?'s':'')+' · '+pct+'% sold</div></div>';
+html+='<div class="ar-stats"><div class="ar-qty">'+x.qtySold+' sold</div><div class="ar-rev">'+fmtMoney(x.revenue)+'</div></div>';
+html+='</div>';
+}
+}
+html+='</div></div>';
+return html;
+}
+
+function renderDeadStockCard(limit){
+limit=limit||8;
+var data=getProductSalesStats();
+var list=data.deadStock.slice(0,limit);
+var html='<div class="analytics-card">';
+html+='<div class="ac-header"><h4><i class="fas fa-skull-crossbones" style="color:var(--accent-danger);"></i> Dead Stock</h4><span class="ac-count" style="background:rgba(239,68,68,.12);color:var(--accent-danger);">'+data.deadStock.length+' unsold</span></div>';
+html+='<div class="ac-body">';
+if(!list.length){
+html+='<div class="ac-empty"><i class="fas fa-check-circle" style="font-size:2rem;opacity:.3;color:var(--accent-4);display:block;margin-bottom:8px;"></i>All products have sales!</div>';
+}else{
+for(var i=0;i<list.length;i++){
+var x=list[i];
+var p=x.product;
+var stockValue=(Number(p.cost)||0)*(Number(p.quantity)||0);
+html+='<div class="analytics-row dead">';
+html+='<div class="ar-rank"><i class="fas fa-times" style="font-size:.7rem;"></i></div>';
+html+='<div class="ar-info"><div class="ar-name">'+escapeHtml(p.name||'—')+'</div><div class="ar-meta">'+escapeHtml(p.store||'—')+' · '+(p.category||'—')+'</div></div>';
+html+='<div class="ar-stats"><div class="ar-qty">'+p.quantity+' in stock</div><div class="ar-rev">Value: '+fmtMoney(stockValue)+'</div></div>';
+html+='</div>';
+}
+if(data.deadStock.length>limit){
+html+='<div style="padding:10px 18px;text-align:center;font-size:.78rem;color:var(--text-muted);font-weight:600;">+'+(data.deadStock.length-limit)+' more unsold products</div>';
+}
+}
+html+='</div></div>';
+return html;
+}
+
 /* ===================== PERMISSIONS ===================== */
 var DEFAULT_ROLE_PERMS={
 admin:['sales_create','sales_delete','inventory_view','inventory_add','inventory_manage','inventory_delete','expenses_view','expenses_manage','reports_view','pnl_view','users_manage','attendance_view'],
@@ -1618,12 +1732,43 @@ function addGlobalAd(ad){var a=getGlobalAds();a.push(ad);saveGlobalAds(a);schedu
 function deleteGlobalAd(id){var ads=getGlobalAds();var target=null;for(var i=0;i<ads.length;i++){if(Number(ads[i].id)===Number(id)){target=ads[i];break;}}if(target){if(target.mediaKey)deleteMediaKey(target.mediaKey).catch(function(){});if(target.posterKey)deleteMediaKey(target.posterKey).catch(function(){});}var filtered=[];for(var j=0;j<ads.length;j++)if(Number(ads[j].id)!==Number(id))filtered.push(ads[j]);saveGlobalAds(filtered,true);if(supabaseClient)supabaseClient.from(TBL_POSTS).delete().eq('id',Number(id)).catch(function(e){});}
 function isAdPromoted(ad){return ad&&ad.promoted&&ad.promotedUntil&&ad.promotedUntil>Date.now();}
 function isAdExpired(ad){if(!ad||!ad.timestamp)return true;return (Date.now()-ad.timestamp)>=AD_LIFETIME_MS;}
-function cleanupExpiredAds(){var ads=getGlobalAds();var active=[];var changed=false;for(var i=0;i<ads.length;i++){var ad=ads[i];if(isAdExpired(ad)){changed=true;if(ad.mediaKey)deleteMediaKey(ad.mediaKey).catch(function(){});if(ad.posterKey)deleteMediaKey(ad.posterKey).catch(function(){});if(supabaseClient)supabaseClient.from(TBL_POSTS).delete().eq('id',Number(ad.id)).catch(function(e){});}else active.push(ad);}if(changed){saveGlobalAds(active,true);mexSyncFeed();}return active;}
+function cleanupExpiredAds(){var ads=getGlobalAds();var active=[];var changed=false;for(var i=0;i<ads.length;i++){var ad=ads[i];if(isAdExpired(ad)){changed=true;if(ad.mediaKey)deleteMediaKey(ad.mediaKey).catch(function(){});if(ad.posterKey)deleteMediaKey(ad.posterKey).catch(function(){});if(supabaseClient)supabaseClient.from(TBL_POSTS).delete().eq('id',Number(ad.id)).catch(function(e){});}else active.push(ad);}if(changed){saveGlobalAds(active,true);try{mexSyncFeed();}catch(e){}}return active;}
 function getAdFeedOrder(ads){if(!Array.isArray(ads)||!ads.length)return [];var promoted=[];var regular=[];for(var i=0;i<ads.length;i++){if(isAdPromoted(ads[i]))promoted.push(ads[i]);else regular.push(ads[i]);}promoted.sort(function(a,b){return (b.promotedAt||b.timestamp)-(a.promotedAt||a.timestamp);});regular.sort(function(a,b){return b.timestamp-a.timestamp;});return promoted.concat(regular);}
 function getAdViews(ad){if(!ad)return 0;return Number(ad.views)||0;}
 function incrementAdView(adId){if(!adId)return;var ads=getGlobalAds();var ad=null;for(var i=0;i<ads.length;i++){if(Number(ads[i].id)===Number(adId)){ad=ads[i];break;}}if(!ad)return;ad.views=(Number(ad.views)||0)+VIEW_INCREMENT;saveGlobalAds(ads,true);if(supabaseClient)supabaseClient.from(TBL_POSTS).update({views:ad.views,updated_at:new Date().toISOString()}).eq('id',Number(adId)).catch(function(e){});var el=document.getElementById('views-count-'+adId);if(el)el.textContent=fmtViews(ad.views);}
 function countAdComments(ad){if(!ad||!Array.isArray(ad.comments))return 0;var total=ad.comments.length;for(var i=0;i<ad.comments.length;i++){var c=ad.comments[i];if(c&&Array.isArray(c.replies))total+=c.replies.length;}return total;}
-function toggleAdLike(adId){var u=getCurrentUser();if(!u)return;markOwnWrite();var ads=getGlobalAds();var ad=null;for(var i=0;i<ads.length;i++){if(Number(ads[i].id)===Number(adId)){ad=ads[i];break;}}if(!ad)return;if(!Array.isArray(ad.likes))ad.likes=[];var myId=likeKey(u);var idx=ad.likes.indexOf(myId);var wasLiked=idx!==-1;if(wasLiked)ad.likes.splice(idx,1);else ad.likes.push(myId);saveGlobalAds(ads,true);scheduleLikePush(adId,myId,!wasLiked);if(supabaseClient)supabaseClient.from(TBL_POSTS).update({likes_count:ad.likes.length,updated_at:new Date().toISOString()}).eq('id',Number(adId)).catch(function(e){});var btn=document.getElementById('like-btn-'+adId);var cnt=document.getElementById('like-count-'+adId);if(btn){btn.classList.toggle('liked',!wasLiked);var icon=btn.querySelector('i');if(icon)icon.className=(!wasLiked?'fas':'far')+' fa-heart';}if(cnt)cnt.textContent=ad.likes.length>0?ad.likes.length:'';}
+
+/* ============================================================
+🔧 FIX: toggleAdLike — Like inafanya kazi bila navigate
+Inabaki kwenye page uliyo (MexData, MexFace, modal)
+============================================================ */
+function toggleAdLike(adId){
+var u=getCurrentUser();
+if(!u)return;
+markOwnWrite();
+var ads=getGlobalAds();
+var ad=null;
+for(var i=0;i<ads.length;i++){if(Number(ads[i].id)===Number(adId)){ad=ads[i];break;}}
+if(!ad)return;
+if(!Array.isArray(ad.likes))ad.likes=[];
+var myId=likeKey(u);
+var idx=ad.likes.indexOf(myId);
+var wasLiked=idx!==-1;
+if(wasLiked)ad.likes.splice(idx,1);else ad.likes.push(myId);
+saveGlobalAds(ads,true);
+scheduleLikePush(adId,myId,!wasLiked);
+if(supabaseClient)supabaseClient.from(TBL_POSTS).update({likes_count:ad.likes.length,updated_at:new Date().toISOString()}).eq('id',Number(adId)).catch(function(e){});
+/* 🔧 UPDATE UI moja kwa moja — bila navigate */
+var btns=document.querySelectorAll('[id="like-btn-'+adId+'"]');
+for(var b=0;b<btns.length;b++){
+btns[b].classList.toggle('liked',!wasLiked);
+var ic=btns[b].querySelector('i');
+if(ic)ic.className=(!wasLiked?'fas':'far')+' fa-heart';
+}
+var cnts=document.querySelectorAll('[id="like-count-'+adId+'"]');
+for(var c=0;c<cnts.length;c++)cnts[c].textContent=ad.likes.length>0?ad.likes.length:'';
+}
+
 function quickAddComment(adId){var inp=document.getElementById('ad-quick-input-'+adId);if(!inp)return;var tx=inp.value.trim();if(!tx)return;var u=getCurrentUser();if(!u)return;markOwnWrite();var ads=getGlobalAds();var ad=null;for(var i=0;i<ads.length;i++){if(Number(ads[i].id)===Number(adId)){ad=ads[i];break;}}if(!ad)return;if(!Array.isArray(ad.comments))ad.comments=[];var newC={id:uid(),userId:isSuperAdmin?0:(isMexEmployee?currentMexEmployeeId:u.id),userName:isSuperAdmin?'Super Admin':(u.fullName||u.username),photoKey:getCurrentCommenterPhotoKey(u),isSuperAdmin:isSuperAdmin,isMexEmployee:isMexEmployee,mexEmployeeId:isMexEmployee?currentMexEmployeeId:null,tenantId:(isSuperAdmin||isMexEmployee)?null:currentTenantId,text:tx,timestamp:Date.now(),replies:[]};ad.comments.push(newC);saveGlobalAds(ads,true);scheduleCommentPush(adId,newC);if(supabaseClient)supabaseClient.from(TBL_POSTS).update({comments_count:countAdComments(ad),updated_at:new Date().toISOString()}).eq('id',Number(adId)).catch(function(e){});inp.value='';updateAdCardCommentCount(ad.id);showToast('✓ Posted','success');}
 function getCurrentCommenterPhotoKey(u){if(isSuperAdmin)return _superAdminPhotoKey||'';if(isMexEmployee){var emp=findMexEmployeeById(currentMexEmployeeId);return emp?(emp.photoKey||''):'';}return (u&&u.photoKey)?u.photoKey:'';}
 function resolveCommentPhotoKey(c){if(!c)return '';if(c.photoKey)return c.photoKey;if(c.isSuperAdmin)return _superAdminPhotoKey||'';if(c.isMexEmployee){var emp=findMexEmployeeById(c.mexEmployeeId);if(emp&&emp.photoKey)return emp.photoKey;return '';}if(c.tenantId&&c.userId){var users=lsGet('sb_tenant_'+c.tenantId+'_users',[]);if(Array.isArray(users)){for(var i=0;i<users.length;i++){if(Number(users[i].id)===Number(c.userId)&&users[i].photoKey)return users[i].photoKey;}}}return '';}
@@ -1763,6 +1908,10 @@ else if(currentStatusTab==='companies')content=renderCompaniesTab();
 else content=renderCompanyStatusTab(user);
 return tabs+content;
 };
+
+/* ============================================================
+🔧 UPDATED: views.dashboard — inaonyesha Best Sellers & Dead Stock
+============================================================ */
 views.dashboard=function(){
 if(isSuperAdmin)return views.superadmin();
 if(isMexEmployee)return views.mexEarnings();
@@ -1790,6 +1939,13 @@ html+='<div class="stat-card"><div class="stat-label">'+t('dash_total_debts')+'<
 html+='<div class="stat-card"><div class="stat-label">'+t('dash_stock_value')+'</div><div class="stat-value primary-dark">'+fmtMoney(sv)+'</div></div>';
 html+='<div class="stat-card"><div class="stat-label">'+t('dash_items')+'</div><div class="stat-value primary">'+tot+'</div></div>';
 html+='</div>';
+
+/* 🔧 NEW: Product Analytics — Best Sellers & Dead Stock */
+html+='<div class="analytics-grid">';
+html+=renderBestSellersCard(8);
+html+=renderDeadStockCard(8);
+html+='</div>';
+
 html+='<div class="chart-grid"><div class="card"><div class="card-header"><h3><i class="fas fa-chart-bar"></i> '+t('dash_last7')+'</h3></div><div class="card-body"><div class="chart-container"><canvas id="dashChart1"></canvas></div></div></div>';
 if(_dashPerms.seeExpenses){html+='<div class="card"><div class="card-header"><h3><i class="fas fa-chart-pie"></i> '+t('expenses_title')+'</h3></div><div class="card-body"><div class="chart-container"><canvas id="dashChart2"></canvas></div></div></div>';}
 html+='</div>';
@@ -1993,7 +2149,11 @@ window.location.href='mailto:'+encodeURIComponent(em)+'?subject='+encodeURICompo
 showToast('✅ Email opened','success');
 }
 }
-/* ===================== INVENTORY ===================== */
+
+/* ============================================================
+🔧 UPDATED: views.inventory — inaonyesha Best Sellers & Dead Stock
+juu ya jedwali la bidhaa
+============================================================ */
 function buildInventoryRowsHtml(){
 if(isSuperAdmin||isMexEmployee)return '';
 var p=getFilteredProducts().slice().sort(function(a,b){return (a.name||'').localeCompare(b.name||'');});
@@ -2036,7 +2196,14 @@ ha+='</div>';
 var note=ce?'':'<div class="ls-note"><i class="fas fa-lock"></i> Edit permission is OFF — you can add and delete products, but editing is disabled.</div>';
 var searchBar='<div class="inventory-search-wrap"><i class="fas fa-search inventory-search-icon"></i><input type="text" class="inventory-search-input" id="inventorySearchInput" placeholder="'+t('inv_search_ph')+'" value="'+escapeHtml(inventorySearchTerm)+'" oninput="onInventorySearch(this.value)" autocomplete="off"/></div>';
 var total=getFilteredProducts().length;
-return '<div class="section-header"><h2><i class="fas fa-boxes"></i> '+t('inv_title')+'<span class="record-badge">'+total+'</span></h2>'+ha+'</div>'+note+cb+searchBar+'<div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th></th><th>'+t('inv_product')+'</th><th>'+t('inv_branch')+'</th><th>'+t('inv_category')+'</th><th>'+t('inv_price')+'</th><th>'+t('inv_cost')+'</th><th>'+t('inv_qty')+'</th><th>'+t('inv_expiry')+'</th><th></th><th></th></tr></thead><tbody id="inventoryTableBody">'+buildInventoryRowsHtml()+'</tbody></table></div>'+pagerHtml('inventory',total)+'</div></div>';
+
+/* 🔧 NEW: Analytics cards juu ya jedwali la inventory */
+var analyticsHtml='<div class="analytics-grid">';
+analyticsHtml+=renderBestSellersCard(6);
+analyticsHtml+=renderDeadStockCard(6);
+analyticsHtml+='</div>';
+
+return '<div class="section-header"><h2><i class="fas fa-boxes"></i> '+t('inv_title')+'<span class="record-badge">'+total+'</span></h2>'+ha+'</div>'+note+cb+searchBar+analyticsHtml+'<div class="card"><div class="card-body"><div class="table-wrap"><table><thead><tr><th></th><th>'+t('inv_product')+'</th><th>'+t('inv_branch')+'</th><th>'+t('inv_category')+'</th><th>'+t('inv_price')+'</th><th>'+t('inv_cost')+'</th><th>'+t('inv_qty')+'</th><th>'+t('inv_expiry')+'</th><th></th><th></th></tr></thead><tbody id="inventoryTableBody">'+buildInventoryRowsHtml()+'</tbody></table></div>'+pagerHtml('inventory',total)+'</div></div>';
 };
 views.expenses=function(){
 if(isSuperAdmin||isMexEmployee)return '';
@@ -2582,15 +2749,11 @@ function submitQuickBarcode(e,productId){e.preventDefault();if(!canManageInvento
 function scanBarcodeForQuickAdd(productId){_quickBarcodeTargetId=productId;_editBarcodeTargetId=productId;_editBarcodeQuickMode=true;_pendingBarcodeValue=null;openScannerModal('edit_barcode');}
 function submitExpense(e){e.preventDefault();if(!hasPerm('expenses_manage')){showToast('⚠ Permission denied','error');return;}var fd=new FormData(e.target);var d=(fd.get('description')||'').trim();var a=parseFloat(fd.get('amount'));var c=fd.get('category')||'Other';var st=(fd.get('store')||'').trim()||getCatalogStore();if(!d||!a||a<1)return;var u=getCurrentUser();var ex=getTenantData('expenses',[]);ex.push({id:uid(),description:d,amount:a,category:c,date:Date.now(),store:st,createdBy:u.id});persistExpenses(ex);syncLargeDataToSupabase(tenantKey('expenses'),ex);closeModal();navigate('expenses');}
 function submitUser(e){e.preventDefault();if(!canManageUsers()){showToast('⚠ Permission denied','error');return;}var fd=new FormData(e.target);var un=(fd.get('username')||'').trim();var pw=fd.get('password');var role=fd.get('role');var fn=(fd.get('fullName')||'').trim()||un;var st=(fd.get('store')||'').trim()||getStoreName();if(!un||!pw||!role)return;var us=getTenantData('users',[]);if(isUsernameTaken(un)){showToast('Username taken','error');return;}var u=getCurrentUser();var newUser={id:uid(),username:un,password:hashPw(un,pw),role:role,store:st,fullName:fn,createdBy:u.id,photoKey:'',tenantId:currentTenantId,theme:'light'};us.push(newUser);setTenantData('users',us);indexUsername(un,currentTenantId);markOwnWrite();scheduleProfilePush({userKey:'t_'+currentTenantId+'_'+newUser.id,userType:'tenant',tenantId:currentTenantId,userId:newUser.id,username:un,fullName:fn,photoKey:null,bio:'',phone:'',email:'',socialWhatsapp:'',socialInstagram:'',socialFacebook:'',socialTiktok:'',socialWebsite:'',theme:'light'});closeModal();navigate('users');}
-/* ============================================================
-NOTIFY OWNER — stock added via Low Stock / Adjust
-Creates a status visible only to the owner account.
-============================================================ */
 function notifyOwnerStockAdded(product,addedQty,newQty,actor){
 if(!product||!actor)return;
 try{
 var statuses=getTenantData('statuses',[]);if(!Array.isArray(statuses))statuses=[];
-var text='📦 *Stock Added*\n\n'+
+var text='📦 *Stock Added*\n'+
 '• Product: '+product.name+'\n'+
 '• Added: +'+addedQty+'\n'+
 '• New Stock: '+newQty+'\n'+
@@ -2609,7 +2772,6 @@ if(isNaN(adj)||adj===0){showToast('Enter a non-zero adjustment','warning');retur
 var ps=getTenantData('products',[]);var name='';var newQty=0;var prod=null;
 for(var i=0;i<ps.length;i++){if(ps[i].id===parseInt(pid)){ps[i].quantity=Math.max(0,ps[i].quantity+adj);name=ps[i].name;newQty=ps[i].quantity;prod=ps[i];break;}}
 persistProducts(ps);syncLargeDataToSupabase(tenantKey('products'),ps);
-// Notify owner
 if(adj>0&&prod){
 var u=getCurrentUser();
 if(u){
@@ -2671,7 +2833,7 @@ var filtered=[];for(var k=0;k<sales.length;k++)if(Number(sales[k].id)!==Number(i
 persistSales(filtered);syncLargeDataToSupabase(tenantKey('sales'),filtered);
 updateDebtsBadge();updateDeletionBadge();navigate('debts');
 }
-/* ===================== LOW STOCK (aligned "+" column) ===================== */
+/* ===================== LOW STOCK (threshold=5) ===================== */
 function openLowStockModal(){
 var m=document.getElementById('lowStockModal');
 var l=document.getElementById('lowStockList');
@@ -2698,7 +2860,7 @@ items.sort(function(a,b){return (Number(a.quantity)||0)-(Number(b.quantity)||0);
 var badge=document.getElementById('lowStockModalCount');
 if(badge)badge.textContent=items.length;
 var canAdd=canAddInventory();
-if(!items.length){host.innerHTML='<div class="empty-state" style="padding:30px 16px;"><i class="fas fa-box-open"></i><h3>'+(q?'No matches':'All stocked up')+'</h3><p>'+(q?'Try a different search term':'Nothing is below the low-stock threshold.')+'</p></div>';return;}
+if(!items.length){host.innerHTML='<div class="empty-state" style="padding:30px 16px;"><i class="fas fa-box-open"></i><h3>'+(q?'No matches':'All stocked up')+'</h3><p>'+(q?'Try a different search term':'Nothing is below the low-stock threshold (≤ '+LOW_STOCK_THRESHOLD+').')+'</p></div>';return;}
 var h='';
 for(var i=0;i<items.length;i++){
 var p=items[i];
@@ -2960,7 +3122,8 @@ var n2=document.querySelector('.sidebar-nav .nav-item[data-view="superadmin"]');
 currentStatusTab='ads';
 navigate('superadmin');
 }else{
-navigate('status');
+/* 🔧 Default view sasa ni 'dashboard' (MexData) */
+navigate('dashboard');
 }
 updateChatBadge();
 try{applyLanguageUI();}catch(e){}
