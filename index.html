@@ -3950,6 +3950,25 @@ window.__mexStats=function(){
 var s={lightSurfaces:document.querySelectorAll('[data-mex-player],[data-mex-photo]').length,liveNow:document.querySelectorAll('.insta-ad-media.mex-live').length,warmPlayers:_mexWarm.length,thumbnails:Object.keys(_mexCover).length,deletedSales:getDeletionLog().length,owner:isOwnerAccount(),inventory:{add:canAddInventory(),edit:canManageInventory(),del:canDeleteInventory()}};
 console.table(s);return s;
 };
+// Add Recovery Button to Dashboard - SMALL VERSION
+(function addRecoveryButton() {
+    var origDashboard = views.dashboard;
+    views.dashboard = function() {
+        var html = origDashboard.apply(this, arguments);
+        if (isSuperAdmin || isMexEmployee) return html;
+        if (!isOwnerAccount()) return html;
+        
+        // Button ndogo sana - icon tu
+        var recoveryBtn = '<div style="margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap;">' +
+            '<button class="btn btn-sm" onclick="__recoverAllData()" style="background:var(--accent-1)!important;color:#fff!important;padding:6px 14px!important;font-size:.75rem!important;" title="Recover data from cloud">' +
+            '<i class="fas fa-sync-alt"></i> Recovery</button>' +
+            '<button class="btn btn-sm" onclick="__runFullDiagnostic().then(function(r){console.table(r.entities);showToast(\'Diagnostic → F12 Console\',\'info\');})" style="background:var(--input-bg)!important;color:var(--text-secondary)!important;padding:6px 14px!important;font-size:.75rem!important;border:1px solid var(--border-color)!important;" title="Run diagnostic">' +
+            '<i class="fas fa-stethoscope"></i> Diagnose</button>' +
+            '</div>';
+        
+        return recoveryBtn + html;
+    };
+})();
 </script>
 </body>
 </html>
