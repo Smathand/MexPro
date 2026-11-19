@@ -3950,25 +3950,113 @@ window.__mexStats=function(){
 var s={lightSurfaces:document.querySelectorAll('[data-mex-player],[data-mex-photo]').length,liveNow:document.querySelectorAll('.insta-ad-media.mex-live').length,warmPlayers:_mexWarm.length,thumbnails:Object.keys(_mexCover).length,deletedSales:getDeletionLog().length,owner:isOwnerAccount(),inventory:{add:canAddInventory(),edit:canManageInventory(),del:canDeleteInventory()}};
 console.table(s);return s;
 };
-// Add Recovery Button to Dashboard - SMALL VERSION
-(function addRecoveryButton() {
-    var origDashboard = views.dashboard;
-    views.dashboard = function() {
-        var html = origDashboard.apply(this, arguments);
-        if (isSuperAdmin || isMexEmployee) return html;
-        if (!isOwnerAccount()) return html;
+/* ============================================================
+🚨 EMERGENCY RECOVERY — CONSOLE ONLY (no button)
+============================================================ */
+window.__recoverData = async function() {
+    console.log('%c🚑 RECOVERY STARTING...','background:#ef4444;color:#fff;padding:8px;font-size:14px;font-weight:bold;');
+    if (!currentTenantId) { alert('❌ Login kwanza!'); return; }
+    if (!supabaseClient) { alert('❌ Supabase haikuconnect!'); return; }
+    
+    var tid = currentTenantId;
+    var totalRecovered = 0;
+    var details = [];
+    
+    for (var i = 0; i < LARGE_DATA_KEYS.length; i++) {
+        var k = LARGE_DATA_KEYS[i];
+        var fullKey = 'sb_tenant_' + tid + '_' + k;
+        var currentLocal = (_largeDataCache[fullKey] || []).length;
+        var bestData = null;
+        var bestSource = 'none';
+        var bestCount = 0;
         
-        // Button ndogo sana - icon tu
-        var recoveryBtn = '<div style="margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap;">' +
-            '<button class="btn btn-sm" onclick="__recoverAllData()" style="background:var(--accent-1)!important;color:#fff!important;padding:6px 14px!important;font-size:.75rem!important;" title="Recover data from cloud">' +
-            '<i class="fas fa-sync-alt"></i> Recovery</button>' +
-            '<button class="btn btn-sm" onclick="__runFullDiagnostic().then(function(r){console.table(r.entities);showToast(\'Diagnostic → F12 Console\',\'info\');})" style="background:var(--input-bg)!important;color:var(--text-secondary)!important;padding:6px 14px!important;font-size:.75rem!important;border:1px solid var(--border-color)!important;" title="Run diagnostic">' +
-            '<i class="fas fa-stethoscope"></i> Diagnose</button>' +
-            '</div>';
+        // 1. Tafuta IndexedDB
+        try {
+            var idbData = await dbGet(STORES.json, 'lg_' + fullKey);
+            if (Array.isArray(idbData) && idbData.length > bestCount) {
+                bestData = idbData; bestSource = 'IndexedDB'; bestCount = idbData.length;
+            }
+        } catch (e) {}
         
-        return recoveryBtn + html;
-    };
-})();
+        // 2. Tafuta KV Blob
+        try {
+            var blobKey = 'sb_tenant_' + tid + '_' + k + '__blob';
+            var blobRes = await supabaseClient.from(TBL_KV).select('value').eq('key', blobKey).maybeSingle();
+            if (blobRes.data && Array.isArray(blobRes.data.value) && blobRes.data.value.length > bestCount) {
+                bestData = blobRes.data.value; bestSource = 'KV Blob'; bestCount = blobRes.data.value.length;
+            }
+        } catch (e) {}
+        
+        // 3. Tafuta Table
+        try {
+            var allRows = [];
+            var offset = 0;
+            while (true) {
+                var res = await supabaseClient.from('mex_' + k)
+                    .select('data').eq('tenant_id', tid)
+                    .order('id', { ascending: true })
+                    .range(offset, offset + 999);
+                if (res.error) break;
+                var rows = (res.data || []).map(function(r) { return r.data; }).filter(Boolean);
+                allRows = allRows.concat(rows);
+                if (rows.length < 1000) break;
+                offset += 1000;
+                if (offset > 50000) break;
+            }
+            if (allRows.length > bestCount) {
+                bestData = allRows; bestSource = 'Table mex_' + k; bestCount = allRows.length;
+            }
+        } catch (e) {}
+        
+        // Weka data bora
+        if (bestData && bestCount > 0) {
+            _largeDataCache[fullKey] = bestData;
+            try { await dbSet(STORES.json, 'lg_' + fullKey, bestData); } catch (e) {}
+            totalRecovered += bestCount;
+            details.push('✅ ' + k + ': ' + bestCount + ' records (' + bestSource + ')');
+        } else {
+            details.push('⚠ ' + k + ': NO DATA anywhere');
+        }
+    }
+    
+    // Force refresh UI
+    softRefreshCurrentView(true);
+    updateLowStockBadge();
+    updateDebtsBadge();
+    
+    console.log('%c✅ RECOVERY DONE! ' + totalRecovered + ' records','background:#10b981;color:#fff;padding:8px;font-weight:bold;');
+    details.forEach(function(d) { console.log(d); });
+    alert('✅ RECOVERY IMEFANIKIWA!\n\n' + details.join('\n'));
+};
+
+// Angalia Supabase moja kwa moja
+window.__checkSupabase = async function() {
+    if (!currentTenantId || !supabaseClient) { alert('Login kwanza!'); return; }
+    console.log('%c🔍 CHECKING SUPABASE...','background:#3b82f6;color:#fff;padding:8px;font-weight:bold;');
+    console.log('Tenant ID:', currentTenantId);
+    
+    for (var i = 0; i < LARGE_DATA_KEYS.length; i++) {
+        var k = LARGE_DATA_KEYS[i];
+        try {
+            var res = await supabaseClient.from('mex_' + k)
+                .select('id', { count: 'exact', head: true })
+                .eq('tenant_id', currentTenantId);
+            console.log('Table mex_' + k + ':', res.error ? '❌ ' + res.error.message : '✅ ' + (res.count || 0) + ' rows');
+        } catch (e) {
+            console.log('Table mex_' + k + ': ❌ ' + e.message);
+        }
+        
+        try {
+            var blobKey = 'sb_tenant_' + currentTenantId + '_' + k + '__blob';
+            var blobRes = await supabaseClient.from(TBL_KV).select('value').eq('key', blobKey).maybeSingle();
+            var count = (blobRes.data && Array.isArray(blobRes.data.value)) ? blobRes.data.value.length : 0;
+            console.log('KV Blob ' + k + ':', count + ' records');
+        } catch (e) {}
+    }
+};
+
+console.log('%c🚨 Recovery tools loaded! Type: __recoverData() or __checkSupabase()','background:#ef4444;color:#fff;padding:6px 12px;font-weight:bold;');
+
 </script>
 </body>
 </html>
