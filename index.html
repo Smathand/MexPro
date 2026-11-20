@@ -4056,6 +4056,70 @@ window.__checkSupabase = async function() {
 };
 
 console.log('%c🚨 Recovery tools loaded! Type: __recoverData() or __checkSupabase()','background:#ef4444;color:#fff;padding:6px 12px;font-weight:bold;');
+(async function restoreMexData(){
+  const KEYS = ['sales','products','expenses','punchHistory','transfers','statuses'];
+  const tid  = (lsGet('sb_session',null)||{}).tid || currentTenantId;
+  if(!tid) return console.error('❌ Hakuna tenant ID');
+  const out = {};
+
+  for(const ent of KEYS){
+    const fullKey = 'sb_tenant_'+tid+'_'+ent;
+
+    // 1) Table rows
+    let tableRows = [];
+    try{
+      let off = 0;
+      while(true){
+        const r = await supabaseClient.from('mex_'+ent)
+          .select('data').eq('tenant_id', tid)
+          .order('id',{ascending:true}).range(off, off+999);
+        if(r.error) break;
+        const rows = (r.data||[]).map(x=>x.data).filter(Boolean);
+        tableRows = tableRows.concat(rows);
+        if(rows.length < 1000) break;
+        off += 1000;
+      }
+    }catch(e){}
+
+    // 2) Blob fallback
+    let blobRows = [];
+    try{
+      const r = await supabaseClient.from('mex_kv_store')
+        .select('value').eq('key', fullKey+'__blob').maybeSingle();
+      if(!r.error && r.data && Array.isArray(r.data.value)) blobRows = r.data.value;
+    }catch(e){}
+
+    // 3) Local cache
+    const local = _largeDataCache[fullKey] || [];
+
+    // Merge kwa id — updated_at mpya inashinda
+    const map = new Map();
+    [...tableRows, ...blobRows, ...local].forEach(it=>{
+      if(!it || it.id===undefined || it.id===null) return;
+      const k  = String(it.id);
+      const t  = Number(it.updated_at || it.updatedAt || 0);
+      const p  = map.get(k);
+      const pt = p ? Number(p.updated_at || p.updatedAt || 0) : -1;
+      if(!p || t >= pt) map.set(k, it);
+    });
+    const merged = Array.from(map.values());
+
+    // Andika local + IndexedDB
+    _largeDataCache[fullKey] = merged;
+    try{ await dbSet(STORES.json, 'lg_'+fullKey, merged); }catch(e){}
+
+    out[ent] = {
+      table : tableRows.length,
+      blob  : blobRows.length,
+      local : local.length,
+      merged: merged.length
+    };
+  }
+
+  console.table(out);
+  toast?.('✅ Data imerudishwa: '+Object.values(out).reduce((a,x)=>a+x.merged,0)+' records','success');
+  return out;
+})();
 
 </script>
 </body>
